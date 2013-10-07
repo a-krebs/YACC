@@ -15,3 +15,7 @@
 *.exe
 *.out
 *.app
+
+# bin folder
+bin/*
+!bin/.gitkeep
