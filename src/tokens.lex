@@ -13,14 +13,11 @@
 "//"[^\n]*                      { ; }
 ^[a-zA-Z][a-zA-Z0-9]*$          { yylval.id = strdup(yytext);
                                   return(ID); }
-                                  
-^[0-9]+$                        { yylval.integer = strdup(yytext);
-                                  return(INT); }
-                                  
-^[0-9]+([.]*[0-9]+([E][-+]*[0-9]*)*[0-9]+)*$ 
+^[-+]?[0-9]*\.?[0-9]+([E][-+]?[0-9]+)?$
                                 { yylval.real = strdup(yytext); 
-                                return(REAL); }
-                                  
+                                  return(REAL); }
+"'"[^'\\]*(?:\\.[^'\\]*)*"'"    { yylval.string = strdup(yytext);
+                                  return(STRING); }
 ":="                            { return(ASSIGN); }
 "and"                           { return(AND); }
 "continue"                      { return(CONTINUE); }
