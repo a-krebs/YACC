@@ -21,7 +21,7 @@ TESTEXE=	$(BIN)/test
 TESTOBJS=	$(BIN)/test.o $(BIN)/test_dummy_shared.o $(OBJS)
 
 # Compiler flags for all builds
-CFLAGS+= -Wall
+CFLAGS+= 
 
 # Linked libraries for all builds
 LIBS=		-ll

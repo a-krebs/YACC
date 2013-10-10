@@ -1,0 +1,11 @@
+// First sample PAL program
+
+program expressionTest (input, output);
+var 
+	a, b : integer;
+	c : real;
+begin
+	a:=3;
+	a:=a*4;
+	c:=(b+a)/2
+end.

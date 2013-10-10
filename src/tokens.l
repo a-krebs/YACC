@@ -11,7 +11,7 @@
 "//"[^\n]*                      { ; }
 ^[a-zA-Z][a-zA-Z0-9]*          { yylval.id = strdup(yytext);
                                   return(ID); }
-("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
+^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
 				yylval.real = atof(yytext); 
                                 return(REAL); }
 "'"([^'\\]*(?:\\.[^'\\]*)*)"'"    { yylval.string = strdup(yytext);
