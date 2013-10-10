@@ -3,9 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include "Error.h"
 extern int yylex(void);
+extern int yylineno;
 %}
 
+%error-verbose
 %union {
 	char character;
 	char *string;
@@ -248,6 +252,7 @@ matched_stat            : simple_stat
 %%
 
 yyerror(s) char *s; {
-	/* empty implementation for now */
+	printError(s);
+	printf("%d\n", yylineno);
 }
 

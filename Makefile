@@ -5,7 +5,7 @@
 # Locations of all shared object files. Add .o files for each new module to
 # this list.
 OBJS=		$(BIN)/dummy_shared.o $(BIN)/parser.tab.o 
-OBJS+=		$(BIN)/lex.yy.o
+OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o
 
 # Root source directory
 SRC=		src
@@ -15,7 +15,7 @@ BIN=		bin
 TEST=		test
 
 # Location and name of executables along with their object dependencies
-EXE=		$(BIN)/teamyacc
+EXE=		$(BIN)/pal
 EXEOBJS=	$(BIN)/main.o $(OBJS)
 TESTEXE=	$(BIN)/test
 TESTOBJS=	$(BIN)/test.o $(BIN)/test_dummy_shared.o $(OBJS)
@@ -23,7 +23,7 @@ TESTOBJS=	$(BIN)/test.o $(BIN)/test_dummy_shared.o $(OBJS)
 # Compiler flags for all builds
 CFLAGS+= 
 
-# Linked libraries for all builds
+# Linked libraries for final build
 LIBS=		-ll
 
 # Compile command. Make's default rules don't seem to work with subdirectories
@@ -52,6 +52,9 @@ $(TESTEXE): $(TESTOBJS)
 	$(CC) -o $@ $+
 
 $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
+	$(COMPILE)
+
+$(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
 	$(COMPILE)
 
 $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
