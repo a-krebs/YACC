@@ -18,7 +18,6 @@ main(int argc, char *argv[])
 	/* unit test example code */
 	tmp = 0;
 	tmp = dummySharedFunc(0);
-	printf("0+1=%d\n", tmp);
 
 	/* for now just pull input file as argv[1] blindly,
 	 * this obviously needs to be corrected before checkpoint 1 */

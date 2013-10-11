@@ -5,7 +5,11 @@
 # Locations of all shared object files. Add .o files for each new module to
 # this list.
 OBJS=		$(BIN)/dummy_shared.o $(BIN)/parser.tab.o 
-OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o
+OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
+
+# New variable for filtering out lex.yy.o and parser.tab.o from
+# the compilation of the tests.
+TOFILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o
 
 # Root source directory
 SRC=		src
@@ -18,7 +22,11 @@ TEST=		test
 EXE=		$(BIN)/pal
 EXEOBJS=	$(BIN)/main.o $(OBJS)
 TESTEXE=	$(BIN)/test
-TESTOBJS=	$(BIN)/test.o $(BIN)/test_dummy_shared.o $(OBJS)
+TESTOBJS1=	$(BIN)/test.o $(BIN)/test_dummy_shared.o 
+TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o
+TESTOBJS1+=	$(OBJS)
+TESTOBJS=	$(filter-out $(TOFILTER), $(TESTOBJS1))
+
 
 # Compiler flags for all builds
 CFLAGS+= 
@@ -55,6 +63,15 @@ $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
 	$(COMPILE)
 
 $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
+	$(COMPILE)
+
+$(BIN)/testError.o: $(TEST)/testError.c $(TEST)/testError.h
+	$(COMPILE)
+
+$(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
+	$(COMPILE)
+
+$(BIN)/testErrorLL.o: $(TEST)/testErrorLL.c $(TEST)/testErrorLL.h
 	$(COMPILE)
 
 $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h

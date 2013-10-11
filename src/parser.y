@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include "Error.h"
+#include "ErrorLL.h"
 extern int yylex(void);
 extern int yylineno;
 %}
@@ -85,6 +86,7 @@ type                    : simple_type
 
 simple_type             : scalar_type
                         | ID
+			| REAL
                         ;
 
 scalar_type             : L_PAREN scalar_list R_PAREN
@@ -162,7 +164,7 @@ stat                    : simple_stat
                         |
                         ;
 
-simple_stat             : var ':=' expr
+simple_stat             : var ASSIGN expr
                         | proc_invok
                         | compound_stat
                         ;
@@ -177,7 +179,7 @@ var                     : ID
                         ;
 
 subscripted_var         : var LS_BRACKET expr
-                        | subscripted_var ',' expr
+                        | subscripted_var COLON expr
                         ;
 
 expr                    : simple_expr
@@ -186,7 +188,7 @@ expr                    : simple_expr
                         | expr LESS_OR_EQUAL simple_expr
                         | expr LESS     simple_expr
                         | expr GREATER_OR_EQUAL simple_expr
-                        | expr GREATER     simple_expr
+                        | expr GREATER simple_expr
                         ;
 
 expr_list               : expr_list COMMA expr
@@ -252,6 +254,9 @@ matched_stat            : simple_stat
 %%
 
 yyerror(s) char *s; {
+	/* Simple, naive for now, will add more features as project
+	 * progresses */
+	recordError(s, yylineno);
 	printError(s);
 	printf("%d\n", yylineno);
 }
