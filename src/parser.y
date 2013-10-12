@@ -2,7 +2,6 @@
 
 /*
 * TODO:
-* - ask TA about the 'decls' definition
 * - check all tokens are used in grammer and vice versa
 * - create testing cases!
 */
@@ -62,7 +61,7 @@ program_header
 ;
 
 decls
-: const_decl_part type_decl_part var_decl_part proc_decl_part           /* this doesn't seem quite right...*/
+: const_decl_part type_decl_part var_decl_part proc_decl_part           
 ;
 
 
