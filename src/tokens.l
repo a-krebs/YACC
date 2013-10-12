@@ -53,6 +53,7 @@
 "/"                             { return(DIVIDE); }
 "("                             { return(L_PAREN); } 
 ")"                             { return(R_PAREN); }
+".."                            { return(RANGE); }
 "."                             { return(PERIOD); }
 ";"                             { return(SEMICOLON); }
 ":"                             { return(COLON); }
