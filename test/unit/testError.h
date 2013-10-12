@@ -1,5 +1,5 @@
 #include "minunit.h"
-#include "../src/Error.h"
-#include "../src/ErrorLL.h"
+#include "Error.h"
+#include "ErrorLL.h"
 char *test_recordError();
 char *test_all_Error();

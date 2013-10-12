@@ -16,7 +16,7 @@ SRC=		src
 # Directory to store compiled binaries
 BIN=		bin
 # Location of test source files
-TEST=		test
+TEST=		test/unit
 
 # Location and name of executables along with their object dependencies
 EXE=		$(BIN)/pal
@@ -52,7 +52,7 @@ debug: CFLAGS+= -g -DDEBUG
 debug: $(EXE)
 
 # Build test executable
-test: CFLAGS+= -g
+test: CFLAGS+= -g -Isrc/
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)
