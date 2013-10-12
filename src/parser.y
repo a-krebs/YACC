@@ -319,9 +319,8 @@ field
 %%
 
 yyerror(s) char *s; {
-      /* Simple, naive for now, will add more features as project
-       * progresses */
-      recordError(s, yylineno);
-      printError(s);
-      printf("%d\n", yylineno);
+	/* Simple, naive for now, will add more features as project
+	 * progresses */
+	struct Error *e = recordError(s, yylineno);
+	printError(e);
 }

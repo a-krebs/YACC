@@ -18,19 +18,10 @@
 [ \t]                            { ; }
 "//"[^\n]*                      { ; }
 
-<INITIAL>"{"			{BEGIN(INSIDE_BLOCK_COMMENT);
-				 printf("INSIDE BLOCK COMMENT\n");
-				}
-
-<INSIDE_BLOCK_COMMENT>"}"	{
-				 printf("BLOCK COMMENT DELIMTER\n");
-				 BEGIN(INITIAL);
-				}
-<INSIDE_BLOCK_COMMENT>[^}\n]+	{ }
-
-<INSIDE_BLOCK_COMMENT><<EOF>>	{ printf("EOF REACHED\n"); 
-				  exit(0);
-				}
+<INITIAL>"{"			{ BEGIN(INSIDE_BLOCK_COMMENT); }
+<INSIDE_BLOCK_COMMENT>"}"	{ BEGIN(INITIAL); }
+<INSIDE_BLOCK_COMMENT>[^}\n]+	{ ; }
+<INSIDE_BLOCK_COMMENT><<EOF>>	{ exit(0); }
 
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
@@ -84,6 +75,6 @@
 "["                             { return(LS_BRACKET); }
 "]"                             { return(RS_BRACKET); }
 ","                             { return(COMMA); }
-[a-zA-Z][a-zA-Z0-9]*          { yylval.id = strdup(yytext);
+[a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
                                   return(ID); }
-\n {}
+\n 				{ ; }
