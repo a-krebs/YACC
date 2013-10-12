@@ -16,7 +16,7 @@
 extern int yylex(void);
 extern int yylineno;
 
-}%
+%}
 
 %error-verbose
 %union {
@@ -31,7 +31,7 @@ extern int yylineno;
 %token BOOL CHAR STRING INT REAL RECORD
 
 /* control statements: */
-%token BEGIN END IF THEN ELSE WHILE DO CONTINUE EXIT OF
+%token _BEGIN END IF THEN ELSE WHILE DO CONTINUE EXIT OF
 
 /* kinds: */
 %token ID CONST INT_CONST REAL_CONST
@@ -52,6 +52,7 @@ extern int yylineno;
 
 %%
 
+
 program
 : program_header decls compound_stat PERIOD
 ;
@@ -61,7 +62,7 @@ program_header
 ;
 
 decls
-: const_decl_part type_decl_part var_decl_part proc_decl_part           
+: const_decl_part type_decl_part var_decl_part proc_decl_part          
 ;
 
 
@@ -80,7 +81,6 @@ const_decl
 : ID EQUAL expr
 ;
 
-
 /* type declartions part: */
 type_decl_part
 : TYPE type_decl_list SEMICOLON
@@ -98,7 +98,6 @@ type_decl
 
 
 /* variable declartions part: */
-
 var_decl_part
 : VAR var_decl_list SEMICOLON
 | /* do nothing */
@@ -151,51 +150,9 @@ func_parm
 ;
 
 
-/* type grammer */
-type
-: simple_type
-| structured_type
-;
-
-simple_type
-: scalar_type
-| REAL
-| ID
-;
-
-scalar_type
-: L_PAREN scalar_list R_PAREN
-| INT
-| BOOL
-| CHAR
-;
-
-scalar_list
-: ID
-| scalar_list COMMA ID
-
-structured_type
-: ARRAY LS_BRACKET array_type RS_BRACKET OF type
-| RECORD field_list END
-;
-
-array_type
-: simple_type
-| expr RANGE expr
-;
-
-field_list
-: field
-| field_list SEMICOLON field
-
-field
-: ID COLON type         
-;
-
-
-/* meat and potatoes i.e. program bodies */
+/* program/function bodies */
 compound_stat
-: BEGIN stat_list END
+: _BEGIN stat_list END
 ;
 
 stat_list
@@ -209,16 +166,50 @@ stat
 | /* do nothing */
 ;
 
+struct_stat             
+: IF expr THEN matched_stat ELSE stat
+| IF expr THEN stat
+| WHILE expr DO stat
+| CONTINUE
+| EXIT
+;
+
+matched_stat
+: simple_stat
+| IF expr THEN matched_stat ELSE matched_stat
+| WHILE expr DO matched_stat
+| CONTINUE
+| EXIT
+;
+
 simple_stat
 : var ASSIGN expr
 | proc_invok
 | compound_stat
 ;
 
+/**/
+
 proc_invok
-: para_list_func_invoke R_PAREN
+: parm_list_func_invoke R_PAREN
 | ID L_PAREN R_PAREN
 ;
+
+func_invoke
+: parm_list_func_invoke R_PAREN
+| ID  L_PAREN R_PAREN
+;
+
+parm_list_func_invoke
+: ID L_PAREN parm 
+| parm_list_func_invoke COMMA parm
+;
+
+parm 
+: expr
+;
+
+/**/
 
 var
 : ID
@@ -263,12 +254,13 @@ term
 
 factor
 : var 
-| unsigned_const
-| L_PAREN expr R_PAREN
-| func_invoke
+/* | unsigned_const */
+/* | L_PAREN expr R_PAREN */
+| func_invoke 
 | NOT factor
 ;
 
+/*
 unsigned_const
 : unsigned_num
 | ID
@@ -278,39 +270,50 @@ unsigned_const
 unsigned_num
 : INT_CONST
 | REAL_CONST
-;
+;*/
 
 
-/* control statement grammer */
-func_invoke
-: parm_list_func_invoke R_PAREN
-| ID  L_PAREN R_PAREN
+/* type grammer */
+type
+: simple_type
+| structured_type
 ;
 
-parm_list_func_invoke
-: ID L_PAREN parm 
-| parm_list_func_invoke COMMA parm
+simple_type
+: scalar_type
+| REAL
+| ID
 ;
 
-parm 
-: expr
+scalar_type
+: L_PAREN scalar_list R_PAREN
+| INT
+| BOOL
+| CHAR
 ;
 
-struct_stat             
-: IF expr THEN matched_stat ELSE stat
-| IF expr THEN stat
-| WHILE expr DO stat
-| CONTINUE
-| EXIT
+scalar_list
+: ID
+| scalar_list COMMA ID
+
+structured_type
+: ARRAY LS_BRACKET array_type RS_BRACKET OF type
+| RECORD field_list END
 ;
 
-matched_stat
-: simple_stat
-| IF expr THEN matched_stat ELSE matched_stat
-| WHILE expr DO matched_stat
-| CONTINUE
-| EXIT
+array_type
+: simple_type
+| expr RANGE expr
 ;
+
+field_list
+: field
+| field_list SEMICOLON field
+
+field
+: ID COLON type         
+;
+
 
 
 %%
