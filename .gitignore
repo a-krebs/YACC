@@ -19,3 +19,7 @@
 # bin folder
 bin/*
 !bin/.gitkeep
+
+# vim backup tuff
+*.swp
+*.~
