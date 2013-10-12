@@ -91,5 +91,8 @@ $(SRC)/lex.yy.c: $(SRC)/tokens.l
 	mv lex.yy.c ./$(SRC)
 
 clean:
-	-rm -f $(BIN)/*.o $(TESTEXE) $(EXE) $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c
+	-rm -f $(BIN)/*.o $(TESTEXE) $(EXE) 
+	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c
 
+build:
+	make clean && make
