@@ -47,22 +47,14 @@ recordError(const char *s, int lineno)
 
 	/* Append to linked list of errors appearing during compilation */
 	appendError(&errors, newError);
-	return newError;
 
+	return newError;
 }
 
 
 void 
-printError(char *errorstring, ...)
+printError(struct Error *e)
 {
-	static char errmsg[1024];
-	va_list args;
-
-	va_start(args, errorstring);
-	vsprintf(errmsg, errorstring, args);
-	va_end(args);
-
-	fprintf(stdout, "Error: %s\n", errmsg);
-
+	fprintf(stdout, "%d Error: %s\n", e->lineno, e->msg);
 }
 

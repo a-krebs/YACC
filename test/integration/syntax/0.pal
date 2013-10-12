@@ -1,3 +1,5 @@
+{}
+
 // First sample PAL program
 
 program expressionTest (input, output);

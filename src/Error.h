@@ -19,5 +19,5 @@ struct Error {
 extern int nErrors;
 
 struct Error *recordError(const char *, int);
-void printError(char *errorstring, ...);
+void printError(struct Error *);
 #endif
