@@ -39,8 +39,10 @@ LIBS=		-ll
 COMPILE= $(CC) $(CFLAGS) -c $< -o $@
 
 #LEX and YACC/BISON compilation calls
-LEX= lex $< 
-YACC= bison -d -y  $< -o $@
+LEXFLAGS=
+LEX= lex $(LEXFLAGS) $<
+YACCFLAGS= -d -y
+YACC= bison $(YACCFLAGS) $< -o $@
 
 # Build main executable
 all: $(EXE)
