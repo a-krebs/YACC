@@ -1,0 +1,4 @@
+{}
+program foo(in, out);
+begin
+end.
