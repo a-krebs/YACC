@@ -3,20 +3,44 @@
                        Lexical Entites for YACC-PAL                   
 ********************************************************************************/
 
+#include <stdlib.h>
+
 #include "parser.tab.h"
+#undef YYLMAX
+#define YYLMAX 10240
 %}
 
 %option yylineno
 
+%x INSIDE_BLOCK_COMMENT
+
 %%
 [ \t]                            { ; }
 "//"[^\n]*                      { ; }
+
+<INITIAL>"{"			{BEGIN(INSIDE_BLOCK_COMMENT);
+				 printf("INSIDE BLOCK COMMENT\n");
+				}
+
+<INSIDE_BLOCK_COMMENT>"}"	{
+				 printf("BLOCK COMMENT DELIMTER\n");
+				 BEGIN(INITIAL);
+				}
+<INSIDE_BLOCK_COMMENT>[^}\n]+	{ }
+
+<INSIDE_BLOCK_COMMENT><<EOF>>	{ printf("EOF REACHED\n"); 
+				  exit(0);
+				}
+
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
 				yylval.real = atof(yytext); 
                                 return(REAL); }
 "'"([^'\\]*(?:\\.[^'\\]*)*)"'"    { yylval.string = strdup(yytext);
                                   return(STRING); }
+
+
+
 ":="                            { return(ASSIGN); }
 "and"                           { return(AND); }
 "continue"                      { return(CONTINUE); }
