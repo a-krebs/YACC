@@ -4,6 +4,7 @@
 
 import unittest
 import os
+import re
 from subprocess import Popen, PIPE
 
 
@@ -25,8 +26,12 @@ def get_error_lines_from_stderr(output):
     lines = list()
 
     for line in output:
-        num = line[:1]
-        lines.append(int(num))
+        num = re.findall(r"^\d+", line)
+        if len(num) == 1:
+            num = num[0]
+            lines.append(int(num))
+        else:
+            raise RuntimeError("Error output in wrong format.")
 
     return lines
 
@@ -53,6 +58,8 @@ def construct_tests():
                 line = line.replace(k,v)
 
             files[f] = line.split(",")
+            # convert to int
+            files[f] = [int(s) for s in files[f]]
 
     # for each file, make test case
     for filename, expected_errors in files.items():
