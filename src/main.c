@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "dummy_shared.h"
 
 #include "parser.tab.h"
 
@@ -13,12 +12,7 @@ int
 main(int argc, char *argv[]) 
 {
 	FILE *in;
-	int tmp;
 	
-	/* unit test example code */
-	tmp = 0;
-	tmp = dummySharedFunc(0);
-
 	/* for now just pull input file as argv[1] blindly,
 	 * this obviously needs to be corrected before checkpoint 1 */
 	in = fopen(argv[1], "r");
