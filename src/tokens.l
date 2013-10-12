@@ -13,22 +13,40 @@
 %option yylineno
 
 %x INSIDE_BLOCK_COMMENT
+%x INSIDE_STRING
 
 %%
+
+%{
+	printf("yylineno = %d\n", yylineno);
+
+%}
 [ \t]                            { ; }
 "//"[^\n]*                      { ; }
 
 <INITIAL>"{"			{ BEGIN(INSIDE_BLOCK_COMMENT); }
 <INSIDE_BLOCK_COMMENT>"}"	{ BEGIN(INITIAL); }
 <INSIDE_BLOCK_COMMENT>[^}\n]+	{ ; }
-<INSIDE_BLOCK_COMMENT><<EOF>>	{ exit(0); }
-
+<INSIDE_BLOCK_COMMENT><<EOF>>	{ return; }
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
 				yylval.real = atof(yytext); 
                                 return(REAL); }
-"'"([^'\\]*(?:\\.[^'\\]*)*)"'"    { yylval.string = strdup(yytext);
-                                  return(STRING); }
+
+<INITIAL>"'"			{ BEGIN(INSIDE_STRING);
+				  printf("STRING FOUND\n");
+				}
+
+<INSIDE_STRING>([^'\\]*(?:\\.[^'\\]*)*)    { 
+				yylval.string = strdup(yytext);
+                                  return(STRING); 
+				}
+
+<INSIDE_STRING>\n		{
+				printf("NEWLINE APPEARS INSIDE STRING");
+				}
+
+<INSIDE_STRING>"'"		{BEGIN(INITIAL);}
 
 
 
