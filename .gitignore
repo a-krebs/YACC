@@ -24,5 +24,9 @@ bin/*
 *.swp
 *.~
 
+# emacs and gedit backup stuff (yes, I edit with gedit, I'm not proud)
+*~
+*#
+
 # python compiled files
 *.pyc

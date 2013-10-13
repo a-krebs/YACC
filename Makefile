@@ -6,6 +6,7 @@
 # this list.
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
+OBJS+=		$(BIN)/ProgList.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -23,7 +24,7 @@ EXE=		$(BIN)/pal
 EXEOBJS=	$(BIN)/main.o $(OBJS)
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
-TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o
+TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TOFILTER), $(TESTOBJS1))
 
@@ -67,7 +68,13 @@ $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
 $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
 	$(COMPILE)
 
-$(BIN)/testError.o: $(TEST)/testError.c $(TEST)/testError.h
+$(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
+	$(COMPILE)
+
+$(BIN)/testProgList.o: $(TEST)/testProgList.c $(TEST)/testProgList.h
+	$(COMPILE)
+
+$(BIN)/testError.o: $(TEST)/testError.c $(TEST)/minunit.h
 	$(COMPILE)
 
 $(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h

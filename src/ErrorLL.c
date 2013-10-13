@@ -50,6 +50,22 @@ appendError(struct ErrorLL **eLL, struct Error *e)
 
 
 /*
+ * Returns a pointer to the next Error in the given
+ * ErrorLL or NULL if none exists or if passed a NULL
+ * pointer.
+ */
+struct Error *
+getNextError(struct ErrorLL ** eLL)
+{
+	if (!(*eLL)) return NULL;
+	if (!((*eLL)->error)) return NULL;
+	if (!(*eLL = (*eLL)->next)) return NULL;
+	return (*eLL)->error;
+
+}
+
+
+/*
  * Frees all memory associated with the linked list ErrorLL.
  */
 void

@@ -16,7 +16,6 @@
 
 
 int nErrors = 0;
-static int eof = 0; /* flag set to detect the end of file */
 
 
 /* 
@@ -51,6 +50,16 @@ recordError(const char *s, int lineno)
 	return newError;
 }
 
+
+void
+createErrorString(char *buf, int bufSize, struct Error *e)
+{
+	if (!e) return; /* don't try to create string for NULL error */
+	/* zero out buf in case it is being reused */
+	memset(buf, 0, sizeof(char)*bufSize);
+
+	snprintf(buf, bufSize-1, "Error: %s (line %d)", e->msg, e->lineno);
+}
 
 void 
 printError(struct Error *e)

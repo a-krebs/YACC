@@ -20,5 +20,6 @@ struct ErrorLL {
 extern struct ErrorLL * errors;
 
 void appendError(struct ErrorLL **, struct Error *);
+struct Error *getNextError(struct ErrorLL **);
 void freeErrorList(struct ErrorLL *);
 #endif
