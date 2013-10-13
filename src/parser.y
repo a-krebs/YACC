@@ -43,6 +43,9 @@ extern int yylineno;
 %token L_PAREN R_PAREN LS_BRACKET RS_BRACKET
 %token PERIOD COMMA SEMICOLON COLON RANGE ASSIGN
 
+/* unrecognized character */
+%token UNREC
+
 /* operators: (keep in mind priority before changing order) */
 %left NOT 
 %left MULTIPLY DIVIDE DIV MOD AND
