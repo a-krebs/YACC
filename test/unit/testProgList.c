@@ -66,6 +66,7 @@ test_printProgramListing()
 	recordError("I am testing you.", 2);
 	recordError("multiple errors on same line test", 2);
 	recordError("That's a lot of a's. Error number 3.", 4);
+	recordError("Do we print error with lineno > lines in file?", 2000);
 	printProgramListing(in, "./test/unit/ProgListTestFileOut.lst");
 	return NULL;
 	

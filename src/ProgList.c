@@ -17,7 +17,7 @@
  * Produces the program listing for the given compilation.
  * Pre: in is points to the input file which was parsed/compiled
  *      fileName is a null terminated string which is the name
- *               of the file which was parsed/compiled
+ *               of the file to which to write the program listing
  */
 void
 printProgramListing(FILE *in, char *fileName)
@@ -72,6 +72,11 @@ printProgramListing(FILE *in, char *fileName)
 				 * so let's make it bigger */
 				bufSize *= 2;
 				buf = realloc(buf, sizeof(char)*bufSize);
+				if (!buf) {
+					err(1, "Failed to realloc buf, \
+                                                no listing generated");
+					return;
+				}
 			}
 		} while ( (c != EOF) && (c != '\n'));
 
@@ -99,6 +104,19 @@ printProgramListing(FILE *in, char *fileName)
 		}
 	} while (c != EOF);
 
+
+	/* 
+	 * If nextErrLineno > lineno, we did something wrong, but let's
+	 * write the error out for posterity anyway.
+	 */
+	while (lineno < nextErrLineno) {
+		fprintf(out, "\n");
+		createErrorString(errMsg, ERRMSG_SIZE, nextError);
+		fprintf(out, "Error\t|:\t%s", errMsg);
+		nextError = getNextError(&ell);
+		if (nextError) nextErrLineno = nextError->lineno;
+		else nextErrLineno = -1;
+	}
 
 	free(buf);
 }
