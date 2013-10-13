@@ -89,7 +89,7 @@ int colno = 1;
 				}
 
 
-"'"(([^'\\])|(\\.))*(\n)+(([^'\\])|(\\.))*"'" {
+"'"((([^'\\])|(\\.))*(\n)+(([^'\\])|(\\.))*)+"'" {
 #if DEBUG
 				printf("STRING LITERAL WITH NEWLINE FOUND\n");
 				colno += strlen(yytext);
