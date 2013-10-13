@@ -58,12 +58,12 @@ def make_test_function(filename, expected_errors):
         
         for error in actual_errors:
             self.assertIn(error, expected_errors,
-                "Parser reported error at {f}:{l} where none is expected."\
+                "CAUGHT ERROR at {f}, line {l} where none is expected."\
                 .format(l = error, f = filename)
             )
         for error in expected_errors:
             self.assertIn(error, actual_errors,
-                "Parser did not catch error at {f}:{l} but one is expected."\
+                "MISSED ERROR at {f}, line {l} but one is expected."\
                 .format(l = error, f = filename)
             )
 
