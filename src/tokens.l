@@ -5,7 +5,11 @@
 
 #include <stdlib.h>
 
+#include "Error.h"
+#include "ErrorLL.h"
 #include "parser.tab.h"
+
+/* re-set max token size */
 #undef YYLMAX
 #define YYLMAX 10240
 %}
@@ -27,6 +31,14 @@
 [ \t]				{ ; }
 "//"[^\n]*			{ ; }
 
+"}"				{
+				  recordError("Closing comment brace '}' found without matching '{'", yylineno);
+#if DEBUG
+				  printf("'}' FOUND WITHOUT MATCHING '{'\n");
+#endif
+
+				}
+
 <INITIAL>"{"			{ 
 				  BEGIN(INSIDE_BLOCK_COMMENT);
 #if DEBUG
@@ -39,6 +51,7 @@
 				  printf("END BLOCK COMMENT\n");
 #endif
 				}
+
 <INSIDE_BLOCK_COMMENT>[^}]+	{ 
 #if DEBUG
 				  printf("INSIDE BLOCK COMMENT\n");
