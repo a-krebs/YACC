@@ -64,29 +64,25 @@
 				  return(REAL);
 				}
 
-<INITIAL>"'"			{
-				  BEGIN(INSIDE_STRING);
+
+"'"(([^'\\])|(\\.))*(\n)+(([^'\\])|(\\.))*"'" {
+#if DEBUG
+				printf("STRING LITERAL WITH NEWLINE FOUND\n");
+#endif
+				recordError("Newline characters cannot appear in strings.", yylineno);
+				/* 
+				 * We know it's an invalid string, but we'll continue compilation
+				 * as though it was valid.
+				 */
+				return(STRING);
+				}
+
+"'"(([^'\\])|(\\.))*"'"		{
 #if DEBUG
 				  printf("STRING FOUND\n");
 #endif
-				}
-
-<INSIDE_STRING>([^'\\]*(?:\\.[^'\\]*)*)	{ 
 				  yylval.string = strdup(yytext);
 				  return(STRING); 
-				}
-
-<INSIDE_STRING>\n		{
-#if DEBUG
-				  printf("NEWLINE APPEARS INSIDE STRING");
-#endif
-				}
-
-<INSIDE_STRING>"'"		{
-				  BEGIN(INITIAL);
-#if DEBUG
-				  printf("END STRING\n");
-#endif
 				}
 
 ":="				{ return(ASSIGN); }
