@@ -20,6 +20,7 @@
 %{
 #if DEBUG
 	printf("yylineno = %d\n", yylineno);
+	printf("Current Token: %s\n", yytext);
 #endif
 %}
 
