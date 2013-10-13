@@ -39,7 +39,7 @@
 				  printf("END BLOCK COMMENT\n");
 #endif
 				}
-<INSIDE_BLOCK_COMMENT>[^}\n]+	{ 
+<INSIDE_BLOCK_COMMENT>[^}]+	{ 
 #if DEBUG
 				  printf("INSIDE BLOCK COMMENT\n");
 #endif
