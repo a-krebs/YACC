@@ -317,5 +317,8 @@ yyerror(char *s) {
 	/* Simple, naive for now, will add more features as project
 	 * progresses */
 	struct Error *e = recordError(s, yylineno);
+#if DEBUG
+	printf("New error on line %d\n", yylineno);
+#endif
 	printError(e);
 }
