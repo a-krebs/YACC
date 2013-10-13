@@ -1,7 +1,14 @@
-{}
-// working program
+{4,6,7,8,9,10,11,21}
+// special characters and missing termination period
 
-// First sample PAL program
+%!@
+
+!
+@
+#
+$
+%
+^
 
 program expressionTest (input, output);
 var 
@@ -11,4 +18,4 @@ begin
 	a := 3;
 	a := a*4;
 	c := (b+a)/2
-end.
+end	

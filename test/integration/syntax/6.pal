@@ -1,0 +1,21 @@
+{5}
+// some crazy comment stuff
+
+{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{comment}
+{comment}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}} } // expect error here
+program foo(input, output);
+begin{comment}
+	// some comment
+
+	{
+		sadflkjsafd
+
+		asdf;kjsadf
+
+		}
+
+
+	{///sadflkjasfd
+		// comment inside comment
+	}
+end{comment}.
