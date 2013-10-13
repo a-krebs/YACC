@@ -1,4 +1,6 @@
-{ 5 }
+{ 7 }
+// missing period at end of file
+
 program test( input, output );
 begin
 end
