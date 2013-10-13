@@ -27,29 +27,50 @@
 [ \t]				{ ; }
 "//"[^\n]*			{ ; }
 
-<INITIAL>"{"			{ BEGIN(INSIDE_BLOCK_COMMENT); }
-<INSIDE_BLOCK_COMMENT>"}"	{ BEGIN(INITIAL); }
+<INITIAL>"{"			{ 
+				  BEGIN(INSIDE_BLOCK_COMMENT);
+#if DEBUG
+				  printf("BEGIN BLOCK COMMENT\n");
+#endif
+				}
+<INSIDE_BLOCK_COMMENT>"}"	{ 
+				  BEGIN(INITIAL);
+#if DEBUG
+				  printf("END BLOCK COMMENT\n");
+#endif
+				}
 <INSIDE_BLOCK_COMMENT>[^}\n]+	{ ; }
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ return; }
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
-				yylval.real = atof(yytext); 
-				return(REAL); }
+				  yylval.real = atof(yytext); 
+				  return(REAL);
+				}
 
-<INITIAL>"'"			{ BEGIN(INSIDE_STRING);
+<INITIAL>"'"			{
+				  BEGIN(INSIDE_STRING);
+#if DEBUG
 				  printf("STRING FOUND\n");
+#endif
 				}
 
 <INSIDE_STRING>([^'\\]*(?:\\.[^'\\]*)*)	{ 
-				yylval.string = strdup(yytext);
+				  yylval.string = strdup(yytext);
 				  return(STRING); 
 				}
 
 <INSIDE_STRING>\n		{
-				printf("NEWLINE APPEARS INSIDE STRING");
+#if DEBUG
+				  printf("NEWLINE APPEARS INSIDE STRING");
+#endif
 				}
 
-<INSIDE_STRING>"'"		{BEGIN(INITIAL);}
+<INSIDE_STRING>"'"		{
+				  BEGIN(INITIAL);
+#if DEBUG
+				  printf("END STRING\n");
+#endif
+				}
 
 ":="				{ return(ASSIGN); }
 "and"				{ return(AND); }
