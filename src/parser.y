@@ -313,7 +313,7 @@ matched_stat
 
 %%
 
-yyerror(s) char *s; {
+yyerror(char *s) {
 	/* Simple, naive for now, will add more features as project
 	 * progresses */
 	struct Error *e = recordError(s, yylineno);
