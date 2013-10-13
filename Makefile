@@ -1,3 +1,4 @@
+
 ################################################################################
 # Makefile for Team YACC PAL compiler.
 ################################################################################
@@ -10,7 +11,8 @@ OBJS+=		$(BIN)/ProgList.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
-TOFILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o
+TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o
+LEX_FILTER=	$(BIN)/parser.tab.o
 
 # Root source directory
 SRC=		src
@@ -22,11 +24,18 @@ TEST=		test/unit
 # Location and name of executables along with their object dependencies
 EXE=		$(BIN)/pal
 EXEOBJS=	$(BIN)/main.o $(OBJS)
+
+LEXTEST_EXE=	$(BIN)/lextest
+LEXTEST_OBJS1=	$(BIN)/main.o $(BIN)/tokenTestParser.tab.o $(OBJS)
+LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
+
+
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(OBJS)
-TESTOBJS=	$(filter-out $(TOFILTER), $(TESTOBJS1))
+TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
+
 
 
 # Compiler flags for all builds
@@ -50,7 +59,12 @@ all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
 debug: CFLAGS+= -g -DDEBUG
+debug: YACCFLAGS += --report-file=bisonReport.out -v
 debug: $(EXE)
+
+# Build main using tokenTestParser.y to analyze lexical tokens
+lextest: CFLAGS+= -g -DLEXTEST_DEBUG
+lextest: $(LEXTEST_EXE)
 
 # Build test executable
 test: CFLAGS+= -g -Isrc/
@@ -61,6 +75,9 @@ $(EXE): $(EXEOBJS)
 
 $(TESTEXE): $(TESTOBJS)
 	$(CC) -o $@ $+
+
+$(LEXTEST_EXE): $(LEXTEST_OBJS)
+	$(CC) -o $@ $+ $(LIBS)
 
 $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
 	$(COMPILE)
@@ -89,8 +106,14 @@ $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
 	$(COMPILE)
 
+$(BIN)/tokenTestParser.tab.o: $(SRC)/tokenTestParser.tab.c $(SRC)/lex.yy.c
+	$(COMPILE)
+
 $(BIN)/lex.yy.o: $(SRC)/lex.yy.c
 	$(COMPILE)
+
+$(SRC)/tokenTestParser.tab.c: $(SRC)/tokenTestParser.y
+	$(YACC)
 
 $(SRC)/parser.tab.c: $(SRC)/parser.y
 	$(YACC)
@@ -101,7 +124,8 @@ $(SRC)/lex.yy.c: $(SRC)/tokens.l
 
 clean:
 	-rm -f $(BIN)/*.o $(TESTEXE) $(EXE) 
-	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c
+	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
+	-rm -f $(SRC)/tokenTestParser.tab.c
 
 # shortcuts for common actions
 build:

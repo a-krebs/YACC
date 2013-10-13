@@ -7,7 +7,14 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
+
+#ifndef LEXTEST_DEBUG
 #include "parser.tab.h"
+#endif
+
+#if LEXTEST_DEBUG
+#include "tokenTestParser.tab.h"
+#endif
 
 /* re-set max token size */
 #undef YYLMAX
@@ -60,7 +67,7 @@
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ return; }
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
-				  yylval.real = atof(yytext); 
+				  yylval.real = strdup(yytext); 
 				  return(REAL);
 				}
 
