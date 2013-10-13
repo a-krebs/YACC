@@ -96,5 +96,14 @@ clean:
 	-rm -f $(BIN)/*.o $(TESTEXE) $(EXE) 
 	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c
 
+# shortcuts for common actions
 build:
 	make clean && make
+
+unit_tests:
+	make clean && make test
+	./bin/test
+
+integration_tests:
+	make build
+	cd test && python testRunner.py
