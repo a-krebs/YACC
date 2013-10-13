@@ -18,8 +18,9 @@
 %%
 
 %{
+#if DEBUG
 	printf("yylineno = %d\n", yylineno);
-
+#endif
 %}
 
 [ \t]				{ ; }
