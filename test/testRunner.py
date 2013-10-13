@@ -5,13 +5,32 @@
 import unittest
 import os
 import re
+import types
 from subprocess import check_output
 
 PAL_EXE = "../../../bin/pal"
 TEST_DIR = "./integration/syntax/"
 
 
-class SyntaxUnitTests(unittest.TestCase):
+def addFailureSansTraceback(self, test, err):
+    err_sans_tb = (err[0], err[1], None)
+    self.failures.append((test, self._exc_info_to_string(err_sans_tb, test)))
+    self._mirrorOutput = True
+
+
+class NoTraceTestCase(unittest.TestCase):
+    """
+    Override run method to suppress python traceback on assertion failures.
+    
+    See http://stackoverflow.com/questions/11908784/\
+        django-how-to-hide-traceback-in-unit-tests-for-readability
+    """
+    def run(self, result=None):
+        result.addFailure = types.MethodType(addFailureSansTraceback, result)
+        super(NoTraceTestCase, self).run(result)
+
+
+class SyntaxUnitTests(NoTraceTestCase):
     """
     Run all integration tests in ./integration/syntax
 
