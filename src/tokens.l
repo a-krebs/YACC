@@ -39,7 +39,11 @@
 				  printf("END BLOCK COMMENT\n");
 #endif
 				}
-<INSIDE_BLOCK_COMMENT>[^}\n]+	{ ; }
+<INSIDE_BLOCK_COMMENT>[^}\n]+	{ 
+#if DEBUG
+				  printf("INSIDE BLOCK COMMENT\n");
+#endif
+				}
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ return; }
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
