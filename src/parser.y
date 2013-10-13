@@ -43,6 +43,9 @@ extern int yylineno;
 %token L_PAREN R_PAREN LS_BRACKET RS_BRACKET
 %token PERIOD COMMA SEMICOLON COLON RANGE ASSIGN
 
+/* unrecognized character */
+%token UNREC
+
 /* operators: (keep in mind priority before changing order) */
 %left NOT 
 %left MULTIPLY DIVIDE DIV MOD AND
@@ -310,9 +313,12 @@ matched_stat
 
 %%
 
-yyerror(s) char *s; {
+yyerror(char *s) {
 	/* Simple, naive for now, will add more features as project
 	 * progresses */
 	struct Error *e = recordError(s, yylineno);
+#if DEBUG
+	printf("New error on line %d\n", yylineno);
+#endif
 	printError(e);
 }

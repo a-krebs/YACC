@@ -1,6 +1,6 @@
 %{
 /*******************************************************************************
-                       Lexical Entites for YACC-PAL                   
+			Lexical Entites for YACC-PAL			
 ********************************************************************************/
 
 #include <stdlib.h>
@@ -18,81 +18,108 @@
 %%
 
 %{
+#if DEBUG
 	printf("yylineno = %d\n", yylineno);
-
+	printf("Current Token: %s\n", yytext);
+#endif
 %}
-[ \t]                            { ; }
-"//"[^\n]*                      { ; }
 
-<INITIAL>"{"			{ BEGIN(INSIDE_BLOCK_COMMENT); }
-<INSIDE_BLOCK_COMMENT>"}"	{ BEGIN(INITIAL); }
-<INSIDE_BLOCK_COMMENT>[^}\n]+	{ ; }
+[ \t]				{ ; }
+"//"[^\n]*			{ ; }
+
+<INITIAL>"{"			{ 
+				  BEGIN(INSIDE_BLOCK_COMMENT);
+#if DEBUG
+				  printf("BEGIN BLOCK COMMENT\n");
+#endif
+				}
+<INSIDE_BLOCK_COMMENT>"}"	{ 
+				  BEGIN(INITIAL);
+#if DEBUG
+				  printf("END BLOCK COMMENT\n");
+#endif
+				}
+<INSIDE_BLOCK_COMMENT>[^}]+	{ 
+#if DEBUG
+				  printf("INSIDE BLOCK COMMENT\n");
+#endif
+				}
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ return; }
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
-				yylval.real = atof(yytext); 
-                                return(REAL); }
-
-<INITIAL>"'"			{ BEGIN(INSIDE_STRING);
-				  printf("STRING FOUND\n");
+				  yylval.real = atof(yytext); 
+				  return(REAL);
 				}
 
-<INSIDE_STRING>([^'\\]*(?:\\.[^'\\]*)*)    { 
-				yylval.string = strdup(yytext);
-                                  return(STRING); 
+<INITIAL>"'"			{
+				  BEGIN(INSIDE_STRING);
+#if DEBUG
+				  printf("STRING FOUND\n");
+#endif
+				}
+
+<INSIDE_STRING>([^'\\]*(?:\\.[^'\\]*)*)	{ 
+				  yylval.string = strdup(yytext);
+				  return(STRING); 
 				}
 
 <INSIDE_STRING>\n		{
-				printf("NEWLINE APPEARS INSIDE STRING");
+#if DEBUG
+				  printf("NEWLINE APPEARS INSIDE STRING");
+#endif
 				}
 
-<INSIDE_STRING>"'"		{BEGIN(INITIAL);}
+<INSIDE_STRING>"'"		{
+				  BEGIN(INITIAL);
+#if DEBUG
+				  printf("END STRING\n");
+#endif
+				}
 
-
-
-":="                            { return(ASSIGN); }
-"and"                           { return(AND); }
-"continue"                      { return(CONTINUE); }
-"end"                           { return(END); }
-"mod"                           { return(MOD); }
-"procedure"                     { return(PROCEDURE); }
-"type"                          { return(TYPE); }
-"array"                         { return(ARRAY); }
-"div"                           { return(DIV); }
-"exit"                          { return(EXIT); }
-"not"                           { return(NOT); }
-"program"                       { return(PROGRAM); }
-"var"                           { return(VAR); }
-"begin"                         { return(_BEGIN); }
-"do"                            { return(DO);}
-"function"                      { return(FUNCTION); }
-"of"                            { return(OF); }
-"record"                        { return(RECORD); }
-"while"                         { return(WHILE); }
-"const"                         { return(CONST); }
-"else"                          { return(ELSE); }
-"if"                            { return(IF); }
-"or"                            { return(OR); }
-"then"                          { return(THEN); }
-"="                             { return(EQUAL); }
-"<>"                            { return(NOT_EQUAL); }
-"<"                             { return(LESS); }
-"<="                            { return(LESS_OR_EQUAL); }
-">="                            { return(GREATER_OR_EQUAL); }
-">"                             { return(GREATER); }
-"+"                             { return(PLUS); }
-"-"                             { return(MINUS); }
-"*"                             { return(MULTIPLY); }
-"/"                             { return(DIVIDE); }
-"("                             { return(L_PAREN); } 
-")"                             { return(R_PAREN); }
-".."                            { return(RANGE); }
-"."                             { return(PERIOD); }
-";"                             { return(SEMICOLON); }
-":"                             { return(COLON); }
-"["                             { return(LS_BRACKET); }
-"]"                             { return(RS_BRACKET); }
-","                             { return(COMMA); }
+":="				{ return(ASSIGN); }
+"and"				{ return(AND); }
+"continue"			{ return(CONTINUE); }
+"end"				{ return(END); }
+"mod"				{ return(MOD); }
+"procedure"			{ return(PROCEDURE); }
+"type"				{ return(TYPE); }
+"array"				{ return(ARRAY); }
+"div"				{ return(DIV); }
+"exit"				{ return(EXIT); }
+"not"				{ return(NOT); }
+"program"			{ return(PROGRAM); }
+"var"				{ return(VAR); }
+"begin"				{ return(_BEGIN); }
+"do"				{ return(DO);}
+"function"			{ return(FUNCTION); }
+"of"				{ return(OF); }
+"record"			{ return(RECORD); }
+"while"				{ return(WHILE); }
+"const"				{ return(CONST); }
+"else"				{ return(ELSE); }
+"if"				{ return(IF); }
+"or"				{ return(OR); }
+"then"				{ return(THEN); }
+"="				{ return(EQUAL); }
+"<>"				{ return(NOT_EQUAL); }
+"<"				{ return(LESS); }
+"<="				{ return(LESS_OR_EQUAL); }
+">="				{ return(GREATER_OR_EQUAL); }
+">"				{ return(GREATER); }
+"+"				{ return(PLUS); }
+"-"				{ return(MINUS); }
+"*"				{ return(MULTIPLY); }
+"/"				{ return(DIVIDE); }
+"("				{ return(L_PAREN); } 
+")"				{ return(R_PAREN); }
+".."				{ return(RANGE); }
+"."				{ return(PERIOD); }
+";"				{ return(SEMICOLON); }
+":"				{ return(COLON); }
+"["				{ return(LS_BRACKET); }
+"]"				{ return(RS_BRACKET); }
+","				{ return(COMMA); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
-                                  return(ID); }
+				  return(ID); }
 \n 				{ ; }
+.				{ return(UNREC); }
