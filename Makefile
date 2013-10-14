@@ -123,7 +123,7 @@ $(SRC)/lex.yy.c: $(SRC)/tokens.l
 	mv lex.yy.c ./$(SRC)
 
 clean:
-	-rm -f $(BIN)/*.o $(TESTEXE) $(EXE) 
+	-rm -f $(BIN)/*.o $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
 	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
 	-rm -f $(SRC)/tokenTestParser.tab.c
 
