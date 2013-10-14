@@ -37,6 +37,9 @@ TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
 
+# for debug output, location of Bison/YACC report
+BISONREPORT= 	bisonReport.out
+
 
 # Compiler flags for all builds
 CFLAGS+= 
@@ -59,7 +62,7 @@ all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
 debug: CFLAGS+= -g -DDEBUG
-debug: YACCFLAGS += --report-file=bisonReport.out -v
+debug: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug: $(EXE)
 
 # Build main using tokenTestParser.y to analyze lexical tokens
@@ -124,8 +127,10 @@ $(SRC)/lex.yy.c: $(SRC)/tokens.l
 
 clean:
 	-rm -f $(BIN)/*.o $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
-	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
+	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h
+	-rm -f $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
 	-rm -f $(SRC)/tokenTestParser.tab.c
+	-rm -f $(BISONREPORT)
 
 # shortcuts for common actions
 build:
