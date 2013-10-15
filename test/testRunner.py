@@ -9,6 +9,7 @@ import types
 from subprocess import check_output
 
 PAL_EXE = "../../../bin/pal"
+LEXTEST_EXE = "../../../bin/lextest"
 TEST_DIR = "./integration/syntax/"
 
 
@@ -62,7 +63,39 @@ def get_error_lines_from_output(output):
     return line_numbers
 
 
-def make_test_function(filename, expected_errors):
+def make_lexer_test_function(filename, expected_tokens):
+    """
+    Make a new test function.
+
+    The test function runs the filename through the lexer test parser
+    and checks that the expected tokens are returned in turn.
+    
+    Return a function object.
+    """
+    def new_test(self):
+        output = check_output([LEXTEST_EXE, filename])
+        actual_tokens = [
+            re.sub(r"\(.*\)", "", line).strip()
+                for line in output.split("\n") if line != ''
+        ]
+        
+        self.assertEqual(len(expected_tokens), len(actual_tokens),
+            "Number of expected tokens and actual tokens differs."
+        )
+        for i in xrange(0,len(expected_tokens)):
+            self.assertEqual(expected_tokens[i], actual_tokens[i],
+                "TOKEN MISMATCH at {f}. Expected {expected} got {actual}"\
+                    .format(
+                        f=filename,
+                        expected=expected_tokens[i],
+                        actual=actual_tokens[i],
+                    )
+            )
+    
+    return new_test
+
+
+def make_parser_test_function(filename, expected_errors):
     """
     Make a new test function.
 
@@ -78,12 +111,12 @@ def make_test_function(filename, expected_errors):
         for error in actual_errors:
             self.assertIn(error, expected_errors,
                 "CAUGHT ERROR at {f}, line {l} where none is expected."\
-                .format(l = error, f = filename)
+                .format(l=error, f=filename)
             )
         for error in expected_errors:
             self.assertIn(error, actual_errors,
                 "MISSED ERROR at {f}, line {l} but one is expected."\
-                .format(l = error, f = filename)
+                .format(l=error, f=filename)
             )
 
     return new_test
@@ -106,6 +139,10 @@ def construct_tests():
     for f in files:
         with open(f) as fp:
             line = fp.readline()
+            files[f] = {
+                'errors': None,
+                'tokens': None,
+            }
             
             # remove comment braces, newline, and whitespace
             mapping = [("\n", ""), (" ", ""), ("{", ""), ("}", "")]
@@ -114,24 +151,50 @@ def construct_tests():
             
             # if errors are specified, add them to the error list for this file
             if line != '':
-                files[f] = line.split(",")            
+                files[f]['errors'] = line.split(",")            
                 # convert to int
-                if len(files[f]) > 0:
-                    files[f] = [int(s) for s in files[f]]
+                if len(files[f]['errors']) > 0:
+                    files[f]['errors'] = [int(s) for s in files[f]['errors']]
             else:
-                files[f] = []
+                files[f]['errors'] = []
+    
+    # look for .tokens pairing
+    for f in files.keys():
+        tokens_pair = f[:-4] + '.tokens'
+        try:
+            with open(tokens_pair) as fp:
+                files[f]['tokens'] = list()
+                for line in fp.read().split("\n"):
+                    if line != '':
+                        files[f]['tokens'].append(line)
+        except:
+            # do nothin if file can't be opened
+            pass
 
 
-    # for each file, make test case
-    for filename, expected_errors in files.items():
-        name = "test_{}".format(filename.rstrip(".pal"))
+    # for each file, make a parser test case
+    for filename, values in files.items():
+        expected_errors = values['errors']
+        name = "test_parser_{}".format(filename[:-4])
 
-        new_test = make_test_function(filename, expected_errors)
+        new_test = make_parser_test_function(filename, expected_errors)
 
         if getattr(SyntaxUnitTests, name, None) is not None:
             raise RuntimeError("Duplicate test name: {}".format(name))
         else:
-            setattr(SyntaxUnitTests, name, new_test) 
+            setattr(SyntaxUnitTests, name, new_test)
+
+    # if a file with expected tokens is given, make tokenizer test case
+    for filename, values in files.items():
+        expected_tokens = values['tokens']
+        name = "test_lexer_{}".format(filename[:-4])
+        if expected_tokens is not None:
+            new_test = make_lexer_test_function(filename, expected_tokens)
+
+            if getattr(SyntaxUnitTests, name, None) is not None:
+                raise RuntimeError("Duplicate test name: {}".format(name))
+            else:
+                setattr(SyntaxUnitTests, name, new_test)
             
 
 if __name__ == "__main__":

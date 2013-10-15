@@ -17,40 +17,7 @@ extern int yylex(void);
 extern int yylineno;
 
 %}
-
-%error-verbose
-%union {
-      char character;
-      char *string;
-      char *id;
-      double real;
-      int integer;
-}
-
-/* types: */
-%token BOOL CHAR STRING INT REAL RECORD
-
-/* control statements: */
-%token _BEGIN END IF THEN ELSE WHILE DO CONTINUE EXIT OF
-
-/* kinds: */
-%token ID CONST INT_CONST REAL_CONST
-
-/* declaration operators: */
-%token PROGRAM TYPE VAR ARRAY FUNCTION PROCEDURE 
-
-/* structure tokons: */
-%token L_PAREN R_PAREN LS_BRACKET RS_BRACKET
-%token PERIOD COMMA SEMICOLON COLON RANGE ASSIGN
-
-/* unrecognized character */
-%token UNREC
-
-/* operators: (keep in mind priority before changing order) */
-%left NOT 
-%left MULTIPLY DIVIDE DIV MOD AND
-%left PLUS MINUS OR
-%left EQUAL NOT_EQUAL LESS LESS_OR_EQUAL GREATER GREATER_OR_EQUAL
+<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
 
 %%
 
@@ -278,7 +245,7 @@ factor
 unsigned_const          
 : unsigned_num
 // | ID
-| STRING
+| STRING_CONST
 ;
 
 unsigned_num
