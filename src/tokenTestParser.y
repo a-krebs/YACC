@@ -21,13 +21,20 @@ token           :types_list
 		|operators_list
 		|etc_list
 		|keywords_list
+		|constant_list
 		;
 
+constant_list	:INT_CONST		{printf("INT_CONST \
+					    ( %d)\n", $<integer>1);}
+		|REAL_CONST		{printf("REAL_CONST \
+					    (%f)\n", $<real>1);}
+		|STRING_CONST           {printf("STRING_CONST \
+					    (%s)\n", $<string>1);}
 types_list	:CHAR
 		|ID                     {printf("ID (%s)\n",$<id>1);}
-		|INT                    {printf("INT ( %d)\n",$<integer>1);}
-		|REAL                   {printf("REAL (%s)\n",$<real>1);}
-		|STRING                 {printf("STRING (%s)\n",$<string>1);}
+		|INT                    {printf("INT\n");}
+		|REAL                   {printf("REAL\n");}
+		|ARRAY			{printf("ARRAY\n");}
 		;
 
 operators_list	:PLUS                   {printf("PLUS\n");}
@@ -61,7 +68,6 @@ keywords_list	:AND		{printf("AND\n");}
 		|CONTINUE	{printf("CONTINUE\n");}
 		|PROCEDURE	{printf("PROCEDURE\n");}
 		|TYPE		{printf("TYPE\n");}
-		|ARRAY		{printf("ARRAY\n");}
 		|_BEGIN		{printf("_BEGIN\n");}
 		|END		{printf("END\n");}
 		|NOT		{printf("NOT\n");}
