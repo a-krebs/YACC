@@ -7,19 +7,22 @@
       int integer;
 }
 
-/* types: */
-%token BOOL CHAR STRING INT REAL RECORD
+/* id */
+ID
+
+/* types names: */
+%token ARRAY BOOL CHAR INT REAL RECORD
+
+/* literals */
+%token INT_CONST REAL_CONST STRING
 
 /* control statements: */
 %token _BEGIN END IF THEN ELSE WHILE DO CONTINUE EXIT OF
 
-/* kinds: */
-%token ID CONST INT_CONST REAL_CONST
+/* program portion headers: */
+%token PROGRAM TYPE VAR CONST FUNCTION PROCEDURE
 
-/* declaration operators: */
-%token PROGRAM TYPE VAR ARRAY FUNCTION PROCEDURE 
-
-/* structure tokons: */
+/* structure tokens: */
 %token L_PAREN R_PAREN LS_BRACKET RS_BRACKET
 %token PERIOD COMMA SEMICOLON COLON RANGE ASSIGN
 
