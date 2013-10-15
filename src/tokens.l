@@ -42,7 +42,8 @@ int colno = 1;
 "//"[^\n]*			{ colno = (1); }
 
 "}"				{
-				  recordError("Closing comment brace '}' found without matching '{'", yylineno);
+				  recordError("Closing comment brace '}' \
+				      found without matching '{'", yylineno);
 #if DEBUG
 				  printf("'}' FOUND WITHOUT MATCHING '{'\n");
 #endif
@@ -71,7 +72,8 @@ int colno = 1;
 #endif
 				}
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ 
-				  recordError("End of file reached inside a block comment.", yylineno);
+				  recordError("End of file reached inside a \
+				      block comment.", yylineno);
 				  return; 
 				}
 
@@ -82,7 +84,7 @@ int colno = 1;
 #if DEBUG
 				  colno += strlen(yytext);
 #endif
-				  return(REAL);
+				  return(REAL_CONST);
 				}
 
 
@@ -91,12 +93,14 @@ int colno = 1;
 				printf("STRING LITERAL WITH NEWLINE FOUND\n");
 				colno += strlen(yytext);
 #endif
-				recordError("Newline characters cannot appear in strings.", yylineno);
+				recordError("Newline characters cannot appear \
+				    in strings.", yylineno);
 				/* 
-				 * We know it's an invalid string, but we'll continue compilation
+				 * We know it's an invalid string, but we'll
+				 * continue compilation
 				 * as though it was valid.
 				 */
-				return(STRING);
+				return(STRING_CONST);
 				}
 
 "'"(([^'\\])|(\\.))*"'"		{
@@ -105,7 +109,7 @@ int colno = 1;
 				  colno += strlen(yytext);
 #endif
 				  yylval.string = strdup(yytext);
-				  return(STRING); 
+				  return(STRING_CONST)
 				}
 
 ":="				{ return(ASSIGN); }
