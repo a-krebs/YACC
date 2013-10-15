@@ -8,7 +8,7 @@
 }
 
 /* id */
-ID
+%token ID
 
 /* types names: */
 %token ARRAY BOOL CHAR INT REAL RECORD

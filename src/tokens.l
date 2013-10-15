@@ -109,7 +109,7 @@ int colno = 1;
 				  colno += strlen(yytext);
 #endif
 				  yylval.string = strdup(yytext);
-				  return(STRING_CONST)
+				  return(STRING_CONST);
 				}
 
 ":="				{ return(ASSIGN); }

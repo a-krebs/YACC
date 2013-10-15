@@ -245,7 +245,7 @@ factor
 unsigned_const          
 : unsigned_num
 // | ID
-| STRING
+| STRING_CONST
 ;
 
 unsigned_num
