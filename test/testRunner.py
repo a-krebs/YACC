@@ -80,7 +80,8 @@ def make_lexer_test_function(filename, expected_tokens):
         ]
         
         self.assertEqual(len(expected_tokens), len(actual_tokens),
-            "Number of expected tokens and actual tokens differs."
+            "Number of expected tokens and actual tokens differs.\n" +
+            "Expected: {}\ngot {}".format(expected_tokens, actual_tokens)
         )
         for i in xrange(0,len(expected_tokens)):
             self.assertEqual(expected_tokens[i], actual_tokens[i],
