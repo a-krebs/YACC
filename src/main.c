@@ -95,8 +95,8 @@ int main( int argc, char *argv[] )
 	parseInputs(argc, argv);
 
 	/* test yyparse() for correct call */
-	// yyparse();
-	// fclose(yyin);
+	yyparse();
+	fclose(yyin);
 
 	return EXIT_SUCCESS;
 }
