@@ -155,6 +155,10 @@ int colno = 1;
 "["				{ return(LS_BRACKET); }
 "]"				{ return(RS_BRACKET); }
 ","				{ return(COMMA); }
+"integer"			{ return(INT); }
+"char"				{ return(CHAR); }
+"bool"				{ return(BOOL); }
+"real"				{ return(REAL); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
 				  return(ID); }
 \n 				{ 
