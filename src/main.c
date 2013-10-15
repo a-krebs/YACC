@@ -2,7 +2,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "parser.tab.h"
+#if LEXTEST_DEBUG
+	#include "tokenTestParser.tab.h"
+#else
+	#include "parser.tab.h"
+#endif
 
 extern FILE *yyin;
 

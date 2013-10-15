@@ -7,40 +7,7 @@
 
 %}
 
-/*For parsing the real number with 'E',
- *use char instead of double temporarily 
- */
-
-%union{
-	char character;
-	char *string;
-	char *id;
-	char *real;
-	int integer;
-}
-
-/* keywords */
-%token AND CONTINUE PROCEDURE TYPE ARRAY _BEGIN END NOT
-%token PROGRAM VAR DO FUNCTION OF RECORD WHILE CONST IF ELSE
-%token OR THEN EXIT
-
-/* 
- * Operators and relational operators 
- * (set type and associativity as needed)
- */
-%token PLUS MINUS MULTIPLY MOD DIVIDE DIV 
-%token EQUAL NOT_EQUAL LESS LESS_OR_EQUAL GREATER_OR_EQUAL GREATER
-
-/* Types and identifiers. */
-%token <character> CHAR
-%token <id> ID
-%token <real> REAL
-%token <integer> INT
-%token <string> STRING
-
-/* etc */
-%token ASSIGN COMMA L_PAREN R_PAREN LS_BRACKET RS_BRACKET PERIOD
-%token SEMICOLON COLON RANGE UNREC
+<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
 
 %%
 
@@ -57,17 +24,17 @@ token           :types_list
 		;
 
 types_list	:CHAR
-		|ID                     {printf("%s\n",$<id>1);}
-		|INT                    {printf("%d\n",$<integer>1);}
-		|REAL                   {printf("%s\n",$<real>1);}
-		|STRING                 {printf("%s\n",$<string>1);}
+		|ID                     {printf("ID (%s)\n",$<id>1);}
+		|INT                    {printf("INT ( %d)\n",$<integer>1);}
+		|REAL                   {printf("REAL (%s)\n",$<real>1);}
+		|STRING                 {printf("STRING (%s)\n",$<string>1);}
 		;
 
 operators_list	:PLUS                   {printf("PLUS\n");}
 		|MINUS                  {printf("MINUS\n");}
 		|MULTIPLY               {printf("MULTIPLY\n");}
 		|MOD                    {printf("MOD\n");}
-		|DIVIDE                 {printf("DIVID\n");}        
+		|DIVIDE                 {printf("DIVIDE\n");}        
 		|DIV	                {printf("DIV\n");}
 		|EQUAL                  {printf("EQUAL\n");}			
 		|NOT_EQUAL		{printf("NOT_EQUAL\n");}
@@ -87,6 +54,7 @@ etc_list	:ASSIGN		{printf("ASSIGN\n");}
 		|SEMICOLON	{printf("SEMICOLON\n");}
 		|COLON		{printf("COLON\n");}
 		|RANGE		{printf("RANGE\n");}
+		|UNREC		{printf("UNREC\n");}
 		;
 
 keywords_list	:AND		{printf("AND\n");}
@@ -112,6 +80,7 @@ keywords_list	:AND		{printf("AND\n");}
 		|EXIT		{printf("EXIT\n");}
 		;
 %%
-yyerror(s) char *s;{
+yyerror(char *s) {
+	printf("Test parser encountered an error, this should not happen.\n");
 }
 		

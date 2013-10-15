@@ -39,7 +39,7 @@ int colno = 1;
 %}
 
 [ \t]				{ colno += strlen(yytext); }
-"//"[^\n]*			{ colno = 1; }
+"//"[^\n]*			{ colno = (1); }
 
 "}"				{
 				  recordError("Closing comment brace '}' found without matching '{'", yylineno);
@@ -76,9 +76,6 @@ int colno = 1;
 				}
 
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
-#if LEXTEST_DEBUG
-				  yylval.real = strdup(yytext);
-#endif
 #ifndef LEXTEST_DEBUG
 				  yylval.real = atof(yytext); 
 #endif

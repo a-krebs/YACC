@@ -26,7 +26,7 @@ EXE=		$(BIN)/pal
 EXEOBJS=	$(BIN)/main.o $(OBJS)
 
 LEXTEST_EXE=	$(BIN)/lextest
-LEXTEST_OBJS1=	$(BIN)/main.o $(BIN)/tokenTestParser.tab.o $(OBJS)
+LEXTEST_OBJS1=	$(BIN)/lextest.o $(BIN)/tokenTestParser.tab.o $(OBJS)
 LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
 
 
@@ -40,7 +40,6 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 # for debug output, location of Bison/YACC report
 BISONREPORT= 	bisonReport.out
 
-
 # Compiler flags for all builds
 CFLAGS+= 
 
@@ -51,11 +50,15 @@ LIBS=		-ll
 # so a command to invoke GCC is needed to all object files.
 COMPILE= $(CC) $(CFLAGS) -c $< -o $@
 
-#LEX and YACC/BISON compilation calls
+# LEX and YACC/BISON compilation calls
 LEXFLAGS=
 LEX= lex $(LEXFLAGS) $<
 YACCFLAGS= -d -y
 YACC= bison $(YACCFLAGS) $< -o $@
+
+# sed command to include token definitions in parser files
+SED_INCLUDE= 	sed -e "/<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->/r\
+		    $(SRC)/definitions.tokens" -e "s///" $< > $@
 
 # Build main executable
 all: $(EXE)
@@ -83,6 +86,9 @@ $(LEXTEST_EXE): $(LEXTEST_OBJS)
 	$(CC) -o $@ $+ $(LIBS)
 
 $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
+	$(COMPILE)
+
+$(BIN)/lextest.o: $(SRC)/main.c $(SRC)/tokenTestParser.tab.c
 	$(COMPILE)
 
 $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
@@ -115,15 +121,21 @@ $(BIN)/tokenTestParser.tab.o: $(SRC)/tokenTestParser.tab.c $(SRC)/lex.yy.c
 $(BIN)/lex.yy.o: $(SRC)/lex.yy.c
 	$(COMPILE)
 
-$(SRC)/tokenTestParser.tab.c: $(SRC)/tokenTestParser.y
+$(SRC)/tokenTestParser.tab.c: $(SRC)/generated_tokenTestParser.y
 	$(YACC)
 
-$(SRC)/parser.tab.c: $(SRC)/parser.y
+$(SRC)/parser.tab.c: $(SRC)/generated_parser.y
 	$(YACC)
 
 $(SRC)/lex.yy.c: $(SRC)/tokens.l
 	$(LEX)
 	mv lex.yy.c ./$(SRC)
+
+$(SRC)/generated_parser.y: $(SRC)/parser.y $(SRC)/definitions.tokens
+	$(SED_INCLUDE)
+
+$(SRC)/generated_tokenTestParser.y: $(SRC)/tokenTestParser.y $(SRC)/definitions.tokens
+	$(SED_INCLUDE)
 
 clean:
 	-rm -f $(BIN)/*.o $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
@@ -131,6 +143,8 @@ clean:
 	-rm -f $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
 	-rm -f $(SRC)/tokenTestParser.tab.c
 	-rm -f $(BISONREPORT)
+	-rm -f $(SRC)/generated_parser.y
+	-rm -f $(SRC)/generated_tokenTestParser.y
 
 # shortcuts for common actions
 build:
