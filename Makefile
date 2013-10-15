@@ -156,4 +156,5 @@ unit_tests:
 
 integration_tests:
 	make build
+	make lextest
 	cd test && python testRunner.py
