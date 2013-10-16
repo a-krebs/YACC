@@ -1,0 +1,24 @@
+{23}
+// test if statements
+
+program test(input, output);
+begin
+	if a then
+	begin
+		a := a + 1;
+		b := 2;
+	end
+	else
+		a := a + 2;
+	
+	a := b;
+	
+	if (b = 2) then
+		while a do begin end
+	else if (b = 4) then
+		a := b + 6
+	else
+		c := 12;
+
+	then begin end;			// error
+end.
