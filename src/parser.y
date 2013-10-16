@@ -31,6 +31,7 @@ extern int colno;
 
 program                 
  : program_head decls compound_stat PERIOD
+ | error program_head decls compound_stat PERIOD
 ;
 
 program_head            
