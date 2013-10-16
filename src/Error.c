@@ -23,8 +23,7 @@ int nErrors = 0;
  * the error to the linked list of error kept during compilation.
  * Returns a pointer to the newly created Error for easier debugging.
  */
-struct Error *
-recordError(const char *s, int lineno, int colno) 
+struct Error *recordError(const char *s, int lineno, int colno) 
 {
 	struct Error * newError = NULL;
 	size_t len = strlen(s);
@@ -40,12 +39,12 @@ recordError(const char *s, int lineno, int colno)
 		 * do we stop compiling?
 		 */
 		err(1, "Failed to allocate memory to record new error.");
-		return;
+		return NULL;
 	}
 	newError->msg = calloc(1, sizeof(char)*len+1);
 	if (!newError->msg) {
 		err(1, "Failed to allocate memory to record new error string");
-		return;
+		return NULL;
 
 	}
 	newError->lineno = lineno;
@@ -64,8 +63,7 @@ recordError(const char *s, int lineno, int colno)
  * to the program listing and writes it to buf.
  * NOTE: it is incumbent upon the caller to free 
  */
-void
-createErrorString(char **buf, struct Error *e)
+void createErrorString(char **buf, struct Error *e)
 {
 
 	int extraChars = 64;
@@ -82,15 +80,13 @@ createErrorString(char **buf, struct Error *e)
 		 e->msg, e->lineno, e->colno);
 }
 
-void 
-printError(struct Error *e)
+void printError(struct Error *e)
 {
 	fprintf(stdout, "%d Error: %s (%d, %d)\n", 
 		e->lineno, e->msg, e->lineno, e->colno);
 }
 
-void
-freeError(struct Error *e)
+void freeError(struct Error *e)
 {
 	if (!e) return;
 	if (e->msg) free(e->msg);

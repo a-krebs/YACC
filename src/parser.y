@@ -300,8 +300,7 @@ ID_or_err
 
 %%
 
-char *
-appendErrorToken(char *s, char *token)
+char *appendErrorToken(char *s, char *token)
 {
 	char extraText[] = "  Error token: ";
 	size_t sLen;
