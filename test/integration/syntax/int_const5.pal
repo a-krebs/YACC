@@ -1,5 +1,5 @@
-{8}
-//assign real to an int type. should fail.
+{}
+//assign real to an int type. should fail sematically but is not a syntax error
 
 program expressionTest (input, output);
 var 
