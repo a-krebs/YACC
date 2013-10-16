@@ -1,0 +1,7 @@
+
+program test(input,output);
+var
+	a, b : real;
+begin 
+	a := 32.32E-;
+end.
