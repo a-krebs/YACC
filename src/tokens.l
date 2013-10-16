@@ -28,6 +28,7 @@ extern void yyerror(char *);
 %}
 
 %option yylineno
+%pointer yytext
 
 %x INSIDE_BLOCK_COMMENT
 %x INSIDE_STRING_WITH_NEWLINE
@@ -82,7 +83,7 @@ extern void yyerror(char *);
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ 
 				  BEGIN(INITIAL);
 				  recordError("EOF encountered inside block comment.", yylineno, colno);
-				  return; 
+				  return 0; 
 				}
 
 [0-9]+			{
