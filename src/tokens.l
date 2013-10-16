@@ -182,7 +182,7 @@ extern void yyerror(char *);
 				  colno = 1; 
 				}
 .				{ 
-				 
+				  
 				  yyerror("Unrecognized token(s)");
 	                     	  return(UNREC); 
 				}
