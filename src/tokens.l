@@ -81,7 +81,7 @@ extern void yyerror(char *);
 				}
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ 
 				  BEGIN(INITIAL);
-				  recordError("EOF encountered inside block comment.", lineno, colno);
+				  recordError("EOF encountered inside block comment.", yylineno, colno);
 				  return; 
 				}
 
