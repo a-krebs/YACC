@@ -182,8 +182,9 @@ extern void yyerror(char *);
 				  colno = 1; 
 				}
 .				{ 
-				  
+#ifndef LEXTEST_DEBUG
 				  yyerror("Unrecognized token(s)");
+#endif
 	                     	  return(UNREC); 
 				}
 

@@ -158,5 +158,11 @@ unit_tests:
 
 integration_tests:
 	make build
+	mv $(EXE) $(EXE).bak
+	make clean
 	make lextest
+	mv $(LEXTEST_EXE) $(LEXTEST_EXE).bak
+	make clean
+	mv $(EXE).bak $(EXE)
+	mv $(LEXTEST_EXE).bak $(LEXTEST_EXE)
 	cd test && python testRunner.py
