@@ -15,6 +15,8 @@
 #include "ErrorLL.h"
 extern int yylex(void);
 extern int yylineno;
+extern int yyleng;
+extern int colno;
 
 %}
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
@@ -290,7 +292,7 @@ matched_stat
 yyerror(char *s) {
 	/* Simple, naive for now, will add more features as project
 	 * progresses */
-	struct Error *e = recordError(s, yylineno);
+	struct Error *e = recordError(s, yylineno, colno);
 #if DEBUG
 	printf("New error on line %d\n", yylineno);
 #endif
