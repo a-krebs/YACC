@@ -1,0 +1,5 @@
+{4,6}
+program test(input,outpt);
+begin
+#		// error
+end		// error
