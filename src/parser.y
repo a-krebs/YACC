@@ -29,7 +29,7 @@ program
 ;
 
 program_head            
-: PROGRAM ID L_PAREN ID COMMA ID R_PAREN SEMICOLON
+: PROGRAM ID L_PAREN ID COMMA ID R_PAREN semicolon_or_error
 ;
 
 decls
@@ -40,13 +40,13 @@ proc_decl_part
 ;
 
 const_decl_part         
-: CONST const_decl_list SEMICOLON
+: CONST const_decl_list semicolon_or_error
 |
 ;
 
 const_decl_list         
 : const_decl
-| const_decl_list SEMICOLON const_decl
+| const_decl_list semicolon_or_error const_decl
 ;
 
 const_decl              
@@ -54,13 +54,13 @@ const_decl
 ;
 
 type_decl_part          
-: TYPE type_decl_list SEMICOLON
+: TYPE type_decl_list semicolon_or_error
 |
 ;
 
 type_decl_list          
 : type_decl
-| type_decl_list SEMICOLON type_decl
+| type_decl_list semicolon_or_error type_decl
 ;
 
 type_decl               
@@ -110,7 +110,7 @@ array_type
 
 field_list
 : field
-| field_list SEMICOLON field
+| field_list semicolon_or_error field
 ;
 
 field                   
@@ -118,13 +118,13 @@ field
 ;
 
 var_decl_part
-: VAR var_decl_list SEMICOLON
+: VAR var_decl_list semicolon_or_error
 |
 ;
 
 var_decl_list
 : var_decl
-| var_decl_list SEMICOLON var_decl
+| var_decl_list semicolon_or_error var_decl
 ;
 
 var_decl                
@@ -143,12 +143,12 @@ proc_decl_list
 ;
 
 proc_decl
-: proc_heading decls compound_stat SEMICOLON
+: proc_heading decls compound_stat semicolon_or_error
 ;
 
 proc_heading
-: PROCEDURE ID f_parm_decl SEMICOLON
-| FUNCTION ID f_parm_decl COLON ID SEMICOLON
+: PROCEDURE ID f_parm_decl semicolon_or_error
+| FUNCTION ID f_parm_decl COLON ID semicolon_or_error
 ;
 
 f_parm_decl
@@ -158,7 +158,7 @@ f_parm_decl
 
 f_parm_list
 : f_parm
-| f_parm_list SEMICOLON f_parm
+| f_parm_list semicolon_or_error f_parm
 ;
 
 f_parm
@@ -172,7 +172,7 @@ compound_stat
 
 stat_list
 : stat
-| stat_list SEMICOLON stat
+| stat_list semicolon_or_error stat
 ;
 
 stat  
@@ -283,6 +283,11 @@ matched_stat
 | WHILE expr DO matched_stat
 | CONTINUE
 | EXIT
+;
+
+semicolon_or_error
+: error SEMICOLON 
+| SEMICOLON
 ;
 
 
