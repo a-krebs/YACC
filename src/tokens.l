@@ -77,7 +77,7 @@ int colno = 1;
 				  return; 
 				}
 
-^[0-9]+$			{
+[0-9]+			{
 				  yylval.integer = atoi(yytext);
 #if DEBUG
 				  colno += strlen(yytext);
