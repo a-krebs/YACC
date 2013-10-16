@@ -48,7 +48,10 @@ extern void yyerror(char *);
 %}
 
 [ \t]				{ colno += strlen(yytext); }
-"//"[^\n]*			{ colno = 1; }
+"//"[^\n]*			{ colno = (1);  /* () around 1 to make vim
+						 * syntax highlighting happy
+						 */
+				}
 
 "}"				{
 				  recordError("Closing comment brace '}' \
