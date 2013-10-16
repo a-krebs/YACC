@@ -1,0 +1,6 @@
+{5}
+// missing semi-colin after program declaration. should fail
+
+program foo(in, out)
+begin
+end.

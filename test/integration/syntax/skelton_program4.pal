@@ -1,0 +1,6 @@
+{5}
+// keyword 'begin' miss-spelled. should fail
+
+program foo(in, out);
+begi
+end.
