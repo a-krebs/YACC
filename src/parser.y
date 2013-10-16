@@ -10,12 +10,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Error.h"
 #include "ErrorLL.h"
 extern int yylex(void);
 extern int yylineno;
 extern int yyleng;
+extern char *yytext;
 extern int colno;
 
 %}
@@ -289,12 +291,36 @@ matched_stat
 
 %%
 
+char *
+appendErrorToken(char *s, char *token)
+{
+	char extraText[] = "  Error token: ";
+	size_t sLen = strlen(s);
+	size_t tokenLen = strlen(token);
+	size_t extraTextLen = strlen(extraText);
+	char *ret;
+
+	ret = calloc(1, sizeof(char)*(sLen + tokenLen + extraTextLen + 1));
+
+	strcat(ret, s);
+	strcat(ret, extraText);
+	strcat(ret, token);
+	printf(": %s\n", ret);
+	return ret;
+
+}
+
 yyerror(char *s) {
-	/* Simple, naive for now, will add more features as project
-	 * progresses */
-	struct Error *e = recordError(s, yylineno, colno);
+
+	struct Error *e = NULL;
+	char *errMsg = NULL;
+
+	errMsg = appendErrorToken(s, yytext);
+	e = recordError(errMsg, yylineno, colno);
 #if DEBUG
 	printf("New error on line %d\n", yylineno);
+	printf("new msg: %s\n", e->msg);
 #endif
 	printError(e);
+	free(errMsg);
 }
