@@ -13,6 +13,9 @@ extern int yyleng;
 extern char *yytext;
 extern int colno;
 
+#if DEBUG
+	yydebug = 1;
+#endif
 %}
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
 
@@ -179,6 +182,8 @@ stat
 : simple_stat
 | struct_stat
 |
+| error simple_stat
+| error struct_stat
 ;
 
 simple_stat
