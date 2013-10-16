@@ -42,6 +42,8 @@ BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
 CFLAGS+=	-Wall
+# exclude these flags from compiles involving Bison/Flex
+FLEXBISONFLAGEXCLUDES= -Wall
 
 # Linked libraries for final build
 LIBS=		-ll
@@ -49,6 +51,10 @@ LIBS=		-ll
 # Compile command. Make's default rules don't seem to work with subdirectories
 # so a command to invoke GCC is needed to all object files.
 COMPILE= $(CC) $(CFLAGS) -c $< -o $@
+# Use this command for anything that includes Bison/Flex. The warnings
+# from implicin includes when using Bison/Flex can't really be avoided.
+BISONFLEXCOMPILE = $(CC) $(filter-out $(FLEXBISONFLAGEXCLUDES), $(CFLAGS))\
+		       -c $< -o $@
 
 # LEX and YACC/BISON compilation calls
 LEXFLAGS=
@@ -86,7 +92,7 @@ $(LEXTEST_EXE): $(LEXTEST_OBJS)
 	$(CC) -o $@ $+ $(LIBS)
 
 $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
-	$(COMPILE)
+	$(BISONFLEXCOMPILE)
 
 $(BIN)/lextest.o: $(SRC)/main.c $(SRC)/tokenTestParser.tab.c
 	$(COMPILE)
@@ -113,13 +119,13 @@ $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 	$(COMPILE)
 
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
-	$(COMPILE)
+	$(BISONFLEXCOMPILE)
 
 $(BIN)/tokenTestParser.tab.o: $(SRC)/tokenTestParser.tab.c $(SRC)/lex.yy.c
-	$(COMPILE)
+	$(BISONFLEXCOMPILE)
 
 $(BIN)/lex.yy.o: $(SRC)/lex.yy.c
-	$(COMPILE)
+	$(BISONFLEXCOMPILE)
 
 $(SRC)/tokenTestParser.tab.c: $(SRC)/generated_tokenTestParser.y
 	$(YACC)
