@@ -20,8 +20,8 @@ extern int colno;
 
 file
 : program
-| error program
-| program error
+| error file
+| file error
 ;
 
 program                 
