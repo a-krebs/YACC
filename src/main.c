@@ -56,12 +56,11 @@ void parseInputs( int argc, char *argv[] ) {
 	
     while ( (c = getopt(argc, argv, "Snachi:o:")) != -1) {
         switch (c) {
-			printf("%d\n", c);
         case 'S':
-            printf("PH leave ASC file intact\n");
+//            printf("PH leave ASC file intact\n");
             break;
         case 'c':
-            printf("PH generate ASC file without invoking ASC\n");
+//            printf("PH generate ASC file without invoking ASC\n");
             break;
         case 'n':
             programlist = 0;
@@ -69,8 +68,8 @@ void parseInputs( int argc, char *argv[] ) {
             break;
         case 'a':
             boundscheck = 0;
-            printf("PH do not perform runtime run-time array");
-            printf("subscript bounds checking\n");
+//            printf("PH do not perform runtime run-time array");
+//            printf("subscript bounds checking\n");
             break;
         case 'h':
     		system(cmd);
@@ -78,7 +77,7 @@ void parseInputs( int argc, char *argv[] ) {
             exit(0);
             break;
         case 'i':
-            printf ("option i with value '%s'\n", optarg);
+//            printf ("option i with value '%s'\n", optarg);
             strcpy(inputfile, optarg);
             yyin = openFile(inputfile, "r");
             break;
