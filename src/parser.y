@@ -184,6 +184,8 @@ stat
 : simple_stat
 | struct_stat
 |
+| error simple_stat
+| error struct_stat
 ;
 
 simple_stat
