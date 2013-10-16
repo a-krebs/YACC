@@ -20,6 +20,9 @@ extern int yyleng;
 extern char *yytext;
 extern int colno;
 
+#if DEBUG
+	yydebug = 1;
+#endif
 %}
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
 
