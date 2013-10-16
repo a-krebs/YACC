@@ -41,7 +41,7 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
-CFLAGS+= 
+CFLAGS+=	-Wall
 
 # Linked libraries for final build
 LIBS=		-ll
