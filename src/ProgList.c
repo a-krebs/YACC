@@ -19,13 +19,11 @@
  *      fileName is a null terminated string which is the name
  *               of the file to which to write the program listing
  */
-void
-printProgramListing(FILE *in, char *fileName)
+void printProgramListing(FILE *in, char *fileName)
 {
 	char *errMsg;
 	struct ErrorLL *ell = errors;
 	struct Error *nextError = NULL;
-	long fileSize, bytesRead = 0;
 	int nextErrLineno = -1, bufPos, lineno = 0, bufSize = 512;
 	FILE *out = NULL;
 	char *buf, c;

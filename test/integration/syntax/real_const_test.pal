@@ -1,7 +1,9 @@
+{}
+//test a expression when it assigns to variable. should pass.
 
 program test(input,output);
 var
-	a, b : real;
+	a : real;
 begin 
-	a := 32.32E-;
+	a := 32.32-32;
 end.

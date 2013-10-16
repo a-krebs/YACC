@@ -56,8 +56,7 @@ void parseCommandOptions( char *options ) {
 
 
 void parseInputs( int argc, char *argv[] ) {
-	int i, j;
-	char *arg;
+	int i;
 	int fileFlag = 0;
 
 	if ( argc == 1 ) {
