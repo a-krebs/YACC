@@ -1,11 +1,4 @@
 /* Cmput 415 - YACC - Bison parser */     
-
-/*
-* TODO:
-* - check all tokens are used in grammer and vice versa
-* - create testing cases!
-*/
-
 %{
 
 #include <stdio.h>
@@ -25,9 +18,14 @@ extern int colno;
 
 %%
 
+file
+: program
+| error file
+| file error
+;
 
 program                 
- : program_head decls compound_stat PERIOD
+: program_head decls compound_stat PERIOD
 ;
 
 program_head            
