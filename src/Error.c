@@ -24,7 +24,7 @@ int nErrors = 0;
  * Returns a pointer to the newly created Error for easier debugging.
  */
 struct Error *
-recordError(const char *s, int lineno) 
+recordError(const char *s, int lineno, int colno) 
 {
 	struct Error * newError = NULL;
 	
@@ -42,6 +42,7 @@ recordError(const char *s, int lineno)
 		return;
 	}
 	newError->lineno = lineno;
+	newError->colno = colno;
 	strncpy(newError->msg, s, ERR_STRSIZE);
 
 	/* Append to linked list of errors appearing during compilation */
@@ -58,12 +59,14 @@ createErrorString(char *buf, int bufSize, struct Error *e)
 	/* zero out buf in case it is being reused */
 	memset(buf, 0, sizeof(char)*bufSize);
 
-	snprintf(buf, bufSize-1, "Error: %s (line %d)", e->msg, e->lineno);
+	snprintf(buf, bufSize-1, "Error: %s (line %d, col %d)", 
+		 e->msg, e->lineno, e->colno);
 }
 
 void 
 printError(struct Error *e)
 {
-	fprintf(stdout, "%d Error: %s\n", e->lineno, e->msg);
+	fprintf(stdout, "%d Error: %s (%d, %d)\n", 
+		e->lineno, e->msg, e->lineno, e->colno);
 }
 

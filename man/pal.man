@@ -6,7 +6,7 @@ pal - Compiler for PAL language
 
 .SH SYNOPSIS
 
-pal [-PH] infile
+pal [-S][-n][-a] infile
 
 .SH DESCRIPTION
 
@@ -15,7 +15,12 @@ to an executable file
 
 .SH OPTIONS
 
-PH
+-S Leave Asc code in file.asc instead of removing it.
+
+-n Do not produce a program listing. Default is to produce one.
+
+-a Do not generate run-time array subscript bounds checking.
+Default is to do the checking.
 
 .SH FILES
 

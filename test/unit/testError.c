@@ -14,9 +14,9 @@ char *
 test_createErrorString()
 {
 	char errorMsg[ERR_STRSIZE] = "This is only a test.";
-	int lineno = 1029, bufSize = 512;
+	int lineno = 1029, colno = 999,bufSize = 512;
 	char buf[bufSize];
-	char expectedRet[] = "Error: This is only a test. (line 1029)";
+	char expectedRet[] = "Error: This is only a test. (line 1029, col 999)";
 	
 	buf[bufSize-1] = 'a';
 
@@ -27,6 +27,7 @@ test_createErrorString()
 	}
 	strncpy(e->msg, errorMsg, ERR_STRSIZE);
 	e->lineno = lineno;
+	e->colno = colno;
 
 	createErrorString(buf, bufSize, NULL);
 	mu_assert("Call to createErrorString() with NULL e should leave buf unmodified",
@@ -46,20 +47,23 @@ char *
 test_recordError() 
 {
 	char errorMsg[ERR_STRSIZE] = "This is only a test.";
-	int lineno = 1029;
+	int lineno = 1029, colno = 9899;
 	struct Error *ret = NULL;
 
 	errors = NULL;
-	ret = recordError(errorMsg, lineno);
+	ret = recordError(errorMsg, lineno, colno);
 
 	mu_assert("recordError doest not return  NULL pointer.", (ret));
 	mu_assert("lineno correctly set in returned Error.",
 		  ret->lineno == lineno);
+	mu_assert("colno correctly set in returned Error.",
+		  ret->colno == colno);
 	mu_assert("Error message correct set in returned Error.",
 		  strncmp(ret->msg, errorMsg, ERR_STRSIZE) == 0);
 	mu_assert("Error correctly appended as first element of ErrorLL.",
 		  (strncmp(errors->error->msg, ret->msg, ERR_STRSIZE) == 0) &&
-		  (errors->error->lineno == ret->lineno));
+		  (errors->error->lineno == ret->lineno) &&
+		  (errors->error->colno == ret->colno));
 	return NULL;
 }
 

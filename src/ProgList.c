@@ -26,7 +26,7 @@ printProgramListing(FILE *in, char *fileName)
 	struct ErrorLL *ell = errors;
 	struct Error *nextError = NULL;
 	long fileSize, bytesRead = 0;
-	int nextErrLineno = 0, bufPos, lineno = 0, bufSize = 512;
+	int nextErrLineno = -1, bufPos, lineno = 0, bufSize = 512;
 	FILE *out = NULL;
 	char *buf, c;
 
