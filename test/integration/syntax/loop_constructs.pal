@@ -1,0 +1,14 @@
+{12}
+// test loops missing starts and ends, etc.
+
+program test(input, output);
+begin
+	while i do a := a-1;
+
+	while (a < 100) do begin
+		a := a + 1;
+	end;
+
+	do begin end;			// error
+	while (a < 100) do begin end;
+end.
