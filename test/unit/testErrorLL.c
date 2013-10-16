@@ -16,7 +16,7 @@ test_appendError()
 	struct ErrorLL *ell = NULL;
 	struct Error *e = NULL;
 	char  errMsg[ERR_STRSIZE] = "This is only a test";
-	int lineno = 1000;
+	int lineno = 1000, colno = 9999;
 
 	e = calloc(1, sizeof(struct Error));
 	if (!e) {
@@ -25,6 +25,7 @@ test_appendError()
 	}
 	strncpy(e->msg, errMsg, ERR_STRSIZE);
 	e->lineno = lineno;
+	e->colno = colno;
 
 	appendError(&ell, e);
 
@@ -32,6 +33,7 @@ test_appendError()
 		  ell != NULL);
 	mu_assert("appended Error is identical to one passed to appendError",
 		  (ell->error->lineno == lineno) &&
+		  (ell->error->colno == colno) &&
 		  (strncmp(ell->error->msg, errMsg, ERR_STRSIZE) == 0));	
 }
 
@@ -42,7 +44,7 @@ test_getNextError()
 	struct Error *e1 = NULL, *e2 = NULL, *ret = NULL;
 	char errMsg1[ERR_STRSIZE] = "This is only a test";
 	char errMsg2[ERR_STRSIZE] = "This is also only a test";
-	int lineno = 1000;
+	int lineno = 1000, colno = 3848;
 
 
 	mu_assert("Calling getNextError() with NULL ptr should return NULL",
@@ -57,6 +59,7 @@ test_getNextError()
 	}
 	strncpy(e1->msg, errMsg1, ERR_STRSIZE);
 	e1->lineno = lineno;
+	e1->colno = colno;
 
 	/* create second test Error */
 	e2 = calloc(1, sizeof(struct Error));
@@ -66,6 +69,7 @@ test_getNextError()
 	}
 	strncpy(e2->msg, errMsg2, ERR_STRSIZE);
 	e2->lineno = lineno + 1;
+	e2->colno = colno -12;
 
 	appendError(&ell, e1);
 	appendError(&ell, e1);
@@ -78,6 +82,7 @@ test_getNextError()
 
 	mu_assert("First call to getNextError() should return test error 1",
 		  (ret->lineno == e1->lineno) &&
+		  (ret->colno == e1->colno) &&
 		  (strncmp(ret->msg, e1->msg, ERR_STRSIZE) == 0));
 
 	ret = getNextError(&ell);
@@ -86,6 +91,7 @@ test_getNextError()
 
 	mu_assert("Second call to getNextError() should return test error 2",
 		  (ret->lineno == e2->lineno) &&
+		  (ret->colno == e2->colno) &&
 		  (strncmp(ret->msg, e2->msg, ERR_STRSIZE) == 0));
 
 	ret = getNextError(&ell);
