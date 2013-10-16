@@ -85,15 +85,8 @@ extern void yyerror(char *);
 				  return; 
 				}
 
-[0-9]+			{
-				  yylval.integer = atoi(yytext);
-#if DEBUG
-				  colno += strlen(yytext);
-#endif
-				  return(INT_CONST);
-				}
 
-^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
+[-+]?[0-9]+((\.[0-9]+([E][+-]?[0-9]+)?)|([E][+-]?[0-9]+)) { 
 #ifndef LEXTEST_DEBUG
 				  yylval.real = atof(yytext); 
 #endif
@@ -101,6 +94,13 @@ extern void yyerror(char *);
 				  return(REAL_CONST);
 				}
 
+[0-9]+			{
+				  yylval.integer = atoi(yytext);
+#if DEBUG
+				  colno += strlen(yytext);
+#endif
+				  return(INT_CONST);
+				}
 
 <INITIAL>"'"((([^'\\])|(\\.))*(\n)+(([^'\\])|(\\.))*)+"'" {
 #if DEBUG
