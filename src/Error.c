@@ -27,6 +27,7 @@ struct Error *
 recordError(const char *s, int lineno, int colno) 
 {
 	struct Error * newError = NULL;
+	size_t len = strlen(s);
 	
 	/* Update number of error which have appeared during compilation  */
 	nErrors++;
@@ -41,9 +42,15 @@ recordError(const char *s, int lineno, int colno)
 		err(1, "Failed to allocate memory to record new error.");
 		return;
 	}
+	newError->msg = calloc(1, sizeof(char)*len+1);
+	if (!newError->msg) {
+		err(1, "Failed to allocate memory to record new error string");
+		return;
+
+	}
 	newError->lineno = lineno;
 	newError->colno = colno;
-	strncpy(newError->msg, s, ERR_STRSIZE);
+	strncpy(newError->msg, s, len);
 
 	/* Append to linked list of errors appearing during compilation */
 	appendError(&errors, newError);
@@ -52,14 +59,26 @@ recordError(const char *s, int lineno, int colno)
 }
 
 
+/*
+ * Creates a version of the error string suitable for printing
+ * to the program listing and writes it to buf.
+ * NOTE: it is incumbent upon the caller to free 
+ */
 void
-createErrorString(char *buf, int bufSize, struct Error *e)
+createErrorString(char **buf, struct Error *e)
 {
+
+	int extraChars = 64;
+	size_t size = sizeof(char)*(strlen(e->msg) + extraChars);
 	if (!e) return; /* don't try to create string for NULL error */
 	/* zero out buf in case it is being reused */
-	memset(buf, 0, sizeof(char)*bufSize);
+	*buf = calloc(1, size);
+	if (!*buf) {
+		err(1, "Failed to allocate memory to create err msg");
+		return;
+	}
 
-	snprintf(buf, bufSize-1, "Error: %s (line %d, col %d)", 
+	snprintf(*buf, size, "Error: %s (line %d, col %d)", 
 		 e->msg, e->lineno, e->colno);
 }
 
@@ -68,5 +87,13 @@ printError(struct Error *e)
 {
 	fprintf(stdout, "%d Error: %s (%d, %d)\n", 
 		e->lineno, e->msg, e->lineno, e->colno);
+}
+
+void
+freeError(struct Error *e)
+{
+	if (!e) return;
+	if (e->msg) free(e->msg);
+	free(e);
 }
 
