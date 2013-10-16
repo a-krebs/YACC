@@ -77,6 +77,14 @@ int colno = 1;
 				  return; 
 				}
 
+^[0-9]+$			{
+				  yylval.integer = atoi(yytext);
+#if DEBUG
+				  colno += strlen(yytext);
+#endif
+				  return(INT_CONST);
+				}
+
 ^("+"|"-")?([0-9]*)(".")?[0-9]+(E("-"|"+")?[0-9]+)? { 
 #ifndef LEXTEST_DEBUG
 				  yylval.real = atof(yytext); 
