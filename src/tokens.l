@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 
+
 #include "Error.h"
 #include "ErrorLL.h"
 
@@ -20,30 +21,37 @@
 #undef YYLMAX
 #define YYLMAX 10240
 
+extern YYABORT;
+
 int colno = 1;
+extern void yyerror(char *);
 %}
 
 %option yylineno
 
 %x INSIDE_BLOCK_COMMENT
-%x INSIDE_STRING
+%x INSIDE_STRING_WITH_NEWLINE
 
 %%
 
 %{
-#if DEBUG
+
 	colno += yyleng;
+#if DEBUG
 	printf("yylineno = %d, colno = %d\n", yylineno, colno);
 	printf("Current Token: %s\n", yytext);
+	printf("\n");
+
 #endif
+
 %}
 
 [ \t]				{ colno += strlen(yytext); }
-"//"[^\n]*			{ colno = (1); }
+"//"[^\n]*			{ colno = 1; }
 
 "}"				{
 				  recordError("Closing comment brace '}' \
-				      found without matching '{'", yylineno);
+				      found without matching '{'", yylineno, colno);
 #if DEBUG
 				  printf("'}' FOUND WITHOUT MATCHING '{'\n");
 #endif
@@ -52,28 +60,28 @@ int colno = 1;
 
 <INITIAL>"{"			{ 
 				  BEGIN(INSIDE_BLOCK_COMMENT);
-#if DEBUG
 				  colno++;
+#if DEBUG
 				  printf("BEGIN BLOCK COMMENT\n");
 #endif
 				}
 <INSIDE_BLOCK_COMMENT>"}"	{ 
 				  BEGIN(INITIAL);
-#if DEBUG
 				  colno++;
+#if DEBUG
 				  printf("END BLOCK COMMENT\n");
 #endif
 				}
 
 <INSIDE_BLOCK_COMMENT>[^}]+	{ 
-#if DEBUG
 				  colno += strlen(yytext);
+#if DEBUG
 				  printf("INSIDE BLOCK COMMENT\n");
 #endif
 				}
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ 
-				  recordError("End of file reached inside a \
-				      block comment.", yylineno);
+				  BEGIN(INITIAL);
+				  recordError("EOF encountered inside block comment.", lineno, colno);
 				  return; 
 				}
 
@@ -89,20 +97,17 @@ int colno = 1;
 #ifndef LEXTEST_DEBUG
 				  yylval.real = atof(yytext); 
 #endif
-#if DEBUG
 				  colno += strlen(yytext);
-#endif
 				  return(REAL_CONST);
 				}
 
 
-"'"((([^'\\])|(\\.))*(\n)+(([^'\\])|(\\.))*)+"'" {
+<INITIAL>"'"((([^'\\])|(\\.))*(\n)+(([^'\\])|(\\.))*)+"'" {
 #if DEBUG
 				printf("STRING LITERAL WITH NEWLINE FOUND\n");
-				colno += strlen(yytext);
 #endif
 				recordError("Newline characters cannot appear \
-				    in strings.", yylineno);
+				    in strings.", yylineno, colno);
 				/* 
 				 * We know it's an invalid string, but we'll
 				 * continue compilation
@@ -114,8 +119,7 @@ int colno = 1;
 "'"(([^'\\])|(\\.))*"'"		{
 #if DEBUG
 				  printf("STRING FOUND\n");
-				  colno += strlen(yytext);
-#endif
+#endif	
 				  yylval.string = strdup(yytext);
 				  return(STRING_CONST);
 				}
@@ -168,12 +172,18 @@ int colno = 1;
 "bool"				{ return(BOOL); }
 "real"				{ return(REAL); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
-				  return(ID); }
+				  return(ID); 
+				}
 \n 				{ 
-#if DEBUG
 				  colno = 1; 
-#endif
 				}
 .				{ 
+				 
+				  yyerror("Unrecognized token(s)");
 	                     	  return(UNREC); 
 				}
+
+%{
+
+
+%}
