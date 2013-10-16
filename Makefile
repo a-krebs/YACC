@@ -145,6 +145,8 @@ clean:
 	-rm -f $(BISONREPORT)
 	-rm -f $(SRC)/generated_parser.y
 	-rm -f $(SRC)/generated_tokenTestParser.y
+	-rm -f $(TEST)/ProgListTestFile.txt
+	-rm -f $(TEST)/ProgListTestFileOut.lst
 
 # shortcuts for common actions
 build:
