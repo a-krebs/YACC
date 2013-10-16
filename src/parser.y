@@ -305,7 +305,6 @@ appendErrorToken(char *s, char *token)
 	strcat(ret, s);
 	strcat(ret, extraText);
 	strcat(ret, token);
-	printf(": %s\n", ret);
 	return ret;
 
 }
@@ -319,7 +318,6 @@ yyerror(char *s) {
 	e = recordError(errMsg, yylineno, colno);
 #if DEBUG
 	printf("New error on line %d\n", yylineno);
-	printf("new msg: %s\n", e->msg);
 #endif
 	printError(e);
 	free(errMsg);

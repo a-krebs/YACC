@@ -1,5 +1,5 @@
 {6}
-// missing semi-colin after program declaration. should fail
+// missing period at end of file. should fail
 
 program foo(in, out);
 begin
