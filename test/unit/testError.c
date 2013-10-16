@@ -13,27 +13,27 @@
 char *
 test_createErrorString()
 {
-	char errorMsg[ERR_STRSIZE] = "This is only a test.";
+	char errorMsg[] = "This is only a test.";
+	int ERR_STRSIZE = strlen(errorMsg);
 	int lineno = 1029, colno = 999,bufSize = 512;
-	char buf[bufSize];
+	char *buf;
 	char expectedRet[] = "Error: This is only a test. (line 1029, col 999)";
 	
-	buf[bufSize-1] = 'a';
-
 	struct Error *e = malloc(sizeof(struct Error));
 	if (!e) {
 		err(1, "Failed to allocate memory for createErrorString()");
+		return NULL;
+	}
+	e->msg = calloc(1, sizeof(char)*ERR_STRSIZE);
+	if (!e->msg) {
+		err(1, "Failed to allocate memory for error message");
 		return NULL;
 	}
 	strncpy(e->msg, errorMsg, ERR_STRSIZE);
 	e->lineno = lineno;
 	e->colno = colno;
 
-	createErrorString(buf, bufSize, NULL);
-	mu_assert("Call to createErrorString() with NULL e should leave buf unmodified",
-		  buf[bufSize-1] == 'a');
-
-	createErrorString(buf, bufSize, e);
+	createErrorString(&buf, e);
 	mu_assert("createErrorString() should write to buf the expected return.",
 		  strncmp(expectedRet, buf, strlen(expectedRet)) == 0);
 	return NULL;
@@ -46,7 +46,9 @@ test_createErrorString()
 char *
 test_recordError() 
 {
-	char errorMsg[ERR_STRSIZE] = "This is only a test.";
+	char errorMsg[] = "This is only a test.";
+	int ERR_STRSIZE = strlen(errorMsg);
+
 	int lineno = 1029, colno = 9899;
 	struct Error *ret = NULL;
 

@@ -1,0 +1,9 @@
+{}
+//bad integer. should pass
+
+program expressionTest (input, output);
+var 
+	a : integer;
+begin
+	a := a333;
+end.

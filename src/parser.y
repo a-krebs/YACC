@@ -10,12 +10,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Error.h"
 #include "ErrorLL.h"
 extern int yylex(void);
 extern int yylineno;
 extern int yyleng;
+extern char *yytext;
 extern int colno;
 
 %}
@@ -29,7 +31,7 @@ program
 ;
 
 program_head            
-: PROGRAM ID L_PAREN ID COMMA ID R_PAREN SEMICOLON
+: PROGRAM ID_or_err L_PAREN ID_or_err COMMA ID_or_err R_PAREN semicolon_or_error
 ;
 
 decls
@@ -40,31 +42,31 @@ proc_decl_part
 ;
 
 const_decl_part         
-: CONST const_decl_list SEMICOLON
+: CONST const_decl_list semicolon_or_error
 |
 ;
 
 const_decl_list         
 : const_decl
-| const_decl_list SEMICOLON const_decl
+| const_decl_list semicolon_or_error const_decl
 ;
 
 const_decl              
-: ID EQUAL expr
+: ID_or_err EQUAL expr
 ;
 
 type_decl_part          
-: TYPE type_decl_list SEMICOLON
+: TYPE type_decl_list semicolon_or_error
 |
 ;
 
 type_decl_list          
 : type_decl
-| type_decl_list SEMICOLON type_decl
+| type_decl_list semicolon_or_error type_decl
 ;
 
 type_decl               
-: ID EQUAL type
+: ID_or_err EQUAL type
 ;
 
 
@@ -78,7 +80,7 @@ type
 simple_type             
 : scalar_type
 | REAL
-| ID
+| ID_or_err
 ;
 
 scalar_type             
@@ -89,8 +91,8 @@ scalar_type
 ;
 
 scalar_list             
-: scalar_list COMMA ID
-| ID COMMA ID
+: scalar_list COMMA ID_or_err
+| ID_or_err COMMA ID_or_err
 ;
 
 // scalar_list             
@@ -110,26 +112,26 @@ array_type
 
 field_list
 : field
-| field_list SEMICOLON field
+| field_list semicolon_or_error field
 ;
 
 field                   
-: ID COLON type
+: ID_or_err COLON type
 ;
 
 var_decl_part
-: VAR var_decl_list SEMICOLON
+: VAR var_decl_list semicolon_or_error
 |
 ;
 
 var_decl_list
 : var_decl
-| var_decl_list SEMICOLON var_decl
+| var_decl_list semicolon_or_error var_decl
 ;
 
 var_decl                
-: ID COLON type
-| ID COMMA var_decl
+: ID_or_err COLON type
+| ID_or_err COMMA var_decl
 ;
 
 proc_decl_part
@@ -143,12 +145,12 @@ proc_decl_list
 ;
 
 proc_decl
-: proc_heading decls compound_stat SEMICOLON
+: proc_heading decls compound_stat semicolon_or_error
 ;
 
 proc_heading
-: PROCEDURE ID f_parm_decl SEMICOLON
-| FUNCTION ID f_parm_decl COLON ID SEMICOLON
+: PROCEDURE ID_or_err f_parm_decl semicolon_or_error
+| FUNCTION ID_or_err f_parm_decl COLON ID_or_err semicolon_or_error
 ;
 
 f_parm_decl
@@ -158,12 +160,12 @@ f_parm_decl
 
 f_parm_list
 : f_parm
-| f_parm_list SEMICOLON f_parm
+| f_parm_list semicolon_or_error f_parm
 ;
 
 f_parm
-: ID COLON ID
-| VAR ID COLON ID
+: ID_or_err COLON ID_or_err
+| VAR ID_or_err COLON ID_or_err
 ;
 
 compound_stat
@@ -172,7 +174,7 @@ compound_stat
 
 stat_list
 : stat
-| stat_list SEMICOLON stat
+| stat_list semicolon_or_error stat
 ;
 
 stat  
@@ -189,12 +191,12 @@ simple_stat
 
 proc_invok  
 : plist_finvok R_PAREN
-| ID L_PAREN R_PAREN
+| ID_or_err L_PAREN R_PAREN
 ;
 
 var
-: ID
-| var PERIOD ID
+: ID_or_err
+| var PERIOD ID_or_err
 | subscripted_var RS_BRACKET
 ;
 
@@ -257,11 +259,11 @@ unsigned_num
 
 func_invok
 : plist_finvok R_PAREN
-| ID L_PAREN R_PAREN
+| ID_or_err L_PAREN R_PAREN
 ;
 
 plist_finvok
-: ID L_PAREN parm
+: ID_or_err L_PAREN parm
 | plist_finvok COMMA parm
 ;
 
@@ -285,16 +287,55 @@ matched_stat
 | EXIT
 ;
 
+semicolon_or_error
+: error SEMICOLON 
+| SEMICOLON
+;
+
+ID_or_err
+: ID UNREC ID_or_err
+| ID
+;
 
 
 %%
 
+char *
+appendErrorToken(char *s, char *token)
+{
+	char extraText[] = "  Error token: ";
+	size_t sLen;
+	size_t tokenLen;
+	size_t extraTextLen;
+	char *ret;
+
+	if ((!token)) {
+		return NULL;
+	}
+	sLen = strlen(s);
+	tokenLen = strlen(token);
+	extraTextLen = strlen(extraText);
+	ret = calloc(1, sizeof(char)*(sLen + tokenLen + extraTextLen + 1));
+
+	strcat(ret, s);
+	strcat(ret, extraText);
+	strcat(ret, token);
+	return ret;
+
+}
+
 yyerror(char *s) {
-	/* Simple, naive for now, will add more features as project
-	 * progresses */
-	struct Error *e = recordError(s, yylineno, colno);
+
+	struct Error *e = NULL;
+	char *errMsg = NULL;
+
+	errMsg = appendErrorToken(s, yytext);
+	if (errMsg) e = recordError(errMsg, yylineno, colno);
+	else e = recordError(s, yylineno, colno);
+
 #if DEBUG
 	printf("New error on line %d\n", yylineno);
 #endif
 	printError(e);
+	if (errMsg) free(errMsg);
 }

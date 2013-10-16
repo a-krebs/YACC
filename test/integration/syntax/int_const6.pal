@@ -1,0 +1,9 @@
+{8}
+// space in int. should fail
+
+program expressionTest (input, output);
+var 
+	a : integer;
+begin
+	a := 3222222 55555;
+end.

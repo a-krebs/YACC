@@ -22,7 +22,7 @@
 void
 printProgramListing(FILE *in, char *fileName)
 {
-	char errMsg[ERRMSG_SIZE];
+	char *errMsg;
 	struct ErrorLL *ell = errors;
 	struct Error *nextError = NULL;
 	long fileSize, bytesRead = 0;
@@ -96,11 +96,12 @@ printProgramListing(FILE *in, char *fileName)
 		 * this line.
 		 */
 		while (nextErrLineno == lineno) {
-			createErrorString(errMsg, ERRMSG_SIZE, nextError);
+			createErrorString(&errMsg, nextError);
 			fprintf(out, "Error\t|:\t%s\n", errMsg);
 			nextError = getNextError(&ell);
 			if (nextError) nextErrLineno = nextError->lineno;
 			else nextErrLineno = -1;
+			free(errMsg);
 		}
 	} while (c != EOF);
 
@@ -111,11 +112,12 @@ printProgramListing(FILE *in, char *fileName)
 	 */
 	while (lineno < nextErrLineno) {
 		fprintf(out, "\n");
-		createErrorString(errMsg, ERRMSG_SIZE, nextError);
+		createErrorString(&errMsg, nextError);
 		fprintf(out, "Error\t|:\t%s", errMsg);
 		nextError = getNextError(&ell);
 		if (nextError) nextErrLineno = nextError->lineno;
 		else nextErrLineno = -1;
+		free(errMsg);
 	}
 
 	free(buf);

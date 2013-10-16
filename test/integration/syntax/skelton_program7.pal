@@ -1,0 +1,6 @@
+{6}
+// missing period at end of file. should fail
+
+program foo(in, out);
+begin
+end

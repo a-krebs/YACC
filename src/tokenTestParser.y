@@ -30,7 +30,7 @@ constant_list	:INT_CONST		{printf("INT_CONST \
 					    (%f)\n", $<real>1);}
 		|STRING_CONST           {printf("STRING_CONST \
 					    (%s)\n", $<string>1);}
-types_list	:CHAR
+types_list	:CHAR			{printf("CHAR\n");}
 		|ID                     {printf("ID (%s)\n",$<id>1);}
 		|INT                    {printf("INT\n");}
 		|REAL                   {printf("REAL\n");}
@@ -87,6 +87,6 @@ keywords_list	:AND		{printf("AND\n");}
 		;
 %%
 yyerror(char *s) {
-	printf("Test parser encountered an error, this should not happen.\n");
+	printf("Test parser error: %s\n", s);
 }
 		

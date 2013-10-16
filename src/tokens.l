@@ -28,6 +28,7 @@ extern void yyerror(char *);
 %}
 
 %option yylineno
+%pointer yytext
 
 %x INSIDE_BLOCK_COMMENT
 %x INSIDE_STRING_WITH_NEWLINE
@@ -47,7 +48,10 @@ extern void yyerror(char *);
 %}
 
 [ \t]				{ colno += strlen(yytext); }
-"//"[^\n]*			{ colno = 1; }
+"//"[^\n]*			{ colno = (1);  /* () around 1 to make vim
+						 * syntax highlighting happy
+						 */
+				}
 
 "}"				{
 				  recordError("Closing comment brace '}' \
@@ -82,7 +86,7 @@ extern void yyerror(char *);
 <INSIDE_BLOCK_COMMENT><<EOF>>	{ 
 				  BEGIN(INITIAL);
 				  recordError("EOF encountered inside block comment.", yylineno, colno);
-				  return; 
+				  return 0; 
 				}
 
 
@@ -178,7 +182,7 @@ extern void yyerror(char *);
 				  colno = 1; 
 				}
 .				{ 
-				 
+				  
 				  yyerror("Unrecognized token(s)");
 	                     	  return(UNREC); 
 				}

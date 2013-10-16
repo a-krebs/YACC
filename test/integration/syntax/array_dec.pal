@@ -1,0 +1,14 @@
+{9,10,11}
+// test array declaration
+
+program arrayTests(input, output);
+type
+	string = array[0..127] of char;
+	Dog = (poodle,germanShep,littleYappyOne);
+	dog = array[Dog] of integer;
+	interval = 1..100;					// error
+	brokenInterval = array[1.100] of integer;		// error
+	illegalArrayDec = array[1..10,1..10] of integer;	// error
+	legalArrayDec = array[1..10] of array [1..10] of integer;
+begin
+end.

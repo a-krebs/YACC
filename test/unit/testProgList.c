@@ -35,7 +35,8 @@ test_printProgramListing()
 	char *lines[5];
 	char line1[] = "program hello (input, output);\n";
 	char line2[] = "{ Let's make pretend like a real {error} }}}}\n";
-	char line3[] = "The next line is purposefully longer than the default buffer size we set in printProgramListing\n";
+	char line3[] = "The next line is purposefully longer than the default \
+	    buffer size we set in printProgramListing\n";
 	char line4[longLineLen];
 	char line5[] = "end. // end";
 
