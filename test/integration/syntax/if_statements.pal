@@ -1,4 +1,4 @@
-{23}
+{25, 27}
 // test if statements
 
 program test(input, output);
@@ -19,6 +19,8 @@ begin
 		a := b + 6
 	else
 		c := 12;
+	
+	a := 12;
 
 	then begin end;			// error
-end.
+end					// error
