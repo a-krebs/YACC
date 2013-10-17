@@ -1,0 +1,7 @@
+{6}
+
+program test(input, output);
+begin
+	{ comment }
+	{ nested {comment }}
+end.
