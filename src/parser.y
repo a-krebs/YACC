@@ -35,11 +35,13 @@ program_head
 : PROGRAM ID_or_err L_PAREN ID_or_err COMMA ID_or_err R_PAREN semicolon_or_error
 ;
 
+
+// no | here since this is a list
 decls
 : const_decl_part
-type_decl_part        
-var_decl_part
-proc_decl_part
+  type_decl_part        
+  var_decl_part
+  proc_decl_part
 ;
 
 const_decl_part         
@@ -70,9 +72,6 @@ type_decl
 : ID_or_err EQUAL type
 ;
 
-
-
-
 type                    
 : simple_type
 | structured_type
@@ -95,11 +94,6 @@ scalar_list
 : scalar_list COMMA ID_or_err
 | ID_or_err COMMA ID_or_err
 ;
-
-// scalar_list             
-// : ID
-// | scalar_list ',' ID
-// ;
 
 structured_type         
 : ARRAY LS_BRACKET array_type RS_BRACKET OF type
@@ -218,11 +212,6 @@ expr
 | expr GREATER     simple_expr
 ;
 
-// expr_list               
-// : expr_list ',' expr
-// | expr
-// ;
-
 simple_expr
 : term
 | PLUS term
@@ -245,12 +234,14 @@ factor
 : var
 | unsigned_const
 | L_PAREN expr R_PAREN
- | func_invok
+| func_invok
 | NOT factor
 ;
 
 unsigned_const          
 : unsigned_num
+// intentionall commented out. var and unsigned_const both reduce to ID in the
+// same place, so this is redundant.
 // | ID
 | STRING_CONST
 ;
