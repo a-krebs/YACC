@@ -1,11 +1,4 @@
 /* Cmput 415 - YACC - Bison parser */     
-
-/*
-* TODO:
-* - check all tokens are used in grammer and vice versa
-* - create testing cases!
-*/
-
 %{
 
 #include <stdio.h>
@@ -20,14 +13,22 @@ extern int yyleng;
 extern char *yytext;
 extern int colno;
 
+#if DEBUG
+	yydebug = 1;
+#endif
 %}
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
 
 %%
 
+file
+: program
+| error file
+| file error
+;
 
 program                 
- : program_head decls compound_stat PERIOD
+: program_head decls compound_stat PERIOD
 ;
 
 program_head            
@@ -181,6 +182,8 @@ stat
 : simple_stat
 | struct_stat
 |
+| error simple_stat
+| error struct_stat
 ;
 
 simple_stat

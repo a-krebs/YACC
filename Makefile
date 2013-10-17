@@ -41,9 +41,9 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
-CFLAGS+=	-Wall
+CFLAGS+=	-Wall -std=c99
 # exclude these flags from compiles involving Bison/Flex
-FLEXBISONFLAGEXCLUDES= -Wall
+FLEXBISONFLAGEXCLUDES= -Wall -std=c99
 
 # Linked libraries for final build
 LIBS=		-ll
@@ -70,7 +70,7 @@ SED_INCLUDE= 	sed -e "/<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->/r\
 all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
-debug: CFLAGS+= -g -DDEBUG
+debug: CFLAGS+= -g -DDEBUG -DYYDEBUG=1
 debug: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug: $(EXE)
 
@@ -164,5 +164,11 @@ unit_tests:
 
 integration_tests:
 	make build
+	mv $(EXE) $(EXE).bak
+	make clean
 	make lextest
+	mv $(LEXTEST_EXE) $(LEXTEST_EXE).bak
+	make clean
+	mv $(EXE).bak $(EXE)
+	mv $(LEXTEST_EXE).bak $(LEXTEST_EXE) 
 	cd test && python testRunner.py

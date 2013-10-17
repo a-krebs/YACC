@@ -1,0 +1,8 @@
+{}
+// no errors, just make sure complicated array indexing stuff passes
+
+program test(in, out);
+begin
+	arr[12][d-12 + 2] := b[sixteen][funcCall(x,y,z['stringindex'])];
+	rec.member[arrayindex * 14 div operand].member := fizbuz;
+end.
