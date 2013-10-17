@@ -1,0 +1,8 @@
+{7} 
+//on line 6 because of next character consumption
+// no semicolon in variable declaration
+
+program test(input, output);
+	var x: integer		//error
+begin
+end.
