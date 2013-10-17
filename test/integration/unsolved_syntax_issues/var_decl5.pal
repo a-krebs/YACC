@@ -1,0 +1,13 @@
+{}
+// fails in lextester...
+
+program test(input, output);
+	var 
+		x: integer;
+		y: char;
+		z: someidthingy;
+		a: bool;
+		b: real;
+		c: string;
+begin
+end.
