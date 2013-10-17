@@ -23,8 +23,9 @@ extern int colno;
 
 file
 : program
-| error file
-| file error
+| error program
+| program error
+| error program error
 ;
 
 program                 
@@ -176,8 +177,6 @@ stat
 : simple_stat
 | struct_stat
 |
-| error simple_stat
-| error struct_stat
 ;
 
 simple_stat

@@ -1,4 +1,4 @@
-{12, 15, 17}
+{12, 16, 20}
 // test loops missing starts and ends, etc.
 
 program test(input, output);
@@ -11,6 +11,9 @@ begin
 
 	do begin end;			// error
 	while (a < 100) do begin end;
+	a := 2;
 
 	do begin end;			// error
+	
+	a := 2;
 end
