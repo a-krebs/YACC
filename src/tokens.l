@@ -47,30 +47,30 @@ extern void yyerror(char *);
 
 %}
 
-[ \t]				{ colno += strlen(yytext); }
-"//"[^\n]*			{ colno = (1);  /* () around 1 to make vim
-						 * syntax highlighting happy
-						 */
-				}
+[ \t]                   { colno += strlen(yytext); }
+"//"[^\n]*              { colno = (1);
+                        /* () around 1 to make vim
+                         * syntax highlighting happy
+                         */
+                        }
 
-"}"				{
-				  colno++;
-				  struct Error *e = recordError("Closing comment brace '}' \
-				      found without matching '{'", yylineno, colno);
-				  printError(e);
+"}"             { colno++;
+                  struct Error *e = recordError("Closing comment brace '}' \
+                  found without matching '{'", yylineno, colno);
+                  printError(e);
 #if DEBUG
-				  printf("'}' FOUND WITHOUT MATCHING '{'\n");
+                  printf("'}' FOUND WITHOUT MATCHING '{'\n");
 #endif
+                }
 
-				}
-
-<INITIAL>"{"			{ 
+<INITIAL>"{"                    {
 				  BEGIN(INSIDE_BLOCK_COMMENT);
 				  colno++;
 #if DEBUG
 				  printf("BEGIN BLOCK COMMENT\n");
 #endif
 				}
+
 <INSIDE_BLOCK_COMMENT>"}"	{ 
 				  BEGIN(INITIAL);
 				  colno++;
@@ -85,9 +85,10 @@ extern void yyerror(char *);
 				  printf("INSIDE BLOCK COMMENT\n");
 #endif
 				}
-<INSIDE_BLOCK_COMMENT><<EOF>>	{ 
-				  BEGIN(INITIAL);
-				  recordError("EOF encountered inside block comment.", yylineno, colno);
+
+<INSIDE_BLOCK_COMMENT><<EOF>>   {
+                                  BEGIN(INITIAL);
+                                  recordError("EOF encountered inside block comment.", yylineno, colno);
 				  return 0; 
 				}
 
@@ -100,7 +101,7 @@ extern void yyerror(char *);
 				  return(REAL_CONST);
 				}
 
-[0-9]+			{
+[0-9]+                          {
 				  yylval.integer = atoi(yytext);
 #if DEBUG
 				  colno += strlen(yytext);
@@ -184,12 +185,11 @@ extern void yyerror(char *);
 				  colno = 1; 
 				}
 
-. { 	  
-	#ifndef LEXTEST_DEBUG
-		yyerror("Unrecognized token(s)");
-	#endif 				  
-	
-	return(UNREC); 
+.                               {
+#ifndef LEXTEST_DEBUG
+                                  yyerror("Unrecognized token(s)");
+#endif
+                                  return(UNREC);
 }
 
 %{
