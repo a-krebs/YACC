@@ -93,7 +93,7 @@ extern void yyerror(char *);
 				}
 
 
-[-+]?[0-9]+((\.[0-9]+([E][+-]?[0-9]+)?)|([E][+-]?[0-9]+)) { 
+[0-9]+((\.[0-9]+([E][+-]?[0-9]+)?)|([E][+-]?[0-9]+)) { 
 #ifndef LEXTEST_DEBUG
 				  yylval.real = atof(yytext); 
 #endif
