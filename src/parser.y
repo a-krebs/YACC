@@ -7,6 +7,9 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
+#include "args.h"
+
+extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
 extern int yylineno;
 extern int yyleng;
@@ -365,6 +368,8 @@ yyerror(char *s) {
 #if DEBUG
         printf("New error on line %d\n", yylineno);
 #endif
-        printError(e);
+	if (givenArgs.q == 0) {
+        	printError(e);
+	}
         if (errMsg) free(errMsg);
 }
