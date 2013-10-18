@@ -59,6 +59,7 @@ const_decl_list
 
 const_decl
 : ID_or_err EQUAL expr
+| error
 ;
 
 type_decl_part
