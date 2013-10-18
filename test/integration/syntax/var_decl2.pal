@@ -1,0 +1,7 @@
+{}
+// using type of identifier
+
+program test(input, output);
+	var x: boooooooo;
+begin
+end.

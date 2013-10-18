@@ -1,0 +1,8 @@
+{6}
+// x; integer; should be: x: integer;  -> semicolon
+
+program test(input, output);
+	var 
+		x; integer;
+begin
+end.

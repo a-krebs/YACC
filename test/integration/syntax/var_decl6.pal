@@ -1,0 +1,8 @@
+{6}
+// 
+
+program test(input, output);
+	var 
+		x: 88999;
+begin
+end.

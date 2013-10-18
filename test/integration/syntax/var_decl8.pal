@@ -1,0 +1,8 @@
+{6}
+// 
+
+program test(input, output);
+	var 
+		x: 'sdfsdfsdf';
+begin
+end.
