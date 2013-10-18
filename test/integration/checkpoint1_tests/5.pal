@@ -1,3 +1,4 @@
+{26,57,117}
 {
   Cmput 415 - Team YACC
   Tests compiler's ability to perfrom declarations of types, consts, vars,
@@ -5,11 +6,11 @@
   to parse basic flow control statements, and its ability to parse variable
   attributes/offsets (e.g., array indexing, record propery access, etc.)
   Errors:
-	- declare a real constant to be equal to an ID on line 24
+	- declare a real constant to be equal to an ID on line 26
 	- declare two variables of the same type separated only by commas
 	  in a function definition (a feature supported by pascal but not
-	  by PAL) on line 55
-	- extra square bracket in array index derefrence on line 115 
+	  by PAL) on line 57
+	- extra square bracket in array index derefrence on line 117
 
 
   Program cribbed from:

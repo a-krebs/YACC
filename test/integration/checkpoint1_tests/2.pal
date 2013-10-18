@@ -1,3 +1,4 @@
+{301,302}
 { 2.pal -- tests for limits on the size of tokens/identifiers;
   affirms the lexical analyzers non-reliance on whitepsace;
   assures that reserverd words can appear as a part of a valid identifier;

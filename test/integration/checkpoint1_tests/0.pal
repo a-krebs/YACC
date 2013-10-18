@@ -1,4 +1,4 @@
-{}
+{21,22,23}
 { 0.pal -- tests for the correct operation of the lexical analyzer}
 program testLex0(in, out);
 

@@ -1,13 +1,14 @@
+{41,44,53}
 {
 	Cmput 415 - Team YACC
 	7.pal
 	Tests for correct syntatic use of operators.
 	Errors:
-		-comment separates characters in <> token making it 52
-		 separate < and > tokens inappropriate place causing error line
-		-mismatched parenthesis in nested computation
-		-
-
+		-missing close paren on line 41
+		-missing open parent on line 44
+		-comment separates characters in <> token making it
+		 separate < and > tokens inappropriate place causing
+		 error line 52
 
 }
 
