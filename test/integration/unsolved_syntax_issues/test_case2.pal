@@ -1,0 +1,49 @@
+{5, 10, 15, 20, 25 ,30,35,40,45}
+
+program amTheAwesomenessProgram(input, output);
+begin
+	a := b < > c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+
+	a := b < = c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+	
+	a := b = > c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+
+	a := b ={hahahahahahahahahyab....s}> c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+	
+	a := b <{hahahahahahahahahyab....s}= c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+
+	a := b ={hahahahahahahahahyab....s}> c;
+	a := b + b;
+	a := b + b;
+	a := b + b;	
+
+	a := b <	> c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+
+	a := b <	= c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+
+	a := b =	> c;	
+	a := b + b;
+	a := b + b;
+	a := b + b;
+end.
