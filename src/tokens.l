@@ -88,7 +88,8 @@ extern void yyerror(char *);
 
 <INSIDE_BLOCK_COMMENT><<EOF>>   {
                                   BEGIN(INITIAL);
-                                  recordError("EOF encountered inside block comment.", yylineno, colno);
+                                  yyerror("EOF encountered inside block \
+				  comment.");
 				  return 0; 
 				}
 
@@ -113,8 +114,8 @@ extern void yyerror(char *);
 #if DEBUG
 				printf("STRING LITERAL WITH NEWLINE FOUND\n");
 #endif
-				recordError("Newline characters cannot appear \
-				    in strings.", yylineno, colno);
+				yytext = NULL;
+				yyerror("Multiline string literal detected.");
 				/* 
 				 * We know it's an invalid string, but we'll
 				 * continue compilation
@@ -182,7 +183,7 @@ extern void yyerror(char *);
 				  return(ID); 
 				}
 \n 				{ 
-				  colno = 1; 
+				  colno = 1;
 				}
 
 .                               {

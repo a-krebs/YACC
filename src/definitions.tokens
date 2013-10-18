@@ -27,7 +27,7 @@
 %token PERIOD COMMA SEMICOLON COLON RANGE ASSIGN
 
 /* unrecognized character */
-%token UNREC
+%token UNREC 
 
 /* operators: (keep in mind priority before changing order) */
 %left NOT 

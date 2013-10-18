@@ -1,4 +1,4 @@
-/* Cmput 415 - YACC - Bison parser */     
+/* Cmput 415 - YACC - Bison parser */
 %{
 
 #include <stdio.h>
@@ -10,11 +10,12 @@
 extern int yylex(void);
 extern int yylineno;
 extern int yyleng;
+extern int yyerrok;
 extern char *yytext;
 extern int colno;
 
 #if DEBUG
-	yydebug = 1;
+        yydebug = 1;
 #endif
 %}
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
@@ -28,11 +29,11 @@ file
 | error program error
 ;
 
-program                 
+program
 : program_head decls compound_stat PERIOD
 ;
 
-program_head            
+program_head
 : PROGRAM ID_or_err L_PAREN ID_or_err COMMA ID_or_err R_PAREN semicolon_or_error
 ;
 
@@ -40,39 +41,40 @@ program_head
 // no | here since this is a list
 decls
 : const_decl_part
-  type_decl_part        
+  type_decl_part
   var_decl_part
   proc_decl_part
 ;
 
-const_decl_part         
+const_decl_part
 : CONST const_decl_list semicolon_or_error
 |
 ;
 
-const_decl_list         
+const_decl_list
 : const_decl
 | const_decl_list semicolon_or_error const_decl
 ;
 
-const_decl              
+const_decl
 : ID_or_err EQUAL expr
 ;
 
-type_decl_part          
+type_decl_part
 : TYPE type_decl_list semicolon_or_error
 |
 ;
 
-type_decl_list          
+type_decl_list
 : type_decl
 | type_decl_list semicolon_or_error type_decl
 ;
 
-type_decl               
+type_decl
 : ID_or_err EQUAL type
 ;
 
+<<<<<<< Updated upstream
 type                    
 : structured_type
 | simple_type
@@ -91,19 +93,24 @@ scalar_type
 : L_PAREN scalar_list R_PAREN  
 ;
 
-scalar_list             
+scalar_list
 : scalar_list COMMA ID_or_err
 | ID_or_err
 ;
 
 structured_type         
 : ARRAY LS_BRACKET array_type RS_BRACKET OF type
+| ARRAY LS_BRACKET error RS_BRACKET OF type
 | RECORD field_list END
 ;
 
 array_type 
 : simple_type
 | expr RANGE expr
+| expr error expr 	{ 
+			  yyerror("Error in array declaration.  Error \
+			  oken be unhelpful.");
+			}
 ;
 
 field_list
@@ -111,7 +118,7 @@ field_list
 | field_list semicolon_or_error field
 ;
 
-field                   
+field
 : ID_or_err COLON type
 ;
 
@@ -125,7 +132,7 @@ var_decl_list
 | var_decl_list semicolon_or_error var_decl
 ;
 
-var_decl                
+var_decl
 : ID_or_err COLON type
 | ID_or_err COMMA var_decl
 ;
@@ -166,14 +173,14 @@ f_parm
 
 compound_stat
 : _BEGIN stat_list END
-;       
+;
 
 stat_list
 : stat
 | stat_list semicolon_or_error stat
 ;
 
-stat  
+stat
 : simple_stat
 | struct_stat
 |
@@ -185,7 +192,7 @@ simple_stat
 | compound_stat
 ;
 
-proc_invok  
+proc_invok
 : plist_finvok R_PAREN
 | ID_or_err L_PAREN R_PAREN
 ;
@@ -203,12 +210,12 @@ subscripted_var
 
 expr
 : simple_expr
-| expr EQUAL     simple_expr
+| expr EQUAL simple_expr
 | expr NOT_EQUAL simple_expr
 | expr LESS_OR_EQUAL simple_expr
-| expr LESS     simple_expr
+| expr LESS simple_expr
 | expr GREATER_OR_EQUAL simple_expr
-| expr GREATER     simple_expr
+| expr GREATER simple_expr
 ;
 
 simple_expr
@@ -217,7 +224,7 @@ simple_expr
 | MINUS term
 | simple_expr PLUS term
 | simple_expr MINUS term
-| simple_expr OR  term
+| simple_expr OR term
 ;
 
 term
@@ -237,7 +244,7 @@ factor
 | NOT factor
 ;
 
-unsigned_const          
+unsigned_const
 : unsigned_num
 // intentionall commented out. var and unsigned_const both reduce to ID in the
 // same place, so this is redundant.
@@ -264,7 +271,7 @@ parm
 : expr
 ;
 
-struct_stat             
+struct_stat
 : IF expr THEN matched_stat ELSE stat
 | IF expr THEN stat
 | WHILE expr DO stat
@@ -272,7 +279,7 @@ struct_stat
 | EXIT
 ;
 
-matched_stat            
+matched_stat
 : simple_stat
 | IF expr THEN matched_stat ELSE matched_stat
 | WHILE expr DO matched_stat
@@ -281,7 +288,7 @@ matched_stat
 ;
 
 semicolon_or_error
-: error SEMICOLON 
+: error SEMICOLON {yyerrok;}
 | SEMICOLON
 ;
 
@@ -295,39 +302,39 @@ ID_or_err
 
 char *appendErrorToken(char *s, char *token)
 {
-	char extraText[] = "  Error token: ";
-	size_t sLen;
-	size_t tokenLen;
-	size_t extraTextLen;
-	char *ret;
+        char extraText[] = " Error token: ";
+        size_t sLen;
+        size_t tokenLen;
+        size_t extraTextLen;
+        char *ret;
 
-	if ((!token)) {
-		return NULL;
-	}
-	sLen = strlen(s);
-	tokenLen = strlen(token);
-	extraTextLen = strlen(extraText);
-	ret = calloc(1, sizeof(char)*(sLen + tokenLen + extraTextLen + 1));
+        if ((!token)) {
+                return NULL;
+        }
+        sLen = strlen(s);
+        tokenLen = strlen(token);
+        extraTextLen = strlen(extraText);
+        ret = calloc(1, sizeof(char)*(sLen + tokenLen + extraTextLen + 1));
 
-	strcat(ret, s);
-	strcat(ret, extraText);
-	strcat(ret, token);
-	return ret;
+        strcat(ret, s);
+        strcat(ret, extraText);
+        strcat(ret, token);
+        return ret;
 
 }
 
 yyerror(char *s) {
 
-	struct Error *e = NULL;
-	char *errMsg = NULL;
+        struct Error *e = NULL;
+        char *errMsg = NULL;
 
-	errMsg = appendErrorToken(s, yytext);
-	if (errMsg) e = recordError(errMsg, yylineno, colno);
-	else e = recordError(s, yylineno, colno);
+        errMsg = appendErrorToken(s, yytext);
+        if (errMsg) e = recordError(errMsg, yylineno, colno);
+        else e = recordError(s, yylineno, colno);
 
 #if DEBUG
-	printf("New error on line %d\n", yylineno);
+        printf("New error on line %d\n", yylineno);
 #endif
-	printError(e);
-	if (errMsg) free(errMsg);
+        printError(e);
+        if (errMsg) free(errMsg);
 }
