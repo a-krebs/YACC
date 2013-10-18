@@ -34,7 +34,7 @@ void printProgramListing(FILE *in, char *fileName)
 	 */
 	out = fopen(fileName, "w");
 	if (!out) {
-		err(2, "Failed to open output file.  No listing generated.");
+		err(2, "Failed to open output file. No listing generated.\n");
 		return;
 	}
 
@@ -55,7 +55,7 @@ void printProgramListing(FILE *in, char *fileName)
 
 	buf = malloc(sizeof(char)*bufSize);
 	if (!buf) {
-		err(1, "Failed to allocate memory to write program listing.");
+		err(1, "Failed to allocate memory to write program listing.\n");
 		return;
 	}
 
@@ -72,7 +72,7 @@ void printProgramListing(FILE *in, char *fileName)
 				buf = realloc(buf, sizeof(char)*bufSize);
 				if (!buf) {
 					err(1, "Failed to realloc buf, \
-                                                no listing generated");
+                                                no listing generated\n");
 					return;
 				}
 			}
@@ -119,4 +119,32 @@ void printProgramListing(FILE *in, char *fileName)
 	}
 
 	free(buf);
+}
+
+/*
+ * Given an input file name, strip the '.pal' and return
+ * a string with a '.lst' ending.
+ *
+ * Return a pointer to the new filename, be sure to
+ * call free() on it later.
+ * Return NULL if the file name cannot be generated.
+ *
+ */
+char *getListingFileName(char *palFileName)
+{
+	int len = 0;
+	char *listingFileName = NULL;
+
+	len = strlen(palFileName) + 1;		// +1 for null termination
+	if (len < 5) {
+		return NULL;
+	}
+
+	listingFileName = calloc(len, sizeof(char));
+
+	strncpy(listingFileName, palFileName, len);
+	strncpy(listingFileName + len - 5, ".lst", 4);
+	printf("%s\n", listingFileName);
+	
+	return listingFileName;
 }

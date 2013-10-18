@@ -73,11 +73,30 @@ test_printProgramListing()
 	
 }
 
+char *test_getListingFileName() {
+	char *pal1 = "filename.pal";
+	char *lst1 = "filename.lst";
+	char *pal2 = "filename.pascal";
+	char *lst2 = "filename.pa.lst";
+	char *pal3 = "a";
+
+	mu_assert("Listing file name not generated as expected.",
+	    strcmp(getListingFileName(pal1), lst1) == 0);
+
+	mu_assert("Listing file name not generated as expected.",
+	    strcmp(getListingFileName(pal2), lst2) == 0);
+
+	mu_assert("Listing file name not NULL as expected.",
+	    getListingFileName(pal3) == NULL);
+
+	return NULL;
+}
+
 char *
 test_all_ProgList()
 {
 	mu_run_test(test_printProgramListing);
-	tests_run -= 2;
+	mu_run_test(test_getListingFileName);
 	return NULL;
 
 }

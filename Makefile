@@ -95,7 +95,7 @@ $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
 	$(BISONFLEXCOMPILE)
 
 $(BIN)/lextest.o: $(SRC)/main.c $(SRC)/tokenTestParser.tab.c
-	$(COMPILE)
+	$(BISONFLEXCOMPILE)
 
 $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
 	$(COMPILE)

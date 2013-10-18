@@ -17,6 +17,7 @@ extern struct ErrorLL *errors;
 
 void printProgramListing(FILE *, char *);
 int getNextErrLineno(struct ErrorLL **);
+char *getListingFileName(char*);
 
 
 

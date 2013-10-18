@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
+#include "ProgList.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -8,85 +10,111 @@
 	#include "parser.tab.h"
 #endif
 
+#define FILE_MODE "r"
+
 extern FILE *yyin;
 
-char commandOptions[4] = "Sna"; /* TODO: put in header file */
+struct args {
+	/* Leave Asc code in file .asc instead of removing it */
+	int S;
+	/* Do not produce a program listing. Default is to produce one. */
+	int n;
+	/* 
+	 * Do not generate run-time script-bounds checking.
+	 * Default is to do the checking.
+	 */
+	int a;
+	/* Input file name */
+	char *inFile;
+	/* Listing file name */
+	char *listingFile;
+};
 
+/*
+ * Use getopt to parse and validate the given program arguments.
+ *
+ * Return non-zero on error.
+ */
+int parseInputs(int argc, char **argv, struct args* argStruct)
+{
+	/* expected arguments */
+	int S = 0;
+	int n = 0;
+	int a = 0;
+	char *file = NULL;
+	char *listing = NULL;
 
-FILE * openFile(char *path, char *mode) {
-	FILE *file;
+	/* vars needed for parsing */
+	int index;
+	int option;
 
-	if (path == NULL) {
-		/*TODO: create error*/
-		printf("error, incorrect path\n");
-	}
-	
-	file = fopen(path, mode);
-	if (file == NULL) {
-		/*TODO: create error*/
-		printf("error, could not open file to read\n");
-	}	
+	/* reset opterr */
+	opterr = 0;
 
-	return file;
-}
-
-
-void parseCommandOptions( char *options ) {
-	int i, j;
-	int flag = 0;
-
-	/* start at 1 b/c 0 is the flag symbol */
-	for ( i = 1; i < strlen(options); i++) {
-				
-		for ( j = 0; j < strlen(commandOptions); j++) {
-			
-			if ( options[i] == commandOptions[j] ) {
-				/*TODO: something needs to happen here to respond to flag*/
-				flag = 1;
-				break;
+	/* check options */
+	while ((option = getopt(argc, argv, "Sna")) != -1) {
+		switch (option) {
+		case 'S':
+			S = 1;
+			break;
+		case 'n':
+			n = 1;
+			break;
+		case 'a':
+			a = 1;
+			break;
+		case '?':
+			if (isprint(optopt)) {
+				fprintf(
+				    stderr,
+				    "Unknown option `-%c'.\n",
+				    optopt);
+			} else {
+				fprintf(
+				    stderr,
+				    "Unknown option character `\\x%x'.\n",
+				    optopt);
 			}
-		}
-
-		if ( flag != 0 ) {
-			/*TODO: create error*/
-			printf("error, option '%c' not supported\n", options[i]);
+			/* fall through to default */
+		default:
+			return -1;
 		}
 	}
-}
 
+	/* filename should be next argument */
+	if (optind >= argc) {
+		printf("Missing file name argument.\n");
+		return -1;
+	}
+	file = argv[optind];
+	optind++;
 
-void parseInputs( int argc, char *argv[] ) {
-	int i;
-	int fileFlag = 0;
-
-	if ( argc == 1 ) {
-		/*TODO: create error*/
-		printf("error: no arguments to compilier\n"); 
+	/* complain if there are other arguments */
+	for (index = optind; index < argc; index++) {
+		printf("Non-option argument %s\n", argv[index]);
 	}
 
-	/* start at 1 b/c first element is program */
-	for ( i = 1; i < argc; i++ ) { 
-
-		if ( strncmp(argv[i], "-", 1) == 0 ) {
-			//found a option and must process
-			parseCommandOptions(argv[i]);
-			continue;
-		}
-
-		//doesn't identify as an option:
-		if ( fileFlag == 0) {
-			yyin = openFile(argv[i], "r");
-			fileFlag = 1;
-			continue;
-		} else {
-			/*TODO: create error*/
-			printf("incorrect input options. ");
-			printf("Either more than one input file ");
-			printf("was specified or input options ");
-			printf("inputted.\n");
-
-		}
+	listing = getListingFileName(file);
+	if (listing == NULL) {
+		return -1;
 	}
+
+	/* set values in arg struct */
+	argStruct->S = S;
+	argStruct->n = n;
+	argStruct->a = a;
+	argStruct->inFile = file;
+	argStruct->listingFile = listing;
+
+#if DEBUG
+	printf("S: %d\n", S);
+	printf("n: %d\n", n);
+	printf("a: %d\n", a);
+	printf("inFile: %s\n", file);
+	printf("listingFile: %s\n", listing);
+#endif
+
+	return 0;
 }
 
 
@@ -95,11 +123,45 @@ void parseInputs( int argc, char *argv[] ) {
  */
 int main( int argc, char *argv[] )
 {
-	parseInputs(argc, argv);
+	struct args givenArgs;
+	int argsParsedSuccess = 0;
+	FILE *fp = NULL;
 
-	/* test yyparse() for correct call */
+	memset(&givenArgs, 0, sizeof(struct args));
+
+	/* parse the given arguments */
+	parseInputs(argc, argv, &givenArgs);
+
+	/* check that parsing was success */
+	if (argsParsedSuccess != 0) {
+		return EXIT_FAILURE;
+	}
+
+	/* TODO open file and pass pointer to bison/flex */
+	fp = fopen(givenArgs.inFile, FILE_MODE);
+	if (fp == NULL) {
+		return EXIT_FAILURE;
+	}
+	yyin = fp;
+
+	/* TODO test yyparse() for correct call */
+	/* parse file */
 	yyparse();
-	fclose(yyin);
+
+	/* 
+	 * print program listing.
+	 * 0 means the flag is NOT SET, so produce file
+	 */
+	if (givenArgs.n == 0) {
+		printProgramListing(fp, givenArgs.listingFile);
+	}
+
+	/* close file, clean up, and exit */
+	if (fclose(fp) != 0) {
+		return EXIT_FAILURE;
+	}
+	
+	free(givenArgs.listingFile);
 
 	return EXIT_SUCCESS;
 }
