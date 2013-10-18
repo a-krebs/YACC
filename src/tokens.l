@@ -115,7 +115,7 @@ comment.");
 				  return(INT_CONST);
 				}
 
-<INITIAL>"'"((([^'\\])|(\\[tn\\]))*(\n)+(([^'\\])|(\\[tn\\]))*)+"'" {
+<INITIAL>"'"((([^'\\])|(\\['tn\\]))*(\n)+(([^'\\])|(\\['tn\\]))*)+"'" {
 #if DEBUG
 				printf("STRING LITERAL WITH NEWLINE FOUND\n");
 #endif
@@ -129,7 +129,7 @@ comment.");
 				return(STRING_CONST);
 				}
 
-"'"(([^'\\])|(\\[tn\\]))*"'"		{
+"'"(([^'\\])|(\\['tn\\]))*"'"		{
 #if DEBUG
 				  printf("STRING FOUND\n");
 #endif	
