@@ -1,0 +1,60 @@
+{17,19,23,29,30,31,34,35,42,45,51,52,53,54,55}
+{
+	Test various things we had a hard time recovering from.
+	Compilers should be able to recover from all of these without
+	extra statements for resynchronization.
+
+	-type declarations section tests array declarations
+	-type declarations also tests string literals
+	-main program body tests, missing operands, ability to recover from
+	 missing parens without resync statements
+	-last two lines are valid but might trip some people up.
+
+
+
+
+}
+program test();					// error: missing args
+const
+	2 = a;
+	a = 2;
+	a = 2;
+type
+	2 = a;
+	a = integer;
+	a = integer;
+	string = array[0..127] of char;
+	Dog = (poodle,germanShep,littleYappyOne);
+	dog = array[Dog] of integer;
+	interval = 1..100;					// error
+	brokenInterval = array[1.100] of integer;		// error
+	illegalArrayDec = array[1..10,1..10] of integer;	// error
+	legalArrayDec = array[1..10] of array [1..10] of integer;
+
+	name = "Bob";						// error
+	name2 = 'bob';						// error
+var
+	a : boolean;
+	a : array [real] of boolean;
+begin
+
+
+	then begin end;			// error
+
+
+	a := (a ;				// error
+
+	foobar(foo, (bar + zap));
+
+
+
+	a := (  * 2);					// error
+	a := ( 2 * );					// error
+	a := ( or false);				// error
+	a := ( false or );				// error
+	a := not (or r);				// error
+	a := not b or c;
+
+	arr[12][d-12 + 2] := b[sixteen][funcCall(x,y,z['stringindex'])];
+	rec.member[arrayindex * 14 div operand].member := fizbuz;
+end.

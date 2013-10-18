@@ -1,0 +1,70 @@
+{21,25,29,34,38,42,47,51,55,62}
+{
+	Cmput 415 - Team YACC
+	4.pal
+	Testing lexor for the operator between tokens
+	Errors:
+		- line 6
+		- line 10
+		- line 14
+		- line 19
+		- line 23
+		- line 27
+		- line 32
+		- line 36
+		- line 40
+		- line 47
+}
+program thisisgoingtohurt(input, output);
+	var a: real;
+begin
+	a := 6*******6;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6+++++++6;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6-------------------6;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6////////6;	// not an error, a comment
+	a := 2;			
+	a := 2;
+	a := 2;
+
+	a := 3 + -3;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6--++--6;
+	a := 2;
+	a := 2;
+	a := 2;
+
+	a := 3 * -3;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 3 + - 3;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6+-------------------6;
+	a := 2;
+	a := 2;
+	a := 2;
+
+	// the first term can have unary minus, but not the second
+	a := -3 + 2;
+	a := 3 + -2; //error
+	a := -3 - 2;
+
+	a := -3 < -3;
+	a := -3 > -2;
+	a := -2 = -2;
+
+
+end.
