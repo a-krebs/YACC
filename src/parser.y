@@ -74,7 +74,7 @@ type_decl
 : ID_or_err EQUAL type
 ;
 
-type                    
+type
 : structured_type
 | simple_type
 | scalar_type
@@ -88,8 +88,8 @@ simple_type
 | ID_or_err
 ;
 
-scalar_type             
-: L_PAREN scalar_list R_PAREN  
+scalar_type
+: L_PAREN scalar_list R_PAREN
 ;
 
 scalar_list
@@ -97,13 +97,13 @@ scalar_list
 | ID_or_err
 ;
 
-structured_type         
+structured_type
 : ARRAY LS_BRACKET array_type RS_BRACKET OF type
 | ARRAY LS_BRACKET error RS_BRACKET OF type
 | RECORD field_list END
 ;
 
-array_type 
+array_type
 : simple_type
 | expr RANGE expr
 ;
@@ -148,7 +148,7 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-| FUNCTION ID_or_err f_parm_decl COLON simple_type  semicolon_or_error
+| FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
 ;
 
 f_parm_decl
@@ -211,15 +211,14 @@ expr
 | expr LESS simple_expr
 | expr GREATER_OR_EQUAL simple_expr
 | expr GREATER simple_expr
-| error
 ;
 
 simple_expr
 : term
 | PLUS term
 | MINUS term
-| simple_expr PLUS simple_expr
-| simple_expr MINUS simple_expr
+| simple_expr PLUS term
+| simple_expr MINUS term
 | simple_expr OR term
 ;
 
