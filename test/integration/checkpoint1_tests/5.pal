@@ -1,4 +1,18 @@
-{ Program cribbed from:
+{
+  Cmput 415 - Team YACC
+  Tests compiler's ability to perfrom declarations of types, consts, vars,
+  its ability to parse a procdure/function defintions/invocations, its ability 
+  to parse basic flow control statements, and its ability to parse variable
+  attributes/offsets (e.g., array indexing, record propery access, etc.)
+  Errors:
+	- declare a real constant to be equal to an ID on line 24
+	- declare two variables of the same type separated only by commas
+	  in a function definition (a feature supported by pascal but not
+	  by PAL) on line 55
+	- extra square bracket in array index derefrence on line 115 
+
+
+  Program cribbed from:
   http://stackoverflow.com/questions/9079969/a-dijkstras-algorithm-simple-implementation-pascal
   with changes made such that it is PAL-compatible
 }
@@ -6,8 +20,9 @@
 program dijkstraOrSomething(in, out);
 
 const
-    MAXX = 20;
+    MAXX = 08740;
     MAXY = 25;
+    1 = D;
 
 type
     TArr = array [0..MAXY] of array [0..MAXX] of integer;
@@ -96,9 +111,9 @@ begin
     min := MaxInt;
     mini := 0;
     while i < a.len do
-        if a.arr[i].G < min then
+        if a.arr[i].G < min and yourMom < myMom or LBJ23 > KB24 then
         begin
-            min := a.arr[i].G;
+            min := a.arr[i]].G;
  mini := i;
         end;
 

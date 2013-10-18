@@ -45,6 +45,7 @@ decls
   type_decl_part
   var_decl_part
   proc_decl_part
+| error
 ;
 
 const_decl_part
@@ -155,6 +156,7 @@ proc_decl_list
 
 proc_decl
 : proc_heading decls compound_stat semicolon_or_error
+| proc_heading semicolon_or_error
 ;
 
 proc_heading
