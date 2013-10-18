@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <unistd.h>
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -10,7 +11,14 @@
 
 extern FILE *yyin;
 
-char commandOptions[4] = "Sna"; /* TODO: put in header file */
+/*char commandOptions[4] = "Sna";  TODO: put in header file */
+
+int programlist = 1;
+
+int boundscheck = 1;
+
+char inputfile[100];
+char outputfile[100];
 
 
 FILE * openFile(char *path, char *mode) {
@@ -30,64 +38,110 @@ FILE * openFile(char *path, char *mode) {
 	return file;
 }
 
-
-void parseCommandOptions( char *options ) {
-	int i, j;
-	int flag = 0;
-
-	/* start at 1 b/c 0 is the flag symbol */
-	for ( i = 1; i < strlen(options); i++) {
-				
-		for ( j = 0; j < strlen(commandOptions); j++) {
-			
-			if ( options[i] == commandOptions[j] ) {
-				/*TODO: something needs to happen here to respond to flag*/
-				flag = 1;
-				break;
-			}
-		}
-
-		if ( flag != 0 ) {
-			/*TODO: create error*/
-			printf("error, option '%c' not supported\n", options[i]);
-		}
-	}
-}
-
-
 void parseInputs( int argc, char *argv[] ) {
 	int i;
 	int fileFlag = 0;
 
 	if ( argc == 1 ) {
 		/*TODO: create error*/
-		printf("error: no arguments to compilier\n"); 
+		printf("error: no arguments to compilier\n");
+        exit(1);
 	}
+    
+    int c;
+    int digit_optind = 0;
+    int aopt = 0, bopt = 0;
+    char cmd[100];
+    sprintf(cmd, "nroff -man ./man/pal.man");
+    memset(inputfile, 0, 100);
+    memset(outputfile, 0, 100);
+	
+    while ( (c = getopt(argc, argv, ":Snacho:")) != -1) {
+        switch (c) {
+        case 'S':
+//            printf("PH leave ASC file intact\n");
+            break;
+        case 'c':
+//            printf("PH generate ASC file without invoking ASC\n");
+            break;
+        case 'n':
+            programlist = 0;
+//          printf("do not produce program listing");
+            break;
+        case 'a':
+            boundscheck = 0;
+//            printf("PH do not perform runtime run-time array");
+//            printf("subscript bounds checking\n");
+            break;
+        case 'h':
+    		system(cmd);
+//          printf("show man page");
+            exit(0);
+            break;
+//        case 'o':
+//            printf ("option o with value '%s'\n", optarg);
+//            strcpy(outputfile, optarg);
+//            yyout = openFile(outputfile, "w");
+//            break;
+        case ':':
+            strcpy(inputfile, optarg);
+            yyin = openFile(inputfile, "r");
+            break;
+        default:
+//            system(cmd);
+//            exit(1);
+            break;
+        }
+    }
 
-	/* start at 1 b/c first element is program */
-	for ( i = 1; i < argc; i++ ) { 
+    if (optind < argc) {
 
-		if ( strncmp(argv[i], "-", 1) == 0 ) {
-			//found a option and must process
-			parseCommandOptions(argv[i]);
-			continue;
-		}
+    }
 
-		//doesn't identify as an option:
-		if ( fileFlag == 0) {
-			yyin = openFile(argv[i], "r");
-			fileFlag = 1;
-			continue;
-		} else {
-			/*TODO: create error*/
-			printf("incorrect input options. ");
-			printf("Either more than one input file ");
-			printf("was specified or input options ");
-			printf("inputted.\n");
+//    int i;
+//
+//    int inputflag = 0;
+//    for (i = 0; i < argc; i++)
+//    {
+//        if (strncmp(argv[i], "-i", 2) == 0)
+//        {   
+//            if (strncmp(argv[i+1], "-", 1) == 0)
+//                {}
+//            else
+//                 inputflag = 1;
+//        }
+//    }
+//    if (inputflag == 0)
+//    {
+//        printf("no input file specified\n");
+//        exit(1);
+//    }
 
-		}
-	}
+//    int outputflag = 0;
+//    for (i = 0; i < argc; i++)
+//    {
+//        if (strncmp(argv[i], "-o", 2) == 0)
+//       {
+//            if ((strncmp(argv[i+1], "-", 1) == 0))
+//                {}
+//           else
+//                outputflag = 1;
+//        }
+//    }
+//    if (outputflag == 0)
+//    {
+//        printf("no output file specified\n");
+//        exit(1);
+//    }
+
+
+
+
+
+
 }
+
+
 
 
 /*
@@ -99,6 +153,12 @@ int main( int argc, char *argv[] )
 
 	/* test yyparse() for correct call */
 	yyparse();
+
+//    if (programlist != 0)
+//    {
+//        printProgramListing(yyin);
+//    }
+
 	fclose(yyin);
 
 	return EXIT_SUCCESS;
