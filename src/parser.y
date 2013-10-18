@@ -101,17 +101,22 @@ scalar_list
 ;
 
 structured_type
-: ARRAY LS_BRACKET array_type RS_BRACKET OF type
-| ARRAY LS_BRACKET error RS_BRACKET OF type
+: ARRAY array_type_decl OF type
 | RECORD field_list END
 ;
 
-
+array_type_decl
+: LS_BRACKET array_type RS_BRACKET
+| LS_BRACKET error RS_BRACKET				{yyerrok;}
+| error RS_BRACKET					{yyerrok;}
+| LS_BRACKET error					{yyerrok;}
+;
 
 array_type
 : simple_type
-| expr RANGE expr
+| expr RANGE expr 
 ;
+
 
 field_list
 : field
