@@ -240,9 +240,14 @@ term
 factor
 : var
 | unsigned_const
-| L_PAREN expr R_PAREN
+| L_PAREN expr R_PAREN_or_error
 | func_invok
 | NOT factor
+;
+
+R_PAREN_or_error
+: R_PAREN
+| error
 ;
 
 unsigned_const
