@@ -69,12 +69,13 @@ getNextError(struct ErrorLL ** eLL)
  * Frees all memory associated with the linked list ErrorLL.
  */
 void
-freeErrorList(struct ErrorLL *eLL)
+freeErrorList(struct ErrorLL *ell)
 {
-	/* 
-	 * TODO: complete implementation of this function.
-	 * Stub -- will be called after we write the errors
-	 * to the program listing and stderr.  For now, we leak
-	 * memory. :)
-	 */
+	struct ErrorLL *copy;
+	while (ell) {
+		copy = ell;
+		ell = ell->next;
+		freeError(copy->error);
+		free(copy);
+	}
 }

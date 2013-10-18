@@ -70,9 +70,27 @@ test_recordError()
 }
 
 char *
+test_freeError()
+{	
+
+	char errorMsg[] = "This is only a test.";
+
+	int lineno = 1029, colno = 9899;
+	struct Error *ret = NULL;
+
+	errors = NULL;
+	ret = recordError(errorMsg, lineno, colno);
+	mu_assert("Call to freeError does not cause segfault",
+		  1);
+
+	return NULL;
+}
+
+char *
 test_all_Error() 
 {
 	mu_run_test(test_createErrorString);
 	mu_run_test(test_recordError);
+	mu_run_test(test_freeError);
 	return NULL;
 }
