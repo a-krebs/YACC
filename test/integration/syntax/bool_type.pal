@@ -1,0 +1,7 @@
+{}
+program test(input, output);
+var
+	a : boolean;
+	a : array [real] of boolean;
+begin
+end.
