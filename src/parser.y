@@ -148,7 +148,7 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-| FUNCTION ID_or_err f_parm_decl COLON ID_or_err semicolon_or_error
+| FUNCTION ID_or_err f_parm_decl COLON simple_type  semicolon_or_error
 ;
 
 f_parm_decl
@@ -162,8 +162,8 @@ f_parm_list
 ;
 
 f_parm
-: ID_or_err COLON ID_or_err
-| VAR ID_or_err COLON ID_or_err
+: ID_or_err COLON simple_type
+| VAR ID_or_err COLON simple_type
 ;
 
 compound_stat
@@ -218,8 +218,8 @@ simple_expr
 : term
 | PLUS term
 | MINUS term
-| simple_expr PLUS term
-| simple_expr MINUS term
+| simple_expr PLUS simple_expr
+| simple_expr MINUS simple_expr
 | simple_expr OR term
 ;
 
@@ -230,6 +230,7 @@ term
 | term DIV factor
 | term MOD factor
 | term AND factor
+| error
 ;
 
 factor
