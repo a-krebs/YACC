@@ -137,14 +137,12 @@ int main( int argc, char *argv[] )
 		return EXIT_FAILURE;
 	}
 
-	/* TODO open file and pass pointer to bison/flex */
 	fp = fopen(givenArgs.inFile, FILE_MODE);
 	if (fp == NULL) {
 		return EXIT_FAILURE;
 	}
 	yyin = fp;
 
-	/* TODO test yyparse() for correct call */
 	/* parse file */
 	yyparse();
 
@@ -153,6 +151,11 @@ int main( int argc, char *argv[] )
 	 * 0 means the flag is NOT SET, so produce file
 	 */
 	if (givenArgs.n == 0) {
+		/*
+		 * First set fp to point to beginning of file before passing
+		 * it to printProgramListing.
+		 */
+		fseek(fp, 0L, SEEK_SET);
 		printProgramListing(fp, givenArgs.listingFile);
 	}
 
