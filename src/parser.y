@@ -74,6 +74,7 @@ type_decl_list
 
 type_decl
 : ID_or_err EQUAL type
+| error
 ;
 
 type
