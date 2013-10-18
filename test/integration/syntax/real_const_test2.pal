@@ -1,5 +1,5 @@
-{}
-// assignment int_const & real number test
+{14,16,17,21}
+// assignment int_const & real number test. Should fail
 
 program operatorTest(in,out);
 var
