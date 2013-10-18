@@ -119,6 +119,9 @@ void printProgramListing(FILE *in, char *fileName)
 	}
 
 	free(buf);
+	/* we are done with the ErrorLL and can finally free the memory used */
+	freeErrorList(errors);
+
 }
 
 /*
