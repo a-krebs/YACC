@@ -34,7 +34,7 @@ void printProgramListing(FILE *in, char *fileName)
 	 */
 	out = fopen(fileName, "w");
 	if (!out) {
-		err(2, "Failed to open output file.  No listing generated.");
+		err(2, "Failed to open output file. No listing generated.\n");
 		return;
 	}
 
@@ -55,7 +55,7 @@ void printProgramListing(FILE *in, char *fileName)
 
 	buf = malloc(sizeof(char)*bufSize);
 	if (!buf) {
-		err(1, "Failed to allocate memory to write program listing.");
+		err(1, "Failed to allocate memory to write program listing.\n");
 		return;
 	}
 
@@ -72,7 +72,7 @@ void printProgramListing(FILE *in, char *fileName)
 				buf = realloc(buf, sizeof(char)*bufSize);
 				if (!buf) {
 					err(1, "Failed to realloc buf, \
-                                                no listing generated");
+                                                no listing generated\n");
 					return;
 				}
 			}
