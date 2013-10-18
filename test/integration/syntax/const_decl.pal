@@ -1,0 +1,70 @@
+{7,18,30,36,43,49,55,61,68}
+
+program constStuff(input, output);
+const
+	a = 1;
+	truth = true < false;
+	name = "Bob";						// error
+	name2 = 'bob';
+	q = r or False;
+	q = 12321452454325E123432143214;
+	a = 1;
+	a = 1;
+	a = 1;
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a 2;							// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a = a = a;	// should work
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	7 = a;							// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a : integer						// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+
+	a := foo;						// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a b c = 2;						// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a, b, c = 1;						// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a,b,c : integer;					// error
+
+	a = 1;
+	a = 1;
+	a = 1;
+
+	a = 1							// error
+	a = 1;
+begin
+end.
