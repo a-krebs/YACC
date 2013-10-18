@@ -31,10 +31,11 @@ file
 
 program
 : program_head decls compound_stat PERIOD
+| program_head error PERIOD
 ;
 
 program_head
-: PROGRAM ID_or_err L_PAREN ID_or_err COMMA ID_or_err R_PAREN semicolon_or_error
+: PROGRAM ID_or_err L_PAREN ID_or_err comma_or_error ID_or_err R_PAREN semicolon_or_error
 ;
 
 
@@ -93,7 +94,7 @@ scalar_type
 ;
 
 scalar_list
-: scalar_list COMMA ID_or_err
+: scalar_list comma_or_error ID_or_err
 | ID_or_err
 ;
 
@@ -129,7 +130,7 @@ var_decl_list
 
 var_decl
 : ID_or_err COLON type
-| ID_or_err COMMA var_decl
+| ID_or_err comma_or_error var_decl
 ;
 
 proc_decl_part
@@ -200,7 +201,7 @@ var
 
 subscripted_var
 : var LS_BRACKET expr
-| subscripted_var COMMA expr
+| subscripted_var comma_or_error expr
 ;
 
 expr
@@ -260,7 +261,7 @@ func_invok
 
 plist_finvok
 : ID_or_err L_PAREN parm
-| plist_finvok COMMA parm
+| plist_finvok comma_or_error parm
 ;
 
 parm
@@ -283,8 +284,13 @@ matched_stat
 | EXIT
 ;
 
+comma_or_error
+: error COMMA		{yyerrok;}
+| COMMA
+;
+
 semicolon_or_error
-: error SEMICOLON {yyerrok;}
+: error SEMICOLON 	{yyerrok;}
 | SEMICOLON
 ;
 
@@ -296,7 +302,7 @@ ID_or_err
 
 %%
 
-char *appendErrorToken(char *s, char *token)
+char *appENDErrorToken(char *s, char *token)
 {
         char extraText[] = " Error token: ";
         size_t sLen;
@@ -324,7 +330,7 @@ yyerror(char *s) {
         struct Error *e = NULL;
         char *errMsg = NULL;
 
-        errMsg = appendErrorToken(s, yytext);
+        errMsg = appENDErrorToken(s, yytext);
         if (errMsg) e = recordError(errMsg, yylineno, colno);
         else e = recordError(s, yylineno, colno);
 
