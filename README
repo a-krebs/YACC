@@ -1,0 +1,48 @@
+YACC - Yet Another CMPUT 415 Compiler
+====
+
+CMPUT 415 Compiler Project
+
+Installation
+----
+
+To build, use `make`. The `pal` executable with be located at `bin/pal`.
+
+To build the unit testing executable, use `make test`, which will produce
+the test executable at `bin/test`.
+To build the lexical tester, use `make lextest`, which will build
+`bin/lextest`. This binary prints the tokens, in the order the lexer reads them,
+to standard output.
+
+There is also a debug build, `make debug`, which enables VERY verbose debugging
+ouput.
+
+To run the entire suite of tests, use `make integration_tests` and
+`make unit_tests`.
+
+Usage
+----
+
+Please refer to the man page for usage. Try `nroff -man pal.man | less`.
+
+Files
+----
+
+Source files are in the `src/` directory. Building the application places
+some object files in `bin/` along with the final binaries.
+
+The makefile is located in the root directory (the same directory as this
+readme file). The default rule builds the pal compiler.
+
+Tests for Checkpoint 1 are numbered 0 through 9 with file extension '.pal'
+and are located in the root directory.
+
+Documentation is in `docs/` as a `documentation.PDF`.
+
+The man page is located in the root directory with filename `pal.man`.
+
+Further unit tests are located in `test/unit/' and more pal test cases are
+int `test/integration/syntax/`. There are also '.tokens' files in that directory
+which contain test output for the lex tester (see Installation for how to build
+this).
+
