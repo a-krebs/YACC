@@ -106,10 +106,6 @@ structured_type
 array_type 
 : simple_type
 | expr RANGE expr
-| expr error expr 	{ 
-			  yyerror("Error in array declaration.  Error \
-			  oken be unhelpful.");
-			}
 ;
 
 field_list
