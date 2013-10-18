@@ -1,3 +1,4 @@
+{28,34,37}
 program testLex1(in, out);
 
 var
