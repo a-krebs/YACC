@@ -1,0 +1,165 @@
+{22,53,156}
+{
+	Cmput 415 - Team YACC
+	Tests general ability to properly parse function definitions, 
+	array defintions, loops and other flow control statements.
+
+	Errors:	- attempt to declare array bounds using anonymous scalar type
+		  on line 22
+		- define a procedure as having a return type, line 53
+		- extra parenthesis on line 156
+
+
+	Code skeleton cribbed from:
+	http://stackoverflow.com/questions/19057986/why-does-procedure-affect-on-a-loop
+
+}
+program hello(in, out);
+type
+	a = array[1..019283019283019283019283019283019283019283019283] of array[1..019283019283019283019283019283019283019283019283] of array[0..1E10] of poop;
+	no = (means, no, pervert);
+	a = array[no] of array[means] of array[no] of empowerDaYouth;
+	b = array[thatLastOneWasOkay] of array[(but, this, one, inst)] of integer;
+
+var
+n, i :integer;
+a, b, h, x, res :real;
+
+
+function funcx1(y :real; a : real) : real;
+  begin
+    funcx1:= (y*y*y*y) * (1 + sin(y) * sin(y));
+  end;
+
+
+function funcx1(y :real) : real;
+  begin
+    funcx1:= (y*y*y*y) * (1 + sin(y) * sin(y));
+  end;
+
+
+function funcx2(y :real) : real;
+  begin
+    funcx2:= sin(y/2) / cos(y/2);
+  end;
+
+
+function funcx3(y :real) :real;
+  begin
+    funcx3:= sin(y) * cos(y);
+  end;
+
+procedure Line(sideSymbolLeft: kar; usualSymbol: kar;
+               divideSymbol: kar; sideSymbolRight: kar) : integer;
+  begin
+    write(kar(sideSymbolLeft));
+    while i <> 75 do
+      begin
+        write(kar(usualSymbol));
+        if ( (i mod 19) = 0 ) then
+          write(kar(divideSymbol));
+	if ((((nothing <> 2)))) then
+	  doNothingAtAll(hello, you, big, big);
+      end;
+    writeln(kar(sideSymbolRight));
+  end;
+
+procedure Line(sideSymbolLeft: kar; usualSymbol: kar;
+               divideSymbol: kar; sideSymbolRight: kar);
+  begin
+    write(kar(sideSymbolLeft));
+    while i <> 75 do
+      begin
+        write(kar(usualSymbol));
+        if ( (i mod 19) = 0 ) then
+          write(kar(divideSymbol));
+	if ((((nothing <> 2)))) then
+	  doNothingAtAll(hello, you, big, big);
+      end;
+    writeln(kar(sideSymbolRight));
+  end;
+
+
+begin
+ { clrscr();
+  a:= 0;
+  b:= 2 * pi;
+  n:= 7;
+  h:= ( b - a ) / n;
+
+
+  Line(kar(201), kar(205), kar(205), kar(187));
+  writeln(kar(186),'Functions of one variable',kar(186));
+  Line(kar(204), kar(205), kar(203), kar(185));
+  writeln(kar(186),'    Argument X    ',kar(186),'  x^4*(1+sin^2(x)) ',
+          kar(186),'      tg(x/2)      ',kar(186),'   sin(x)*cos(x)  ',kar(186));
+
+  while I < n do { calculating all Xs (arguments) }
+    begin
+      x:= a + (i * h);
+      write('   ');
+      write(x,8,3);
+
+      res:= funcx1(x);
+      write('              ');
+      write(res,8,3);
+
+      res:= funcx2(x);
+      write('   ');
+      write(res,8,3);
+
+      res:= funcx3(x);
+      write('         ');
+      writeln(res,8,3);
+
+      //(* HERE IS THAT PROCEDURE *)
+      //(* When I put it here, the loop becomes endless *)
+      //(* and I have to close the console (and lose all unsaved data) *)
+      Line(kar(204), kar(205), kar(203), kar(185));
+
+    end;
+
+  clrscr();
+  a:= 0;
+  b:= 2 * pi;
+  n:= 7;
+  h:= ( b - a ) / n;
+
+
+  Line(kar(201), kar(205), kar(205), kar(187));
+  writeln(kar(186),'Functions of one variable',kar(186));
+  Line(kar(204), kar(205), kar(203), kar(185));
+  writeln(kar(186),'    Argument X    ',kar(186),'  x^4*(1+sin^2(x)) ',
+          kar(186),'      tg(x/2)      ',kar(186),'   sin(x)*cos(x)  ',kar(186));
+
+  while I < n do { calculating all Xs (arguments) }
+    begin
+      x:= a + (i * h);
+      write('   ');
+      write(x,8,3);
+
+      res:= funcx1(x);
+      write('              ');
+      write(res,8,3);
+
+      res:= funcx2(x);
+      write('   ');
+      write(res,8,3);
+
+      res:= funcx3(x);
+      write('         ');
+      writeln(res,8,3);
+
+      //(* HERE IS THAT PROCEDURE *)
+      //(* When I put it here, the loop becomes endless *)
+      //(* and I have to close the console (and lose all unsaved data) *)
+      Line((kar(204), kar(205), kar(203), kar(185));
+
+    end;
+
+
+  readln();
+
+
+  readln();
+end.

@@ -1,0 +1,69 @@
+1	|:	{37, 43, 45}
+2	|:	{
+3	|:		Cmput 415 - Team YACC
+4	|:		1.pal
+5	|:		Testing lexor for valid ids, comments, and string handling
+6	|:		Errors:
+7	|:			- unmatches comment brace, line 37
+8	|:			- multiline string, line 43
+9	|:			- EOF inside a block comment, line 45
+10	|:	}
+11	|:	program testLex1(in, out);
+12	|:	
+13	|:	var
+14	|:		{ We first insure that IDs can be of an acceptable format }
+15	|:		someVar : integer;
+16	|:		s0m3VVVar : char;
+17	|:		s33909lkja98328uKJDF : integer;
+18	|:		X7f2c9XxXZzZ : KDkdKDkd91KD91KD;
+19	|:		myStr : String;
+20	|:	begin
+21	|:		myStr := 'This is a perfectly valid string.';
+22	|:		myStr := 'As is this!';
+23	|:		myStr := 'If \' we \' escape \' we\'re okay';
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 23, col 11)
+Error	|:	Error: syntax error, unexpected UNREC Error token: ' (line 23, col 11)
+Error	|:	Error: Unrecognized token(s) Error token: \ (line 23, col 15)
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 23, col 16)
+Error	|:	Error: Unrecognized token(s) Error token: \ (line 23, col 21)
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 23, col 22)
+Error	|:	Error: Unrecognized token(s) Error token: \ (line 23, col 31)
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 23, col 32)
+Error	|:	Error: Unrecognized token(s) Error token: \ (line 23, col 36)
+24	|:		myStr := 'We can even do a bunch of \n this\t\n\t\n;aldksfja;ldskjf';
+25	|:		myStr := 'We can put almost @#$%^&*( whatever (">?{>"?"{ we want';
+26	|:		myStr := 'INS!DE 4 57|2!|\|G 8==========D';
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 26, col 11)
+Error	|:	Error: syntax error, unexpected UNREC Error token: ' (line 26, col 11)
+Error	|:	Error: Unrecognized token(s) Error token: ! (line 26, col 15)
+Error	|:	Error: Unrecognized token(s) Error token: | (line 26, col 23)
+Error	|:	Error: Unrecognized token(s) Error token: ! (line 26, col 25)
+Error	|:	Error: Unrecognized token(s) Error token: | (line 26, col 26)
+Error	|:	Error: Unrecognized token(s) Error token: \ (line 26, col 27)
+Error	|:	Error: Unrecognized token(s) Error token: | (line 26, col 28)
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 26, col 43)
+27	|:	
+28	|:		{ C0MM3NT5 |2 n347 o|AT \/\/4Y 2+_)+__)*)((*%$#^%#%^&*()P{:">?>ML:K}
+29	|:		{ Da remix: $@#%$#^$|":>:<XC>ZSAsdsfdSDWSERGF@$#@#@#TYUHGUYGYU}
+30	|:		{
+31	|:		{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+32	|:		{{{{{{{{{{{{{{{{THIS IS ALL ONE VALID COMMENT{{{{{{{{{{{{{{{{{{{
+33	|:		{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+34	|:		{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{
+35	|:		{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{{THAT ENDS HERE --->}
+36	|:	
+37	|:		} // Error: unmatches comment brace
+Error	|:	Error: Closing comment brace '}' found without matching '{' (line 37, col 3)
+38	|:	
+39	|:		myStr := 'Strings	can	have	tabs';
+40	|:		myStr := 'But we can\'t
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 40, col 11)
+Error	|:	Error: syntax error, unexpected UNREC Error token: ' (line 40, col 11)
+Error	|:	Error: Unrecognized token(s) Error token: \ (line 40, col 22)
+41	|:		have
+42	|:		multiline
+43	|:		string :('; 	//Error: multiline string
+Error	|:	Error: Multiline string literal detected. (line 43, col 23)
+44	|:	
+45	|:	end.	{ As the last error, we present to you an EOF inside a block comment
+46	|:	Error	|:	Error: EOF encountered inside block comment. Error token:  (line 46, col 75)

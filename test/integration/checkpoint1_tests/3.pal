@@ -1,0 +1,32 @@
+{18, 23, 28}
+{
+	Cmput 415 - Team YACC
+	3.pal
+	Testing lexor to see if compiler recongizes comparison operators
+		as one or two tokens when seperated by space, comment, tab.
+		We give correct input for 3 lines after each error, this allows
+		enought correct tokens to recover in time to catch each subsequent error.
+	Errors:
+		- space between = > in line 18
+		- comment between = > in line 23	
+		- tab between = > in line 28	
+}
+
+
+program amTheAwesomenessProgram(input, output);
+begin
+	a := b = > c;
+	a := b + b;
+	a := b + b;
+	a := b + b;
+
+	a := b ={hahahahahahahahahyab....s}> c;
+	a := b + b;
+	a := b + b;
+	a := b + b;	
+
+	a := b =	> c;	
+	a := b + b;
+	a := b + b;
+	a := b + b;
+end.

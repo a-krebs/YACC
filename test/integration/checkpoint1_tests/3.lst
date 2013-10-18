@@ -1,0 +1,35 @@
+1	|:	{18, 23, 28}
+2	|:	{
+3	|:		Cmput 415 - Team YACC
+4	|:		3.pal
+5	|:		Testing lexor to see if compiler recongizes comparison operators
+6	|:			as one or two tokens when seperated by space, comment, tab.
+7	|:			We give correct input for 3 lines after each error, this allows
+8	|:			enought correct tokens to recover in time to catch each subsequent error.
+9	|:		Errors:
+10	|:			- space between = > in line 18
+11	|:			- comment between = > in line 23	
+12	|:			- tab between = > in line 28	
+13	|:	}
+14	|:	
+15	|:	
+16	|:	program amTheAwesomenessProgram(input, output);
+17	|:	begin
+18	|:		a := b = > c;
+Error	|:	Error: syntax error, unexpected GREATER Error token: > (line 18, col 11)
+19	|:		a := b + b;
+20	|:		a := b + b;
+21	|:		a := b + b;
+22	|:	
+23	|:		a := b ={hahahahahahahahahyab....s}> c;
+Error	|:	Error: syntax error, unexpected GREATER Error token: > (line 23, col 37)
+24	|:		a := b + b;
+25	|:		a := b + b;
+26	|:		a := b + b;	
+27	|:	
+28	|:		a := b =	> c;	
+Error	|:	Error: syntax error, unexpected GREATER Error token: > (line 28, col 11)
+29	|:		a := b + b;
+30	|:		a := b + b;
+31	|:		a := b + b;
+32	|:	end.
