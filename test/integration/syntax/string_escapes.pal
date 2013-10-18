@@ -1,0 +1,9 @@
+{4,7}
+program test(input,output);
+begin
+	str := 'blah blah\ blah';
+	str := 'blah \t blah blah';
+	str := 'blah blah blah \n';
+	str := 'blah blah blah \a';
+	str := 'blah blah \\ blah';
+end.
