@@ -15,7 +15,7 @@
 #include "ErrorLL.h"
 
 
-int nErrors = 0;
+static int nErrors = 0;
 
 
 /* 
@@ -28,8 +28,11 @@ struct Error *recordError(const char *s, int lineno, int colno)
 	struct Error * newError = NULL;
 	size_t len = strlen(s);
 	
-	/* Update number of error which have appeared during compilation  */
-	nErrors++;
+	/* 
+	 * Update number of error which have appeared during compilation  
+	 * We will not try to report more errors than a given maximum.
+	 */
+	if (nErrors < MAXERRORS) nErrors++;
 
 	/* Construct new error given function args */
 	newError = calloc(1, sizeof(struct Error));
@@ -52,9 +55,10 @@ struct Error *recordError(const char *s, int lineno, int colno)
 	strncpy(newError->msg, s, len);
 
 	/* Append to linked list of errors appearing during compilation */
-	appendError(&errors, newError);
-
-	return newError;
+	if (nErrors < MAXERRORS) {
+		appendError(&errors, newError);
+		return newError;
+	} else return NULL;
 }
 
 
@@ -82,6 +86,7 @@ void createErrorString(char **buf, struct Error *e)
 
 void printError(struct Error *e)
 {
+	if (!e) return;
 	fprintf(stdout, "%d Error: %s (%d, %d)\n", 
 		e->lineno, e->msg, e->lineno, e->colno);
 }

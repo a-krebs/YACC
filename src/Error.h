@@ -3,6 +3,8 @@
 
 #include "ErrorLL.h"
 
+#define MAXERRORS 20
+
 /*
  * typedef which stores the info necessary to record error when it
  * occurs and have it  printed to stderr and the program listing.
@@ -14,7 +16,6 @@ struct Error {
 	
 };
 
-extern int nErrors;
 extern int colno; 
 
 struct Error *recordError(const char *, int, int);
