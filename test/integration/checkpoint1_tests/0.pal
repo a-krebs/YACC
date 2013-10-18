@@ -1,0 +1,24 @@
+{}
+{ 0.pal -- tests for the correct operation of the lexical analyzer}
+program testLex0(in, out);
+
+var
+	a : real;
+	b : integer;
+begin
+	a := E-32;
+	b := -123456789;
+	b := 123456789;
+	b := +430982345098724350982348590234098572;
+	a := E+32;
+	a := 0.0;
+	a := 12345.234234E3838;
+	a := -45674567856786;
+	a := +45678765678900.203948023984230984E298374209387422304987230487;
+	a := -0000000000000000000000000000000000000000000000.00000000000000000000000000000000000000E0000000000000000000000000000000000000000;
+	
+	{ The following should produce errors }
+	a := 0.E32; 	// Not a valid real 
+	a := -.123123;	// Also not a valid real 
+	a := 3456789.	// Not a valid real or int	
+end.
