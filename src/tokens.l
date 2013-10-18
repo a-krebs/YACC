@@ -89,7 +89,7 @@ extern void yyerror(char *);
 <INSIDE_BLOCK_COMMENT><<EOF>>   {
                                   BEGIN(INITIAL);
                                   yyerror("EOF encountered inside block \
-				  comment.");
+comment.");
 				  return 0; 
 				}
 

@@ -106,6 +106,8 @@ structured_type
 | RECORD field_list END
 ;
 
+
+
 array_type
 : simple_type
 | expr RANGE expr
@@ -113,7 +115,7 @@ array_type
 
 field_list
 : field
-| field_list semicolon_or_error field
+| field_list SEMICOLON field
 ;
 
 field
@@ -124,6 +126,7 @@ var_decl_part
 : VAR var_decl_list semicolon_or_error
 |
 ;
+
 
 var_decl_list
 : var_decl
