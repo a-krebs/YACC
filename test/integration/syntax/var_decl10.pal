@@ -1,0 +1,8 @@
+{6}
+// underscore in id. 
+
+program test(input, output);
+	var 
+		x_x: char;
+begin
+end.
