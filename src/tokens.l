@@ -177,7 +177,7 @@ extern void yyerror(char *);
 ","				{ return(COMMA); }
 "integer"			{ return(INT); }
 "char"				{ return(CHAR); }
-"bool"				{ return(BOOL); }
+"boolean"			{ return(BOOL); }
 "real"				{ return(REAL); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
 				  return(ID); 
