@@ -160,11 +160,16 @@ proc_decl
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
+| PROCEDURE ID semicolon_or_error		{yyerrok;}
+| FUNCTION ID semicolon_or_error		{yyerrok;}
+| PROCEDURE semicolon_or_error
+| FUNCTION semicolon_or_error
 ;
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
 | L_PAREN R_PAREN
+| VAR ID error COLON simple_type		{yyerrok;}
 ;
 
 f_parm_list
@@ -175,7 +180,7 @@ f_parm_list
 f_parm
 : ID COLON simple_type
 | VAR ID COLON simple_type
-| ID error COLON simple_type	{yyerrok;}
+| ID error COLON simple_type		{yyerrok;}
 | VAR ID error COLON simple_type	{yyerrok;}
 ;
 
@@ -274,6 +279,7 @@ unsigned_num
 func_invok
 : plist_finvok R_PAREN
 | ID_or_err L_PAREN R_PAREN
+| plist_finvok error R_PAREN		{ yyerrok; }
 ;
 
 plist_finvok
