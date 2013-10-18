@@ -37,6 +37,8 @@ program
 program_head
 : PROGRAM ID_or_err L_PAREN ID_or_err comma_or_error ID_or_err R_PAREN semicolon_or_error
 | PROGRAM semicolon_or_error
+| PROGRAM ID_or_err L_PAREN semicolon_or_error
+| PROGRAM ID_or_err semicolon_or_error
 ;
 
 
