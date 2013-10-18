@@ -74,26 +74,26 @@ type_decl
 ;
 
 type                    
-: simple_type
-| structured_type
+: structured_type
+| simple_type
+| scalar_type
 ;
 
-simple_type             
-: scalar_type
-| REAL
+simple_type
+: REAL
+| INT
+| BOOL
+| CHAR
 | ID_or_err
 ;
 
 scalar_type             
 : L_PAREN scalar_list R_PAREN  
-| INT
-| BOOL
-| CHAR
 ;
 
 scalar_list             
 : scalar_list COMMA ID_or_err
-| ID_or_err COMMA ID_or_err
+| ID_or_err
 ;
 
 structured_type         

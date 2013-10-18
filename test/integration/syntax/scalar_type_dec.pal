@@ -1,0 +1,13 @@
+{5,8}
+program scalars(input, output);
+type
+	bazz = (bob,fred,jack);
+	bubbles = array [(some,scalar,list)] of integer;	//error
+	t = integer;
+	t = integer;
+	foo = array [(single)] of integer;	// error
+	t = integer;
+	t = integer;
+	bar = (single);
+begin
+end.
