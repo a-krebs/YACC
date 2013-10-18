@@ -1,4 +1,4 @@
-{4,7}
+{4,5,6,7,8,9,10,11}
 program test(input,output);
 begin
 	str := 'blah blah\ blah';
@@ -6,4 +6,7 @@ begin
 	str := 'blah blah blah \n';
 	str := 'blah blah blah \a';
 	str := 'blah blah \\ blah';
+	str := 'sadfadsf\'sadfdasf';
+	str := 'safdsaf\'\'\'asdsafadsf\'';
+	str := 'sadfdsaf\'\'\'sadfasdfas';
 end.
