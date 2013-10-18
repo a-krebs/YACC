@@ -22,7 +22,7 @@
 #define YYLMAX 10240
 
 extern YYABORT;
-
+extern int nErrors;
 int colno = 1;
 extern void yyerror(char *);
 %}
@@ -36,7 +36,12 @@ extern void yyerror(char *);
 %%
 
 %{
+	if (nErrors >= MAXERRORS) {
+		fprintf(stderr, "Maximum number of errors recorded.  Parsing\
+				 will stop.\n");
+		return 0;
 
+	}
 	colno += yyleng;
 #if DEBUG
 	printf("yylineno = %d, colno = %d\n", yylineno, colno);

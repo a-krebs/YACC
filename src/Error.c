@@ -15,7 +15,7 @@
 #include "ErrorLL.h"
 
 
-static int nErrors = 0;
+int nErrors = 0;
 
 
 /* 
