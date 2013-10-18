@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include "ProgList.h"
+#include "args.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -13,22 +14,8 @@
 #define FILE_MODE "r"
 
 extern FILE *yyin;
-
-struct args {
-	/* Leave Asc code in file .asc instead of removing it */
-	int S;
-	/* Do not produce a program listing. Default is to produce one. */
-	int n;
-	/* 
-	 * Do not generate run-time script-bounds checking.
-	 * Default is to do the checking.
-	 */
-	int a;
-	/* Input file name */
-	char *inFile;
-	/* Listing file name */
-	char *listingFile;
-};
+/* global program arguments struct */
+extern struct args givenArgs;
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -41,6 +28,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	int S = 0;
 	int n = 0;
 	int a = 0;
+	int q = 0;
 	char *file = NULL;
 	char *listing = NULL;
 
@@ -52,7 +40,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	opterr = 0;
 
 	/* check options */
-	while ((option = getopt(argc, argv, "Sna")) != -1) {
+	while ((option = getopt(argc, argv, "Snaq")) != -1) {
 		switch (option) {
 		case 'S':
 			S = 1;
@@ -62,6 +50,9 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 			break;
 		case 'a':
 			a = 1;
+			break;
+		case 'q':
+			q = 1;
 			break;
 		case '?':
 			if (isprint(optopt)) {
@@ -103,6 +94,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	argStruct->S = S;
 	argStruct->n = n;
 	argStruct->a = a;
+	argStruct->q = q;
 	argStruct->inFile = file;
 	argStruct->listingFile = listing;
 
@@ -110,6 +102,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	printf("S: %d\n", S);
 	printf("n: %d\n", n);
 	printf("a: %d\n", a);
+	printf("q: %d\n", q);
 	printf("inFile: %s\n", file);
 	printf("listingFile: %s\n", listing);
 #endif
@@ -123,10 +116,10 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
  */
 int main( int argc, char *argv[] )
 {
-	struct args givenArgs;
 	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
 
+	/* initialize global args struct */
 	memset(&givenArgs, 0, sizeof(struct args));
 
 	/* parse the given arguments */

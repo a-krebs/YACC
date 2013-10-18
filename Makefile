@@ -91,7 +91,7 @@ $(TESTEXE): $(TESTOBJS)
 $(LEXTEST_EXE): $(LEXTEST_OBJS)
 	$(CC) -o $@ $+ $(LIBS)
 
-$(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c
+$(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c $(SRC)/args.h
 	$(BISONFLEXCOMPILE)
 
 $(BIN)/lextest.o: $(SRC)/main.c $(SRC)/tokenTestParser.tab.c
@@ -137,10 +137,10 @@ $(SRC)/lex.yy.c: $(SRC)/tokens.l
 	$(LEX)
 	mv lex.yy.c ./$(SRC)
 
-$(SRC)/generated_parser.y: $(SRC)/parser.y $(SRC)/definitions.tokens
+$(SRC)/generated_parser.y: $(SRC)/parser.y $(SRC)/definitions.tokens $(SRC)/args.h
 	$(SED_INCLUDE)
 
-$(SRC)/generated_tokenTestParser.y: $(SRC)/tokenTestParser.y $(SRC)/definitions.tokens
+$(SRC)/generated_tokenTestParser.y: $(SRC)/tokenTestParser.y $(SRC)/definitions.tokens $(SRC)/args.h
 	$(SED_INCLUDE)
 
 clean:
