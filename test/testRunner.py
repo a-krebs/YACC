@@ -9,7 +9,9 @@ import types
 from subprocess import check_output
 
 PAL_EXE = "../../../bin/pal"
+PAL_OPTIONS = "-n"
 LEXTEST_EXE = "../../../bin/lextest"
+LEXTEST_OPTIONS = PAL_OPTIONS
 TEST_DIR = "./integration/syntax/"
 
 
@@ -73,7 +75,7 @@ def make_lexer_test_function(filename, expected_tokens):
     Return a function object.
     """
     def new_test(self):
-        output = check_output([LEXTEST_EXE, filename])
+        output = check_output([LEXTEST_EXE, LEXTEST_OPTIONS, filename])
         actual_tokens = [
             re.sub(r"\(.*\)", "", line).strip()
                 for line in output.split("\n") if line != ''
@@ -106,7 +108,7 @@ def make_parser_test_function(filename, expected_errors):
     Return a function object.
     """
     def new_test(self):
-        output = check_output([PAL_EXE, filename])
+        output = check_output([PAL_EXE, PAL_OPTIONS, filename])
         actual_errors = get_error_lines_from_output(output)
         
         for error in actual_errors:

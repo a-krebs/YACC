@@ -144,7 +144,6 @@ char *getListingFileName(char *palFileName)
 
 	strncpy(listingFileName, palFileName, len);
 	strncpy(listingFileName + len - 5, ".lst", 4);
-	printf("%s\n", listingFileName);
 	
 	return listingFileName;
 }
