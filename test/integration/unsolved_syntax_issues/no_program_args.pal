@@ -1,0 +1,6 @@
+{2,5,7}
+program test;
+begin
+	a := 1;
+	2 = 1;			// error
+end				// error
