@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include "ProgList.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -9,139 +10,112 @@
 	#include "parser.tab.h"
 #endif
 
+#define FILE_MODE "r"
+
 extern FILE *yyin;
 
-/*char commandOptions[4] = "Sna";  TODO: put in header file */
+struct args {
+	/* Leave Asc code in file .asc instead of removing it */
+	int S;
+	/* Do not produce a program listing. Default is to produce one. */
+	int n;
+	/* 
+	 * Do not generate run-time script-bounds checking.
+	 * Default is to do the checking.
+	 */
+	int a;
+	/* Input file name */
+	char *inFile;
+	/* Listing file name */
+	char *listingFile;
+};
 
-int programlist = 1;
+/*
+ * Use getopt to parse and validate the given program arguments.
+ *
+ * Return non-zero on error.
+ */
+int parseInputs(int argc, char **argv, struct args* argStruct)
+{
+	/* expected arguments */
+	int S = 0;
+	int n = 0;
+	int a = 0;
+	char *file = NULL;
+	char *listing = NULL;
 
-int boundscheck = 1;
+	/* vars needed for parsing */
+	int index;
+	int option;
 
-char inputfile[100];
-char outputfile[100];
+	/* reset opterr */
+	opterr = 0;
 
-
-FILE * openFile(char *path, char *mode) {
-	FILE *file;
-
-	if (path == NULL) {
-		/*TODO: create error*/
-		printf("error, incorrect path\n");
+	/* check options */
+	while ((option = getopt(argc, argv, "Sna")) != -1) {
+		switch (option) {
+		case 'S':
+			S = 1;
+			break;
+		case 'n':
+			n = 1;
+			break;
+		case 'a':
+			a = 1;
+			break;
+		case '?':
+			if (isprint(optopt)) {
+				fprintf(
+				    stderr,
+				    "Unknown option `-%c'.\n",
+				    optopt);
+			} else {
+				fprintf(
+				    stderr,
+				    "Unknown option character `\\x%x'.\n",
+				    optopt);
+			}
+			/* fall through to default */
+		default:
+			return -1;
+		}
 	}
-	
-	file = fopen(path, mode);
-	if (file == NULL) {
-		/*TODO: create error*/
-		printf("error, could not open file to read\n");
-	}	
 
-	return file;
-}
-
-void parseInputs( int argc, char *argv[] ) {
-	int i;
-	int fileFlag = 0;
-
-	if ( argc == 1 ) {
-		/*TODO: create error*/
-		printf("error: no arguments to compilier\n");
-        exit(1);
+	/* filename should be next argument */
+	if (optind >= argc) {
+		printf("Missing file name argument.\n");
+		return -1;
 	}
-    
-    int c;
-    int digit_optind = 0;
-    int aopt = 0, bopt = 0;
-    char cmd[100];
-    sprintf(cmd, "nroff -man ./man/pal.man");
-    memset(inputfile, 0, 100);
-    memset(outputfile, 0, 100);
-	
-    while ( (c = getopt(argc, argv, ":Snacho:")) != -1) {
-        switch (c) {
-        case 'S':
-//            printf("PH leave ASC file intact\n");
-            break;
-        case 'c':
-//            printf("PH generate ASC file without invoking ASC\n");
-            break;
-        case 'n':
-            programlist = 0;
-//          printf("do not produce program listing");
-            break;
-        case 'a':
-            boundscheck = 0;
-//            printf("PH do not perform runtime run-time array");
-//            printf("subscript bounds checking\n");
-            break;
-        case 'h':
-    		system(cmd);
-//          printf("show man page");
-            exit(0);
-            break;
-//        case 'o':
-//            printf ("option o with value '%s'\n", optarg);
-//            strcpy(outputfile, optarg);
-//            yyout = openFile(outputfile, "w");
-//            break;
-        case ':':
-            strcpy(inputfile, optarg);
-            yyin = openFile(inputfile, "r");
-            break;
-        default:
-//            system(cmd);
-//            exit(1);
-            break;
-        }
-    }
+	file = argv[optind];
+	optind++;
 
-    if (optind < argc) {
+	/* complain if there are other arguments */
+	for (index = optind; index < argc; index++) {
+		printf("Non-option argument %s\n", argv[index]);
+	}
 
-    }
+	listing = getListingFileName(file);
+	if (listing == NULL) {
+		return -1;
+	}
 
-//    int i;
-//
-//    int inputflag = 0;
-//    for (i = 0; i < argc; i++)
-//    {
-//        if (strncmp(argv[i], "-i", 2) == 0)
-//        {   
-//            if (strncmp(argv[i+1], "-", 1) == 0)
-//                {}
-//            else
-//                 inputflag = 1;
-//        }
-//    }
-//    if (inputflag == 0)
-//    {
-//        printf("no input file specified\n");
-//        exit(1);
-//    }
+	/* set values in arg struct */
+	argStruct->S = S;
+	argStruct->n = n;
+	argStruct->a = a;
+	argStruct->inFile = file;
+	argStruct->listingFile = listing;
 
-//    int outputflag = 0;
-//    for (i = 0; i < argc; i++)
-//    {
-//        if (strncmp(argv[i], "-o", 2) == 0)
-//       {
-//            if ((strncmp(argv[i+1], "-", 1) == 0))
-//                {}
-//           else
-//                outputflag = 1;
-//        }
-//    }
-//    if (outputflag == 0)
-//    {
-//        printf("no output file specified\n");
-//        exit(1);
-//    }
+#if DEBUG
+	printf("S: %d\n", S);
+	printf("n: %d\n", n);
+	printf("a: %d\n", a);
+	printf("inFile: %s\n", file);
+	printf("listingFile: %s\n", listing);
+#endif
 
-
-
-
-
-
+	return 0;
 }
-
-
 
 
 /*
@@ -149,17 +123,45 @@ void parseInputs( int argc, char *argv[] ) {
  */
 int main( int argc, char *argv[] )
 {
-	parseInputs(argc, argv);
+	struct args givenArgs;
+	int argsParsedSuccess = 0;
+	FILE *fp = NULL;
 
-	/* test yyparse() for correct call */
+	memset(&givenArgs, 0, sizeof(struct args));
+
+	/* parse the given arguments */
+	parseInputs(argc, argv, &givenArgs);
+
+	/* check that parsing was success */
+	if (argsParsedSuccess != 0) {
+		return EXIT_FAILURE;
+	}
+
+	/* TODO open file and pass pointer to bison/flex */
+	fp = fopen(givenArgs.inFile, FILE_MODE);
+	if (fp == NULL) {
+		return EXIT_FAILURE;
+	}
+	yyin = fp;
+
+	/* TODO test yyparse() for correct call */
+	/* parse file */
 	yyparse();
 
-//    if (programlist != 0)
-//    {
-//        printProgramListing(yyin);
-//    }
+	/* 
+	 * print program listing.
+	 * 0 means the flag is NOT SET, so produce file
+	 */
+	if (givenArgs.n == 0) {
+		printProgramListing(fp, givenArgs.listingFile);
+	}
 
-	fclose(yyin);
+	/* close file, clean up, and exit */
+	if (fclose(fp) != 0) {
+		return EXIT_FAILURE;
+	}
+	
+	free(givenArgs.listingFile);
 
 	return EXIT_SUCCESS;
 }
