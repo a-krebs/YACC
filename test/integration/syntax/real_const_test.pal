@@ -1,0 +1,9 @@
+{}
+//test a expression when it assigns to variable. should pass.
+
+program test(input,output);
+var
+	a : real;
+begin 
+	a := 32.32-32;
+end.

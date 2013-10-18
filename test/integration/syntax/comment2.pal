@@ -1,0 +1,7 @@
+{}
+//comments in weird places, seprator. should pass.
+
+program fizzbop(input,{comment}output);
+begin
+	a := abcdef{sdfsdf};
+end.

@@ -1,0 +1,6 @@
+{}
+// should parse correctly
+
+program foo(in, out);
+begin
+end.

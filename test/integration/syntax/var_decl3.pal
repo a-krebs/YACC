@@ -1,0 +1,8 @@
+{6}
+// using var declaration twice
+
+program test(input, output);
+	var x: integer;
+	var y: char;
+begin
+end.

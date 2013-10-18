@@ -1,0 +1,64 @@
+{7,8,13,19,25,30,36,43,49,55,62}
+
+program constStuff(input, output);
+type
+	a = a;
+	a = a;
+	name = "Bob";						// error
+	name2 = 'bob';						// error
+	q = foobar232foobar452454325Efoobar23432foobar432foobar4;
+	a = foobar;
+	a = foobar;
+
+	a 2;							// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+	a = a = a;						// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+	7 = a;							// error
+
+	a = foobar;
+	a = foobar;
+
+	a : integer						// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+	a := foo;						// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+
+	a b c = 2;						// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+	a, b, c = foobar;					// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+	a,b,c : integer;					// error
+
+	a = foobar;
+	a = foobar;
+	a = foobar;
+
+	a = foobar						// error
+	a = foobar;
+begin
+end.

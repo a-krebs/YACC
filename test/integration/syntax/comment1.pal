@@ -1,0 +1,7 @@
+{}
+// should parse fine
+
+program{comment as token separator}p(input, output);
+
+begin
+end.

@@ -1,0 +1,11 @@
+{}
+
+
+program expressionTest (input, output);
+var 
+	a : integer;
+begin
+	a := 3;
+	b:=3;
+end.
+

@@ -1,0 +1,6 @@
+{4}
+// missing program parameter. should fail
+
+program foo(, out);
+begin
+end.

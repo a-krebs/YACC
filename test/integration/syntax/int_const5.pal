@@ -1,0 +1,9 @@
+{}
+//assign real to an int type. should fail sematically but is not a syntax error
+
+program expressionTest (input, output);
+var 
+	a : integer;
+begin
+	a := 3222222222222222222.3;
+end.

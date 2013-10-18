@@ -1,0 +1,7 @@
+{4}
+program test(intput, output);
+begin
+	a := (a ;				// error
+
+	foobar(foo, (bar + zap));
+end.

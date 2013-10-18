@@ -1,0 +1,21 @@
+{14, 16, 17, 18, 19, 20, 21}
+// special characters at end of file
+
+program expressionTest (input, output);
+var 
+	a, b : integer;
+	c : real;
+begin
+	a := 3;
+	a := a*4;
+	c := (b+a)/2
+end.
+
+%!@
+
+!
+@
+#
+$
+%
+^

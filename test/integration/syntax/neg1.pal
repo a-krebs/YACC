@@ -1,0 +1,55 @@
+{6,10,14,19,23,27,32,36,40, 47}
+
+program thisisgoingtohurt(input, output);
+	var a: real;
+begin
+	a := 6*******6;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6+++++++6;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6-------------------6;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6////////6;	// not an error, a comment
+	a := 2;			// error here, missing semicolon on prev line
+	a := 2;
+	a := 2;
+
+	a := 3 + -3;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6--++--6;
+	a := 2;
+	a := 2;
+	a := 2;
+
+	a := 3 * -3;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 3 + - 3;
+	a := 2;
+	a := 2;
+	a := 2;
+	a := 6+-------------------6;
+	a := 2;
+	a := 2;
+	a := 2;
+
+	// the first term can have unary minus, but not the second
+	a := -3 + 2;
+	a := 3 + -2; //error
+	a := -3 - 2;
+
+	a := -3 < -3;
+	a := -3 > -2;
+	a := -2 = -2;
+
+
+end.

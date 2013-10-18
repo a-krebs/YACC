@@ -1,0 +1,36 @@
+%error-verbose
+%union {
+      char character;
+      char *string;
+      char *id;
+      double real;
+      int integer;
+}
+
+/* id */
+%token ID
+
+/* types names: */
+%token ARRAY BOOL CHAR INT REAL RECORD
+
+/* literals */
+%token INT_CONST REAL_CONST STRING_CONST
+
+/* control statements: */
+%token _BEGIN END IF THEN ELSE WHILE DO CONTINUE EXIT OF
+
+/* program portion headers: */
+%token PROGRAM TYPE VAR CONST FUNCTION PROCEDURE
+
+/* structure tokens: */
+%token L_PAREN R_PAREN LS_BRACKET RS_BRACKET
+%token PERIOD COMMA SEMICOLON COLON RANGE ASSIGN
+
+/* unrecognized character */
+%token UNREC 
+
+/* operators: (keep in mind priority before changing order) */
+%left NOT 
+%left MULTIPLY DIVIDE DIV MOD AND
+%left PLUS MINUS OR
+%left EQUAL NOT_EQUAL LESS LESS_OR_EQUAL GREATER GREATER_OR_EQUAL

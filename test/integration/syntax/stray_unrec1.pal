@@ -1,0 +1,10 @@
+{6,11}
+//
+
+program test(input,outpt);
+begin
+#	// error
+
+a := 2;
+a := 2;
+end	// error, missing period

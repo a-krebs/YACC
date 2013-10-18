@@ -1,0 +1,6 @@
+{7}
+
+program test(input,output);
+begin
+{
+	END OF FILE IN THE MIDDLE OF A COMMENT BLOC---

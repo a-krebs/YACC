@@ -15,3 +15,18 @@
 *.exe
 *.out
 *.app
+
+# bin folder
+bin/*
+!bin/.gitkeep
+
+# vim backup tuff
+*.swp
+*.~
+
+# emacs and gedit backup stuff (yes, I edit with gedit, I'm not proud)
+*~
+*#
+
+# python compiled files
+*.pyc

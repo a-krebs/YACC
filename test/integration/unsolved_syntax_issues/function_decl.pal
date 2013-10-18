@@ -1,0 +1,14 @@
+{5,15}
+// function decl without return value
+
+program test(intput, output);
+function fizzbuzz( a : integer; b : integer );
+begin
+	r := 0;
+	if a < b then
+		r := 1
+	else
+		r := -1
+end;
+begin
+end				// error

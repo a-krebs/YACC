@@ -1,0 +1,6 @@
+{6}
+// keyword 'end' miss-spelled. should fail
+
+program foo(in, out);
+begin
+edn.

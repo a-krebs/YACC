@@ -1,0 +1,6 @@
+{6}
+// no period at end of program. should fail
+
+program foo(in, out);
+begin
+end
