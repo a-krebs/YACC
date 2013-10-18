@@ -211,6 +211,7 @@ expr
 | expr LESS simple_expr
 | expr GREATER_OR_EQUAL simple_expr
 | expr GREATER simple_expr
+| error
 ;
 
 simple_expr
