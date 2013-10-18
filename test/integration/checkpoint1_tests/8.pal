@@ -1,5 +1,10 @@
 {}
-// 
+{
+	Cmput 415 - Team YACC
+	8.pal
+	Testing lexor and parser for correctness.
+	This file should pass with no errors as all valid pal.
+}
 
 program arrayTests(input, output);
 
