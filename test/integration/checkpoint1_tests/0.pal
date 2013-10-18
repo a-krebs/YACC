@@ -18,7 +18,8 @@ begin
 	a := -0000000000000000000000000000000000000000000000.00000000000000000000000000000000000000E0000000000000000000000000000000000000000;
 	
 	{ The following should produce errors }
-	a := 0.E32; 	// Not a valid real 
 	a := -.123123;	// Also not a valid real 
-	a := 3456789.	// Not a valid real or int	
+	a := 3456789.;	// Not a valid real or int	
+	a := 101239e023480923;
 end.
+
