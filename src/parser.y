@@ -163,8 +163,10 @@ f_parm_list
 ;
 
 f_parm
-: ID_or_err COLON simple_type
-| VAR ID_or_err COLON simple_type
+: ID COLON simple_type
+| VAR ID COLON simple_type
+| ID error COLON simple_type	{yyerrok;}
+| VAR ID error COLON simple_type	{yyerrok;}
 ;
 
 compound_stat
