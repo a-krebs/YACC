@@ -1,0 +1,24 @@
+{}
+// assignment int_const & real number test
+
+program operatorTest(in,out);
+var
+    a: real;
+    b: integer;
+begin
+    a := E-32;
+    b := -1234567890;
+    b := 1234567890;
+    b := +123456790;
+    a := E+32;
+    a := 0.E+32;
+    a := 0.0;
+    a := 0.E32;
+    a := 32E32.;
+    a := 32E32;
+    a := -0123456789E1234567890;
+    a := +0123456789E1234567890;
+    a := -.12;
+end.
+
+
