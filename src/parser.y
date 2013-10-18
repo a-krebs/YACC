@@ -74,12 +74,8 @@ type_decl
 ;
 
 type                    
-: simple_type_or_anon_scalar
-| structured_type
-;
-
-simple_type_or_anon_scalar
-: simple_type
+: structured_type
+| simple_type
 | scalar_type
 ;
 
