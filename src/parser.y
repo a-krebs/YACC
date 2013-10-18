@@ -74,7 +74,6 @@ type_decl
 : ID_or_err EQUAL type
 ;
 
-<<<<<<< Updated upstream
 type                    
 : structured_type
 | simple_type
