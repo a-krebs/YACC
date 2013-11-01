@@ -16,6 +16,11 @@ struct Error {
 	
 };
 
+enum ErrorType {
+	SYNTAX,
+	SEMANTIC,
+};
+
 extern int colno; 
 extern int nErrors;
 
@@ -23,4 +28,5 @@ struct Error *recordError(const char *, int, int);
 void createErrorString(char **, struct Error *);
 void printError(struct Error *);
 void freeError(struct Error *);
+char *getErrorTypeString(enum ErrorType);
 #endif

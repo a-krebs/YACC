@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "testError.h"
 
@@ -86,11 +87,23 @@ test_freeError()
 	return NULL;
 }
 
+char *test_getErrorTypeString()
+{
+	char *syntax = "Syntax";
+	char *semantic = "Semantic";
+	mu_assert("getErrorTypeString returned wrong string.",
+	    strcmp(getErrorTypeString(SYNTAX), syntax) == 0);
+	mu_assert("getErrorTypeString returned wrong string.",
+	    strcmp(getErrorTypeString(SEMANTIC), semantic) == 0);
+	return NULL;
+}
+
 char *
 test_all_Error() 
 {
 	mu_run_test(test_createErrorString);
 	mu_run_test(test_recordError);
 	mu_run_test(test_freeError);
+	mu_run_test(test_getErrorTypeString);
 	return NULL;
 }

@@ -98,3 +98,13 @@ void freeError(struct Error *e)
 	free(e);
 }
 
+char *getErrorTypeString(enum ErrorType type)
+{
+	if (type == SYNTAX) {
+		return "Syntax";
+	} else if (type == SEMANTIC) {
+		return "Semantic";
+	} else {
+		return NULL;
+	}
+}
