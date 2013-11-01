@@ -41,6 +41,7 @@ test_appendError()
 		  (ell->error->lineno == lineno) &&
 		  (ell->error->colno == colno) &&
 		  (strncmp(ell->error->msg, errMsg, ERR_STRSIZE) == 0));	
+	return NULL;
 }
 
 char *
@@ -122,7 +123,7 @@ test_getNextError()
 	ret = getNextError(&ell);
 	mu_assert("Fourth call to getNextError() should return NULL",
 		  ret == NULL);
-
+	return NULL;
 }
 
 

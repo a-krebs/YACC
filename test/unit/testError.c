@@ -16,7 +16,7 @@ test_createErrorString()
 {
 	char errorMsg[] = "This is only a test.";
 	int ERR_STRSIZE = strlen(errorMsg);
-	int lineno = 1029, colno = 999,bufSize = 512;
+	int lineno = 1029, colno = 999;
 	char *buf;
 	char expectedRet[] = "Error: This is only a test. (line 1029, col 999)";
 	
@@ -81,6 +81,7 @@ test_freeError()
 
 	errors = NULL;
 	ret = recordError(errorMsg, lineno, colno, GENERIC);
+	freeError(ret);
 	mu_assert("Call to freeError does not cause segfault",
 		  1);
 

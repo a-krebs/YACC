@@ -11,6 +11,7 @@
 #include "Error.h"
 #include "ErrorLL.h"
 #include "testProgList.h"
+#include "ProgList.h"
 
 extern struct ErrorLL *errors;
 
