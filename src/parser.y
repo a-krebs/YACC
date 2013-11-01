@@ -362,8 +362,8 @@ yyerror(char *s) {
         char *errMsg = NULL;
 
         errMsg = appENDErrorToken(s, yytext);
-        if (errMsg) e = recordError(errMsg, yylineno, colno);
-        else e = recordError(s, yylineno, colno);
+        if (errMsg) e = recordError(errMsg, yylineno, colno, SYNTAX);
+        else e = recordError(s, yylineno, colno, SYNTAX);
 
 #if DEBUG
         printf("New error on line %d\n", yylineno);

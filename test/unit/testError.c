@@ -54,7 +54,7 @@ test_recordError()
 	struct Error *ret = NULL;
 
 	errors = NULL;
-	ret = recordError(errorMsg, lineno, colno);
+	ret = recordError(errorMsg, lineno, colno, GENERIC);
 
 	mu_assert("recordError doest not return  NULL pointer.", (ret));
 	mu_assert("lineno correctly set in returned Error.",
@@ -80,7 +80,7 @@ test_freeError()
 	struct Error *ret = NULL;
 
 	errors = NULL;
-	ret = recordError(errorMsg, lineno, colno);
+	ret = recordError(errorMsg, lineno, colno, GENERIC);
 	mu_assert("Call to freeError does not cause segfault",
 		  1);
 
@@ -95,6 +95,8 @@ char *test_getErrorTypeString()
 	    strcmp(getErrorTypeString(SYNTAX), syntax) == 0);
 	mu_assert("getErrorTypeString returned wrong string.",
 	    strcmp(getErrorTypeString(SEMANTIC), semantic) == 0);
+	mu_assert("getErrorTypeString returned wrong string.",
+	    getErrorTypeString(GENERIC) == NULL);
 	return NULL;
 }
 

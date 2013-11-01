@@ -64,10 +64,10 @@ test_printProgramListing()
 
        
 	errors = NULL;
-	recordError("I am testing you.", 2, 10);
-	recordError("multiple errors on same line test", 2, 10);
-	recordError("That's a lot of a's. Error number 3.", 4, 2398);
-	recordError("Do we print error with lineno > lines in file?", 2000, 12);
+	recordError("I am testing you.", 2, 10, GENERIC);
+	recordError("multiple errors on same line test", 2, 10, GENERIC);
+	recordError("That's a lot of a's. Error number 3.", 4, 2398, GENERIC);
+	recordError("Do we print error with lineno > lines in file?", 2000, 12, GENERIC);
 	printProgramListing(in, "./test/unit/ProgListTestFileOut.lst");
 	return NULL;
 	

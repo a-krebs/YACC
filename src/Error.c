@@ -23,7 +23,8 @@ int nErrors = 0;
  * the error to the linked list of error kept during compilation.
  * Returns a pointer to the newly created Error for easier debugging.
  */
-struct Error *recordError(const char *s, int lineno, int colno) 
+struct Error *recordError(const char *s, int lineno,
+    int colno, enum ErrorType type)
 {
 	struct Error * newError = NULL;
 	size_t len = strlen(s);
@@ -52,6 +53,7 @@ struct Error *recordError(const char *s, int lineno, int colno)
 	}
 	newError->lineno = lineno;
 	newError->colno = colno;
+	newError->type = type;
 	strncpy(newError->msg, s, len);
 
 	/* Append to linked list of errors appearing during compilation */
@@ -87,8 +89,12 @@ void createErrorString(char **buf, struct Error *e)
 void printError(struct Error *e)
 {
 	if (!e) return;
-	fprintf(stdout, "%d Error: %s (%d, %d)\n", 
-		e->lineno, e->msg, e->lineno, e->colno);
+	fprintf(stdout, "%d %s Error: %s (%d, %d)\n",
+	    e->lineno,
+	    getErrorTypeString(e->type),
+	    e->msg,
+	    e->lineno,
+	    e->colno);
 }
 
 void freeError(struct Error *e)
