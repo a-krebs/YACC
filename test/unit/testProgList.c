@@ -8,12 +8,9 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "Error.h"
-#include "ErrorLL.h"
 #include "testProgList.h"
 
 extern struct ErrorLL *errors;
-
 
 char *
 test_printProgramListing() 

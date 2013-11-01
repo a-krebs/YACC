@@ -3,7 +3,8 @@
 #include "testError.h"
 #include "testErrorLL.h"
 #include "testProgList.h"
-
+#include "testSymbol.h"
+#include "testType.h"
 
 int tests_run = 0;
 
@@ -26,6 +27,7 @@ char *test_all() {
 	mu_run_suite(test_all_Error);
 	mu_run_suite(test_all_ErrorLL);
 	mu_run_suite(test_all_ProgList);
-
+	mu_run_suite(test_all_Symbol);
+	mu_run_suite(test_all_Type);
 	return NULL;
 }

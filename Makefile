@@ -7,7 +7,8 @@
 # this list.
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
-OBJS+=		$(BIN)/ProgList.o
+OBJS+=		$(BIN)/ProgList.o $(BIN)/ParamArray.o $(BIN)/Symbol.o 
+OBJS+=		$(BIN)/Type.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -33,6 +34,7 @@ LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
+TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -100,7 +102,19 @@ $(BIN)/lextest.o: $(SRC)/main.c $(SRC)/tokenTestParser.tab.c
 $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
 	$(COMPILE)
 
+$(BIN)/ParamArray.o: $(SRC)/ParamArray.c $(SRC)/ParamArray.h
+	$(COMPILE)
+
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
+	$(COMPILE)
+
+$(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Kind.h
+	$(COMPILE)
+
+$(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
+	$(COMPILE)
+
+$(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h
 	$(COMPILE)
 
 $(BIN)/testProgList.o: $(TEST)/testProgList.c $(TEST)/testProgList.h
@@ -113,6 +127,9 @@ $(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
 	$(COMPILE)
 
 $(BIN)/testErrorLL.o: $(TEST)/testErrorLL.c $(TEST)/testErrorLL.h
+	$(COMPILE)
+
+$(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
 	$(COMPILE)
 
 $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
