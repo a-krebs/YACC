@@ -46,7 +46,29 @@ class SyntaxUnitTests(NoTraceTestCase):
     """
 
 
-def get_error_lines_from_output(output):
+def filter_line_by_test_type(line, test_type):
+    """
+    Return True if the line should be evaluated for the given test_type.
+    """
+    # skip empty lines
+    if line == '':
+        return False
+
+    if test_type == TEST_TYPE['syntax']:
+        prog = re.compile(r'^\d+ Syntax.*$', re.IGNORECASE)
+        if prog.search(line) is None:
+            return False
+    elif test_type == TEST_TYPE['semantic']:
+        prog = re.compile(r'^\d+ Semantic.*$', re.IGNORECASE)
+        if prog.search(line) is None:
+            return False
+    else:
+        return False
+
+    return True
+
+
+def get_error_lines_from_output(output, test_type):
     """
     Extract error line numbers from parser output.
 
@@ -56,7 +78,7 @@ def get_error_lines_from_output(output):
 
     for line in output.split("\n"):
         # ignore empty lines
-        if line == "":
+        if filter_line_by_test_type(line, test_type) == False:
             continue
 
         num = re.findall(r"^\d+", line)
@@ -102,7 +124,7 @@ def make_lexer_test_function(filename, expected_tokens):
     return new_test
 
 
-def make_parser_test_function(filename, expected_errors):
+def make_parser_test_function(filename, expected_errors, test_type):
     """
     Make a new test function.
 
@@ -113,7 +135,7 @@ def make_parser_test_function(filename, expected_errors):
     """
     def new_test(self):
         output = check_output([PAL_EXE, PAL_OPTIONS, filename])
-        actual_errors = get_error_lines_from_output(output)
+        actual_errors = get_error_lines_from_output(output, test_type)
         
         for error in actual_errors:
             self.assertIn(error, expected_errors,
@@ -184,7 +206,7 @@ def construct_tests(test_type, test_dir):
         expected_errors = values['errors']
         name = "test_parser_{}".format(filename[:-4])
 
-        new_test = make_parser_test_function(filename, expected_errors)
+        new_test = make_parser_test_function(filename, expected_errors, test_type)
 
         if getattr(SyntaxUnitTests, name, None) is not None:
             raise RuntimeError("Duplicate test name: {}".format(name))
