@@ -171,4 +171,4 @@ integration_tests:
 	make clean
 	mv $(EXE).bak $(EXE)
 	mv $(LEXTEST_EXE).bak $(LEXTEST_EXE) 
-	cd test && python testRunner.py
+	cd test && python testRunner.py -x -d ./integration/syntax

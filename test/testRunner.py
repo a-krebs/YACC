@@ -6,14 +6,18 @@ import unittest
 import os
 import re
 import types
+import sys
+import getopt
 from subprocess import check_output
 
 PAL_EXE = "../../../bin/pal"
 PAL_OPTIONS = "-n"
 LEXTEST_EXE = "../../../bin/lextest"
 LEXTEST_OPTIONS = PAL_OPTIONS
-TEST_DIR = "./integration/syntax/"
-
+TEST_TYPE = {
+    'syntax' : 0,
+    'semantic': 1,
+}
 
 def addFailureSansTraceback(self, test, err):
     err_sans_tb = (err[0], err[1], None)
@@ -125,13 +129,13 @@ def make_parser_test_function(filename, expected_errors):
     return new_test
 
 
-def construct_tests():
+def construct_tests(test_type, test_dir):
     """
     For each discovered file, add a test to SyntaxUnitTests.
     """
     files = dict()
 
-    os.chdir(TEST_DIR)
+    os.chdir(test_dir)
 
     # get all test files
     for f in os.listdir("."):
@@ -201,5 +205,32 @@ def construct_tests():
             
 
 if __name__ == "__main__":
-    construct_tests()
+    """
+    Parse arguments and run appropriate tests.
+    """
+    test_dir = '/'
+    test_type = -1
+    # copy argv and then clear it so that unittest.main() doesn't get our args
+    argv = sys.argv[1:]
+    sys.argv = sys.argv[0:1]
+    usage = "Run with -x option for syntax tests, -c option for semantic tests."\
+            "Use -d option to specify test directory."
+    
+    try:
+        opts, args = getopt.getopt(argv, "h?xcd:")
+    except getopt.GetoptError:
+        print usage
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h' or opt == '-?':
+            print usage
+            sys.exit()
+        elif opt == '-x':
+            test_type = TEST_TYPE['syntax']
+        elif opt == '-c':
+            test_type = TEST_TYPE['semantic']
+        elif opt == '-d':
+            test_dir = arg
+
+    construct_tests(test_type, test_dir)
     unittest.main()
