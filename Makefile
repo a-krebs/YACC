@@ -161,14 +161,19 @@ build:
 unit_tests:
 	make clean && make test
 	./bin/test
-
+	
 integration_tests:
-	make build
-	mv $(EXE) $(EXE).bak
-	make clean
-	make lextest
-	mv $(LEXTEST_EXE) $(LEXTEST_EXE).bak
-	make clean
-	mv $(EXE).bak $(EXE)
-	mv $(LEXTEST_EXE).bak $(LEXTEST_EXE) 
-	cd test && python testRunner.py -x -d ./integration/syntax
+	# @ symbols supress printing commands that are executed
+	# -s flag on make suppressess all output from make
+	@make -s build
+	@mv $(EXE) $(EXE).bak
+	@make -s clean
+	@make -s lextest
+	@mv $(LEXTEST_EXE) $(LEXTEST_EXE).bak
+	@make -s clean
+	@mv $(EXE).bak $(EXE)
+	@mv $(LEXTEST_EXE).bak $(LEXTEST_EXE)
+	@echo "SYNTAX TESTS:"
+	@cd test && python testRunner.py -x -d ./integration/syntax
+	@echo "\nSEMANTIC TESTS:"
+	@cd test && python testRunner.py -c -d ./integration/semantic
