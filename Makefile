@@ -161,10 +161,10 @@ build:
 unit_tests:
 	make clean && make test
 	./bin/test
-	
+
+# @ symbols supress printing commands that are executed
+# -s flag on make suppressess all output from make
 integration_tests:
-	# @ symbols supress printing commands that are executed
-	# -s flag on make suppressess all output from make
 	@make -s build
 	@mv $(EXE) $(EXE).bak
 	@make -s clean
