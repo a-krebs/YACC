@@ -22,7 +22,6 @@ struct hashElement *symbolTable[TABLE_SIZE];
 
 
 /* Function declarations. */
-int isKeyCollison(char *key);
-int isSameKey(char *key);
+void dumpSymbolTable();
 
 #endif

@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "ProgList.h"
 #include "args.h"
+#include "Hash.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -112,12 +113,18 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 }
 
 
+void testHash() {
+	printf("testttttttttttttttt");
+	dumpSymbolTable();
+}
+
+
 /*
  * Main entry point for the Team YACC PAL compiler.
  */
 int main( int argc, char *argv[] )
 {
-	
+	// testHash();
 
 
 
