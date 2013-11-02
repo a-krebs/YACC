@@ -1,3 +1,7 @@
 void *getHashElement(char*);
-void setType(void*, void*);
+void doTypeDecl(void*, void*);
 void enterTypeDeclPart(void);
+void doConstDecl(void*, void*);
+void enterConstDeclPart(void);
+void *anonIntLiteral(int);
+void *anonRealLiteral(double);

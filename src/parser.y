@@ -57,6 +57,7 @@ decls
 
 const_decl_part
 : CONST const_decl_list semicolon_or_error
+	{ enterConstDeclPart(); }
 |
 ;
 
@@ -67,6 +68,7 @@ const_decl_list
 
 const_decl
 : ID_or_err EQUAL expr
+	{ doConstDecl($<hash>1, $<type>3); }
 | error
 ;
 
@@ -83,7 +85,7 @@ type_decl_list
 
 type_decl
 : ID_or_err EQUAL type
-	{ setType($<hash>1, $<hash>3); }
+	{ doTypeDecl($<hash>1, $<hash>3); }
 | error
 ;
 
@@ -286,11 +288,14 @@ unsigned_const
 // same place, so this is redundant.
 // | ID
 | STRING_CONST
+	// return String struct from Type.h
 ;
 
 unsigned_num
 : INT_CONST
+	{ $<hash>$ = anonIntLiteral($<integer>1); }
 | REAL_CONST
+	{ $<hash>$ = anonRealLiteral($<real>1); }
 ;
 
 func_invok
