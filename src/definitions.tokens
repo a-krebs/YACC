@@ -5,6 +5,8 @@
       char *id;
       double real;
       int integer;
+      // TODO change type to hashElement type
+      void *hashElement;
 }
 
 /* id */
