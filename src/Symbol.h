@@ -22,7 +22,7 @@ struct Symbol {
 struct Symbol *newArraySym(int, char *, struct Symbol *, struct Symbol *);
 struct Symbol *newSubrangeSym(int, struct Symbol *, struct Symbol *);
 struct Symbol *newVariableSym(int, char *, struct Symbol *);
-struct Param *newParameter(int, char *, struct Symbol *);
 struct Symbol *newProcedureSym(int, char *, struct ParamArray *);
+struct Param *newParameter(char *, struct Symbol *);
 void setTypePtr(Type *, Type, type_t);
 #endif

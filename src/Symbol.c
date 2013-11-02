@@ -43,6 +43,46 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 }
 
 /*
+ * Creates a new parameter to be attached to a function. 
+ * NOTE: each call to newParameter must be followed by a call to newVariable()
+ *       in order to make the parameter available as a local variable in
+ *       procedure/function definition body.
+ * TODO: this function is UNTESTED
+ * TODO: shouldn't this really be in Type.c ???? 
+ */
+struct Param *
+newParameter(char *id, struct Symbol *typeSym)
+{
+	struct Param *newParam = NULL;
+
+	if (!typeSym) {
+		/* Record error */
+		return NULL;
+	}
+	if (typeSym->kind != TYPE_KIND) {
+		/* Record error */
+		return NULL;
+	}
+
+	if (!id) {
+		/* Error: canot have anonymous parameters! */
+		return NULL;
+	}
+
+	
+	newParam = calloc(1, sizeof(struct Param));
+	if (!newParam) {
+		err(1, "Failed to allocate memory for new parameter!");
+		exit(1);
+	}
+
+	strcpy(newParam->name, id);
+	newParam->type = typeSym->kind;
+	return newParam;
+}
+
+
+/*
  * Creates a new variable struct to be added to the symbol table
  * given an identifier and an entry in the symbol table which is a type.
  */
@@ -101,45 +141,6 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 
 	newVar->lvl = lvl;	
 	return newVar;
-}
-
-/*
- * Creates a new parameter to be attached to a function. 
- * NOTE: each call to newParameter must be followed by a call to newVariable()
- *       in order to make the parameter available as a local variable in
- *       procedure/function definition body.
- * TODO: this function is UNTESTED
- * TODO: shouldn't this really be in Type.c ???? 
- */
-struct Param *
-newParameter(int lvl, char *id, struct Symbol *typeSym)
-{
-	struct Param *newParam = NULL;
-
-	if (!typeSym) {
-		/* Record error */
-		return NULL;
-	}
-	if (typeSym->kind != TYPE_KIND) {
-		/* Record error */
-		return NULL;
-	}
-
-	if (!id) {
-		/* Error: canot have anonymous parameters! */
-		return NULL;
-	}
-
-	
-	newParam = calloc(1, sizeof(struct Param));
-	if (!newParam) {
-		err(1, "Failed to allocate memory for new parameter!");
-		exit(1);
-	}
-
-	strcpy(newParam->name, id);
-	newParam->type = typeSym->kind;
-	return newParam;
 }
 
 /*

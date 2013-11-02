@@ -131,4 +131,6 @@ struct Record {
 
 /* Function declarations */
 int isOrdinal(type_t);
+
+
 #endif
