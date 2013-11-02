@@ -16,6 +16,7 @@ struct Symbol {
 	kind_t kind;	/* the kind associated with this entry */
 	type_t type;	/* the type associated with the kind of this entry */
 	Type typePtr;	/* pointer to the type associated with kind of entry */	
+	struct Symbol *typeSym;/*the symbol describing the type of the Symbol */
 	int lvl;	/* the lexical level at which the entry is defined */	
 };
 
