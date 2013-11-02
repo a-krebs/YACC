@@ -56,18 +56,13 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 
 	/* Set array base type and base type pointer */
 	newArraySym->typePtr.Array->baseType = baseTypeSym->type;	
-
-	/* 
-	 * Forgive me, for I have sinned: cast to Type * added to make
-	 * gcc shut up.
-	 */
-	setTypePtr((Type *)&(newArraySym->typePtr.Array->baseTypePtr),
+	setTypePtr(&(newArraySym->typePtr.Array->baseTypePtr),
 		    baseTypeSym->typePtr,
 		    baseTypeSym->type);
 
 	/* Set up index type and index type pointer */
 	newArraySym->typePtr.Array->indexType = indexTypeSym->type;
-	setTypePtr((Type *)&(newArraySym->typePtr.Array->indexTypePtr),
+	setTypePtr(&(newArraySym->typePtr.Array->indexTypePtr),
 		    indexTypeSym->typePtr,
 		    indexTypeSym->type);	
 

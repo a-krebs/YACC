@@ -66,9 +66,9 @@ struct ParamArray {
 struct Array {
 	type_t baseType;	/* type of elements of array (e.g., array of 
 				 * char => baseType = CHAR_T */
-	void *baseTypePtr;	/* pointer to struct of base type */
+	Type baseTypePtr;	/* pointer to struct of base type */
 	type_t indexType;	/* type which indexes the array */
-	void *indexTypePtr;	/* pointer to struct of index type */
+	Type indexTypePtr;	/* pointer to struct of index type */
 };
 
 struct Boolean {
