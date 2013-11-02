@@ -13,6 +13,9 @@
 #define INTLOW_VAL 12
 #define INTHIGH_VAL 23423
 
+int yylineno;
+int colno;
+
 /*
  * TODO: make this function accept type_t arg so it can set up types
  * of different types.

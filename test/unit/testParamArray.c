@@ -186,7 +186,6 @@ test_freeParamArray()
 	struct ParamArray *pa = newParamArray();
 	struct Param *p1 = setUpTestParam();
 	struct Param *p2 = setUpTestParam();
-	struct Param *ret = NULL;
 	p2->typePtr.Char->value = 0;
 	appendParam(pa, p1);
 	appendParam(pa, p2);

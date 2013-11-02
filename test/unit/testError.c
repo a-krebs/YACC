@@ -85,7 +85,7 @@ test_customErrorString()
 
 	ret = customErrorString(bigStr);
 	mu_assert("call to customErrorString() should not cause segfault  \
-		  when passed string larger than buf size and the returned\ 
+		  when passed string larger than buf size and the returned\
 		  string should be null terminated",
 		  ret[CUSTOM_ERRMSG_SZ-1] == '\0');
 
