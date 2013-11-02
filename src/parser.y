@@ -8,6 +8,7 @@
 #include "Error.h"
 #include "ErrorLL.h"
 #include "args.h"
+#include "Actions.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -114,16 +115,18 @@ structured_type
 
 array_type_decl
 : LS_BRACKET array_type RS_BRACKET
-| LS_BRACKET error RS_BRACKET				{yyerrok;}
-| error RS_BRACKET					{yyerrok;}
-| LS_BRACKET error					{yyerrok;}
+| LS_BRACKET error RS_BRACKET
+	{yyerrok;}
+| error RS_BRACKET
+	{yyerrok;}
+| LS_BRACKET error
+	{yyerrok;}
 ;
 
 array_type
 : simple_type
 | expr RANGE expr 
 ;
-
 
 field_list
 : field
@@ -138,7 +141,6 @@ var_decl_part
 : VAR var_decl_list semicolon_or_error
 |
 ;
-
 
 var_decl_list
 : var_decl
@@ -168,8 +170,10 @@ proc_decl
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-| PROCEDURE ID semicolon_or_error		{yyerrok;}
-| FUNCTION ID semicolon_or_error		{yyerrok;}
+| PROCEDURE ID semicolon_or_error
+	{yyerrok;}
+| FUNCTION ID semicolon_or_error
+	{yyerrok;}
 | PROCEDURE semicolon_or_error
 | FUNCTION semicolon_or_error
 ;
@@ -177,7 +181,8 @@ proc_heading
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
 | L_PAREN R_PAREN
-| VAR ID error COLON simple_type		{yyerrok;}
+| VAR ID error COLON simple_type
+	{yyerrok;}
 ;
 
 f_parm_list
@@ -188,8 +193,10 @@ f_parm_list
 f_parm
 : ID COLON simple_type
 | VAR ID COLON simple_type
-| ID error COLON simple_type		{yyerrok;}
-| VAR ID error COLON simple_type	{yyerrok;}
+| ID error COLON simple_type
+	{yyerrok;}
+| VAR ID error COLON simple_type
+	{yyerrok;}
 ;
 
 compound_stat
@@ -287,7 +294,8 @@ unsigned_num
 func_invok
 : plist_finvok R_PAREN
 | ID_or_err L_PAREN R_PAREN
-| plist_finvok error R_PAREN		{ yyerrok; }
+| plist_finvok error R_PAREN
+	{ yyerrok; }
 ;
 
 plist_finvok
@@ -316,18 +324,21 @@ matched_stat
 ;
 
 comma_or_error
-: error COMMA		{yyerrok;}
+: error COMMA
+	{yyerrok;}
 | COMMA
 ;
 
 semicolon_or_error
-: error SEMICOLON 	{yyerrok;}
+: error SEMICOLON
+	{ yyerrok;}
 | SEMICOLON
 ;
 
 ID_or_err
 : ID UNREC ID_or_err
 | ID
+	{ $<hashElement>$ = getHashElement($<id>1); }
 ;
 
 
