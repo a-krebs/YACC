@@ -6,6 +6,8 @@
 #include "testProgList.h"
 #include "testSymbol.h"
 #include "testType.h"
+#include "testHash.h"
+
 
 int tests_run = 0;
 
@@ -31,5 +33,7 @@ char *test_all() {
 	mu_run_suite(test_all_ProgList);
 	mu_run_suite(test_all_Symbol);
 	mu_run_suite(test_all_Type);
+	mu_run_suite(test_all_Hash);
+
 	return NULL;
 }

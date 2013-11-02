@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include "ProgList.h"
 #include "args.h"
+#include "Hash.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -16,6 +17,7 @@
 extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
+extern struct hashElement *symbolTable[TABLE_SIZE];
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -111,11 +113,14 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 }
 
 
+
 /*
  * Main entry point for the Team YACC PAL compiler.
  */
 int main( int argc, char *argv[] )
 {
+
+
 	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
 
@@ -158,6 +163,7 @@ int main( int argc, char *argv[] )
 	}
 	
 	free(givenArgs.listingFile);
+
 
 	return EXIT_SUCCESS;
 }
