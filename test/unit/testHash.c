@@ -109,6 +109,64 @@ char *test_createNewElement() {
 	return NULL;
 }
 
+char *test_isKeysIdentical() {
+	struct hashElement *element = createNewElement("blue", 123);
+
+	mu_assert("Keys idenitcal but evaluating to different.", 
+ 		isKeysIdentical(element, "blue") == 1);
+
+	mu_assert("Keys differnt but evaluating to same.", 
+ 		isKeysIdentical(element, "green") == 0);	
+
+	return NULL;
+}
+
+
+//THIS IS BROKEN!!!!!!!!!!!!!!!!
+// char *test_findHashElementByKey() {
+// 	struct hashElement *element = createNewElement("blue", 123);
+
+// 	mu_assert("Could not find element that should be table.", 
+//  		findHashElementByKey("blue") != NULL);
+
+// 	mu_assert("Found element that should not be table.", 
+//  		findHashElementByKey("green") == NULL);
+
+
+// 	return NULL;
+// }
+
+char *test_appendToHashBucket() {
+	struct hashElement *element1 = createNewElement("blue", 123);
+	struct hashElement *element2 = createNewElement("green", 456);
+
+	appendToHashBucket(element1, element2);
+	mu_assert("Call to appendToHashBucket does not seg fault.", 1);
+
+	mu_assert("Head element of bucket not set propertly.", 
+ 		element1->prev == NULL);
+
+	mu_assert("Append element did not work.", 
+ 		element1->next != NULL);
+
+	mu_assert("Cannot access prev element in bucket list.", 
+ 		element2->prev != NULL);	
+
+	mu_assert("End of list not propertly set.", 
+ 		element2->next == NULL);
+
+	printf("%p\n", element2);	
+	printf("%p\n", element1->next);	
+
+	mu_assert("Bucket list not assigning next propertly.", 
+ 		element1->next == element2);	
+
+	mu_assert("Bucket list not assigning prev propertly.", 
+ 		element2->prev == element1);		
+
+	return NULL;
+}
+
 
 
 
@@ -117,6 +175,9 @@ char * test_all_Hash() {
 	mu_run_test(test_getHashedKey);
 	mu_run_test(test_isKeyCollison);
 	mu_run_test(test_createNewElement);
+	mu_run_test(test_isKeysIdentical);
+	// mu_run_test(test_findHashElementByKey);
+	mu_run_test(test_appendToHashBucket);
 
 	return NULL;
 }

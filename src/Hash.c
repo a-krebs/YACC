@@ -23,13 +23,45 @@ unsigned int getHashedKey(char *string) {
 //     return 0;
 // }
 
-int isKeyCollison(char *key) {
 
-        if ( symbolTable[getHashedKey(key)] != NULL) {
+
+
+
+
+
+
+
+
+int isKeyInBucket(char *key) {
+        if ( findHashElementByKey(key) != NULL ){
                 return 1;
         }
 
         return 0;
+}
+
+struct hashElement *findHashElementByKey(char *key) {
+        struct hashElement *element = symbolTable[getHashedKey(key)];
+
+        if ( element == NULL) {
+                return NULL;
+        }
+
+        if ( isKeysIdentical(element, key) ) {
+                return element;
+        }
+
+        for (; element->next != NULL; element = element->next) {
+                if ( isKeysIdentical(element, key) ) {
+                    return element;
+                }     
+        }   
+
+        if (HASH_DEBUG) {
+                printf("Could not find hash element.\n");
+        }
+
+        return NULL;
 }
 
 
@@ -79,37 +111,64 @@ struct hashElement *createNewElement(char *key, int value) {
         return element;
 }
 
+void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newElement) {
+    struct hashElement *current = bucketHead;
 
-// int createHashElement(char *key, int value) {
-//     struct hashElement *element;
-//     int index = simpleHashFunc(key);
+    for (; current->next != NULL; current = current->next);
+    
+    current->next = newElement;
+    newElement->prev = current;
+}
 
-//     if ( isSameKey(key) ) {
-        
-//         if (HASH_DEBUG) {
-//             printf("Error: Hash key already used! Will not reset. Skipping...\n");  
-//         }
+int isKeysIdentical(struct hashElement *element, char *key) {
+        if ( element != NULL ) {
+                if ( strcmp(element->key, key) == 0 ) {        
+                        return 1;
+                }
+        }   
+            
+        return 0;
+}
 
-//         return 1;
-//     }
+int isKeyCollison(char *key) {
 
-//     element = createNewElement(key, value);  
+        if ( symbolTable[getHashedKey(key)] != NULL) {
+                return 1;
+        }
 
-//     if ( isKeyCollison(key) ) {
+        return 0;
+}
 
-//         if (HASH_DEBUG) {
-//             printf("We have a hash collision. Creating list element...\n"); 
-//         }
 
-//         appendToHashBucket(hash[index], element);          
-//     }
-//     else {
-//         hash[index] = element;     
-//     }    
+int createHashElement(char *key, int value) {
+        struct hashElement *element;
+        int index = getHashedKey(key);
 
-//     if (HASH_DEBUG) {
-//         printf("Created hash element with data:\n\tkey: %s\n\tvalue: %d\n", element->key, element->value);  
-//     }
+        element = createNewElement(key, value);  
 
-//     return 0;
-// }
+        if ( isKeyCollison(key) ) {
+
+                if ( isKeyInBucket(key) ) {
+                        if (HASH_DEBUG) {
+                                printf("Error: Hash key already used! Will not reset. Skipping...\n");  
+                        }
+
+                        return 1;
+                }
+
+                if (HASH_DEBUG) {
+                        printf("We have a hash collision. Creating bucket list element...\n"); 
+                }
+
+                appendToHashBucket(symbolTable[index], element);          
+        }
+        else {
+                symbolTable[index] = element;     
+        }    
+
+        if (HASH_DEBUG) {
+                printf("Created hash element with data:\n\tkey: %s\n\tvalue: %d\n", element->key, element->value);  
+        }
+
+        return 0;
+}

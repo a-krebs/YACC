@@ -23,5 +23,7 @@ struct hashElement *symbolTable[TABLE_SIZE];
 
 /* Function declarations. */
 void dumpSymbolTable();
+int isKeyInBucket(char *key);
+struct hashElement *findHashElementByKey(char *key);
 
 #endif
