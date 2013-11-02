@@ -35,13 +35,9 @@ test_createErrorString()
 	e->colno = colno;
 
 	createErrorString(&buf, e);
-	mu_assert("createErrorString() should write to buf the expected return.",
+	mu_assert("createErrorString() should write to buf the expected return",
 		  strncmp(expectedRet, buf, strlen(expectedRet)) == 0);
 	return NULL;
-
-	
-	
-
 }
 
 char *
@@ -71,6 +67,38 @@ test_recordError()
 }
 
 char *
+test_customErrorString()
+{
+	char bigStr[CUSTOM_ERRMSG_SZ + 10];
+	int a1 = 10, a2 = 123, a3 = 321;
+	char varName[] = "customVan";
+	char formatStr[] = "a1 = %d, a2 = %d, a3 = %d, varName = %s";
+	char expectedRet[] = "a1 = 10, a2 = 123, a3 = 321, varName = customVan";
+	char *ret = customErrorString(formatStr, a1, a2, a3, varName);
+	int i;
+
+	mu_assert("customErrorString() should return a string of the expected\
+		  format", strcmp(ret, expectedRet) == 0);
+	for(i = 0; i < CUSTOM_ERRMSG_SZ + 10; i++) {
+		bigStr[i] = 'a';
+	}
+
+	ret = customErrorString(bigStr);
+	mu_assert("call to customErrorString() should not cause segfault  \
+		  when passed string larger than buf size and the returned\ 
+		  string should be null terminated",
+		  ret[CUSTOM_ERRMSG_SZ-1] == '\0');
+
+	ret = customErrorString(formatStr, a1, a2, a3, varName);
+	mu_assert("customErrorString() should return string of the expected\
+		  format even newest string is smaller than previous string\
+		  (e.g., fact that buffer was filled on last call should   \
+		  not affect null termination of next string created)",
+		  strcmp(ret, expectedRet) == 0);
+	return NULL;
+}
+
+char *
 test_freeError()
 {	
 
@@ -91,6 +119,7 @@ test_all_Error()
 {
 	mu_run_test(test_createErrorString);
 	mu_run_test(test_recordError);
+	mu_run_test(test_customErrorString);
 	mu_run_test(test_freeError);
 	return NULL;
 }

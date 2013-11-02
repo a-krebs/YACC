@@ -37,7 +37,7 @@ newParamArray()
 /*
  * Doubles the size of the array if is full.
  */
-static void
+void
 growParamArray(struct ParamArray *pa)
 {
 	if (!pa) {

@@ -48,7 +48,6 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
  *       in order to make the parameter available as a local variable in
  *       procedure/function definition body.
  * TODO: this function is UNTESTED
- * TODO: shouldn't this really be in Type.c ???? 
  */
 struct Param *
 newParameter(char *id, struct Symbol *typeSym)
