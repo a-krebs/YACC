@@ -16,3 +16,19 @@ void *getHashElement(char* id) {
 	// TODO implement hash table lookup
 	return NULL;
 }
+
+/*
+ * Set the ID's type.
+ */
+// TODO change types
+void setType(void *id, void* type) {
+	// TODO assign type to id
+}
+
+/*
+ * Perform actions necessary when entering type decl part.
+ */
+void enterTypeDeclPart(void) {
+	// TODO implementation. Probably just increase lex level.
+}
+

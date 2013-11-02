@@ -72,6 +72,7 @@ const_decl
 
 type_decl_part
 : TYPE type_decl_list semicolon_or_error
+	{ enterTypeDeclPart(); }
 |
 ;
 
@@ -82,6 +83,7 @@ type_decl_list
 
 type_decl
 : ID_or_err EQUAL type
+	{ setType($<hash>1, $<hash>3); }
 | error
 ;
 
@@ -338,7 +340,7 @@ semicolon_or_error
 ID_or_err
 : ID UNREC ID_or_err
 | ID
-	{ $<hashElement>$ = getHashElement($<id>1); }
+	{ $<hash>$ = getHashElement($<id>1); }
 ;
 
 
