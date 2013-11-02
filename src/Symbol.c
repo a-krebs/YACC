@@ -24,7 +24,7 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 		errMsg = customErrorString("Semantic Error: cannot define array %s, \
 				   base type or index type incorrect \
 				   undefined? (%d, %d)", id, yylineno, colno);
-		recordError(errMsg, yylineno, colno);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 	if ((indexTypeSym->type != SCALAR_T) &&

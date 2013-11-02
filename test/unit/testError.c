@@ -108,6 +108,8 @@ test_freeError()
 	int lineno = 1029, colno = 9899;
 
 	errors = NULL;
+	struct Error *ret = NULL;
+
 	ret = recordError(errorMsg, lineno, colno, GENERIC);
 	freeError(ret);
 	mu_assert("Call to freeError does not cause segfault",

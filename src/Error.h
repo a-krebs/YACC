@@ -28,12 +28,8 @@ struct Error {
 extern int colno; 
 extern int nErrors;
 
-<<<<<<< .merge_file_wXseLR
-struct Error *recordError(const char *, int, int);
 char *customErrorString(char *, ...);
-=======
 struct Error *recordError(const char *, int, int, enum ErrorType);
->>>>>>> .merge_file_XuBQdR
 void createErrorString(char **, struct Error *);
 void printError(struct Error *);
 void freeError(struct Error *);
