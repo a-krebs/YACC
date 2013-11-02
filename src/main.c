@@ -115,7 +115,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 
 void testHash() {
 	printf("testttttttttttttttt");
-	dumpSymbolTable();
+	//dumpSymbolTable();
 }
 
 
