@@ -28,6 +28,8 @@ typedef enum {
 	BOOLEAN_T,
 	CHAR_T,
 	INTEGER_T,
+	FUNCTION_T,
+	PROCEDURE_T,
 	REAL_T,
 	RECORD_T,	
 	SCALAR_T,
@@ -39,6 +41,8 @@ typedef union type_union {
 	struct Boolean * Boolean;
 	struct Char * Char;
 	struct Integer * Integer;
+	struct Function *Function;
+	struct Procedure *Procedure;
 	struct Real * Real;
 	struct Record * Record;
 	struct Scalar * Scalar;
@@ -96,7 +100,7 @@ struct Integer {
 };
 
 struct Procedure {
-	struct ParamArray params;
+	struct ParamArray *params;
 };
 
 

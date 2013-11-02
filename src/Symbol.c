@@ -109,6 +109,7 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
  *       in order to make the parameter available as a local variable in
  *       procedure/function definition body.
  * TODO: this function is UNTESTED
+ * TODO: shouldn't this really be in Type.c ???? 
  */
 struct Param *
 newParameter(int lvl, char *id, struct Symbol *typeSym)
@@ -138,8 +139,6 @@ newParameter(int lvl, char *id, struct Symbol *typeSym)
 
 	strcpy(newParam->name, id);
 	newParam->type = typeSym->kind;
-	newParam->typePtr = typeSym->typePtr;	
-
 	return newParam;
 }
 
@@ -273,13 +272,48 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 }
 
 /*
- * 
- *
+ * Creates a new procedure symbol entry to be placed in the symbol table.
+ * TODO: split this into two functions: newProcedureSym() and newProcedure() 
  */
 struct Symbol *
 newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 {
-	return NULL;
+
+	struct Symbol *newProcSym = NULL;
+	unsigned int i;
+	size_t len;
+	if (!pa) {
+		/* Don't pass NULL if no params, pass empty param array. */
+		return NULL;
+	}
+
+	if (!id) {
+		/* Cannot create anonymous procedure! */
+		return NULL;
+	}
+
+	newProcSym = calloc(1, sizeof(struct Symbol));
+	if (!newProcSym) {
+		err(1, "Failed to allocate memory for new procedure symbol!");
+		exit(1);		
+	}
+	newProcSym->typePtr.Procedure = calloc(1, sizeof(struct Procedure));
+	if (!newProcSym->typePtr.Procedure) {
+		err(1, "Failed to allocate memory for new procedure symbol!");
+		exit(1);
+	}	
+
+	len = strlen(id);
+	if (!len) {
+		/* procdure cannot have 0 length name */
+		return NULL;	
+	}
+	strcpy(newProcSym->name, id);
+	newProcSym->kind = PROC_KIND;
+	newProcSym->type = PROCEDURE_T;
+	newProcSym->typePtr.Procedure->params = pa;
+	newProcSym->lvl = lvl;
+	return newProcSym;	
 }
 
 
@@ -288,6 +322,10 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
  * NOTE: this functionly only handles the BOOLEAN_T, CHAR_T, INTEGER_T,
  * and REAL_T cases and it is only in these cases where one type
  * pointer is set to the identicial to another.
+ * TODO: was this premature generalization?  is it needed?  am I a moron?
+ * No, no, this is good for variables where we need to point to the 
+ * type sym we were passed for the rest of cases implement simple
+ * pointer assignments.
  */
 void
 setTypePtr(Type *new, Type old, type_t type)
