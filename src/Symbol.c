@@ -110,7 +110,7 @@ newParameter(char *id, struct Symbol *typeSym)
 
 	strcpy(newParam->name, id);
 	newParam->type = typeSym->type;
-	setTypePtr(newParam->typePtr, typeSym->typePtr, typeSym-type);
+	setTypePtr(&(newParam->typePtr), typeSym->typePtr, typeSym->type);
 	return newParam;
 }
 
