@@ -34,7 +34,7 @@ LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
-TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o
+TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testParamArray.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -127,6 +127,9 @@ $(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
 	$(COMPILE)
 
 $(BIN)/testErrorLL.o: $(TEST)/testErrorLL.c $(TEST)/testErrorLL.h
+	$(COMPILE)
+
+$(BIN)/testParamArray.o: $(TEST)/testParamArray.c $(TEST)/testParamArray.h
 	$(COMPILE)
 
 $(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
