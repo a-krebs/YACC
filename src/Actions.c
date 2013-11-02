@@ -66,3 +66,13 @@ void *anonRealLiteral(double value) {
 	// TODO implement
 	return NULL;
 }
+
+/*
+ * Make a new anonymous symbol with the given string.
+ * Return a pointer to the hash symbol.
+ */
+// TODO change return type
+void *anonStringLiteral(char *value) {
+	// TODO implment
+	return NULL;
+}

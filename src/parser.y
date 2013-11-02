@@ -288,6 +288,7 @@ unsigned_const
 // same place, so this is redundant.
 // | ID
 | STRING_CONST
+	{ $<hash>$ = anonStringLiteral($<string>1); }
 	// return String struct from Type.h
 ;
 
