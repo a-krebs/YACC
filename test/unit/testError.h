@@ -4,4 +4,5 @@
 char *test_createErrorString();
 char *test_recordError();
 char *test_customErrorString();
+char *test_getErrorTypeString();
 char *test_all_Error();

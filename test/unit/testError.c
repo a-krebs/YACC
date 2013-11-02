@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "testError.h"
 
@@ -50,7 +51,7 @@ test_recordError()
 	struct Error *ret = NULL;
 
 	errors = NULL;
-	ret = recordError(errorMsg, lineno, colno);
+	ret = recordError(errorMsg, lineno, colno, GENERIC);
 
 	mu_assert("recordError doest not return  NULL pointer.", (ret));
 	mu_assert("lineno correctly set in returned Error.",
@@ -107,10 +108,24 @@ test_freeError()
 	int lineno = 1029, colno = 9899;
 
 	errors = NULL;
-	recordError(errorMsg, lineno, colno);
+	ret = recordError(errorMsg, lineno, colno, GENERIC);
+	freeError(ret);
 	mu_assert("Call to freeError does not cause segfault",
 		  1);
 
+	return NULL;
+}
+
+char *test_getErrorTypeString()
+{
+	char *syntax = "Syntax";
+	char *semantic = "Semantic";
+	mu_assert("getErrorTypeString returned wrong string.",
+	    strcmp(getErrorTypeString(SYNTAX), syntax) == 0);
+	mu_assert("getErrorTypeString returned wrong string.",
+	    strcmp(getErrorTypeString(SEMANTIC), semantic) == 0);
+	mu_assert("getErrorTypeString returned wrong string.",
+	    getErrorTypeString(GENERIC) == NULL);
 	return NULL;
 }
 
@@ -121,5 +136,6 @@ test_all_Error()
 	mu_run_test(test_recordError);
 	mu_run_test(test_customErrorString);
 	mu_run_test(test_freeError);
+	mu_run_test(test_getErrorTypeString);
 	return NULL;
 }

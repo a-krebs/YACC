@@ -61,7 +61,7 @@ extern void yyerror(char *);
 
 "}"             { colno++;
                   struct Error *e = recordError("Closing comment brace '}' "
-                  "found without matching '{'", yylineno, colno);
+                  "found without matching '{'", yylineno, colno, SYNTAX);
                   printError(e);
 #if DEBUG
                   printf("'}' FOUND WITHOUT MATCHING '{'\n");
