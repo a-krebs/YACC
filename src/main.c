@@ -16,6 +16,7 @@
 extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
+extern struct hashElement *symbolTable[TABLE_SIZE];
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -116,6 +117,10 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
  */
 int main( int argc, char *argv[] )
 {
+	
+
+
+
 	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
 
