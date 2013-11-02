@@ -20,7 +20,6 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 	 struct Symbol *indexTypeSym)
 {
 	struct Symbol *newArraySym = NULL;
-	size_t len;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
 		errMsg = customErrorString("Semantic Error: cannot define array %s, \
 				   base type or index type incorrect \
@@ -232,8 +231,8 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 		{
 			low = constSymLow->typePtr.Char->value;
 			high = constSymHigh->typePtr.Char->value;
-			if (low >= high ) {
-				/* Error: lhs value not less than rhs value */
+			if (low > high ) {
+				/* Error: lhs value greater than rhs value */
 				return NULL;
 			}
 			break;
@@ -311,7 +310,6 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 {
 
 	struct Symbol *newProcSym = NULL;
-	unsigned int i;
 	size_t len;
 	if (!pa) {
 		/* Don't pass NULL if no params, pass empty param array. */
@@ -347,4 +345,32 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 	return newProcSym;	
 }
 
+struct Symbol*
+newConstSym(int lvl, char * id, struct Symbol * constTypeSym)
+{
+	return NULL;
+}
 
+struct Symbol*
+newConstSymFromType(int lvl, Type constType, type_t type)
+{
+	struct Symbol *newConstSym = NULL;
+	if (!newConstSym) {
+		/*Error*/
+		return NULL;	
+	}
+
+	newConstSym = calloc(1, sizeof(struct Symbol));
+	if (!newConstSym) {
+		err(1, "failed to allocate memory for new anon const symbol!");
+		exit(1);
+	}	
+	
+	
+	setTypePtr(&(newConstSym->typePtr), constType, type); 
+	newConstSym->name = NULL;
+	newConstSym->kind = CONST_KIND;
+	newConstSym->lvl = lvl;
+
+	return newConstSym;
+}

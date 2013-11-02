@@ -33,6 +33,7 @@ typedef enum {
 	REAL_T,
 	RECORD_T,	
 	SCALAR_T,
+	STRING_T,
 	SUBRANGE_T,
 } type_t;
 
@@ -46,6 +47,7 @@ typedef union type_union {
 	struct Real * Real;
 	struct Record * Record;
 	struct Scalar * Scalar;
+	struct String * String;
 	struct Subrange * Subrange;
 } Type;
 
@@ -109,6 +111,11 @@ struct Real {
 				 * by an object of kind CONST_KIND */
 };
 
+
+struct String {
+	char * str;
+	unsigned int strlen;
+};
 struct Subrange {
 	int high;
 	int low;
@@ -128,9 +135,24 @@ struct Record {
 	/* each record implemented as its own symbol table */
 };
 
+/*
+ * To be used when were are making an anonymous constant type (which will
+ * be used to make a symbol).  We could not simply reuse the Type union
+ * that is a union of pointers and would have required that we allocate
+ * memory inside actions in the grammar file which I felt was a bad idea.
+ */
+typedef union anonymous_constant_value {
+	struct Boolean Boolean;
+	struct Char Char;
+	struct Integer Integer;
+	struct Real Real;
+	struct String String;
+} AnonConstantValue;
+
 
 /* Function declarations */
 int isOrdinal(type_t);
+Type newAnonConstType(AnonConstantValue, type_t);
 void setTypePtr(Type *, Type, type_t);
-
+void typeMemoryFailure();
 #endif

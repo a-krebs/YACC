@@ -21,6 +21,7 @@ struct Symbol {
 
 struct Symbol *newArraySym(int, char *, struct Symbol *, struct Symbol *);
 struct Symbol *newConstSym(int, char *, struct Symbol *);
+struct Symbol *newConstSymFromType(int, Type, type_t);
 struct Symbol *newSubrangeSym(int, struct Symbol *, struct Symbol *);
 struct Symbol *newVariableSym(int, char *, struct Symbol *);
 struct Symbol *newProcedureSym(int, char *, struct ParamArray *);

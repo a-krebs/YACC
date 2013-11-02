@@ -61,6 +61,9 @@ setTypePtr(Type *new, Type old, type_t type)
 	case SCALAR_T:
 		new->Scalar = old.Scalar;
 		break;
+	case STRING_T:
+		new->String = old.String;
+
 	case SUBRANGE_T:
 		new->Subrange = old.Subrange;
 		break;
@@ -70,3 +73,66 @@ setTypePtr(Type *new, Type old, type_t type)
 	}
 }
 
+Type
+newAnonConstType(AnonConstantValue value, type_t type)
+{
+	Type anonConstType;
+	switch(type) {
+	case BOOLEAN_T: {
+		struct Boolean constVal = value.Boolean;
+		struct Boolean *constValPtr = calloc(1, sizeof(struct Boolean));
+		if (!constValPtr) typeMemoryFailure();
+		constValPtr->value = constVal.value;
+		anonConstType.Boolean = constValPtr;
+		break;
+	}
+
+	case CHAR_T: {
+		struct Char constVal = value.Char;
+		struct Char *constValPtr = calloc(1, sizeof(struct Char));
+		if (!constValPtr) typeMemoryFailure();
+		constValPtr->value = constVal.value;
+		anonConstType.Char = constValPtr;
+		break;
+	}
+	case INTEGER_T: {
+		struct Integer constVal = value.Integer;
+		struct Integer *constValPtr = calloc(1, sizeof(struct Integer));
+		if (!constValPtr) typeMemoryFailure();
+		constValPtr->value = constVal.value;
+		anonConstType.Integer = constValPtr;
+		break;
+	}
+	case REAL_T: {
+		struct Real constVal = value.Real;
+		struct Real *constValPtr = calloc(1, sizeof(struct Real));
+		if (!constValPtr) typeMemoryFailure();
+		constValPtr->value = constVal.value;
+		anonConstType.Real = constValPtr;
+		break;
+	}
+	case STRING_T: {
+		struct String constVal = value.String;
+		struct String *constValPtr = calloc(1, sizeof(struct String));
+		if (!constValPtr) typeMemoryFailure();
+				
+		constValPtr->strlen = constVal.strlen;
+		constValPtr->str = calloc(1, sizeof(char)*constVal.strlen);
+		if(!constValPtr->str) typeMemoryFailure();
+		strncpy(constValPtr->str, constVal.str, constVal.strlen);
+		break;
+	}
+	default:
+		/* NOT SUPPOSED TO BE REACHED */
+		break;
+	}
+
+	return anonConstType;
+}
+
+void
+typeMemoryFailure()
+{
+	err(1, "Failed to allocate memory for new anonymous constant type!");
+	exit(1);
+}
