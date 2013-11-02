@@ -242,12 +242,19 @@ subscripted_var
 
 expr
 : simple_expr
+	{ $<type>$ = $<type>1; }
 | expr EQUAL simple_expr
+	{ $<type>$ = assertOpCompat($<type>1, EQUAL, $<type>1); }
 | expr NOT_EQUAL simple_expr
+	{ $<type>$ = assertOpCompat($<type>1, NOT_EQUAL, $<type>1); }
 | expr LESS_OR_EQUAL simple_expr
+	{ $<type>$ = assertOpCompat($<type>1, LESS_OR_EQUAL, $<type>1); }
 | expr LESS simple_expr
+	{ $<type>$ = assertOpCompat($<type>1, LESS, $<type>1); }
 | expr GREATER_OR_EQUAL simple_expr
+	{ $<type>$ = assertOpCompat($<type>1, GREATER_OR_EQUAL, $<type>1); }
 | expr GREATER simple_expr
+	{ $<type>$ = assertOpCompat($<type>1, GREATER, $<type>1); }
 ;
 
 simple_expr

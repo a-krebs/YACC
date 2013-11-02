@@ -141,18 +141,14 @@ $(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
 $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 	$(COMPILE)
 
-$(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h
-<<<<<<< HEAD
-	$(COMPILE)	
-
 $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 	$(COMPILE)	
 
 $(BIN)/testHash.o: $(TEST)/testHash.c $(TEST)/testHash.h
 	$(COMPILE)		
-=======
+
+$(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
 	$(COMPILE)
->>>>>>> Actions module.
 
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
 	$(BISONFLEXCOMPILE)

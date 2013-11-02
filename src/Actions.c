@@ -4,6 +4,7 @@
 #include <unistd.h>
 
 #include "Hash.h"
+#include "parser.tab.h"
 
 extern struct hashElement *symbolTable[TABLE_SIZE];
 
@@ -74,5 +75,26 @@ void *anonRealLiteral(double value) {
 // TODO change return type
 void *anonStringLiteral(char *value) {
 	// TODO implment
+	return NULL;
+}
+
+/*
+ * Check that the given types are compatible when using the given
+ * operator.
+ *
+ * Return a pointer to the resulting type when performing the operation.
+ *
+ * If the types are not combatible for this operator, set error and return NULL.
+ */
+// TODO change return type and arg types
+void *assertOpCompat(void *type1, int opToken, void *type2) {
+	// TODO implment
+	switch (opToken) {
+		case EQUAL:
+			break;
+		default:
+			// TODO error
+			break;
+	}
 	return NULL;
 }

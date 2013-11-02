@@ -6,3 +6,4 @@ void enterConstDeclPart(void);
 void *anonIntLiteral(int);
 void *anonRealLiteral(double);
 void *anonStringLiteral(char*);
+void *assertOpCompat(void*, int, void*);
