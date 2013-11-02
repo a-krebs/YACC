@@ -11,7 +11,7 @@
 struct hashElement {
     char *key;
     int value;
-    struct struct Symbol *symbol;
+    struct Symbol *symbol;
     struct hashElement *prev;
     struct hashElement *next;
 };
@@ -33,6 +33,10 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
 int isKeysIdentical(struct hashElement *element, char *key);
 int isKeyCollison(char *key);
 int createHashElement(char *key, int value);
+
+void destroySymbolTable();
+void deleteHashBucket(struct hashElement *current);
+void freeHashElement(struct hashElement *element);
 
 
 #endif

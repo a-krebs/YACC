@@ -112,11 +112,15 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	return 0;
 }
 
+
+
 /*
  * Main entry point for the Team YACC PAL compiler.
  */
 int main( int argc, char *argv[] )
 {
+
+
 	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
 
@@ -159,6 +163,7 @@ int main( int argc, char *argv[] )
 	}
 	
 	free(givenArgs.listingFile);
+
 
 	return EXIT_SUCCESS;
 }
