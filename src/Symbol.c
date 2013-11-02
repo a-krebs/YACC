@@ -96,7 +96,6 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 	strcpy(newVar->name, id);
 
 	newVar->kind = VAR_KIND;
-	newVar->kindPtr = NULL;	/* var struct is empty for now */
 	newVar->type = typeSym->type;
 	newVar->typePtr = typeSym->typePtr;
 
@@ -162,20 +161,17 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	 */
 	if ((!constSymLow) || (!constSymHigh)) {
 		/* Error */
-		printf("1\n");
 		return NULL;
 	}
 
 	if ((constSymLow->kind != CONST_KIND) ||
 	    (constSymHigh->kind != CONST_KIND)) {
 		/*Error: subranges indices not constants */
-		printf("2\n");	
 		return NULL;
 	}
 
 	if (constSymLow->type != constSymHigh->type) {
 		/* Error:  Mismatched types for subrange indices */
-		printf("3\n");
 		return NULL;
 	}
 
@@ -184,7 +180,6 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 		 * Error: trying to construct subrange from non ordinal
 		 * types
 		 */
-		printf("4\n");
 		return NULL;
 	}
 
@@ -244,7 +239,6 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	}
 	
 	newSubrange->kind = TYPE_KIND;
-	newSubrange->kindPtr = NULL;
 	newSubrange->typePtr.Subrange->low = low;
 	newSubrange->typePtr.Subrange->high = high;
 	newSubrange->type = SUBRANGE_T;
@@ -278,4 +272,52 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	return newSubrange;
 }
 
+/*
+ * 
+ *
+ */
+struct Symbol *
+newProcedureSym(int lvl, char *id, struct ParamArray *pa)
+{
+	return NULL;
+}
 
+
+/*
+ * Set type pointer new to point to type old of type passed as arg.
+ * NOTE: this functionly only handles the BOOLEAN_T, CHAR_T, INTEGER_T,
+ * and REAL_T cases and it is only in these cases where one type
+ * pointer is set to the identicial to another.
+ */
+void
+setTypePtr(Type *new, Type old, type_t type)
+{
+	switch (type) {
+		case BOOLEAN_T:
+		{
+			new->Boolean->value = old.Boolean->value;
+			new->Boolean = old.Boolean;
+			break;
+		}
+		case CHAR_T:
+		{
+			new->Char->value = old.Char->value;
+			new->Char = old.Char;
+			break;
+		}
+		case INTEGER_T:
+		{
+			new->Integer->value = old.Integer->value;
+			new->Integer = old.Integer;
+			break;	
+		}
+		case REAL_T:
+		{
+			new->Real->value = old.Real->value;
+			new->Real = old.Real;
+			break;
+		}
+		default:
+			break;
+	}
+}

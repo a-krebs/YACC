@@ -35,7 +35,6 @@ setUpTypeSymbol()
 	}
 	strcpy(typeSym->name, id);
 	typeSym->kind = TYPE_KIND;
-	typeSym->kindPtr = NULL;
 	typeSym->type = INTEGER_T;
 
 	typeSym->typePtr.Integer = calloc(1, sizeof(struct Integer));
@@ -125,6 +124,7 @@ test_newSubrangeSym()
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
 	mu_assert("newSubrangeSym() should return null when symbol types \
 		   mistmatch.", !subrangeSym);
+	return NULL;
 }
 
 char *

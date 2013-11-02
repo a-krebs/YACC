@@ -13,39 +13,9 @@ typedef enum {
 	VAR_KIND	/* variable declaration */
 } kind_t;
 
-
-struct Procedure {
-	struct ParamArray params;
-
-};
-
-
-/*
- * TODO: need to check if function actually returns something (i.e., does it
- *	 reference its own id as l-val in an assignment operation?) ; we won't
- *	 have time to implement checking if there is a execution path
- * 	 which results in no return type being set (and thus setting warning/
- *	 error)
- */
-struct Function {
-	struct ParamArray params;
-	struct symbol *return_t;
-	/* flag for checking if anything is returned? */	
-
-};
-
-
-struct Const {
-	type_t type;		/* the type of the const */
-	void *typePtr;		/* pointer to the strcut of const type */
-};
-
-
-
-
-/* Do we need a variable struct?  Keep this here just in case */
-struct Variable {
-	
-};
+typedef union kind_union {
+	struct Function * Function;
+	struct Procedure * Procedure;
+} Kind;
 
 #endif

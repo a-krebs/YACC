@@ -14,7 +14,6 @@
 struct Symbol {
 	char *name;	/* the name associated with the entry */
 	kind_t kind;	/* the kind associated with this entry */
-	void *kindPtr;	/* ptr to the kind struct associated with this entry */
 	type_t type;	/* the type associated with the kind of this entry */
 	Type typePtr;	/* pointer to the type associated with kind of entry */	
 	int lvl;	/* the lexical level at which the entry is defined */	
@@ -24,5 +23,6 @@ struct Symbol *newArraySym(int, char *, struct Symbol *, struct Symbol *);
 struct Symbol *newSubrangeSym(int, struct Symbol *, struct Symbol *);
 struct Symbol *newVariableSym(int, char *, struct Symbol *);
 struct Param *newParameter(int, char *, struct Symbol *);
-struct Symbol *newProcedureSym(int, char *);
+struct Symbol *newProcedureSym(int, char *, struct ParamArray *);
+void setTypePtr(Type *, Type, type_t);
 #endif

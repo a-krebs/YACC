@@ -11,13 +11,6 @@
 
 #define PA_DEFAULT_SZ 24	/* default initial size of param array */
 
-
-struct ParamArray {
-	struct Param **data;
-	unsigned int len;
-	unsigned int nElements;
-};
-
 struct ParamArray *newParamArray();
 void appendParam(struct ParamArray *, struct Param *);
 struct Param *getParam(struct ParamArray *, unsigned int);

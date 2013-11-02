@@ -5,7 +5,6 @@
 #ifndef TYPE_H
 #define TYPE_H
 
-
 /*
  * Defines the pre-defined types used by the compiler.
  */
@@ -46,6 +45,20 @@ typedef union type_union {
 	struct Subrange * Subrange;
 } Type;
 
+struct Param {
+	char *name;
+	type_t type;
+	Type typePtr;
+};
+
+/* Param Array defined here to avoid incestuous circular .h includes :( */
+struct ParamArray {
+	struct Param **data;
+	unsigned int len;
+	unsigned int nElements;
+};
+
+
 struct Array {
 	type_t baseType;	/* type of elements of array (e.g., array of 
 				 * char => baseType = CHAR_T */
@@ -63,10 +76,29 @@ struct Char {
 	char value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
+
+/*
+ * TODO: need to check if function actually returns something (i.e., does it
+ *	 reference its own id as l-val in an assignment operation?) ; we won't
+ *	 have time to implement checking if there is a execution path
+ * 	 which results in no return type being set (and thus setting warning/
+ *	 error)
+ */
+struct Function {
+	struct ParamArray params;
+	Type *returnType;
+
+};
+
 struct Integer {
 	int value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
+
+struct Procedure {
+	struct ParamArray params;
+};
+
 
 struct Real {
 	double value;		/* value only needed when being pointed to
@@ -92,11 +124,6 @@ struct Record {
 	/* each record implemented as its own symbol table */
 };
 
-struct Param {
-	char *name;
-	type_t type;
-	Type typePtr;
-};
 
 /* Function declarations */
 int isOrdinal(type_t);
