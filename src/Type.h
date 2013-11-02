@@ -131,6 +131,6 @@ struct Record {
 
 /* Function declarations */
 int isOrdinal(type_t);
-
+void setTypePtr(Type *, Type, type_t);
 
 #endif
