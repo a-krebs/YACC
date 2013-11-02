@@ -3,20 +3,29 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "Error.h"
 #include "Type.h"
 #include "Symbol.h"
 
+extern int yylineno;
+extern int colno;
+
+static char *errMsg;
+
 /*
- * TODO: finish implementing this function.
+ * 
  */
 struct Symbol *
 newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 	 struct Symbol *indexTypeSym)
 {
-	struct Symbol *newArray = NULL;
+	struct Symbol *newArraySym = NULL;
 	size_t len;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
-		/* Error */
+		errMsg = customErrorString("Semantic Error: cannot define array %s, \
+				   base type or index type incorrect \
+				   undefined? (%d, %d)", id, yylineno, colno);
+		recordError(errMsg, yylineno, colno);
 		return NULL;
 	}
 	if ((indexTypeSym->type != SCALAR_T) ||
@@ -25,21 +34,45 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 		return NULL;
 	}
 
-	newArray = calloc(1, sizeof(struct Symbol));
-	if (!newArray) {
+	newArraySym = calloc(1, sizeof(struct Symbol));
+	if (!newArraySym) {
 		err(1, "Failed to allocate memory for new array!");
 		exit(1);
 	}
 
-	/* Have to explicitly check if id is set because we can have
+	/* Set symbol entries for this symbol */
+
+ 	/* Have to explicitly check if id is set because we can have
 	 * anonymous arrays (e.g., myArray : array[1..10] of array[1..10] of
 	 * char )
 	 */
-	if (id) {
-		strcpy(newArray->name, id);
-	}
+	if (id) strcpy(newArraySym->name, id);
+	else newArraySym->name = NULL;
+
+	newArraySym->kind = TYPE_KIND;
+	newArraySym->lvl = lvl;
+
+	/* Now we proceed to creating the associated array type */
+
+	/* Set array base type and base type pointer */
+	newArraySym->typePtr.Array->baseType = baseTypeSym->type;	
+
+	/* 
+	 * Forgive me, for I have sinned: cast to Type * added to make
+	 * gcc shut up.
+	 */
+	setTypePtr((Type *)&(newArraySym->typePtr.Array->baseTypePtr),
+		    baseTypeSym->typePtr,
+		    baseTypeSym->type);
+
+	/* Set up index type and index type pointer */
+	newArraySym->typePtr.Array->indexType = indexTypeSym->type;
+	setTypePtr((Type *)&(newArraySym->typePtr.Array->indexTypePtr),
+		    indexTypeSym->typePtr,
+		    indexTypeSym->type);	
+
 	
-	return NULL;
+	return newArraySym;
 }
 
 /*
