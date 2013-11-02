@@ -81,6 +81,7 @@ struct Param *
 newParameter(char *id, struct Symbol *typeSym)
 {
 	struct Param *newParam = NULL;
+	size_t len;
 
 	if (!typeSym) {
 		/* Record error */
@@ -95,8 +96,13 @@ newParameter(char *id, struct Symbol *typeSym)
 		/* Error: canot have anonymous parameters! */
 		return NULL;
 	}
-
 	
+	len = strlen(id);
+	if (!len) {
+		/* Cannot have param with 0 length name! */
+		return NULL;
+	}
+
 	newParam = calloc(1, sizeof(struct Param));
 	if (!newParam) {
 		err(1, "Failed to allocate memory for new parameter!");
@@ -104,7 +110,8 @@ newParameter(char *id, struct Symbol *typeSym)
 	}
 
 	strcpy(newParam->name, id);
-	newParam->type = typeSym->kind;
+	newParam->type = typeSym->type;
+	setTypePtr(newParam->typePtr, typeSym->typePtr, typeSym-type);
 	return newParam;
 }
 
