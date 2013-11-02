@@ -13,7 +13,7 @@ extern int colno;
 static char *errMsg;
 
 /*
- * 
+ * Constructs and array symbol given a base type and an index type. 
  */
 struct Symbol *
 newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
@@ -28,7 +28,7 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 		recordError(errMsg, yylineno, colno);
 		return NULL;
 	}
-	if ((indexTypeSym->type != SCALAR_T) ||
+	if ((indexTypeSym->type != SCALAR_T) &&
 	    (indexTypeSym->type != SUBRANGE_T)) {
 		/* Error */
 		return NULL;
@@ -75,7 +75,6 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
  * NOTE: each call to newParameter must be followed by a call to newVariable()
  *       in order to make the parameter available as a local variable in
  *       procedure/function definition body.
- * TODO: this function is UNTESTED
  */
 struct Param *
 newParameter(char *id, struct Symbol *typeSym)
@@ -179,8 +178,6 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 
 /*
  * Constructs an anonymous subrange symbol.  
- * TODO: split this into two functions: newSubrangeSym() and newSubrange()
-*	 where each one does the obvious thing.
  */
 struct Symbol *
 newSubrangeSym(int lvl, struct Symbol *constSymLow, 
@@ -308,7 +305,6 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 
 /*
  * Creates a new procedure symbol entry to be placed in the symbol table.
- * TODO: split this into two functions: newProcedureSym() and newProcedure() 
  */
 struct Symbol *
 newProcedureSym(int lvl, char *id, struct ParamArray *pa)
