@@ -18,6 +18,15 @@ struct Symbol *createRecordType(struct Symbol*);
 struct Symbol *appendFieldToRecordType(struct Symbol*, struct Symbol*);
 struct Symbol *newTmpRecordField(char*, struct Symbol*);
 
+/* var decl list */
+void exitVarDeclPart(void);
+struct Symbol *doVarDecl(char*, struct Symbol*);
+
+/* proc and function decls */
+struct Symbol *doVarDecl(char*, struct Symbol*);
+struct Symbol *enterProcDecl(char*, struct Symbol*);
+struct Symbol *enterFuncDecl(char*, struct Symbol*);
+
 /* expressions and operators */
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3);
 struct Symbol *hashLookupToTmp(char *id);

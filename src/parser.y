@@ -154,6 +154,7 @@ field
 
 var_decl_part
 : VAR var_decl_list semicolon_or_error
+	{ exitVarDeclPart(); }
 |
 ;
 
@@ -164,7 +165,9 @@ var_decl_list
 
 var_decl
 : ID_or_err COLON type
+	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>3); }
 | ID_or_err comma_or_error var_decl
+	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>2); }
 ;
 
 proc_decl_part
@@ -179,18 +182,27 @@ proc_decl_list
 
 proc_decl
 : proc_heading decls compound_stat semicolon_or_error
+	{ exitProcOrFuncDecl(); }
 | proc_heading semicolon_or_error
+	{ exitProcOrFuncDecl(); }
 ;
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterProcDecl($<id>2, $<symbol>3);
+	  /* TODO check what we're doing for f_parm_decl  */ }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>2, $<symbol>3); }
 | PROCEDURE ID semicolon_or_error
-	{yyerrok;}
+	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
+	  yyerrok; }
 | FUNCTION ID semicolon_or_error
-	{yyerrok;}
+	{ $<symbol>$ = enterFuncDecl($<id>2, NULL);
+	  yyerrok; }
 | PROCEDURE semicolon_or_error
+	{ $<symbol>$ = enterProcDecl((void*)NULL, (void*)NULL); }
 | FUNCTION semicolon_or_error
+	{ $<symbol>$ = enterProcDecl((void*)NULL, (void*)NULL); }
 ;
 
 f_parm_decl

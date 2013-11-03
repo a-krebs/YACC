@@ -159,6 +159,56 @@ struct Symbol *newTmpRecordField(char *id, struct Symbol *type) {
 	return NULL;
 }
 
+/*
+ * Perform actions necessary when exiting variable dec section.
+ */
+void exitVarDeclPart(void) {
+	// nothing to do here
+}
+
+/*
+ * Declare a new variable with the given type.
+ *
+ * Return a pointer to type.
+ */
+struct Symbol *doVarDecl(char *id, struct Symbol *type) {
+	return type;
+}
+
+/*
+ * Exit a procedure or function definition.
+ *
+ * This is a good time to pop lexical level.
+ */
+void exitProcOrFuncDecl(void) {
+	// TODO
+}
+
+/*
+ * Declare a new procedure with given arguments and perform anything
+ * necessary when entering the procedure body definition (like increasing
+ * the lexical level).
+ *
+ * Both arguments can be NULL if the definition contains errors.
+ *
+ * Return a pointer to the procedure.
+ */
+struct Symbol *enterProcDecl(char *id, struct Symbol *argv) {
+	return NULL;
+}
+
+/*
+ * Declare a new function with the given arguments and perform anything
+ * necessary when entering the function body definition.
+ *
+ * Both arguments can be NULL if the definition contains errors.
+ * 
+ * Return a pointer to the procedure.
+ */
+struct Symbol *enterFuncDecl(char *id, struct Symbol *argv) {
+	return NULL;
+}
+
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3) {
 	return NULL;
 }
