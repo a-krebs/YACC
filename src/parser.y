@@ -9,6 +9,7 @@
 #include "ErrorLL.h"
 #include "args.h"
 #include "Actions.h"
+#include "Symbol.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -68,7 +69,7 @@ const_decl_list
 
 const_decl
 : ID_or_err EQUAL expr
-	{ doConstDecl($<hash>1, $<type>3); }
+	{ doConstDecl($<id>1, $<tmp>3); }
 | error
 ;
 
@@ -85,7 +86,7 @@ type_decl_list
 
 type_decl
 : ID_or_err EQUAL type
-	{ doTypeDecl($<hash>1, $<hash>3); }
+	{ doTypeDecl($<id>1, $<id>3); }
 | error
 ;
 
@@ -205,6 +206,7 @@ f_parm
 
 compound_stat
 : _BEGIN stat_list END
+	{ /* TODO maybe refactor this into a begin and end part */ }
 ;
 
 stat_list
@@ -220,7 +222,9 @@ stat
 
 simple_stat
 : var ASSIGN expr
+	{ assignOp($<tmp>1, $<tmp>3); }
 | proc_invok
+	{ /* TODO */ }
 | compound_stat
 ;
 
@@ -231,75 +235,79 @@ proc_invok
 
 var
 : ID_or_err
-	{ $<hash>$ = getHashElement($<id>1); }
+	{ $<tmp>$ = hashLookupToTmp($<id>1); }
 | var PERIOD ID_or_err
-	{ $<hash>$ = recordAccess($<id>1, $<id>3 ); }
+	{ $<tmp>$ = recordAccessToTmp($<id>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
-	{ $<integer>$ = $<integer>1; }
+	{ $<tmp>$ = $<tmp>1; }
 ;
 
 subscripted_var
 : var LS_BRACKET expr
+	{ $<tmp>$ = $<tmp>3; }
 | subscripted_var comma_or_error expr
+	{ /* TODO */ }
 ;
 
 expr
 : simple_expr
-	{ $<type>$ = $<type>1; }
+	{ $<tmp>$ = $<tmp>1; }
 | expr EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, EQUAL, $<type>3); }
+	{ $<tmp>$ = eqOp($<tmp>1, $<tmp>3); }
 | expr NOT_EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, NOT_EQUAL, $<type>3); }
+	{ $<tmp>$ = notEqOp($<tmp>1, $<tmp>3); }
 | expr LESS_OR_EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, LESS_OR_EQUAL, $<type>3); }
+	{ $<tmp>$ = lessOrEqOp($<tmp>1, $<tmp>3); }
 | expr LESS simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, LESS, $<type>3); }
+	{ $<tmp>$ = lessOp($<tmp>1, $<tmp>3); }
 | expr GREATER_OR_EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, GREATER_OR_EQUAL, $<type>3); }
+	{ $<tmp>$ = gtOrEqOp($<tmp>1, $<tmp>3); }
 | expr GREATER simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, GREATER, $<type>3); }
+	{ $<tmp>$ = gtOp($<tmp>1, $<tmp>3); }
 ;
 
 simple_expr
 : term
-	{ $<type>$ = $<type>1; }
+	{ $<tmp>$ = $<tmp>1; }
 | PLUS term
-	{ $<type>$ = assertOpCompat(NULL, PLUS, $<type>2); }
+	{ $<tmp>$ = unaryPlusOp($<tmp>2); }
 | MINUS term
-	{ $<type>$ = assertOpCompat(NULL, MINUS, $<type>2); }
+	{ $<tmp>$ = unaryMinusOp($<tmp>2); }
 | simple_expr PLUS term
-	{ $<hash>$ = plusOperator($<hash>1, $<hash>2); }
-	{ $<type>$ = assertOpCompat($<type>1, PLUS, $<type>3); }
+	{ $<tmp>$ = plusOp($<tmp>1, $<tmp>3); }
 | simple_expr MINUS term
-	{ $<type>$ = assertOpCompat($<type>1, MINUS, $<type>3); }
+	{ $<tmp>$ = minusOp($<tmp>1, $<tmp>3); }
 | simple_expr OR term
-	{ $<type>$ = assertOpCompat($<type>1, OR, $<type>3); }
+	{ $<tmp>$ = orOp($<tmp>1, $<tmp>3); }
 ;
 
 term
 : factor
-	{ $<type>$ = $<type>1; }
+	{ $<tmp>$ = $<tmp>1; }
 | term MULTIPLY factor
-	{ $<type>$ = assertOpCompat($<type>1, MULTIPLY, $<type>3); }
+	{ $<tmp>$ = multOp($<tmp>1, $<tmp>3); }
 | term DIVIDE factor
-	{ $<type>$ = assertOpCompat($<type>1, DIVIDE, $<type>3); }
+	{ $<tmp>$ = divideOp($<tmp>1, $<tmp>3); }
 | term DIV factor
-	{ $<type>$ = assertOpCompat($<type>1, DIV, $<type>3); }
+	{ $<tmp>$ = divOp($<tmp>1, $<tmp>3); }
 | term MOD factor
-	{ $<type>$ = assertOpCompat($<type>1, MOD, $<type>3); }
+	{ $<tmp>$ = modOp($<tmp>1, $<tmp>3); }
 | term AND factor
-	{ $<type>$ = assertOpCompat($<type>1, AND, $<type>3); }
+	{ $<tmp>$ = andOp($<tmp>1, $<tmp>3); }
 | error
 ;
 
 factor
 : var
-	{ $<type>$ = $<type>1; }
+	{ $<tmp>$ = $<tmp>1; }
 | unsigned_const
-	
+	{ $<tmp>$ = getTmpFromSymbol($<symbol>1); }
 | L_PAREN expr R_PAREN_or_error
+	{ $<tmp>$ = $<tmp>2; }
 | func_invok
+	{ $<tmp>$ = $<tmp>1; }
 | NOT factor
+	{ $<tmp>$ = unaryNotOp($<tmp>2); }
 ;
 
 R_PAREN_or_error
@@ -313,15 +321,15 @@ unsigned_const
 // same place, so this is redundant.
 // | ID
 | STRING_CONST
-	{ $<hash>$ = anonStringLiteral($<string>1); }
+	{ $<symbol>$ = anonStringLiteral($<string>1); }
 	// return String struct from Type.h
 ;
 
 unsigned_num
 : INT_CONST
-	{ $<hash>$ = anonIntLiteral($<integer>1); }
+	{ $<symbol>$ = anonIntLiteral($<integer>1); }
 | REAL_CONST
-	{ $<hash>$ = anonRealLiteral($<real>1); }
+	{ $<symbol>$ = anonRealLiteral($<real>1); }
 ;
 
 func_invok

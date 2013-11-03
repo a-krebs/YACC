@@ -4,26 +4,64 @@
 #include <unistd.h>
 
 #include "Hash.h"
+#include "Symbol.h"
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
 
 extern struct hashElement *symbolTable[TABLE_SIZE];
 
 /*
- * Look up an ID in the hash table.
- * Return a NULL pointer if id not in hash table.
+ * Utility functions. Can maybe be refactored into own module.
  */
-// TODO change to hashElement type
-void *getHashElement(char* id) {
-	// TODO implement hash table lookup
+
+/*
+ * Check that the given types are compatible when using the given
+ * operator.
+ *
+ * Return a pointer to a Symbol struct THAT IS NOT IN THE SYMBOL TABLE
+ * that is populated with the resulting type when performing the operation, and
+ * the value of the expression if it can be evaluated (like when dealing with
+ * constants).
+ *
+ * If the types are not combatible for this operator, set error and return NULL.
+ */
+struct Symbol *assertOpCompat(
+    struct Symbol *type1, int opToken, struct Symbol *type2) {
+	// TODO implement
+	switch (opToken) {
+		case EQUAL:
+			break;
+		default:
+			// TODO error
+			break;
+	}
 	return NULL;
 }
 
 /*
- * Set the ID's type.
+ * Return 0 if the given types are assignment compatible, otherwise return
+ * non-zero
  */
-// TODO change types
-void doTypeDecl(void *id, void* type) {
-	// TODO assign type to id
+int assignmentCompatEh(struct Symbol type1, struct Symbol type2) {
+	// TODO implement
+	return -1;
+}
+
+/*
+ * Parser action functions, in the order they appear in parser.y
+ */
+
+/*
+ * Perform actions necessary when entering const decl part.
+ */
+void enterConstDeclPart(void) {
+	// function does nothing.
+}
+
+/*
+ * Assign a constant.
+ */
+void doConstDecl(char *id, struct Symbol *tmp) {
+	// TODO implementation. Check that they're assignment compatible.
 }
 
 /*
@@ -34,18 +72,95 @@ void enterTypeDeclPart(void) {
 }
 
 /*
- * Assign a constant.
+ * Set the ID's type.
  */
 // TODO change types
-void doConstDecl(void *id, void *type) {
-	// TODO implementation. Check that they're assignment compatible.
+void doTypeDecl(char *id, struct Symbol *tmp) {
+	// TODO assign type to id
 }
 
-/*
- * Perform actions necessary when entering const decl part.
- */
-void enterConstDeclPart(void) {
-	// TODO implement.
+struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *hashLookupToTmp(char *id) {
+	return NULL;
+}
+
+struct Symbol *recordAccessToTmp(char *id1, char *id3) {
+	return NULL;
+}
+
+struct Symbol *eqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *notEqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *lessOrEqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *lessOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *gtOrEqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *gtOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *unaryPlusOp(struct Symbol *tmp2) {
+	return NULL;
+}
+
+struct Symbol *unaryMinusOp(struct Symbol *tmp2) {
+	return NULL;
+}
+
+struct Symbol *plusOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *minusOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *orOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *multOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *divideOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *divOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *modOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *andOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+struct Symbol *getTmpFromSymbol(struct Symbol *symbol) {
+	return NULL;
+}
+
+struct Symbol *unaryNotOp(struct Symbol *tmp2) {
+	return NULL;
 }
 
 /*
@@ -75,26 +190,5 @@ void *anonRealLiteral(double value) {
 // TODO change return type
 void *anonStringLiteral(char *value) {
 	// TODO implment
-	return NULL;
-}
-
-/*
- * Check that the given types are compatible when using the given
- * operator.
- *
- * Return a pointer to the resulting type when performing the operation.
- *
- * If the types are not combatible for this operator, set error and return NULL.
- */
-// TODO change return type and arg types
-void *assertOpCompat(void *type1, int opToken, void *type2) {
-	// TODO implment
-	switch (opToken) {
-		case EQUAL:
-			break;
-		default:
-			// TODO error
-			break;
-	}
 	return NULL;
 }

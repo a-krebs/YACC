@@ -5,10 +5,8 @@
       char *id;
       double real;
       int integer;
-      // TODO change type to hashElement type
-      void *hash;
-      // TODO change to type type
-      void *type;
+      struct Symbol *symbol;
+      struct Symbol *tmp;
 }
 
 /* id */
