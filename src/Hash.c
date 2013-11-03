@@ -28,24 +28,25 @@ unsigned int getHashedKey(char *string) {
 
 
 void freeHashElement(struct hashElement *element) {
-    free(element->key);
-    free(element);
+        free(element->key);
+        free(element);
 }
 
 void deleteHashBucket(struct hashElement *current) {
-    if ( current->next != NULL ) {
-        deleteHashBucket(current->next);
-    }
+        if ( current->next != NULL ) {
+                deleteHashBucket(current->next);
+        }
 
-    freeHashElement(current);
+        freeHashElement(current);
 }
 
 void destroySymbolTable() {
-    for (int i = 0; i < TABLE_SIZE; ++i) {
-        if ( symbolTable[i] != NULL ) {          
-            deleteHashBucket(symbolTable[i]);
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                if ( symbolTable[i] != NULL ) {     
+                        deleteHashBucket(symbolTable[i]);
+                        symbolTable[i] = NULL;     
+                }
         }
-    }
 }
 
 
