@@ -191,6 +191,112 @@ char *test_createHashElement() {
 	return NULL;
 }
 
+char *test_deleteHashElement_begining() {
+   	createHashElement("GREEN", 7);
+	createHashElement("bb", 6);
+	createHashElement("bbb", 888);
+	createHashElement("bbbb", 753);
+
+	struct hashElement *element = findHashElementByKey("bb");
+	struct hashElement *newHead = element->next;
+
+	mu_assert("unexpected element at head of bucket list.", 
+ 		symbolTable[getHashedKey("b")] == element);
+
+	mu_assert("Delete function did not remove begining element.", 
+ 		deleteHashElement("bb") == 0);
+
+	mu_assert("Begining element not deleted.", 
+ 		symbolTable[getHashedKey("b")] == newHead);
+
+	mu_assert("Did not delete front of list propertly.", 
+ 		newHead->prev == NULL);
+
+	mu_assert("Resulting bucket should have more than one element.", 
+ 		newHead->next != NULL);	
+
+	destroySymbolTable();
+
+	return NULL;
+}
+
+char *test_deleteHashElement_end() {
+   	createHashElement("GREEN", 7);
+	createHashElement("bb", 6);
+	createHashElement("bbb", 888);
+	createHashElement("bbbb", 753);
+
+	struct hashElement *element = findHashElementByKey("bbbb");
+	struct hashElement *newTail = element->prev;
+
+	mu_assert("unexpected element at end of list.", 
+ 		element->next == NULL);
+
+	mu_assert("Delete function did not remove end element.", 
+ 		deleteHashElement("bbbb") == 0);
+
+	mu_assert("End element not deleted.", 
+ 		newTail->next == NULL);
+
+	mu_assert("Did not delete end of list propertly.", 
+ 		newTail->prev != NULL);
+
+	destroySymbolTable();
+
+	return NULL;
+}
+
+
+char *test_deleteHashElement_middle() {
+   	createHashElement("GREEN", 7);
+	createHashElement("bb", 6);
+	createHashElement("bbb", 888);
+	createHashElement("bbbb", 753);
+
+	struct hashElement *element = findHashElementByKey("bbb");
+	struct hashElement *head = findHashElementByKey("bb");
+	struct hashElement *tail = findHashElementByKey("bbbb");
+
+	mu_assert("unexpected element after head.", 
+ 		head->next == element);
+
+	mu_assert("unexpected element before tail.", 
+ 		tail->prev == element);
+
+	mu_assert("Delete function did not remove middle element.", 
+ 		deleteHashElement("bbb") == 0);
+
+	mu_assert("Did not reset next in list propertly.", 
+ 		head->next == tail);
+
+	mu_assert("Did not reset prev in list propertly", 
+ 		tail->prev == head);
+
+	destroySymbolTable();
+
+	return NULL;
+}
+
+char *test_deleteHashElement_single() {
+   	createHashElement("GREEN", 7);
+	createHashElement("bb", 6);
+	createHashElement("bbb", 888);
+	createHashElement("bbbb", 753);
+
+	struct hashElement *element = findHashElementByKey("GREEN");
+
+	mu_assert("unexpected element at in single bucket list.", 
+ 		symbolTable[getHashedKey("G")] == element);
+
+	mu_assert("Delete function did not remove single bucket element.", 
+ 		deleteHashElement("GREEN") == 0);
+
+	mu_assert("Single element not deleted.", 
+ 		symbolTable[getHashedKey("G")] == NULL);
+
+	destroySymbolTable();
+	return NULL;
+}
 
 
 
@@ -203,6 +309,10 @@ char * test_all_Hash() {
 	// mu_run_test(test_findHashElementByKey);
 	mu_run_test(test_appendToHashBucket);
 	mu_run_test(test_createHashElement);
+	mu_run_test(test_deleteHashElement_begining);
+	mu_run_test(test_deleteHashElement_end);
+	mu_run_test(test_deleteHashElement_middle);
+	mu_run_test(test_deleteHashElement_single);
 
 	return NULL;
 }

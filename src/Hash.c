@@ -7,6 +7,14 @@
 
 
 /*
+ TODO:
+        - //make function getSizeOfBucket
+        - getSizeOfBucket in delete tests
+*/
+
+
+
+/*
  *
  * Parameters:
  *
@@ -15,22 +23,22 @@
  */
 
 
-//Simple hash function for now. Will replace later
-// unsigned int getHashedKey(char *string) {
-//         return (string[0] % TABLE_SIZE);   
-// }
-
+// Simple hash function for now. Will replace later
 unsigned int getHashedKey(char *string) {
-        unsigned long x = 5381;
-        int c;
-
-        for ( int i = 0; i < strlen(string); i++ ) {
-                c = string[i];
-                x = ((x << 5) + x) + c; //x * 33 + c
-        }
-
-        return (x % TABLE_SIZE - 1);   
+        return (string[0] % TABLE_SIZE);   
 }
+
+// unsigned int getHashedKey(char *string) {
+//         unsigned long x = 5381;
+//         int c;
+
+//         for ( int i = 0; i < strlen(string); i++ ) {
+//                 c = string[i];
+//                 x = ((x << 5) + x) + c; //x * 33 + c
+//         }
+
+//         return (x % TABLE_SIZE - 1);   
+// }
 
 
 
@@ -132,6 +140,61 @@ void destroySymbolTable() {
 }
 
 
+/* Deletes element in symbole table indicated by the key.
+ *
+ * Parameters: 
+ *              key: hash key
+ *
+ * Return: 0 on success
+ *         1 on element didn't exist in symbol table
+ * 
+ * TODO: errors on delete?
+ */
+int deleteHashElement(char *key) {
+        struct hashElement *element = findHashElementByKey(key);
+        struct hashElement *temp;
+
+        if ( element == NULL ) {
+                return 1;
+        }
+
+        //only element in bucket
+        if ( element->prev == NULL && element->next == NULL ) {
+                symbolTable[getHashedKey(key)] = NULL;
+                freeHashElement(element);
+                return 0;
+        }
+
+        //at head of bucket list
+        if (element->prev == NULL) {
+                temp = element->next;
+                symbolTable[getHashedKey(key)] = temp;
+                temp->prev = NULL;
+
+                freeHashElement(element);
+                return 0;
+        }
+
+        //at the end of bucket list
+        if (element->next == NULL) {
+                temp = element->prev;
+                temp->next = NULL;
+
+                freeHashElement(element);
+                return 0;
+        }
+
+        //in middle of list
+        temp = element->prev;
+        temp->next = element->next;
+        (temp->next)->prev = temp;
+
+        freeHashElement(element);
+
+        return 0;
+}
+
+
 /* Gets pointer to hash element requested
  *
  * Parameters: 
@@ -150,9 +213,9 @@ struct hashElement *findHashElementByKey(char *key) {
                 return element;
         }
 
-        for (; element->next != NULL; element = element->next) {
+        for (; element != NULL; element = element->next) {
                 if ( isKeysIdentical(element, key) ) {
-                    return element;
+                        return element;
                 }     
         }   
 
