@@ -49,10 +49,6 @@ void destroySymbolTable() {
         }
 }
 
-
-
-
-
 int isKeyInBucket(char *key) {
         if ( findHashElementByKey(key) != NULL ){
                 return 1;
@@ -84,7 +80,6 @@ struct hashElement *findHashElementByKey(char *key) {
 
         return NULL;
 }
-
 
 /*
  Prints the symbol table to stdout.

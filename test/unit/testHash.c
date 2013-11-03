@@ -17,6 +17,7 @@
 	- dump table with something in it.
 	- create tests for test_getHashedKey once
 		using real hash function
+	- change tests once real hash functions is created
 */ 
 
 
@@ -80,9 +81,18 @@ char *test_getHashedKey() {
 // }
 
 char *test_isKeyCollison() {
-/*test 1: .*/
 	mu_assert("Collision on empty symbol table.", 
  		isKeyCollison("blue") == 0);
+
+
+	createHashElement("blue", 456666);
+	mu_assert("Could not find key collision where one should exist.", 
+ 		isKeyCollison("blue") == 1);
+
+	mu_assert("Found key collision where one should not exist.", 
+ 		isKeyCollison("green") == 0); 			
+
+	destroySymbolTable();
 
 	return NULL;
 }
@@ -155,14 +165,28 @@ char *test_appendToHashBucket() {
 	mu_assert("End of list not propertly set.", 
  		element2->next == NULL);
 
-	printf("%p\n", element2);	
-	printf("%p\n", element1->next);	
-
 	mu_assert("Bucket list not assigning next propertly.", 
  		element1->next == element2);	
 
 	mu_assert("Bucket list not assigning prev propertly.", 
  		element2->prev == element1);		
+
+	return NULL;
+}
+
+char *test_createHashElement() {
+	
+	destroySymbolTable();
+	mu_assert("Could not created element in empty table.", 
+ 		createHashElement("blue", 123) == 0);
+
+	mu_assert("Over written hash value.", 
+ 		createHashElement("blue", 456) == 1);	
+
+	mu_assert("Could not create element where hash collison happened.", 
+ 		createHashElement("b", 456666) == 0);	
+
+	destroySymbolTable();
 
 	return NULL;
 }
@@ -178,6 +202,7 @@ char * test_all_Hash() {
 	mu_run_test(test_isKeysIdentical);
 	// mu_run_test(test_findHashElementByKey);
 	mu_run_test(test_appendToHashBucket);
+	mu_run_test(test_createHashElement);
 
 	return NULL;
 }
