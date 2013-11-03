@@ -98,6 +98,10 @@ struct Subrange *
 newSubrange(struct Symbol * lowSym, struct Symbol *highSym)
 {
 	struct Subrange *s = NULL;
+	struct Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
+	AnonConstVal *lowVal = &(lowSym->kindPtr.ConstKind->value),
+		* highVal = &(highSym->kindPtr.ConstKind->value);
+	int low = 0, high = 0;
 
 	s = calloc(1, sizeof(struct Subrange));
 	if (!s) {
@@ -105,8 +109,28 @@ newSubrange(struct Symbol * lowSym, struct Symbol *highSym)
 		exit(1);
 	}
 	
-	/* Do a switch based one type to set low, high vals ... */
+	/* Do a switch based on type to set low, high vals ... */
+	switch(typeSym->kindPtr.TypeKind->type) {
+	case BOOLEAN_T:
+		low = lowVal->Boolean.value;
+		high = highVal->Boolean.value;
+		break;
+	case CHAR_T:
+		low = lowVal->Char.value;
+		high = highVal->Char.value;
+		break;
+	case INTEGER_T:
+		low = lowVal->Integer.value;
+		high = highVal->Integer.value;
+		break;
+	default:
+		/* NOT REACHED */
+		return NULL;
+	    
+	}
 
+	s->low = low;
+	s->high = high;
 	s->baseTypeSym = lowSym;
 	return s;
 }
