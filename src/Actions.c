@@ -89,7 +89,7 @@ struct Symbol *simpleTypeLookup(char *id) {
  *
  * Return scalar_list
  */
-struct Symbol *appendToScalarList(struct Symbol *scalar_list, char *new_id) {
+struct Symbol *appendToScalarListType(struct Symbol *scalar_list, char *new_id) {
 	return scalar_list;
 }
 
@@ -98,10 +98,66 @@ struct Symbol *appendToScalarList(struct Symbol *scalar_list, char *new_id) {
  *
  * Return a pointer to the new scalar list
  */
-struct Symbol *createScalarList(char *id) {
+struct Symbol *createScalarListType(char *id) {
 	return NULL;
 }
 
+/*
+ * Create a new arrau type given the index type and base type.
+ */
+struct Symbol *createArrayType(struct Symbol *index, struct Symbol *base) {
+	return NULL;
+}
+
+/*
+ * Check that the given type is a valid array index type.
+ *
+ * Raise an error if the type is not valid as an index type.
+ *
+ * Return the given type.
+ */
+struct Symbol *assertArrIndexType(struct Symbol *index_type) {
+	return index_type;
+}
+
+/*
+ * Create a new subrange type. The arguments are temporary symbols that should
+ * constain constant values for the range bounds.
+ *
+ * Return a pointer to the new subrange type.
+ */
+struct Symbol *createRangeType(struct Symbol *tmp1, struct Symbol *tmp3) {
+	return NULL;
+}
+
+/*
+ * Create a new record type from the given temporary field.
+ *
+ * Return a pointer to the new type symbol.
+ */
+struct Symbol *createRecordType(struct Symbol *tmp) {
+	return NULL;
+}
+
+/*
+ * Add the given temporary field to the record as a proper field.
+ *
+ * Return a pointer to the record type.
+ */
+struct Symbol *appendFieldToRecordType(
+    struct Symbol *record_type, struct Symbol *tmp) {
+	return record_type;
+}
+
+/*
+ * Make a new temporary symbol (do not add to symbol table) that
+ * constains the name and type of a record field.
+ *
+ * Return a pointer to the new tmp symbol.
+ */
+struct Symbol *newTmpRecordField(char *id, struct Symbol *type) {
+	return NULL;
+}
 
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3) {
 	return NULL;

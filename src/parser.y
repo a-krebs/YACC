@@ -95,6 +95,7 @@ type
 | simple_type
 	{ $<symbol>$ = $<symbol>1; }
 | scalar_type
+	{ $<symbol>$ = $<symbol>1; }
 ;
 
 simple_type
@@ -109,18 +110,21 @@ scalar_type
 
 scalar_list
 : scalar_list comma_or_error ID_or_err
-	{ $<symbol>$ = appendToScalarList($<symbol>1, $<id>3); }
+	{ $<symbol>$ = appendToScalarListType($<symbol>1, $<id>3); }
 | ID_or_err
-	{ $<symbol>$ = createScalarList($<id>1); }
+	{ $<symbol>$ = createScalarListType($<id>1); }
 ;
 
 structured_type
 : ARRAY array_type_decl OF type
+	{ $<symbol>$ = createArrayType($<symbol>2, $<symbol>4); }
 | RECORD field_list END
+	{ $<symbol>$ = $<symbol>2; }
 ;
 
 array_type_decl
 : LS_BRACKET array_type RS_BRACKET
+	{ $<symbol>$ = $<symbol>2; }
 | LS_BRACKET error RS_BRACKET
 	{yyerrok;}
 | error RS_BRACKET
@@ -131,16 +135,21 @@ array_type_decl
 
 array_type
 : simple_type
-| expr RANGE expr 
+	{ $<symbol>$ = assertArrIndexType($<symbol>1); }
+| expr RANGE expr
+	{ $<symbol>$ = createRangeType($<tmp>1, $<tmp>3); }
 ;
 
 field_list
 : field
+	{ $<symbol>$ = createRecordType($<tmp>1); }
 | field_list SEMICOLON field
+	{ $<symbol>$ = appendFieldToRecordType($<symbol>1, $<tmp>3); }
 ;
 
 field
 : ID_or_err COLON type
+	{ $<tmp>$ = newTmpRecordField($<id>1, $<symbol>3); }
 ;
 
 var_decl_part

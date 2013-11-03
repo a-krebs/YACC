@@ -1,16 +1,22 @@
 struct Symbol *assertOpCompat(struct Symbol*, int, struct Symbol*);
 int assignmentCompatEh(struct Symbol*, struct Symbol*);
 
-/* declaration list parts */
+/* declaration lists */
 void exitConstDeclPart(void);
 void doConstDecl(char*, struct Symbol*);
 void exitTypeDeclPart(void);
 void doTypeDecl(char*, struct Symbol*);
 
-/* type parts */
+/* types */
 struct Symbol *simpleTypeLookup(char*);
-struct Symbol *appendToScalarList(struct Symbol*, char*);
-struct Symbol *createScalarList(char*);
+struct Symbol *appendToScalarListType(struct Symbol*, char*);
+struct Symbol *createScalarListType(char*);
+struct Symbol *createArrayType(struct Symbol*, struct Symbol*);
+struct Symbol *assertArrIndexType(struct Symbol*);
+struct Symbol *createRangeType(struct Symbol*, struct Symbol*);
+struct Symbol *createRecordType(struct Symbol*);
+struct Symbol *appendFieldToRecordType(struct Symbol*, struct Symbol*);
+struct Symbol *newTmpRecordField(char*, struct Symbol*);
 
 /* expressions and operators */
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3);
