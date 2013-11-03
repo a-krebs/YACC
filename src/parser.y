@@ -97,11 +97,7 @@ type
 ;
 
 simple_type
-: REAL
-| INT
-| BOOL
-| CHAR
-| ID_or_err
+: ID_or_err
 ;
 
 scalar_type
