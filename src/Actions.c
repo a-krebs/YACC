@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 #include "Hash.h"
-#include "parser.tab.h"
+#include "parser.tab.h"	/* token definitions used in operator compat checks */
 
 extern struct hashElement *symbolTable[TABLE_SIZE];
 

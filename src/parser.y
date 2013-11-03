@@ -231,8 +231,11 @@ proc_invok
 
 var
 : ID_or_err
+	{ $<hash>$ = getHashElement($<id>1); }
 | var PERIOD ID_or_err
+	{ $<hash>$ = recordAccess($<id>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
+	{ $<integer>$ = $<integer>1; }
 ;
 
 subscripted_var
@@ -244,41 +247,56 @@ expr
 : simple_expr
 	{ $<type>$ = $<type>1; }
 | expr EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, EQUAL, $<type>1); }
+	{ $<type>$ = assertOpCompat($<type>1, EQUAL, $<type>3); }
 | expr NOT_EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, NOT_EQUAL, $<type>1); }
+	{ $<type>$ = assertOpCompat($<type>1, NOT_EQUAL, $<type>3); }
 | expr LESS_OR_EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, LESS_OR_EQUAL, $<type>1); }
+	{ $<type>$ = assertOpCompat($<type>1, LESS_OR_EQUAL, $<type>3); }
 | expr LESS simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, LESS, $<type>1); }
+	{ $<type>$ = assertOpCompat($<type>1, LESS, $<type>3); }
 | expr GREATER_OR_EQUAL simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, GREATER_OR_EQUAL, $<type>1); }
+	{ $<type>$ = assertOpCompat($<type>1, GREATER_OR_EQUAL, $<type>3); }
 | expr GREATER simple_expr
-	{ $<type>$ = assertOpCompat($<type>1, GREATER, $<type>1); }
+	{ $<type>$ = assertOpCompat($<type>1, GREATER, $<type>3); }
 ;
 
 simple_expr
 : term
+	{ $<type>$ = $<type>1; }
 | PLUS term
+	{ $<type>$ = assertOpCompat(NULL, PLUS, $<type>2); }
 | MINUS term
+	{ $<type>$ = assertOpCompat(NULL, MINUS, $<type>2); }
 | simple_expr PLUS term
+	{ $<hash>$ = plusOperator($<hash>1, $<hash>2); }
+	{ $<type>$ = assertOpCompat($<type>1, PLUS, $<type>3); }
 | simple_expr MINUS term
+	{ $<type>$ = assertOpCompat($<type>1, MINUS, $<type>3); }
 | simple_expr OR term
+	{ $<type>$ = assertOpCompat($<type>1, OR, $<type>3); }
 ;
 
 term
 : factor
+	{ $<type>$ = $<type>1; }
 | term MULTIPLY factor
+	{ $<type>$ = assertOpCompat($<type>1, MULTIPLY, $<type>3); }
 | term DIVIDE factor
+	{ $<type>$ = assertOpCompat($<type>1, DIVIDE, $<type>3); }
 | term DIV factor
+	{ $<type>$ = assertOpCompat($<type>1, DIV, $<type>3); }
 | term MOD factor
+	{ $<type>$ = assertOpCompat($<type>1, MOD, $<type>3); }
 | term AND factor
+	{ $<type>$ = assertOpCompat($<type>1, AND, $<type>3); }
 | error
 ;
 
 factor
 : var
+	{ $<type>$ = $<type>1; }
 | unsigned_const
+	
 | L_PAREN expr R_PAREN_or_error
 | func_invok
 | NOT factor
@@ -353,7 +371,7 @@ semicolon_or_error
 ID_or_err
 : ID UNREC ID_or_err
 | ID
-	{ $<hash>$ = getHashElement($<id>1); }
+	{ $<id>$ = $<id>1; }
 ;
 
 
