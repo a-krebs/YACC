@@ -73,8 +73,71 @@ setTypePtr(Type *new, Type old, type_t type)
 	}
 }
 
+struct Array *
+newArray(struct Symbol *baseTypeSym, struct Symbol *indexTypeSym)
+{
+	struct Array *a;
+	/* Error checking */
+
+	a = calloc(1, sizeof(struct Array));
+	if (!a) {
+		err(1, "Could not allocate memory for new array!");
+		exit(1);
+	}
+	a->baseTypeSym = baseTypeSym;
+	a->indexTypeSym = indexTypeSym;
+	return a;
+}
+
+/* 
+ * Constructs new subrange from the given symbols, assumes symbols have
+ * been vetted and are valid.
+ * TODO: maybe move error checking to this function
+ */
+struct Subrange * 
+newSubrange(struct Symbol * lowSym, struct Symbol *highSym)
+{
+	struct Subrange *s = NULL;
+	struct Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
+	AnonConstVal *lowVal = &(lowSym->kindPtr.ConstKind->value),
+		* highVal = &(highSym->kindPtr.ConstKind->value);
+	int low = 0, high = 0;
+
+	s = calloc(1, sizeof(struct Subrange));
+	if (!s) {
+		err(1, "Failed to allocate memory for new subrange!");
+		exit(1);
+	}
+	
+	/* Do a switch based on type to set low, high vals ... */
+	switch(typeSym->kindPtr.TypeKind->type) {
+	case BOOLEAN_T:
+		low = lowVal->Boolean.value;
+		high = highVal->Boolean.value;
+		break;
+	case CHAR_T:
+		low = lowVal->Char.value;
+		high = highVal->Char.value;
+		break;
+	case INTEGER_T:
+		low = lowVal->Integer.value;
+		high = highVal->Integer.value;
+		break;
+	default:
+		/* NOT REACHED */
+		return NULL;
+	    
+	}
+
+	s->low = low;
+	s->high = high;
+	s->baseTypeSym = lowSym;
+	return s;
+}
+
+
 Type
-newAnonConstType(AnonConstantValue value, type_t type)
+newAnonConstType(AnonConstVal value, type_t type)
 {
 	Type anonConstType;
 	switch(type) {
@@ -123,7 +186,7 @@ newAnonConstType(AnonConstantValue value, type_t type)
 		break;
 	}
 	default:
-		/* NOT SUPPOSED TO BE REACHED */
+		/* NOT REACHED */
 		break;
 	}
 
