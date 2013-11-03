@@ -1,11 +1,18 @@
 struct Symbol *assertOpCompat(struct Symbol*, int, struct Symbol*);
 int assignmentCompatEh(struct Symbol*, struct Symbol*);
 
-void enterConstDeclPart(void);
-void doConstDecl(void*, void*);
-void enterTypeDeclPart(void);
-void doTypeDecl(void*, void*);
+/* declaration list parts */
+void exitConstDeclPart(void);
+void doConstDecl(char*, struct Symbol*);
+void exitTypeDeclPart(void);
+void doTypeDecl(char*, struct Symbol*);
 
+/* type parts */
+struct Symbol *simpleTypeLookup(char*);
+struct Symbol *appendToScalarList(struct Symbol*, char*);
+struct Symbol *createScalarList(char*);
+
+/* expressions and operators */
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3);
 struct Symbol *hashLookupToTmp(char *id);
 struct Symbol *recordAccessToTmp(char *id1, char *id3);
@@ -28,6 +35,7 @@ struct Symbol *andOp(struct Symbol *tmp1, struct Symbol *tmp3);
 struct Symbol *getTmpFromSymbol(struct Symbol *symbol);
 struct Symbol *unaryNotOp(struct Symbol *tmp2);
 
+/* constants */
 void *anonIntLiteral(int);
 void *anonRealLiteral(double);
 void *anonStringLiteral(char*);

@@ -58,7 +58,7 @@ decls
 
 const_decl_part
 : CONST const_decl_list semicolon_or_error
-	{ enterConstDeclPart(); }
+	{ exitConstDeclPart(); }
 |
 ;
 
@@ -75,7 +75,7 @@ const_decl
 
 type_decl_part
 : TYPE type_decl_list semicolon_or_error
-	{ enterTypeDeclPart(); }
+	{ exitTypeDeclPart(); }
 |
 ;
 
@@ -86,27 +86,32 @@ type_decl_list
 
 type_decl
 : ID_or_err EQUAL type
-	{ doTypeDecl($<id>1, $<id>3); }
+	{ doTypeDecl($<id>1, $<symbol>3); }
 | error
 ;
 
 type
 : structured_type
 | simple_type
+	{ $<symbol>$ = $<symbol>1; }
 | scalar_type
 ;
 
 simple_type
 : ID_or_err
+	{ $<symbol>$ = simpleTypeLookup($<id>1); }
 ;
 
 scalar_type
 : L_PAREN scalar_list R_PAREN
+	{ $<symbol>$ = $<symbol>2; }
 ;
 
 scalar_list
 : scalar_list comma_or_error ID_or_err
+	{ $<symbol>$ = appendToScalarList($<symbol>1, $<id>3); }
 | ID_or_err
+	{ $<symbol>$ = createScalarList($<id>1); }
 ;
 
 structured_type

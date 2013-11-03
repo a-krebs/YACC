@@ -51,9 +51,9 @@ int assignmentCompatEh(struct Symbol type1, struct Symbol type2) {
  */
 
 /*
- * Perform actions necessary when entering const decl part.
+ * Perform actions necessary when exiting const decl part.
  */
-void enterConstDeclPart(void) {
+void exitConstDeclPart(void) {
 	// function does nothing.
 }
 
@@ -65,9 +65,9 @@ void doConstDecl(char *id, struct Symbol *tmp) {
 }
 
 /*
- * Perform actions necessary when entering type decl part.
+ * Perform actions necessary when exiting type decl part.
  */
-void enterTypeDeclPart(void) {
+void exitTypeDeclPart(void) {
 	// TODO implementation.
 }
 
@@ -78,6 +78,30 @@ void enterTypeDeclPart(void) {
 void doTypeDecl(char *id, struct Symbol *tmp) {
 	// TODO assign type to id
 }
+
+struct Symbol *simpleTypeLookup(char *id) {
+	return NULL;
+}
+
+
+/*
+ * Add new_id as a mamber to scalar_list.
+ *
+ * Return scalar_list
+ */
+struct Symbol *appendToScalarList(struct Symbol *scalar_list, char *new_id) {
+	return scalar_list;
+}
+
+/*
+ * Create a new scalar list type with id as the only member.
+ *
+ * Return a pointer to the new scalar list
+ */
+struct Symbol *createScalarList(char *id) {
+	return NULL;
+}
+
 
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3) {
 	return NULL;
