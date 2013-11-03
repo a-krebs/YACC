@@ -85,6 +85,12 @@ newAnonArraySym(int lvl, struct Symbol *baseTypeSym,
 	 
 	newArraySym->name = NULL;
 	newArraySym->kind = TYPE_KIND;
+	
+	newArraySym->kindPtr.TypeKind = calloc(1, sizeof(Type));
+	if (!newArraySym->kindPtr.TypeKind) {
+		err(1, "Failed to allocate memory for Type struct!");
+		exit(1);
+	}
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
 	newArraySym->lvl = lvl;
@@ -192,6 +198,12 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 
 	strcpy(newVar->name, id);
 	newVar->kind = VAR_KIND;
+
+	newVar->kindPtr.VarKind = calloc(1, sizeof(Type));
+	if (!newVar->kindPtr.VarKind) {
+		err(1, "Failed to allocate memory for new symbol name!");
+		exit(1);
+	}
 	newVar->kindPtr.VarKind->typeSym = typeSym;
 	newVar->lvl = lvl;
 	return newVar;
@@ -245,6 +257,12 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	newSubrangeSym = calloc(1, sizeof(struct Symbol));
 	if (!newSubrangeSym) {
 		err(1, "Failed to allocate memory for new subrange symbol!");
+		exit(1);
+	}
+
+	newSubrangeSym->kindPtr.TypeKind = calloc(1, sizeof(Type));
+	if (!newSubrangeSym->kindPtr.TypeKind) {
+		err(1, "Failed to allocate memory for type struct!");
 		exit(1);
 	}
 
