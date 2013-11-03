@@ -259,11 +259,6 @@ simple_stat
 | compound_stat
 ;
 
-proc_invok
-: plist_finvok R_PAREN
-| ID_or_err L_PAREN R_PAREN
-;
-
 var
 : ID_or_err
 	{ $<tmp>$ = hashLookupToTmp($<id>1); }
@@ -359,6 +354,11 @@ unsigned_num
 	{ $<symbol>$ = anonIntLiteral($<integer>1); }
 | REAL_CONST
 	{ $<symbol>$ = anonRealLiteral($<real>1); }
+;
+
+proc_invok
+: plist_finvok R_PAREN
+| ID_or_err L_PAREN R_PAREN
 ;
 
 func_invok
