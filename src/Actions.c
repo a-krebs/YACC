@@ -209,6 +209,45 @@ struct Symbol *enterFuncDecl(char *id, struct Symbol *argv) {
 	return NULL;
 }
 
+/*
+ * Create a new parameter list from the given parameter symbol.
+ *
+ * Return a pointer to the parameter list symbol.
+ */
+struct Symbol *createParmList(struct Symbol *parm) {
+	return NULL;
+}
+
+/*
+ * Append the given parameter symbol to the parameter list.
+ *
+ * Return a poinnter to the parameter list.
+ */
+struct Symbol *appendParmToParmList(
+    struct Symbol *parm_list, struct Symbol *new_parm) {
+	return parm_list;
+}
+
+/*
+ * Create a new parameter symbol for a parameter list with the given
+ * name and type.
+ *
+ * Return a pointer to the new parameter symbol.
+ */
+struct Symbol *createNewParm(char *id, struct Symbol *type) {
+	return NULL;
+}
+
+/*
+ * Create a new var parm symbol for a parameter list with the given
+ * name and type.
+ *
+ * Return a pointer to the new parameter symbol.
+ */
+struct Symbol *createNewVarParm(char *id, struct Symbol *type) {
+	return NULL;
+}
+
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3) {
 	return NULL;
 }

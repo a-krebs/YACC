@@ -26,6 +26,10 @@ struct Symbol *doVarDecl(char*, struct Symbol*);
 struct Symbol *doVarDecl(char*, struct Symbol*);
 struct Symbol *enterProcDecl(char*, struct Symbol*);
 struct Symbol *enterFuncDecl(char*, struct Symbol*);
+struct Symbol *createParmList(struct Symbol*);
+struct Symbol *appendParmToParmList(struct Symbol*, struct Symbol*);
+struct Symbol *createNewParm(char*, struct Symbol*);
+struct Symbol *createNewVarParm(char*, struct Symbol*);
 
 /* expressions and operators */
 struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3);

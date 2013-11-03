@@ -189,10 +189,10 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<symbol>3);
+	{ $<symbol>$ = enterProcDecl($<id>2, $<tmp>3);
 	  /* TODO check what we're doing for f_parm_decl  */ }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<symbol>3); }
+	{ $<symbol>$ = enterFuncDecl($<id>2, $<tmp>3); }
 | PROCEDURE ID semicolon_or_error
 	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
 	  yyerrok; }
@@ -207,23 +207,32 @@ proc_heading
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
+	{ $<tmp>$ = $<tmp>2; }
 | L_PAREN R_PAREN
+	{ $<tmp>$ = NULL; }
+// TODO what is this production for?
 | VAR ID error COLON simple_type
 	{yyerrok;}
 ;
 
 f_parm_list
 : f_parm
+	{ $<tmp>$ = createParmList($<tmp>1); }
 | f_parm_list semicolon_or_error f_parm
+	{ $<tmp>$ = appendParmToParmList($<tmp>1, $<tmp>2); }
 ;
 
 f_parm
 : ID COLON simple_type
+	{ $<tmp>$ = createNewParm($<id>1, $<symbol>3); }
 | VAR ID COLON simple_type
+	{ $<tmp>$ = createNewVarParm($<id>2, $<symbol>4); }
 | ID error COLON simple_type
-	{yyerrok;}
+	{ $<tmp>$ = createNewParm($<id>1, $<symbol>3);
+	  yyerrok; }
 | VAR ID error COLON simple_type
-	{yyerrok;}
+	{ $<tmp>$ = createNewVarParm($<id>2, $<symbol>4);
+	  yyerrok; }
 ;
 
 compound_stat
