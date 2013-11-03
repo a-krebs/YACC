@@ -343,7 +343,7 @@ R_PAREN_or_error
 
 unsigned_const
 : unsigned_num
-	{ $<symbol>$ = $<symbol$>; }
+	{ $<symbol>$ = $<symbol>$; }
 | STRING_CONST
 	{ $<symbol>$ = anonStringLiteral($<string>1); }
 	// return String struct from Type.h
@@ -407,6 +407,7 @@ semicolon_or_error
 
 ID_or_err
 : ID UNREC ID_or_err
+	{ $<id>$ = $<id>1; }
 | ID
 	{ $<id>$ = $<id>1; }
 ;
