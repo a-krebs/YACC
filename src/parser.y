@@ -200,9 +200,9 @@ proc_heading
 	{ $<symbol>$ = enterFuncDecl($<id>2, NULL);
 	  yyerrok; }
 | PROCEDURE semicolon_or_error
-	{ $<symbol>$ = enterProcDecl((void*)NULL, (void*)NULL); }
+	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
 | FUNCTION semicolon_or_error
-	{ $<symbol>$ = enterProcDecl((void*)NULL, (void*)NULL); }
+	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
 ;
 
 f_parm_decl
@@ -348,9 +348,6 @@ R_PAREN_or_error
 
 unsigned_const
 : unsigned_num
-// intentionall commented out. var and unsigned_const both reduce to ID in the
-// same place, so this is redundant.
-// | ID
 | STRING_CONST
 	{ $<symbol>$ = anonStringLiteral($<string>1); }
 	// return String struct from Type.h
