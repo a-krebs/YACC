@@ -16,8 +16,20 @@
 
 
 //Simple hash function for now. Will replace later
+// unsigned int getHashedKey(char *string) {
+//         return (string[0] % TABLE_SIZE);   
+// }
+
 unsigned int getHashedKey(char *string) {
-        return (string[0] % TABLE_SIZE);   
+        unsigned long x = 5381;
+        int c;
+
+        for ( int i = 0; i < strlen(string); i++ ) {
+                c = string[i];
+                x = ((x << 5) + x) + c; //x * 33 + c
+        }
+
+        return (x % TABLE_SIZE - 1);   
 }
 
 
