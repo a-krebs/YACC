@@ -348,6 +348,7 @@ R_PAREN_or_error
 
 unsigned_const
 : unsigned_num
+	{ $<symbol>$ = $<symbol$>; }
 | STRING_CONST
 	{ $<symbol>$ = anonStringLiteral($<string>1); }
 	// return String struct from Type.h
