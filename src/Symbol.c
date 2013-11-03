@@ -13,22 +13,63 @@ extern int colno;
 static char *errMsg;
 
 /*
- * Constructs and array symbol given a base type and an index type. 
+ * Constructs a	named array symbol given a ptr to an array type symbol.
+ * (so the new symbol will either be constructed from an anonymous array
+ * type symbol or be a "copy" of another named array type symbol) 
  */
 struct Symbol *
-newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
-	 struct Symbol *indexTypeSym)
+newArraySymFromSym(int lvl, char *id, struct Symbol *arrayTypeSym)
+{
+	struct Symbol *newArraySym = NULL;
+	struct Array *oldArray = NULL;
+
+	if (!arrayTypeSym) {
+		return NULL;
+	}
+
+	if (!arrayTypeSym->kindPtr.TypeKind->typePtr.Array) {
+		return NULL;
+	}
+
+	if (!id) {
+		/* Error: trying to create named symbol from NULL id */
+		return NULL;
+	}
+
+
+	oldArray = arrayTypeSym->kindPtr.TypeKind->typePtr.Array;
+
+	/* TODO: check arrayTypeSym baseTypeSym and indexTypeSym */
+
+
+	newArraySym = newAnonArraySym(lvl, oldArray->baseTypeSym,
+					   oldArray->indexTypeSym);
+
+	strcpy(newArraySym->name, id);
+	newArraySym->kind = TYPE_KIND;
+	newArraySym->kindPtr.TypeKind->type = ARRAY_T;	
+	return newArraySym;
+}
+
+/*
+ * Creates a new anonymous array type symbol given a pointer to a symbol
+ * defining the base type and a pointer to a symbol defining the index type.
+ */
+struct Symbol *
+newAnonArraySym(int lvl, struct Symbol *baseTypeSym, 
+	    struct Symbol *indexTypeSym)
 {
 	struct Symbol *newArraySym = NULL;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
-		errMsg = customErrorString("Semantic Error: cannot define array %s, \
-				   base type or index type incorrect \
-				   undefined? (%d, %d)", id, yylineno, colno);
+		errMsg = customErrorString("Semantic Error: cannot define"
+					   "array, base type or index type"
+					   "incorrect/undefined? (%d, %d)", 
+					    yylineno, colno);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
-	if ((indexTypeSym->type != SCALAR_T) &&
-	    (indexTypeSym->type != SUBRANGE_T)) {
+	if ((indexTypeSym->kindPtr.TypeKind->type != SCALAR_T) &&
+	    (indexTypeSym->kindPtr.TypeKind->type != SUBRANGE_T)) {
 		/* Error */
 		return NULL;
 	}
@@ -41,77 +82,60 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 
 	/* Set symbol entries for this symbol */
 
- 	/* Have to explicitly check if id is set because we can have
-	 * anonymous arrays (e.g., myArray : array[1..10] of array[1..10] of
-	 * char )
-	 */
-	if (id) strcpy(newArraySym->name, id);
-	else newArraySym->name = NULL;
-
+	 
+	newArraySym->name = NULL;
 	newArraySym->kind = TYPE_KIND;
+	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
+								indexTypeSym);
 	newArraySym->lvl = lvl;
-
-	/* Now we proceed to creating the associated array type */
-
-	/* Set array base type and base type pointer */
-	newArraySym->typePtr.Array->baseType = baseTypeSym->type;	
-	setTypePtr(&(newArraySym->typePtr.Array->baseTypePtr),
-		    baseTypeSym->typePtr,
-		    baseTypeSym->type);
-
-	/* Set up index type and index type pointer */
-	newArraySym->typePtr.Array->indexType = indexTypeSym->type;
-	setTypePtr(&(newArraySym->typePtr.Array->indexTypePtr),
-		    indexTypeSym->typePtr,
-		    indexTypeSym->type);	
-
 	
 	return newArraySym;
 }
 
-/*
- * Creates a new parameter to be attached to a function. 
- * NOTE: each call to newParameter must be followed by a call to newVariable()
- *       in order to make the parameter available as a local variable in
- *       procedure/function definition body.
- */
-struct Param *
-newParameter(char *id, struct Symbol *typeSym)
-{
-	struct Param *newParam = NULL;
-	size_t len;
 
-	if (!typeSym) {
-		/* Record error */
-		return NULL;
-	}
-	if (typeSym->kind != TYPE_KIND) {
-		/* Record error */
-		return NULL;
-	}
+/* /\* */
+/*  * Creates a new parameter to be attached to a function.  */
+/*  * NOTE: each call to newParameter must be followed by a call to newVariable() */
+/*  *       in order to make the parameter available as a local variable in */
+/*  *       procedure/function definition body. */
+/*  *\/ */
+/* struct Param * */
+/* newParameter(char *id, struct Symbol *typeSym) */
+/* { */
+/* 	struct Param *newParam = NULL; */
+/* 	size_t len; */
 
-	if (!id) {
-		/* Error: canot have anonymous parameters! */
-		return NULL;
-	}
+/* 	if (!typeSym) { */
+/* 		/\* Record error *\/ */
+/* 		return NULL; */
+/* 	} */
+/* 	if (typeSym->kind != TYPE_KIND) { */
+/* 		/\* Record error *\/ */
+/* 		return NULL; */
+/* 	} */
+
+/* 	if (!id) { */
+/* 		/\* Error: canot have anonymous parameters! *\/ */
+/* 		return NULL; */
+/* 	} */
 	
-	len = strlen(id);
-	if (!len) {
-		/* Cannot have param with 0 length name! */
-		return NULL;
-	}
+/* 	len = strlen(id); */
+/* 	if (!len) { */
+/* 		/\* Cannot have param with 0 length name! *\/ */
+/* 		return NULL; */
+/* 	} */
 
-	newParam = calloc(1, sizeof(struct Param));
-	if (!newParam) {
-		err(1, "Failed to allocate memory for new parameter!");
-		exit(1);
-	}
+/* 	newParam = calloc(1, sizeof(struct Param)); */
+/* 	if (!newParam) { */
+/* 		err(1, "Failed to allocate memory for new parameter!"); */
+/* 		exit(1); */
+/* 	} */
 
-	strcpy(newParam->name, id);
-	newParam->type = typeSym->type;
-	setTypePtr(&(newParam->typePtr), typeSym->typePtr, typeSym->type);
-	return newParam;
-}
+/* 	strcpy(newParam->name, id); */
+/* 	newParam->type = typeSym->type; */
+/* 	setTypePtr(&(newParam->typePtr), typeSym->typePtr, typeSym->type); */
+/* 	return newParam; */
+/* } */
 
 
 /*
@@ -125,25 +149,25 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 	struct Symbol *newVar = NULL;	/* new symbol to be created */
 	size_t len;
 	/*
-	 * Before making any allocations, we assure that the given 
+	 * Before making any allocations, we assure that the given
 	 * symbol typeSym is in fact a type and that we can use it
 	 * to create a new variable.
 	 */
 	if (!typeSym) {
-		/* 
+		/*
 		 * ERROR: trying to create var for NULL symbol!
 		 * --> probably using undefined type
 		 * Call an error recording function.
 		 */
-		return NULL; 
+		return NULL;
 	}
 
 	if (typeSym->kind != TYPE_KIND) {
-		/* ERROR: 
+		/* ERROR:
 		 * Trying to create var using symbol other than a type.
 		 * Call an error recording function.
 		 */
-		return NULL;	
+		return NULL;
 	}
 
 	if (!id) {
@@ -164,27 +188,27 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 	if (!newVar->name) {
 		err(1, "Failed to allocate memory for new symbol name!");
 		exit(1);
-	}	
+	}
+
 	strcpy(newVar->name, id);
-
 	newVar->kind = VAR_KIND;
-	newVar->type = typeSym->type;
-	newVar->typePtr = typeSym->typePtr;
-
-	newVar->lvl = lvl;	
+	newVar->kindPtr.VarKind->typeSym = typeSym;
+	newVar->lvl = lvl;
 	return newVar;
 }
 
 /*
- * Constructs an anonymous subrange symbol.  
+ * Constructs an anonymous subrange symbol.
  */
 struct Symbol *
-newSubrangeSym(int lvl, struct Symbol *constSymLow, 
+newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	        struct Symbol *constSymHigh)
 {
-	struct Symbol *newSubrange = NULL;
-	int high, low;
-	/* 
+	struct Symbol *newSubrangeSym = NULL;
+	struct Symbol *lowSymType = constSymLow->kindPtr.ConstKind->typeSym;
+	struct Symbol *highSymType = constSymHigh->kindPtr.ConstKind->typeSym;
+	
+	/*
 	 * We must assure that we are constructing a subrange
 	 * from two ordinal types of the same type of kind const such that
 	 * the value of constSymLow is less than the value of constSymHigh.
@@ -200,13 +224,14 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 		return NULL;
 	}
 
-	if (constSymLow->type != constSymHigh->type) {
+	if (lowSymType->kindPtr.TypeKind->type != 
+	    highSymType->kindPtr.TypeKind->type) {
 		/* Error:  Mismatched types for subrange indices */
 		return NULL;
 	}
 
-	if (!isOrdinal(constSymLow->type)) {
-		/* 
+	if (!isOrdinal(lowSymType->kindPtr.TypeKind->type)) {
+		/*
 		 * Error: trying to construct subrange from non ordinal
 		 * types
 		 */
@@ -216,161 +241,94 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	/*
 	 * Insure that values are bounded correctly (dependent on type ).
 	 */
-	switch (constSymLow->type) {
-		case BOOLEAN_T:
-		{
-			low = constSymLow->typePtr.Boolean->value;
-			high = constSymLow->typePtr.Boolean->value;	
-			if (low >= high) {
-				/* Error: lhs value not less than rhs value */
-				return NULL;
-			}
-			break;
-		}
-		case CHAR_T:
-		{
-			low = constSymLow->typePtr.Char->value;
-			high = constSymHigh->typePtr.Char->value;
-			if (low > high ) {
-				/* Error: lhs value greater than rhs value */
-				return NULL;
-			}
-			break;
-		}
-		case INTEGER_T:
-		{
-			low = constSymLow->typePtr.Integer->value;
-			high = constSymHigh->typePtr.Integer->value;
-			if (low >= high ) {
-				/* Error: lhs value not less than rhs value */
-				return NULL;
-			}
-			break;
-		}
-		default:
-		{
-			/* This shouldn't happen ... */
-			return NULL;
-		}
-	}
 
-
-
-	newSubrange = calloc(1, sizeof(struct Symbol));
-	if (!newSubrange) {
+	newSubrangeSym = calloc(1, sizeof(struct Symbol));
+	if (!newSubrangeSym) {
 		err(1, "Failed to allocate memory for new subrange symbol!");
 		exit(1);
 	}
 
-	newSubrange->typePtr.Subrange = calloc(1, sizeof(struct Subrange));
-	if (!newSubrange->typePtr.Subrange) {
-		err(1, "Failed to allocate memory for new subrange!");
-		exit(1);
-	}
+	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
+	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
+								  constSymLow,
+								  constSymHigh);
+
+	newSubrangeSym->kind = TYPE_KIND;
+	newSubrangeSym->name = NULL;
+	newSubrangeSym->lvl = lvl;
 	
-	newSubrange->kind = TYPE_KIND;
-	newSubrange->typePtr.Subrange->low = low;
-	newSubrange->typePtr.Subrange->high = high;
-	newSubrange->type = SUBRANGE_T;
-	newSubrange->typePtr.Subrange->baseType = constSymLow->type;
-	newSubrange->name = NULL;
-	newSubrange->lvl = lvl;
-	/* Set base type pointer for new subrange */
-	switch (newSubrange->typePtr.Subrange->baseType) {
-		case BOOLEAN_T:
-		{
-			newSubrange->typePtr.Subrange->baseTypePtr.Boolean =
-			    constSymLow->typePtr.Boolean;
-			break;
-		}
-		case CHAR_T:
-		{
-			newSubrange->typePtr.Subrange->baseTypePtr.Char =
-			    constSymLow->typePtr.Char;
-			break;
-		}
-		case INTEGER_T:
-		{
-			newSubrange->typePtr.Subrange->baseTypePtr.Integer =
-			    constSymLow->typePtr.Integer;
-			break;
-		}
-		default:
-			break;
-	}
-	
-	return newSubrange;
+	return newSubrangeSym;
 }
 
-/*
- * Creates a new procedure symbol entry to be placed in the symbol table.
- */
-struct Symbol *
-newProcedureSym(int lvl, char *id, struct ParamArray *pa)
-{
+/* /\* */
+/*  * Creates a new procedure symbol entry to be placed in the symbol table. */
+/*  *\/ */
+/* struct Symbol * */
+/* newProcedureSym(int lvl, char *id, struct ParamArray *pa) */
+/* { */
 
-	struct Symbol *newProcSym = NULL;
-	size_t len;
-	if (!pa) {
-		/* Don't pass NULL if no params, pass empty param array. */
-		return NULL;
-	}
+/* 	struct Symbol *newProcSym = NULL; */
+/* 	size_t len; */
+/* 	if (!pa) { */
+/* 		/\* Don't pass NULL if no params, pass empty param array. *\/ */
+/* 		return NULL; */
+/* 	} */
 
-	if (!id) {
-		/* Cannot create anonymous procedure! */
-		return NULL;
-	}
+/* 	if (!id) { */
+/* 		/\* Cannot create anonymous procedure! *\/ */
+/* 		return NULL; */
+/* 	} */
 
-	newProcSym = calloc(1, sizeof(struct Symbol));
-	if (!newProcSym) {
-		err(1, "Failed to allocate memory for new procedure symbol!");
-		exit(1);		
-	}
-	newProcSym->typePtr.Procedure = calloc(1, sizeof(struct Procedure));
-	if (!newProcSym->typePtr.Procedure) {
-		err(1, "Failed to allocate memory for new procedure symbol!");
-		exit(1);
-	}	
+/* 	newProcSym = calloc(1, sizeof(struct Symbol)); */
+/* 	if (!newProcSym) { */
+/* 		err(1, "Failed to allocate memory for new procedure symbol!"); */
+/* 		exit(1);		 */
+/* 	} */
+/* 	newProcSym->typePtr.Procedure = calloc(1, sizeof(struct Procedure)); */
+/* 	if (!newProcSym->typePtr.Procedure) { */
+/* 		err(1, "Failed to allocate memory for new procedure symbol!"); */
+/* 		exit(1); */
+/* 	}	 */
 
-	len = strlen(id);
-	if (!len) {
-		/* procdure cannot have 0 length name */
-		return NULL;	
-	}
-	strcpy(newProcSym->name, id);
-	newProcSym->kind = PROC_KIND;
-	newProcSym->type = PROCEDURE_T;
-	newProcSym->typePtr.Procedure->params = pa;
-	newProcSym->lvl = lvl;
-	return newProcSym;	
-}
+/* 	len = strlen(id); */
+/* 	if (!len) { */
+/* 		/\* procdure cannot have 0 length name *\/ */
+/* 		return NULL;	 */
+/* 	} */
+/* 	strcpy(newProcSym->name, id); */
+/* 	newProcSym->kind = PROC_KIND; */
+/* 	newProcSym->type = PROCEDURE_T; */
+/* 	newProcSym->typePtr.Procedure->params = pa; */
+/* 	newProcSym->lvl = lvl; */
+/* 	return newProcSym;	 */
+/* } */
 
-struct Symbol*
-newConstSym(int lvl, char * id, struct Symbol * constTypeSym)
-{
-	return NULL;
-}
+/* struct Symbol* */
+/* newConstSym(int lvl, char * id, struct Symbol * constTypeSym) */
+/* { */
+/* 	return NULL; */
+/* } */
 
-struct Symbol*
-newConstSymFromType(int lvl, Type constType, type_t type)
-{
-	struct Symbol *newConstSym = NULL;
-	if (!newConstSym) {
-		/*Error*/
-		return NULL;	
-	}
+/* struct Symbol* */
+/* newConstSymFromType(int lvl, Type constType, type_t type) */
+/* { */
+/* 	struct Symbol *newConstSym = NULL; */
+/* 	if (!newConstSym) { */
+/* 		/\*Error*\/ */
+/* 		return NULL;	 */
+/* 	} */
 
-	newConstSym = calloc(1, sizeof(struct Symbol));
-	if (!newConstSym) {
-		err(1, "failed to allocate memory for new anon const symbol!");
-		exit(1);
-	}	
+/* 	newConstSym = calloc(1, sizeof(struct Symbol)); */
+/* 	if (!newConstSym) { */
+/* 		err(1, "failed to allocate memory for new anon const symbol!"); */
+/* 		exit(1); */
+/* 	}	 */
 	
 	
-	setTypePtr(&(newConstSym->typePtr), constType, type); 
-	newConstSym->name = NULL;
-	newConstSym->kind = CONST_KIND;
-	newConstSym->lvl = lvl;
+/* 	setTypePtr(&(newConstSym->typePtr), constType, type);  */
+/* 	newConstSym->name = NULL; */
+/* 	newConstSym->kind = CONST_KIND; */
+/* 	newConstSym->lvl = lvl; */
 
-	return newConstSym;
-}
+/* 	return newConstSym; */
+/* } */

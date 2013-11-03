@@ -73,8 +73,47 @@ setTypePtr(Type *new, Type old, type_t type)
 	}
 }
 
+struct Array *
+newArray(struct Symbol *baseTypeSym, struct Symbol *indexTypeSym)
+{
+	struct Array *a;
+	/* Error checking */
+
+	a = calloc(1, sizeof(struct Array));
+	if (!a) {
+		err(1, "Could not allocate memory for new array!");
+		exit(1);
+	}
+	a->baseTypeSym = baseTypeSym;
+	a->indexTypeSym = indexTypeSym;
+	return a;
+}
+
+/* 
+ * Constructs new subrange from the given symbols, assumes symbols have
+ * been vetted and are valid.
+ * TODO: maybe move error checking to this function
+ */
+struct Subrange * 
+newSubrange(struct Symbol * lowSym, struct Symbol *highSym)
+{
+	struct Subrange *s = NULL;
+
+	s = calloc(1, sizeof(struct Subrange));
+	if (!s) {
+		err(1, "Failed to allocate memory for new subrange!");
+		exit(1);
+	}
+	
+	/* Do a switch based one type to set low, high vals ... */
+
+	s->baseTypeSym = lowSym;
+	return s;
+}
+
+
 Type
-newAnonConstType(AnonConstantValue value, type_t type)
+newAnonConstType(AnonConstVal value, type_t type)
 {
 	Type anonConstType;
 	switch(type) {

@@ -5,8 +5,11 @@
 #ifndef TYPE_H
 #define TYPE_H
 
+#include "Kind.h"
+
 /*
- * Defines the pre-defined types used by the compiler.
+ * Changed heavily to mirror the design suggested in Piotr's notes (see
+ * CheckingAttributes.pdf of the site for details)
  */
 
 /*
@@ -51,10 +54,28 @@ typedef union type_union {
 	struct Subrange * Subrange;
 } Type;
 
+
+/*
+ * The kind values an entry in the symbol table can take.
+ */
+typedef enum {
+	CONST_KIND,	/* constant value */
+	FUNC_KIND,	/* function declaration */
+	PROC_KIND,	/* procedure declaration */
+	TYPE_KIND,	/* type declaration */
+	VAR_KIND	/* variable declaration */
+} kind_t;
+
+
+
 struct Param {
-	char *name;
-	type_t type;
-	Type typePtr;
+	char *name;			/* TODO: name unnecessary, work it out
+					 * of code */
+	type_t type;	/* probably unnecessary now that we're pting to sym */
+	struct Symbol *typeSymPtr;	/* note: PAL specifications requires
+					 * that all procs/funcs have params
+					 * have already defined types, so no
+					 * anon types as param types */
 };
 
 /* Param Array defined here to avoid incestuous circular .h includes :( */
@@ -66,11 +87,8 @@ struct ParamArray {
 
 
 struct Array {
-	type_t baseType;	/* type of elements of array (e.g., array of 
-				 * char => baseType = CHAR_T */
-	Type baseTypePtr;	/* pointer to struct of base type */
-	type_t indexType;	/* type which indexes the array */
-	Type indexTypePtr;	/* pointer to struct of index type */
+	struct Symbol *baseTypeSym;	/* pointer to struct of base type */
+	struct Symbol *indexTypeSym;	/* pointer to struct of index type */
 };
 
 struct Boolean {
@@ -91,8 +109,8 @@ struct Char {
  *	 error)
  */
 struct Function {
-	struct ParamArray params;
-	Type *returnType;
+	struct ParamArray *params;
+	struct Symbol  *returnTypeSym;
 
 };
 
@@ -119,8 +137,7 @@ struct String {
 struct Subrange {
 	int high;
 	int low;
-	type_t baseType;  /* type of subrange indices */
-	Type baseTypePtr; /* pointer to struct of type of subrange indices */
+	struct Symbol *baseTypeSym; /* pointer to struct of type of subrange indices */
 };
 
 struct Scalar {
@@ -147,12 +164,60 @@ typedef union anonymous_constant_value {
 	struct Integer Integer;
 	struct Real Real;
 	struct String String;
-} AnonConstantValue;
+} AnonConstVal;
+
+typedef union kind_union {
+	struct ConstantKind * ConstKind;
+	struct FunctionKind * Funcind;
+	struct ProcedureKind * Procind;
+	struct TypeKind * TypeKind;
+	struct VariableKind * VarKind;
+} Kind;
+
+struct ConstantKind {
+	struct Symbol *typeSym;
+	AnonConstVal value;		
+};
+
+struct FunctionKind {
+	struct Symbol *typeSym;
+	struct ParamArray *params;
+};
+
+struct ProcedureKind {
+	struct ParamArray *params;
+};
+
+struct TypeKind {
+	Type typePtr;
+	type_t type;
+};
+
+struct VariableKind {
+	struct Symbol *typeSym;
+};
+
+
+/*
+ * The object stored at a hash element in the symbol table.
+ * Here we define the name of the entry, what kind it is (e.g., VAR, CONST,
+ * PARAM, ... ), and a pointer to the particular type of kind it is. 
+ * We also have type and typePtr here as well because EVERY entry will have
+ * these fields.
+ */
+struct Symbol {
+	char *name;	/* the name associated with the entry */
+	kind_t kind;	/* the kind associated with this entry */
+	Kind kindPtr;	/* kind specific description of symbol */
+	int lvl;	/* the lexical level at which the entry is defined */	
+};
 
 
 /* Function declarations */
 int isOrdinal(type_t);
-Type newAnonConstType(AnonConstantValue, type_t);
+struct Array *newArray(struct Symbol *, struct Symbol *);
+struct Subrange *newSubrange(struct Symbol*, struct Symbol *);
+Type newAnonConstType(AnonConstVal, type_t);
 void setTypePtr(Type *, Type, type_t);
 void typeMemoryFailure();
 #endif
