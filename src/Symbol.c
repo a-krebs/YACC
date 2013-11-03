@@ -260,48 +260,47 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 	return newSubrangeSym;
 }
 
-/* /\* */
-/*  * Creates a new procedure symbol entry to be placed in the symbol table. */
-/*  *\/ */
-/* struct Symbol * */
-/* newProcedureSym(int lvl, char *id, struct ParamArray *pa) */
-/* { */
+/*
+ * Creates a new procedure symbol entry to be placed in the symbol table.
+ */
+struct Symbol *
+newProcedureSym(int lvl, char *id, struct ParamArray *pa)
+{
 
-/* 	struct Symbol *newProcSym = NULL; */
-/* 	size_t len; */
-/* 	if (!pa) { */
-/* 		/\* Don't pass NULL if no params, pass empty param array. *\/ */
-/* 		return NULL; */
-/* 	} */
+	struct Symbol *newProcSym = NULL;
+	size_t len;
+	if (!pa) {
+		/* Don't pass NULL if no params, pass empty param array. */
+		return NULL;
+	}
 
-/* 	if (!id) { */
-/* 		/\* Cannot create anonymous procedure! *\/ */
-/* 		return NULL; */
-/* 	} */
+	if (!id) {
+		/* Cannot create anonymous procedure! */
+		return NULL;
+	}
 
-/* 	newProcSym = calloc(1, sizeof(struct Symbol)); */
-/* 	if (!newProcSym) { */
-/* 		err(1, "Failed to allocate memory for new procedure symbol!"); */
-/* 		exit(1);		 */
-/* 	} */
-/* 	newProcSym->typePtr.Procedure = calloc(1, sizeof(struct Procedure)); */
-/* 	if (!newProcSym->typePtr.Procedure) { */
-/* 		err(1, "Failed to allocate memory for new procedure symbol!"); */
-/* 		exit(1); */
-/* 	}	 */
+	newProcSym = calloc(1, sizeof(struct Symbol));
+	if (!newProcSym) {
+		err(1, "Failed to allocate memory for new procedure symbol!");
+		exit(1);
+	}
+	newProcSym->kindPtr.ProcKind = calloc(1, sizeof(struct ProcedureKind));
+	if (!newProcSym->kindPtr.ProcKind) {
+		err(1, "Failed to allocate memory for new procedure symbol!");
+		exit(1);
+	}
 
-/* 	len = strlen(id); */
-/* 	if (!len) { */
-/* 		/\* procdure cannot have 0 length name *\/ */
-/* 		return NULL;	 */
-/* 	} */
-/* 	strcpy(newProcSym->name, id); */
-/* 	newProcSym->kind = PROC_KIND; */
-/* 	newProcSym->type = PROCEDURE_T; */
-/* 	newProcSym->typePtr.Procedure->params = pa; */
-/* 	newProcSym->lvl = lvl; */
-/* 	return newProcSym;	 */
-/* } */
+	len = strlen(id);
+	if (!len) {
+		/* procdure cannot have 0 length name */
+		return NULL;
+	}
+	strcpy(newProcSym->name, id);
+	newProcSym->kind = PROC_KIND;
+	newProcSym->kindPtr.ProcKind->params = pa;
+	newProcSym->lvl = lvl;
+	return newProcSym;
+}
 
 /* struct Symbol* */
 /* newConstSym(int lvl, char * id, struct Symbol * constTypeSym) */
@@ -312,20 +311,14 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 /* struct Symbol* */
 /* newConstSymFromType(int lvl, Type constType, type_t type) */
 /* { */
-/* 	struct Symbol *newConstSym = NULL; */
+/* 	struct Symbol *newConstSym = calloc(1, sizeof(struct Symbol)); */
 /* 	if (!newConstSym) { */
-/* 		/\*Error*\/ */
-/* 		return NULL;	 */
-/* 	} */
-
-/* 	newConstSym = calloc(1, sizeof(struct Symbol)); */
-/* 	if (!newConstSym) { */
-/* 		err(1, "failed to allocate memory for new anon const symbol!"); */
+/* 		err(1, "Failed to allocate memory for new const symbol!"); */
 /* 		exit(1); */
-/* 	}	 */
+/* 	} */
 	
 	
-/* 	setTypePtr(&(newConstSym->typePtr), constType, type);  */
+/* 	setTypePtr(&(newConstSym->typePtr), constType, type); */
 /* 	newConstSym->name = NULL; */
 /* 	newConstSym->kind = CONST_KIND; */
 /* 	newConstSym->lvl = lvl; */

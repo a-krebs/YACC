@@ -141,9 +141,8 @@ struct Subrange {
 };
 
 struct Scalar {
-	/* 
-	 * Array of pointers to ids of consts in scalar list 
-	 */	
+	struct Symbol *consts;	/* linked list of const syms in scalar 
+				 * enumeration */
 };
 
 
@@ -168,8 +167,8 @@ typedef union anonymous_constant_value {
 
 typedef union kind_union {
 	struct ConstantKind * ConstKind;
-	struct FunctionKind * Funcind;
-	struct ProcedureKind * Procind;
+	struct FunctionKind * FuncKind;
+	struct ProcedureKind * ProcKind;
 	struct TypeKind * TypeKind;
 	struct VariableKind * VarKind;
 } Kind;

@@ -186,7 +186,7 @@ newAnonConstType(AnonConstVal value, type_t type)
 		break;
 	}
 	default:
-		/* NOT SUPPOSED TO BE REACHED */
+		/* NOT REACHED */
 		break;
 	}
 
