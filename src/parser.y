@@ -8,8 +8,8 @@
 #include "Error.h"
 #include "ErrorLL.h"
 #include "args.h"
-#include "Actions.h"
 #include "Symbol.h"
+#include "Actions.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -83,7 +83,7 @@ const_decl_list
 
 const_decl
 : decl_ID_or_err EQUAL expr
-	{ doConstDecl($<id>1, $<tmp>3); }
+	{ doConstDecl($<id>1, $<proxy>3); }
 | error
 ;
 
@@ -151,19 +151,19 @@ array_type
 : simple_type
 	{ $<symbol>$ = assertArrIndexType($<symbol>1); }
 | expr RANGE expr
-	{ $<symbol>$ = createRangeType($<tmp>1, $<tmp>3); }
+	{ $<symbol>$ = createRangeType($<proxy>1, $<proxy>3); }
 ;
 
 field_list
 : field
-	{ $<symbol>$ = createRecordType($<tmp>1); }
+	{ $<symbol>$ = createRecordType($<proxy>1); }
 | field_list SEMICOLON field
-	{ $<symbol>$ = appendFieldToRecordType($<symbol>1, $<tmp>3); }
+	{ $<symbol>$ = appendFieldToRecordType($<symbol>1, $<proxy>3); }
 ;
 
 field
 : ID_or_err COLON type
-	{ $<tmp>$ = newTmpRecordField($<id>1, $<symbol>3); }
+	{ $<proxy>$ = newRecordFieldProxy($<id>1, $<symbol>3); }
 ;
 
 var_decl_part
@@ -203,10 +203,10 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<tmp>3);
+	{ $<symbol>$ = enterProcDecl($<id>2, $<proxy>3);
 	  /* TODO check what we're doing for f_parm_decl  */ }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<tmp>3); }
+	{ $<symbol>$ = enterFuncDecl($<id>2, $<proxy>3); }
 | PROCEDURE ID semicolon_or_error
 	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
 	  yyerrok; }
@@ -221,9 +221,9 @@ proc_heading
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
-	{ $<tmp>$ = $<tmp>2; }
+	{ $<proxy>$ = $<proxy>2; }
 | L_PAREN R_PAREN
-	{ $<tmp>$ = NULL; }
+	{ $<proxy>$ = NULL; }
 // TODO what is this production for?
 | VAR ID error COLON simple_type
 	{yyerrok;}
@@ -231,21 +231,21 @@ f_parm_decl
 
 f_parm_list
 : f_parm
-	{ $<tmp>$ = createParmList($<tmp>1); }
+	{ $<proxy>$ = createParmList($<proxy>1); }
 | f_parm_list semicolon_or_error f_parm
-	{ $<tmp>$ = appendParmToParmList($<tmp>1, $<tmp>2); }
+	{ $<proxy>$ = appendParmToParmList($<proxy>1, $<proxy>2); }
 ;
 
 f_parm
 : ID COLON simple_type
-	{ $<tmp>$ = createNewParm($<id>1, $<symbol>3); }
+	{ $<proxy>$ = createNewParm($<id>1, $<symbol>3); }
 | VAR ID COLON simple_type
-	{ $<tmp>$ = createNewVarParm($<id>2, $<symbol>4); }
+	{ $<proxy>$ = createNewVarParm($<id>2, $<symbol>4); }
 | ID error COLON simple_type
-	{ $<tmp>$ = createNewParm($<id>1, $<symbol>3);
+	{ $<proxy>$ = createNewParm($<id>1, $<symbol>3);
 	  yyerrok; }
 | VAR ID error COLON simple_type
-	{ $<tmp>$ = createNewVarParm($<id>2, $<symbol>4);
+	{ $<proxy>$ = createNewVarParm($<id>2, $<symbol>4);
 	  yyerrok; }
 ;
 
@@ -267,7 +267,7 @@ stat
 
 simple_stat
 : var ASSIGN expr
-	{ assignOp($<tmp>1, $<tmp>3); }
+	{ assignOp($<proxy>1, $<proxy>3); }
 | proc_invok
 	{ /* TODO */ }
 | compound_stat
@@ -276,79 +276,79 @@ simple_stat
 var
 : decl_ID_or_err
 | ID_or_err
-	{ $<tmp>$ = hashLookupToTmp($<id>1); }
+	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | var PERIOD ID_or_err
-	{ $<tmp>$ = recordAccessToTmp($<id>1, $<id>3 ); }
+	{ $<proxy>$ = recordAccessToProxy($<id>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
-	{ $<tmp>$ = $<tmp>1; }
+	{ $<proxy>$ = $<proxy>1; }
 ;
 
 subscripted_var
 : var LS_BRACKET expr
-	{ $<tmp>$ = $<tmp>3; }
+	{ $<proxy>$ = $<proxy>3; }
 | subscripted_var comma_or_error expr
 	{ /* TODO */ }
 ;
 
 expr
 : simple_expr
-	{ $<tmp>$ = $<tmp>1; }
+	{ $<proxy>$ = $<proxy>1; }
 | expr EQUAL simple_expr
-	{ $<tmp>$ = eqOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = eqOp($<proxy>1, $<proxy>3); }
 | expr NOT_EQUAL simple_expr
-	{ $<tmp>$ = notEqOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = notEqOp($<proxy>1, $<proxy>3); }
 | expr LESS_OR_EQUAL simple_expr
-	{ $<tmp>$ = lessOrEqOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = lessOrEqOp($<proxy>1, $<proxy>3); }
 | expr LESS simple_expr
-	{ $<tmp>$ = lessOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = lessOp($<proxy>1, $<proxy>3); }
 | expr GREATER_OR_EQUAL simple_expr
-	{ $<tmp>$ = gtOrEqOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = gtOrEqOp($<proxy>1, $<proxy>3); }
 | expr GREATER simple_expr
-	{ $<tmp>$ = gtOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = gtOp($<proxy>1, $<proxy>3); }
 ;
 
 simple_expr
 : term
-	{ $<tmp>$ = $<tmp>1; }
+	{ $<proxy>$ = $<proxy>1; }
 | PLUS term
-	{ $<tmp>$ = unaryPlusOp($<tmp>2); }
+	{ $<proxy>$ = unaryPlusOp($<proxy>2); }
 | MINUS term
-	{ $<tmp>$ = unaryMinusOp($<tmp>2); }
+	{ $<proxy>$ = unaryMinusOp($<proxy>2); }
 | simple_expr PLUS term
-	{ $<tmp>$ = plusOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = plusOp($<proxy>1, $<proxy>3); }
 | simple_expr MINUS term
-	{ $<tmp>$ = minusOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = minusOp($<proxy>1, $<proxy>3); }
 | simple_expr OR term
-	{ $<tmp>$ = orOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = orOp($<proxy>1, $<proxy>3); }
 ;
 
 term
 : factor
-	{ $<tmp>$ = $<tmp>1; }
+	{ $<proxy>$ = $<proxy>1; }
 | term MULTIPLY factor
-	{ $<tmp>$ = multOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = multOp($<proxy>1, $<proxy>3); }
 | term DIVIDE factor
-	{ $<tmp>$ = divideOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = divideOp($<proxy>1, $<proxy>3); }
 | term DIV factor
-	{ $<tmp>$ = divOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = divOp($<proxy>1, $<proxy>3); }
 | term MOD factor
-	{ $<tmp>$ = modOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = modOp($<proxy>1, $<proxy>3); }
 | term AND factor
-	{ $<tmp>$ = andOp($<tmp>1, $<tmp>3); }
+	{ $<proxy>$ = andOp($<proxy>1, $<proxy>3); }
 | error
 ;
 
 factor
 : var
-	{ $<tmp>$ = $<tmp>1; }
+	{ $<proxy>$ = $<proxy>1; }
 | unsigned_const
-	{ $<tmp>$ = getTmpFromSymbol($<symbol>1); }
+	{ $<proxy>$ = getProxyFromSymbol($<symbol>1); }
 | L_PAREN expr R_PAREN_or_error
-	{ $<tmp>$ = $<tmp>2; }
+	{ $<proxy>$ = $<proxy>2; }
 | func_invok
-	{ $<tmp>$ = $<tmp>1; }
+	{ $<proxy>$ = $<proxy>1; }
 | NOT factor
-	{ $<tmp>$ = unaryNotOp($<tmp>2); }
+	{ $<proxy>$ = unaryNotOp($<proxy>2); }
 ;
 
 R_PAREN_or_error

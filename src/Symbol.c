@@ -15,11 +15,11 @@ static char *errMsg;
 /*
  * Constructs and array symbol given a base type and an index type. 
  */
-struct Symbol *
-newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
-	 struct Symbol *indexTypeSym)
+Symbol *
+newArraySym(int lvl, char *id, Symbol *baseTypeSym,
+	 Symbol *indexTypeSym)
 {
-	struct Symbol *newArraySym = NULL;
+	Symbol *newArraySym = NULL;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
 		errMsg = customErrorString("Semantic Error: cannot define array %s, \
 				   base type or index type incorrect \
@@ -33,7 +33,7 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
 		return NULL;
 	}
 
-	newArraySym = calloc(1, sizeof(struct Symbol));
+	newArraySym = calloc(1, sizeof(Symbol));
 	if (!newArraySym) {
 		err(1, "Failed to allocate memory for new array!");
 		exit(1);
@@ -76,7 +76,7 @@ newArraySym(int lvl, char *id, struct Symbol *baseTypeSym,
  *       procedure/function definition body.
  */
 struct Param *
-newParameter(char *id, struct Symbol *typeSym)
+newParameter(char *id, Symbol *typeSym)
 {
 	struct Param *newParam = NULL;
 	size_t len;
@@ -119,10 +119,10 @@ newParameter(char *id, struct Symbol *typeSym)
  * given an identifier and an entry in the symbol table which is a type.
  */
 
-struct Symbol *
-newVariableSym(int lvl, char *id, struct Symbol* typeSym)
+Symbol *
+newVariableSym(int lvl, char *id, Symbol* typeSym)
 {
-	struct Symbol *newVar = NULL;	/* new symbol to be created */
+	Symbol *newVar = NULL;	/* new symbol to be created */
 	size_t len;
 	/*
 	 * Before making any allocations, we assure that the given 
@@ -152,7 +152,7 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 	}
 		
 
-	newVar = calloc(1, sizeof(struct Symbol));
+	newVar = calloc(1, sizeof(Symbol));
 	if (!newVar) {
 		err(1, "Failed to allocate memory for new symbol!");
 		exit(1);
@@ -178,11 +178,11 @@ newVariableSym(int lvl, char *id, struct Symbol* typeSym)
 /*
  * Constructs an anonymous subrange symbol.  
  */
-struct Symbol *
-newSubrangeSym(int lvl, struct Symbol *constSymLow, 
-	        struct Symbol *constSymHigh)
+Symbol *
+newSubrangeSym(int lvl, Symbol *constSymLow, 
+	        Symbol *constSymHigh)
 {
-	struct Symbol *newSubrange = NULL;
+	Symbol *newSubrange = NULL;
 	int high, low;
 	/* 
 	 * We must assure that we are constructing a subrange
@@ -256,7 +256,7 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 
 
 
-	newSubrange = calloc(1, sizeof(struct Symbol));
+	newSubrange = calloc(1, sizeof(Symbol));
 	if (!newSubrange) {
 		err(1, "Failed to allocate memory for new subrange symbol!");
 		exit(1);
@@ -305,11 +305,11 @@ newSubrangeSym(int lvl, struct Symbol *constSymLow,
 /*
  * Creates a new procedure symbol entry to be placed in the symbol table.
  */
-struct Symbol *
+Symbol *
 newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 {
 
-	struct Symbol *newProcSym = NULL;
+	Symbol *newProcSym = NULL;
 	size_t len;
 	if (!pa) {
 		/* Don't pass NULL if no params, pass empty param array. */
@@ -321,7 +321,7 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 		return NULL;
 	}
 
-	newProcSym = calloc(1, sizeof(struct Symbol));
+	newProcSym = calloc(1, sizeof(Symbol));
 	if (!newProcSym) {
 		err(1, "Failed to allocate memory for new procedure symbol!");
 		exit(1);		
@@ -345,22 +345,22 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 	return newProcSym;	
 }
 
-struct Symbol*
-newConstSym(int lvl, char * id, struct Symbol * constTypeSym)
+Symbol*
+newConstSym(int lvl, char * id, Symbol * constTypeSym)
 {
 	return NULL;
 }
 
-struct Symbol*
+Symbol*
 newConstSymFromType(int lvl, Type constType, type_t type)
 {
-	struct Symbol *newConstSym = NULL;
+	Symbol *newConstSym = NULL;
 	if (!newConstSym) {
 		/*Error*/
 		return NULL;	
 	}
 
-	newConstSym = calloc(1, sizeof(struct Symbol));
+	newConstSym = calloc(1, sizeof(Symbol));
 	if (!newConstSym) {
 		err(1, "failed to allocate memory for new anon const symbol!");
 		exit(1);

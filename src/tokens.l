@@ -8,6 +8,7 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
+#include "Symbol.h"
 
 #ifndef LEXTEST_DEBUG
 #include "parser.tab.h"

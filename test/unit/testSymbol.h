@@ -1,7 +1,7 @@
 #include "minunit.h"
 #include "../../src/Symbol.h"
 
-struct Symbol * setUpTypeSymbol();
+Symbol * setUpTypeSymbol();
 
 char * test_newVariableSym();
 char * test_newSubrangeSym();
