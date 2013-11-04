@@ -20,11 +20,11 @@ int colno;
  * TODO: make this function accept type_t arg so it can set up types
  * of different types.
  */
-struct Symbol *
+Symbol *
 setUpTypeSymbol()
 {
 	char id[] = "testType";
-	struct Symbol *typeSym = calloc(1, sizeof(struct Symbol));
+	Symbol *typeSym = calloc(1, sizeof(Symbol));
 	size_t len = strlen(id);
 	if (!typeSym) {
 		err(1, "Failed to allocate memory for test type symbol!");
@@ -52,9 +52,9 @@ setUpTypeSymbol()
 char *
 test_newVariableSym()
 {
-	struct Symbol *typeSym = setUpTypeSymbol();
-	struct Symbol *newVar = NULL;
-	struct Symbol *varTypeSym = NULL;
+	Symbol *typeSym = setUpTypeSymbol();
+	Symbol *newVar = NULL;
+	Symbol *varTypeSym = NULL;
 	char id[] = "testVariable";
 	int lvl = 100;
 
@@ -88,9 +88,9 @@ test_newVariableSym()
 char *
 test_newSubrangeSym() 
 {
-	struct Symbol *subrangeSym = NULL;
-	struct Symbol *testSymLow = setUpTypeSymbol();
-	struct Symbol *testSymHigh = setUpTypeSymbol();
+	Symbol *subrangeSym = NULL;
+	Symbol *testSymLow = setUpTypeSymbol();
+	Symbol *testSymHigh = setUpTypeSymbol();
 	int lvl = 102;
 	testSymHigh->typePtr.Integer->value = INTHIGH_VAL;
 	testSymLow->kind = CONST_KIND;

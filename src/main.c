@@ -5,6 +5,8 @@
 #include "ProgList.h"
 #include "args.h"
 #include "Hash.h"
+/* must include for symbol typedef to work with parser. */
+#include "Symbol.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"

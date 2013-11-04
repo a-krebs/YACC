@@ -5,8 +5,8 @@
       char *id;
       double real;
       int integer;
-      struct Symbol *symbol;
-      struct Symbol *tmp;
+      Symbol *symbol;
+      ProxySymbol *proxy;
 }
 
 /* id */

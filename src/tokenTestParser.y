@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* include symbols for token union */
+#include "Symbol.h"
+
 %}
 
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->

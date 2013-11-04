@@ -8,6 +8,7 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
+#include "Symbol.h"
 
 #ifndef LEXTEST_DEBUG
 #include "parser.tab.h"
@@ -25,7 +26,13 @@ extern YYABORT;
 extern int nErrors;
 int colno = 1;
 extern void yyerror(char *);
-/* flag to state whether we're in the declaration sections or not. */
+
+/* 
+ * Flag to set if we're in constant declaration.
+ * 
+ * This will enable/disable parts of the grammar. Specifically, when inDecl == 1
+ * the var production will not reduce to a function invokation.
+ */
 int inDecl = 0;
 %}
 

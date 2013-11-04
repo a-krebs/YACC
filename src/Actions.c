@@ -24,8 +24,8 @@ extern struct hashElement *symbolTable[TABLE_SIZE];
  *
  * If the types are not combatible for this operator, set error and return NULL.
  */
-struct Symbol *assertOpCompat(
-    struct Symbol *type1, int opToken, struct Symbol *type2) {
+Symbol *assertOpCompat(
+    Symbol *type1, int opToken, Symbol *type2) {
 	// TODO implement
 	switch (opToken) {
 		case EQUAL:
@@ -41,7 +41,7 @@ struct Symbol *assertOpCompat(
  * Return 0 if the given types are assignment compatible, otherwise return
  * non-zero
  */
-int isAssignmentCompat(struct Symbol type1, struct Symbol type2) {
+int isAssignmentCompat(Symbol type1, Symbol type2) {
 	// TODO implement
 	return -1;
 }
@@ -58,38 +58,44 @@ void exitConstDeclPart(void) {
 }
 
 /*
- * Assign a constant.
+ * Create a new constant in the symbol table.
+ * Extract the value and type information from the proxy.
  */
-void doConstDecl(char *id, struct Symbol *tmp) {
-	// TODO implementation. Check that they're assignment compatible.
+void doConstDecl(char *id, ProxySymbol *proxy) {
+	// TODO implementation.
 }
 
 /*
  * Perform actions necessary when exiting type decl part.
  */
 void exitTypeDeclPart(void) {
-	// TODO implementation.
+	// probably nothing to do here
 }
 
 /*
- * Set the ID's type.
+ * Create a new type identifier symbol in the symbol table.
  */
-// TODO change types
-void doTypeDecl(char *id, struct Symbol *tmp) {
+void doTypeDecl(char *id, Symbol *type) {
 	// TODO assign type to id
 }
 
-struct Symbol *simpleTypeLookup(char *id) {
+/*
+ * Do a lookup in the symbol table for the type with the given id.
+ *
+ * Raise an error if the type is not available.
+ *
+ * Return a pointer to the type.
+ */
+Symbol *simpleTypeLookup(char *id) {
 	return NULL;
 }
-
 
 /*
  * Add new_id as a mamber to scalar_list.
  *
  * Return scalar_list
  */
-struct Symbol *appendToScalarListType(struct Symbol *scalar_list, char *new_id) {
+Symbol *appendToScalarListType(Symbol *scalar_list, char *new_id) {
 	return scalar_list;
 }
 
@@ -98,14 +104,14 @@ struct Symbol *appendToScalarListType(struct Symbol *scalar_list, char *new_id) 
  *
  * Return a pointer to the new scalar list
  */
-struct Symbol *createScalarListType(char *id) {
+Symbol *createScalarListType(char *id) {
 	return NULL;
 }
 
 /*
- * Create a new arrau type given the index type and base type.
+ * Create a new array type given the index type and base type.
  */
-struct Symbol *createArrayType(struct Symbol *index, struct Symbol *base) {
+Symbol *createArrayType(Symbol *index, Symbol *base) {
 	return NULL;
 }
 
@@ -116,46 +122,46 @@ struct Symbol *createArrayType(struct Symbol *index, struct Symbol *base) {
  *
  * Return the given type.
  */
-struct Symbol *assertArrIndexType(struct Symbol *index_type) {
+Symbol *assertArrIndexType(Symbol *index_type) {
 	return index_type;
 }
 
 /*
- * Create a new subrange type. The arguments are temporary symbols that should
+ * Create a new subrange type. The arguments are proxy symbols that should
  * constain constant values for the range bounds.
  *
  * Return a pointer to the new subrange type.
  */
-struct Symbol *createRangeType(struct Symbol *tmp1, struct Symbol *tmp3) {
+Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	return NULL;
 }
 
 /*
- * Create a new record type from the given temporary field.
+ * Create a new record type from the given proxy. the proxy contains the name
+ * of a field and the type of that field.
  *
- * Return a pointer to the new type symbol.
+ * Return a pointer to the new record type symbol.
  */
-struct Symbol *createRecordType(struct Symbol *tmp) {
+Symbol *createRecordType(ProxySymbol *first_field) {
 	return NULL;
 }
 
 /*
- * Add the given temporary field to the record as a proper field.
+ * Add a field to the given record type. The proxy new_field contains
+ * the name and type of the new record field.
  *
  * Return a pointer to the record type.
  */
-struct Symbol *appendFieldToRecordType(
-    struct Symbol *record_type, struct Symbol *tmp) {
+Symbol *appendFieldToRecordType(Symbol *record_type, ProxySymbol *new_field) {
 	return record_type;
 }
 
 /*
- * Make a new temporary symbol (do not add to symbol table) that
- * constains the name and type of a record field.
+ * Create a new ProxySymbol with the given id and type.
  *
- * Return a pointer to the new tmp symbol.
+ * Return a pointer to the new proxy.
  */
-struct Symbol *newTmpRecordField(char *id, struct Symbol *type) {
+ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
 	return NULL;
 }
 
@@ -171,7 +177,7 @@ void exitVarDeclPart(void) {
  *
  * Return a pointer to type.
  */
-struct Symbol *doVarDecl(char *id, struct Symbol *type) {
+Symbol *doVarDecl(char *id, Symbol *type) {
 	return type;
 }
 
@@ -193,7 +199,7 @@ void exitProcOrFuncDecl(void) {
  *
  * Return a pointer to the procedure.
  */
-struct Symbol *enterProcDecl(char *id, struct Symbol *argv) {
+Symbol *enterProcDecl(char *id, ProxySymbol *argv) {
 	return NULL;
 }
 
@@ -205,130 +211,130 @@ struct Symbol *enterProcDecl(char *id, struct Symbol *argv) {
  * 
  * Return a pointer to the procedure.
  */
-struct Symbol *enterFuncDecl(char *id, struct Symbol *argv) {
+Symbol *enterFuncDecl(char *id, ProxySymbol *argv) {
 	return NULL;
 }
 
 /*
- * Create a new parameter list from the given parameter symbol.
+ * Create a new parameter list from the given parameter.
  *
- * Return a pointer to the parameter list symbol.
+ * Return a pointer to the parameter list.
  */
-struct Symbol *createParmList(struct Symbol *parm) {
+ProxySymbol *createParmList(ProxySymbol *parm) {
 	return NULL;
 }
 
 /*
- * Append the given parameter symbol to the parameter list.
+ * Append the given parameter to the parameter list.
  *
  * Return a poinnter to the parameter list.
  */
-struct Symbol *appendParmToParmList(
-    struct Symbol *parm_list, struct Symbol *new_parm) {
+ProxySymbol *appendParmToParmList(
+    ProxySymbol *parm_list, ProxySymbol *new_parm) {
 	return parm_list;
 }
 
 /*
- * Create a new parameter symbol for a parameter list with the given
- * name and type.
+ * Create a new parameter with the given name and type.
  *
- * Return a pointer to the new parameter symbol.
+ * Return a pointer to the new parameter.
  */
-struct Symbol *createNewParm(char *id, struct Symbol *type) {
+ProxySymbol *createNewParm(char *id, Symbol *type) {
 	return NULL;
 }
 
 /*
- * Create a new var parm symbol for a parameter list with the given
- * name and type.
+ * Create a new var parm with the given name and type.
  *
- * Return a pointer to the new parameter symbol.
+ * Return a pointer to the new parameter.
  */
-struct Symbol *createNewVarParm(char *id, struct Symbol *type) {
+ProxySymbol *createNewVarParm(char *id, Symbol *type) {
 	return NULL;
 }
 
-struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+/*
+ * Perform assignment of x to y.
+ */
+void assignOp(ProxySymbol *x, ProxySymbol *y) {
+}
+
+ProxySymbol *hashLookupToProxy(char *id) {
 	return NULL;
 }
 
-struct Symbol *hashLookupToTmp(char *id) {
+ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 	return NULL;
 }
 
-struct Symbol *recordAccessToTmp(char *id1, char *id3) {
+ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *eqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *notEqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *lessOrEqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *lessOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *gtOrEqOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *gtOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *unaryPlusOp(ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *unaryPlusOp(struct Symbol *tmp2) {
+ProxySymbol *unaryMinusOp(ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *unaryMinusOp(struct Symbol *tmp2) {
+ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *plusOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *minusOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *orOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *multOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *divideOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *divOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *modOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-struct Symbol *andOp(struct Symbol *tmp1, struct Symbol *tmp3) {
+ProxySymbol *getProxyFromSymbol(Symbol *symbol) {
 	return NULL;
 }
 
-struct Symbol *getTmpFromSymbol(struct Symbol *symbol) {
-	return NULL;
-}
-
-struct Symbol *unaryNotOp(struct Symbol *tmp2) {
+ProxySymbol *unaryNotOp(ProxySymbol *x) {
 	return NULL;
 }
 

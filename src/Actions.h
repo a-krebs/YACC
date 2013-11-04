@@ -1,58 +1,61 @@
-struct Symbol *assertOpCompat(struct Symbol*, int, struct Symbol*);
-int isAassignmentCompat(struct Symbol*, struct Symbol*);
+#include "Symbol.h"
+
+Symbol *assertOpCompat(Symbol*, int, Symbol*);
+int isAassignmentCompat(Symbol*, Symbol*);
 
 /* declaration lists */
 void exitConstDeclPart(void);
-void doConstDecl(char*, struct Symbol*);
+void doConstDecl(char*, ProxySymbol*);
 void exitTypeDeclPart(void);
-void doTypeDecl(char*, struct Symbol*);
+void doTypeDecl(char*, Symbol*);
 
 /* types */
-struct Symbol *simpleTypeLookup(char*);
-struct Symbol *appendToScalarListType(struct Symbol*, char*);
-struct Symbol *createScalarListType(char*);
-struct Symbol *createArrayType(struct Symbol*, struct Symbol*);
-struct Symbol *assertArrIndexType(struct Symbol*);
-struct Symbol *createRangeType(struct Symbol*, struct Symbol*);
-struct Symbol *createRecordType(struct Symbol*);
-struct Symbol *appendFieldToRecordType(struct Symbol*, struct Symbol*);
-struct Symbol *newTmpRecordField(char*, struct Symbol*);
+Symbol *simpleTypeLookup(char*);
+Symbol *appendToScalarListType(Symbol*, char*);
+Symbol *createScalarListType(char*);
+Symbol *createArrayType(Symbol*, Symbol*);
+Symbol *assertArrIndexType(Symbol*);
+Symbol *createRangeType(ProxySymbol*, ProxySymbol*);
+Symbol *createRecordType(ProxySymbol*);
+Symbol *appendFieldToRecordType(ProxySymbol*, ProxySymbol*);
+ProxySymbol *newRecordFieldProxy(char*, Symbol*);
 
 /* var decl list */
 void exitVarDeclPart(void);
-struct Symbol *doVarDecl(char*, struct Symbol*);
+Symbol *doVarDecl(char*, Symbol*);
 
 /* proc and function decls */
-struct Symbol *doVarDecl(char*, struct Symbol*);
-struct Symbol *enterProcDecl(char*, struct Symbol*);
-struct Symbol *enterFuncDecl(char*, struct Symbol*);
-struct Symbol *createParmList(struct Symbol*);
-struct Symbol *appendParmToParmList(struct Symbol*, struct Symbol*);
-struct Symbol *createNewParm(char*, struct Symbol*);
-struct Symbol *createNewVarParm(char*, struct Symbol*);
+Symbol *doVarDecl(char*, Symbol*);
+void exitProcOrFuncDecl(void);
+Symbol *enterProcDecl(char*, ProxySymbol*);
+Symbol *enterFuncDecl(char*, ProxySymbol*);
+ProxySymbol *createParmList(ProxySymbol*);
+ProxySymbol *appendParmToParmList(ProxySymbol*, ProxySymbol*);
+ProxySymbol *createNewParm(char*, Symbol*);
+ProxySymbol *createNewVarParm(char*, Symbol*);
 
 /* expressions and operators */
-struct Symbol *assignOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *hashLookupToTmp(char *id);
-struct Symbol *recordAccessToTmp(char *id1, char *id3);
-struct Symbol *eqOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *notEqOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *lessOrEqOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *lessOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *gtOrEqOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *gtOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *unaryPlusOp(struct Symbol *tmp2);
-struct Symbol *unaryMinusOp(struct Symbol *tmp2);
-struct Symbol *plusOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *minusOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *orOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *multOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *divideOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *divOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *modOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *andOp(struct Symbol *tmp1, struct Symbol *tmp3);
-struct Symbol *getTmpFromSymbol(struct Symbol *symbol);
-struct Symbol *unaryNotOp(struct Symbol *tmp2);
+ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *hashLookupToProxy(char*);
+ProxySymbol *recordAccessToProxy(char*, char*);
+ProxySymbol *eqOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *notEqOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *lessOrEqOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *lessOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *gtOrEqOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *gtOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *unaryPlusOp(ProxySymbol*);
+ProxySymbol *unaryMinusOp(ProxySymbol*);
+ProxySymbol *plusOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *minusOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *orOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *multOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *divideOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *divOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *modOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *andOp(ProxySymbol*, ProxySymbol*);
+ProxySymbol *getProxyFromSymbol(ProxySymbol *symbol);
+ProxySymbol *unaryNotOp(ProxySymbol*);
 
 /* constants */
 void *anonIntLiteral(int);
