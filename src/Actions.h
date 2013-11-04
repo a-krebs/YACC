@@ -1,5 +1,5 @@
 struct Symbol *assertOpCompat(struct Symbol*, int, struct Symbol*);
-int assignmentCompatEh(struct Symbol*, struct Symbol*);
+int isAassignmentCompat(struct Symbol*, struct Symbol*);
 
 /* declaration lists */
 void exitConstDeclPart(void);
