@@ -1,0 +1,7 @@
+{5}
+// test that a const cannot be initialized by accessing a record
+program constRecAccess(in,out);
+const
+	foo = rec.member;
+begin
+end.

@@ -277,7 +277,6 @@ var
 : decl_ID_or_err
 | ID_or_err
 	{ $<tmp>$ = hashLookupToTmp($<id>1); }
-| var PERIOD decl_ID_or_err
 | var PERIOD ID_or_err
 	{ $<tmp>$ = recordAccessToTmp($<id>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
