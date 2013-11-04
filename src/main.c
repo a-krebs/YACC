@@ -142,11 +142,13 @@ int main( int argc, char *argv[] )
 
 	/* check that parsing was success */
 	if (argsParsedSuccess != 0) {
+		printf("Argument parsing failed.\n");
 		return EXIT_FAILURE;
 	}
 
 	fp = fopen(givenArgs.inFile, FILE_MODE);
 	if (fp == NULL) {
+		printf("Invalid input file.\n");
 		return EXIT_FAILURE;
 	}
 	yyin = fp;
