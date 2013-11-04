@@ -1,8 +1,7 @@
 #ifndef SYMBOL_H
 #define SYMBOL_H
 
-#include "Type.h"
-#include "Kind.h"
+#include "Definitions.h"
 
 Symbol *newArraySym(int, char *, Symbol *, Symbol *);
 Symbol *newAnonArraySym(int, Symbol *, Symbol *);

@@ -7,7 +7,7 @@
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
 OBJS+=		$(BIN)/ProgList.o $(BIN)/ParamArray.o $(BIN)/Symbol.o 
-OBJS+=		$(BIN)/Type.o
+OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 
@@ -103,7 +103,13 @@ $(BIN)/main.o: $(SRC)/main.c $(SRC)/parser.tab.c $(SRC)/args.h
 $(BIN)/lextest.o: $(SRC)/main.c $(SRC)/tokenTestParser.tab.c
 	$(BISONFLEXCOMPILE)
 
+$(SRC)/Definitions.h:
+	#Do nothing
+
 $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
+	$(COMPILE)
+
+$(BIN)/Kind.o: $(SRC)/Kind.c $(SRC)/Kind.h $(SRC)/Definitions.h
 	$(COMPILE)
 
 $(BIN)/ParamArray.o: $(SRC)/ParamArray.c $(SRC)/ParamArray.h
@@ -112,13 +118,13 @@ $(BIN)/ParamArray.o: $(SRC)/ParamArray.c $(SRC)/ParamArray.h
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
-$(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Kind.h
+$(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Definitions.h
 	$(COMPILE)
 
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
 
-$(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h
+$(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
 
 $(BIN)/testProgList.o: $(TEST)/testProgList.c $(TEST)/testProgList.h

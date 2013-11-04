@@ -1,5 +1,15 @@
 #ifndef KIND_H
 #define KIND_H
 
-#include "Type.h"
+#include "Definitions.h"
+
+
+struct ConstantKind *allocateConstantKind();
+struct FunctionKind *allocateFunctionKind();
+struct ProcedureKind *allocateProcedureKind();
+struct TypeKind *allocateTypeKind();
+struct VariableKind *allocateVariableKind();
+void allocateKindPtr(Symbol *);
+void allocationErrorCheck(void *);
+
 #endif
