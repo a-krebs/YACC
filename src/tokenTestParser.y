@@ -32,6 +32,7 @@ constant_list	:INT_CONST		{printf("INT_CONST \
 					    (%s)\n", $<string>1);}
 types_list	:ARRAY			{printf("ARRAY\n");}
 		|ID                     {printf("ID (%s)\n",$<id>1);}
+		|DECL_ID                {printf("ID (%s)\n",$<id>1);}
 		;
 
 operators_list	:PLUS                   {printf("PLUS\n");}

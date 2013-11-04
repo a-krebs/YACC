@@ -10,7 +10,7 @@
 }
 
 /* id */
-%token ID
+%token ID DECL_ID
 
 /* types names: */
 %token ARRAY BOOL CHAR INT REAL RECORD

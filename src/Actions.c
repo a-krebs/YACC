@@ -41,7 +41,7 @@ struct Symbol *assertOpCompat(
  * Return 0 if the given types are assignment compatible, otherwise return
  * non-zero
  */
-int assignmentCompatEh(struct Symbol type1, struct Symbol type2) {
+int isAssignmentCompat(struct Symbol type1, struct Symbol type2) {
 	// TODO implement
 	return -1;
 }
