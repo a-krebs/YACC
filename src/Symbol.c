@@ -343,3 +343,36 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 
 /* 	return newConstSym; */
 /* } */
+
+
+/*
+ * Returns a pointer to the Symbol of TYPE_KIND defining the type for the
+ * given CONST_KIND, FUNC_KIND, PROC_KIND, or VAR_KIND symbol.  Returns
+ * NULL for Symbols of TYPE_KIND.
+ */
+Symbol *
+getTypeSym(Symbol *s) 
+{
+	if (!s) return NULL;
+
+	switch (s->kind) {
+	case CONST_KIND:
+		return s->kindPtr.ConstKind->typeSym;
+	case PROC_KIND: 
+		/* Procedures do not have associate type symbols */
+		return NULL;
+	case FUNC_KIND:
+		return s->kindPtr.FuncKind->typeSym;
+	case TYPE_KIND:
+		/* 
+		 * Symbol is itself a type symbol -- its typePtr may
+		 * depend on other type (potentially multiple) Symbols
+		 * so we need to call more specific functions */
+		return NULL;
+	case VAR_KIND:
+		return s->kindPtr.VarKind->typeSym;
+	default:
+		/* NOT REACHED */
+		return NULL;
+	}
+}
