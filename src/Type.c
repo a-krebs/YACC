@@ -74,7 +74,7 @@ setTypePtr(Type *new, Type old, type_t type)
 }
 
 struct Array *
-newArray(struct Symbol *baseTypeSym, struct Symbol *indexTypeSym)
+newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 {
 	struct Array *a;
 	/* Error checking */
@@ -95,10 +95,10 @@ newArray(struct Symbol *baseTypeSym, struct Symbol *indexTypeSym)
  * TODO: maybe move error checking to this function
  */
 struct Subrange * 
-newSubrange(struct Symbol * lowSym, struct Symbol *highSym)
+newSubrange(Symbol * lowSym, Symbol *highSym)
 {
 	struct Subrange *s = NULL;
-	struct Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
+	Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
 	AnonConstVal *lowVal = &(lowSym->kindPtr.ConstKind->value),
 		* highVal = &(highSym->kindPtr.ConstKind->value);
 	int low = 0, high = 0;
@@ -136,7 +136,7 @@ newSubrange(struct Symbol * lowSym, struct Symbol *highSym)
 }
 
 type_t
-getType(struct Symbol *s)
+getType(Symbol *s)
 {
 	if (!s) /* should probably exit program */ return 0;
 	if (!s->kindPtr.ConstKind) /* no memory allocated to kindPtr */ return 0;

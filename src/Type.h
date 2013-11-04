@@ -211,13 +211,20 @@ struct Symbol {
 	int lvl;	/* the lexical level at which the entry is defined */	
 };
 
+/* typedef Symbol to make it easier to work with */
+typedef struct Symbol Symbol;
+/* typedef a proxy type to hold the same information as symbol, but
+ * to not be stored in the symbol table. It is used as an intermediate value
+ * when traversing the parse tree.
+ */
+typedef Symbol ProxySymbol;
 
 /* Function declarations */
 int isOrdinal(type_t);
-struct Array *newArray(struct Symbol *, struct Symbol *);
-struct Subrange *newSubrange(struct Symbol*, struct Symbol *);
+struct Array *newArray(Symbol *, Symbol *);
+struct Subrange *newSubrange(Symbol*, Symbol *);
 Type newAnonConstType(AnonConstVal, type_t);
-type_t getType(struct Symbol *);
+type_t getType(Symbol *);
 void setTypePtr(Type *, Type, type_t);
 void typeMemoryFailure();
 #endif
