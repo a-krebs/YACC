@@ -213,3 +213,7 @@ integration_tests:
 	@cd test && python testRunner.py -x -d ./integration/syntax
 	@echo "\nSEMANTIC TESTS:"
 	@cd test && python testRunner.py -c -d ./integration/semantic
+
+# remove all .lst files
+clean_lst:
+	find . -name "*.lst" -delete
