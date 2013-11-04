@@ -19,6 +19,14 @@ extern int yyerrok;
 extern char *yytext;
 extern int colno;
 
+/* 
+ * Flag to set if we're in constant declaration.
+ * 
+ * This will enable/disable parts of the grammar. Specifically, when inDecl == 1
+ * the var production will not reduce to a function invokation.
+ */
+extern int inDecl;
+
 #if DEBUG
         yydebug = 1;
 #endif
@@ -41,11 +49,14 @@ program
 
 program_head
 : PROGRAM ID_or_err L_PAREN ID_or_err comma_or_error ID_or_err R_PAREN semicolon_or_error
+	{ inDecl = 1; }
 | PROGRAM semicolon_or_error
+	{ inDecl = 1; }
 | PROGRAM ID_or_err L_PAREN semicolon_or_error
+	{ inDecl = 1; }
 | PROGRAM ID_or_err semicolon_or_error
+	{ inDecl = 1; }
 ;
-
 
 // no | here since this is a list
 decls
@@ -58,8 +69,11 @@ decls
 
 const_decl_part
 : CONST const_decl_list semicolon_or_error
-	{ exitConstDeclPart(); }
+	{ exitConstDeclPart(); 
+	  inDecl = 0;
+	}
 |
+	{ inDecl = 0; }
 ;
 
 const_decl_list
@@ -68,7 +82,7 @@ const_decl_list
 ;
 
 const_decl
-: ID_or_err EQUAL expr
+: decl_ID_or_err EQUAL expr
 	{ doConstDecl($<id>1, $<tmp>3); }
 | error
 ;
@@ -260,8 +274,10 @@ simple_stat
 ;
 
 var
-: ID_or_err
+: decl_ID_or_err
+| ID_or_err
 	{ $<tmp>$ = hashLookupToTmp($<id>1); }
+| var PERIOD decl_ID_or_err
 | var PERIOD ID_or_err
 	{ $<tmp>$ = recordAccessToTmp($<id>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
@@ -412,6 +428,12 @@ ID_or_err
 	{ $<id>$ = $<id>1; }
 ;
 
+decl_ID_or_err
+: DECL_ID UNREC decl_ID_or_err
+	{ $<id>$ = $<id>1; }
+| DECL_ID
+	{ $<id>$ = $<id>1; }
+;
 
 %%
 

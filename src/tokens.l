@@ -25,6 +25,8 @@ extern YYABORT;
 extern int nErrors;
 int colno = 1;
 extern void yyerror(char *);
+/* flag to state whether we're in the declaration sections or not. */
+int inDecl = 0;
 %}
 
 %option yylineno
@@ -181,7 +183,11 @@ comment.");
 "]"				{ return(RS_BRACKET); }
 ","				{ return(COMMA); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
-				  return(ID); 
+				  if (inDecl == 0) {
+				  	return(ID);
+				  } else {
+					return(DECL_ID);
+				  }
 				}
 \n 				{ 
 				  colno = 1;
