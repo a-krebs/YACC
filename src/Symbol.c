@@ -81,16 +81,16 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	}
 
 	/* Set symbol entries for this symbol */
-
-	 
 	newArraySym->name = NULL;
 	newArraySym->kind = TYPE_KIND;
 	
-	newArraySym->kindPtr.TypeKind = calloc(1, sizeof(Type));
-	if (!newArraySym->kindPtr.TypeKind) {
-		err(1, "Failed to allocate memory for Type struct!");
-		exit(1);
-	}
+	allocateKindPtr(newArraySym);
+
+	//newArraySym->kindPtr.TypeKind = calloc(1, sizeof(Type));
+	//if (!newArraySym->kindPtr.TypeKind) {
+	//	err(1, "Failed to allocate memory for Type struct!");
+	//	exit(1);
+	//}
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
 	newArraySym->lvl = lvl;
@@ -198,12 +198,7 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 
 	strcpy(newVar->name, id);
 	newVar->kind = VAR_KIND;
-
-	newVar->kindPtr.VarKind = calloc(1, sizeof(Type));
-	if (!newVar->kindPtr.VarKind) {
-		err(1, "Failed to allocate memory for new symbol name!");
-		exit(1);
-	}
+	allocateKindPtr(newVar);
 	newVar->kindPtr.VarKind->typeSym = typeSym;
 	newVar->lvl = lvl;
 	return newVar;
@@ -260,11 +255,8 @@ newSubrangeSym(int lvl, Symbol *constSymLow,
 		exit(1);
 	}
 
-	newSubrangeSym->kindPtr.TypeKind = calloc(1, sizeof(Type));
-	if (!newSubrangeSym->kindPtr.TypeKind) {
-		err(1, "Failed to allocate memory for type struct!");
-		exit(1);
-	}
+	newSubrangeSym->kind = TYPE_KIND;
+	allocateKindPtr(newSubrangeSym);
 
 	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
 	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
@@ -302,11 +294,9 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 		err(1, "Failed to allocate memory for new procedure symbol!");
 		exit(1);
 	}
-	newProcSym->kindPtr.ProcKind = calloc(1, sizeof(struct ProcedureKind));
-	if (!newProcSym->kindPtr.ProcKind) {
-		err(1, "Failed to allocate memory for new procedure symbol!");
-		exit(1);
-	}
+
+	newProcSym->kind = PROC_KIND;
+	allocateKindPtr(newProcSym);	
 
 	len = strlen(id);
 	if (!len) {
@@ -314,7 +304,6 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 		return NULL;
 	}
 	strcpy(newProcSym->name, id);
-	newProcSym->kind = PROC_KIND;
 	newProcSym->kindPtr.ProcKind->params = pa;
 	newProcSym->lvl = lvl;
 	return newProcSym;

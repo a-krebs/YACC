@@ -2,7 +2,7 @@
 #define SYMBOL_H
 
 #include "Definitions.h"
-
+#include "Kind.h"
 /* Symbol creation function */
 Symbol *newArraySym(int, char *, Symbol *, Symbol *);
 Symbol *newAnonArraySym(int, Symbol *, Symbol *);
