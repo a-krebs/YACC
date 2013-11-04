@@ -7,6 +7,7 @@
 #include "testSymbol.h"
 #include "testType.h"
 #include "testHash.h"
+#include "testActions.h"
 
 
 int tests_run = 0;
@@ -34,6 +35,7 @@ char *test_all() {
 	mu_run_suite(test_all_Symbol);
 	mu_run_suite(test_all_Type);
 	mu_run_suite(test_all_Hash);
+	mu_run_suite(test_all_Actions);
 
 	return NULL;
 }

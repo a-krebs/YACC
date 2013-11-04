@@ -5,6 +5,8 @@
       char *id;
       double real;
       int integer;
+      struct Symbol *symbol;
+      struct Symbol *tmp;
 }
 
 /* id */

@@ -180,10 +180,6 @@ comment.");
 "["				{ return(LS_BRACKET); }
 "]"				{ return(RS_BRACKET); }
 ","				{ return(COMMA); }
-"integer"			{ return(INT); }
-"char"				{ return(CHAR); }
-"boolean"			{ return(BOOL); }
-"real"				{ return(REAL); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
 				  return(ID); 
 				}

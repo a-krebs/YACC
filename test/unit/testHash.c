@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #include "testHash.h"
-#include "../../src/Hash.h"
+#include "Hash.h"
 
 
 /*TODO:
