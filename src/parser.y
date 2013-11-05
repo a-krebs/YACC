@@ -344,6 +344,7 @@ term
 | term AND factor
 	{ $<proxy>$ = andOp($<proxy>1, $<proxy>3); }
 | error
+	{ $<proxy>$ = NULL; }
 ;
 
 factor
@@ -366,10 +367,9 @@ R_PAREN_or_error
 
 unsigned_const
 : unsigned_num
-	{ $<proxy>$ = $<proxy>$; }
+	{ $<proxy>$ = $<proxy>1; }
 | STRING_CONST
 	{ $<proxy>$ = proxyStringLiteral($<string>1); }
-	// return String struct from Type.h
 ;
 
 unsigned_num
@@ -418,13 +418,13 @@ matched_stat
 
 comma_or_error
 : error COMMA
-	{yyerrok;}
+	{ yyerrok; }
 | COMMA
 ;
 
 semicolon_or_error
 : error SEMICOLON
-	{ yyerrok;}
+	{ yyerrok; }
 | SEMICOLON
 ;
 
