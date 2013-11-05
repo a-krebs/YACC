@@ -115,24 +115,11 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 }
 
 
-void testHash() {
-	// createHashElement("blue", 14);
- //    	createHashElement("GREEN", 7);
-	// createHashElement("bee", 6);
-	// createHashElement("bbbb", 888);
-	// createHashElement("e", 4);
-	// createHashElement("blue", 15);
-	// dumpSymbolTable();
-}
-
-
 /*
  * Main entry point for the Team YACC PAL compiler.
  */
 int main( int argc, char *argv[] )
 {
-	// //testHash();
-
 	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
 
@@ -178,8 +165,5 @@ int main( int argc, char *argv[] )
 	
 	free(givenArgs.listingFile);
 
-	
-	destroySymbolTable();
-	
 	return EXIT_SUCCESS;
 }
