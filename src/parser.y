@@ -211,8 +211,7 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<proxy>3);
-	  /* TODO check what we're doing for f_parm_decl  */ }
+	{ $<symbol>$ = enterProcDecl($<id>2, $<proxy>3); }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
 	{ $<symbol>$ = enterFuncDecl($<id>2, $<proxy>3); }
 | PROCEDURE ID semicolon_or_error
