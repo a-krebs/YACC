@@ -82,6 +82,26 @@ isOrdinal(type_t type)
 	return 0;
 }
 
+
+/*
+ * Determines if the given type is a simple type (i.e., a bool, char, int,
+ * or real)
+ */
+int
+isSimpleType(type_t type)
+{
+	switch (type) {
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+
 /*
  * Set type pointer new to point to type old of type passed as arg.
  */

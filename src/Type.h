@@ -16,13 +16,25 @@
 
 
 /* Function declarations */
+int areOpCompatible(Symbol *, Symbol *);
+
 int areSameType(Symbol *, Symbol *);
+
 int isOrdinal(type_t);
+
+int isSimpleType(type_t);
+
 char *typeToString(type_t);
+
 struct Array *newArray(Symbol *, Symbol *);
+
 struct Subrange *newSubrange(Symbol*, Symbol *);
+
 Type newAnonConstType(AnonConstVal, type_t);
+
 type_t getType(Symbol *);
+
 void setTypePtr(Type *, Type, type_t);
+
 void typeMemoryFailure();
 #endif

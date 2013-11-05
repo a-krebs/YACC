@@ -3,12 +3,16 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "Error.h"
 #include "Hash.h"
+#include "Type.h"
 #include "Symbol.h"
+#include "Utils.h"
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
 
 extern struct hashElement *symbolTable[TABLE_SIZE];
-
+extern int yylineno;
+extern int colno;
 /*
  * Utility functions. Can maybe be refactored into own module.
  */
@@ -17,7 +21,7 @@ extern struct hashElement *symbolTable[TABLE_SIZE];
  * Check that the given types are compatible when using the given
  * operator.
  *
- * Return a pointer to a Symbol struct THAT IS NOT IN THE SYMBOL TABLE
+ * Return a pointer to a Symbol struct 
  * that is populated with the resulting type when performing the operation, and
  * the value of the expression if it can be evaluated (like when dealing with
  * constants).
@@ -26,7 +30,53 @@ extern struct hashElement *symbolTable[TABLE_SIZE];
  */
 Symbol *assertOpCompat(
     Symbol *type1, int opToken, Symbol *type2) {
-	// TODO implement
+
+	type_t s1_t, s2_t;
+	char *errMsg;	
+	s1_t = getType(type1);
+	s2_t = getType(type2);
+
+
+	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
+	 * it is a unary operator) then we assume the best */ 
+	if ( (!type1) && (isUnaryOperator(opToken))) {
+		if ((s2_t == REAL_T) || (s2_t == INTEGER_T)) return type2;
+		return NULL; /* else error */
+	} else return NULL; /* else it was an error */
+
+	if (!areOpCompatible(type2, type2)) return NULL; /* errors recorded
+							  * in called func */
+	/*
+	 * Now, we know type1 and type2 are op compatible (e.g., the exact
+	 * same type, an int/real pair, or two strings with the same number
+	 * of elements.   
+	 */
+
+	if (isRelationalOperator(opToken)) {
+		if (!(isSimpleType(s1_t)) || !(isSimpleType(s2_t)) ||
+		    (s1_t != STRING_T)) {
+			/* non-simple, non-string types, relational
+			 * operator cannot be applied */
+			return NULL;
+		}
+		/* return pointer to predefined boolean type symbol */
+		return NULL;
+	}
+
+	if (isLogicalOperator(opToken)) {
+		/* Boolean operators work only on a pair of boolean types */
+		if ((s1_t != BOOLEAN_T) || (s2_t != BOOLEAN_T)) return NULL;
+		/* Else return pointer to pre-defined boolean type */
+		return type1; 
+	}
+
+	if (s1_t == STRING_T) return NULL; /* not relational operator with
+					    * string types => failure */
+	/*
+	 *  
+ 	 */ 
+	if (s1_t == s2_t) return type1;
+
 	switch (opToken) {
 		case EQUAL:
 			break;

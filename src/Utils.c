@@ -3,8 +3,26 @@
  * necessarily belong to any one module.
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "Utils.h"
 #include "parser.tab.h"
+
+int
+isLogicalOperator(int op)
+{
+	switch (op) {
+	case NOT:
+	case AND:
+	case OR:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+
 /*
  * Returns true if the given token is a relation operator token.
  */
@@ -27,4 +45,22 @@ isRelationalOperator(int op)
 	default:
 		return 0;
 	}	
+}
+
+/*
+ * Returns true if the given token is a unary operator.
+ */
+int
+isUnaryOperator(int op)
+{
+	if ((op == PLUS) || (op == MINUS)) return 1;
+	return 0;
+
+}
+
+
+Symbol *
+numOpResult(Symbol * lhs, Symbol * rhs, int op) {
+
+return NULL;
 }
