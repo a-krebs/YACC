@@ -145,11 +145,14 @@ array_type_decl
 : LS_BRACKET array_type RS_BRACKET
 	{ $<symbol>$ = $<symbol>2; }
 | LS_BRACKET error RS_BRACKET
-	{yyerrok;}
+	{ $<symbol>$ = NULL;
+	  yyerrok;}
 | error RS_BRACKET
-	{yyerrok;}
+	{ $<symbol> = NULL;
+	  yyerrok;}
 | LS_BRACKET error
-	{yyerrok;}
+	{ $<symbol>$ = NULL;
+	  yyerrok;}
 ;
 
 array_type
