@@ -47,15 +47,17 @@ int isAssignmentCompat(Symbol type1, Symbol type2) {
 }
 
 /*
+ * Parser action functions, in the order they appear in parser.y
+ */
+
+/*
  * Capture program header definitions of input and output arguments.
+ *
+ * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
 	// TODO
 }
-
-/*
- * Parser action functions, in the order they appear in parser.y
- */
 
 /*
  * Perform actions necessary when exiting const decl part.
