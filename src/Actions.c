@@ -42,7 +42,7 @@ Symbol *assertOpCompat(
 	if ( (!type1) && (isUnaryOperator(opToken))) {
 		if ((s2_t == REAL_T) || (s2_t == INTEGER_T)) return type2;
 		return NULL; /* else error */
-	} else return NULL; /* else it was an error */
+	} else if (!type1) return NULL; /* else it was an error */
 
 	if (!areOpCompatible(type2, type2)) return NULL; /* errors recorded
 							  * in called func */
