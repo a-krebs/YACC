@@ -49,13 +49,17 @@ program
 
 program_head
 : PROGRAM ID_or_err L_PAREN ID_or_err comma_or_error ID_or_err R_PAREN semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl($<id>2, $<id>4, $<id>5);
+	  inDecl = 1; }
 | PROGRAM semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl(NULL, NULL, NULL);
+	  inDecl = 1; }
 | PROGRAM ID_or_err L_PAREN semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl($<id>2, NULL, NULL);
+	  inDecl = 1; }
 | PROGRAM ID_or_err semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl($<id>2, NULL, NULL);
+	  inDecl = 1; }
 ;
 
 // no | here since this is a list
@@ -106,6 +110,7 @@ type_decl
 
 type
 : structured_type
+	{ $<symbol>$ = $<symbol>1; }
 | simple_type
 	{ $<symbol>$ = $<symbol>1; }
 | scalar_type

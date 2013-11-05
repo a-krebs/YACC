@@ -3,6 +3,9 @@
 Symbol *assertOpCompat(Symbol*, int, Symbol*);
 int isAassignmentCompat(Symbol*, Symbol*);
 
+/* program header */
+void doProgramDecl(char*, char*, char*);
+
 /* declaration lists */
 void exitConstDeclPart(void);
 void doConstDecl(char*, ProxySymbol*);

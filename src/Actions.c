@@ -47,6 +47,13 @@ int isAssignmentCompat(Symbol type1, Symbol type2) {
 }
 
 /*
+ * Capture program header definitions of input and output arguments.
+ */
+void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
+	// TODO
+}
+
+/*
  * Parser action functions, in the order they appear in parser.y
  */
 
@@ -338,8 +345,7 @@ ProxySymbol *unaryNotOp(ProxySymbol *x) {
  * Make a new ProxySymbol with type integer and given value.
  * Return pointer to the proxy
  */
-// TODO change return type
-void *proxyIntLiteral(int value) {
+ProxySymbol *proxyIntLiteral(int value) {
 	// TODO implement
 	return NULL;
 }
@@ -348,8 +354,7 @@ void *proxyIntLiteral(int value) {
  * Make a new anonymous symbol with type real and given value.
  * Return a pointer to the hash symbol.
  */
-// TODO change return type
-void *anonRealLiteral(double value) {
+ProxySymbol *proxyRealLiteral(double value) {
 	// TODO implement
 	return NULL;
 }
@@ -358,8 +363,7 @@ void *anonRealLiteral(double value) {
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
  */
-// TODO change return type
-void *anonStringLiteral(char *value) {
+ProxySymbol *proxyStringLiteral(char *value) {
 	// TODO implment
 	return NULL;
 }
