@@ -148,7 +148,7 @@ array_type_decl
 	{ $<symbol>$ = NULL;
 	  yyerrok;}
 | error RS_BRACKET
-	{ $<symbol> = NULL;
+	{ $<symbol>$ = NULL;
 	  yyerrok;}
 | LS_BRACKET error
 	{ $<symbol>$ = NULL;
@@ -232,9 +232,9 @@ f_parm_decl
 	{ $<proxy>$ = $<proxy>2; }
 | L_PAREN R_PAREN
 	{ $<proxy>$ = NULL; }
-// TODO what is this production for?
 | VAR ID error COLON simple_type
-	{yyerrok;}
+	{ $<proxy>$ = NULL;
+	  yyerrok; }
 ;
 
 f_parm_list
