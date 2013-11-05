@@ -54,10 +54,9 @@ ProxySymbol *divideOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *divOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *modOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *andOp(ProxySymbol*, ProxySymbol*);
-ProxySymbol *getProxyFromSymbol(ProxySymbol *symbol);
 ProxySymbol *unaryNotOp(ProxySymbol*);
 
 /* constants */
-void *anonIntLiteral(int);
-void *anonRealLiteral(double);
-void *anonStringLiteral(char*);
+ProxySymbol *proxyIntLiteral(int);
+ProxySymbol *proxyRealLiteral(double);
+ProxySymbol *proxyStringLiteral(char*);

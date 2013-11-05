@@ -342,7 +342,7 @@ factor
 : var
 	{ $<proxy>$ = $<proxy>1; }
 | unsigned_const
-	{ $<proxy>$ = getProxyFromSymbol($<symbol>1); }
+	{ $<proxy>$ = $<proxy>1; }
 | L_PAREN expr R_PAREN_or_error
 	{ $<proxy>$ = $<proxy>2; }
 | func_invok
@@ -358,17 +358,17 @@ R_PAREN_or_error
 
 unsigned_const
 : unsigned_num
-	{ $<symbol>$ = $<symbol>$; }
+	{ $<proxy>$ = $<proxy>$; }
 | STRING_CONST
-	{ $<symbol>$ = anonStringLiteral($<string>1); }
+	{ $<proxy>$ = proxyStringLiteral($<string>1); }
 	// return String struct from Type.h
 ;
 
 unsigned_num
 : INT_CONST
-	{ $<symbol>$ = anonIntLiteral($<integer>1); }
+	{ $<proxy>$ = proxyIntLiteral($<integer>1); }
 | REAL_CONST
-	{ $<symbol>$ = anonRealLiteral($<real>1); }
+	{ $<proxy>$ = proxyRealLiteral($<real>1); }
 ;
 
 proc_invok

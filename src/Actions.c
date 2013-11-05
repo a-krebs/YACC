@@ -330,20 +330,16 @@ ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-ProxySymbol *getProxyFromSymbol(Symbol *symbol) {
-	return NULL;
-}
-
 ProxySymbol *unaryNotOp(ProxySymbol *x) {
 	return NULL;
 }
 
 /*
- * Make a new anonymous symbol with type integer and given value.
- * Return pointer to the hash symbol.
+ * Make a new ProxySymbol with type integer and given value.
+ * Return pointer to the proxy
  */
 // TODO change return type
-void *anonIntLiteral(int value) {
+void *proxyIntLiteral(int value) {
 	// TODO implement
 	return NULL;
 }
