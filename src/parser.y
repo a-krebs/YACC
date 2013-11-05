@@ -259,7 +259,6 @@ f_parm
 
 compound_stat
 : _BEGIN stat_list END
-	{ /* TODO maybe refactor this into a begin and end part */ }
 ;
 
 stat_list
