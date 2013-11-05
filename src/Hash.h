@@ -29,23 +29,23 @@ struct hash {
 
 /* Function declarations. */
 unsigned int getHashedKeySimple(char *string);
-struct hash *createHash(unsigned int (*hashFunction)(char *));
-void destroyHash(struct hash *hash);
-int getHashIndex(struct hash *hash, char *key);
-struct hashElement *getHashBucketHead(struct hash *hash, char *key);
-int isKeyCollison(struct hash *hash, char *key);
-int createHashElement(struct hash *hash, char *key, int value);
-struct hashElement *findHashElementByKey(struct hash *hash, char *key);
-int isKeyInBucket(struct hash *hash, char *key);
-struct hashElement *allocHashElement(char *key, int value);
-void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newElement);
-int isKeysIdentical(struct hashElement *element, char *key);
-struct hashElement *getHashBucketHead(struct hash *hash, char *key);
-void dumpHash(struct hash *hash);
-int deleteHashElement(struct hash *hash, char *key);
-unsigned int getHashedKeySimple(char *string);
 unsigned int getHashedKeyNormal(char *string);
 int getSizeOfBucket(struct hash *hash, char *key);
+int getHashIndex(struct hash *hash, char *key);
+struct hashElement *getHashBucketHead(struct hash *hash, char *key);
+int isKeyInBucket(struct hash *hash, char *key);
+int isKeysIdentical(struct hashElement *element, char *key);
+int isKeyCollison(struct hash *hash, char *key);
+void freeHashElement(struct hashElement *element);
+void deleteHashBucket(struct hashElement *current);
+void destroyHash(struct hash *hash);
+int deleteHashElement(struct hash *hash, char *key);
+struct hashElement *findHashElementByKey(struct hash *hash, char *key);
+struct hashElement *allocHashElement(char *key, int value);
+void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newElement);
+int createHashElement(struct hash *hash, char *key, int value);
+struct hash *createHash(unsigned int (*hashFunction)(char *));
+void dumpHash(struct hash *hash);
 
 
 #endif

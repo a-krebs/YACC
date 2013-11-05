@@ -25,16 +25,6 @@
 
 
 
-int getSizeOfBucket(struct hash *hash, char *key) {
-        struct hashElement *element = getHashBucketHead(hash, key);
-        int count = 0;
-
-        for (; element != NULL; element = element->next) {
-                     count++;
-        }
-
-        return count;
-}
 
 
 
@@ -70,6 +60,26 @@ unsigned int getHashedKeyNormal(char *string) {
         }
 
         return (x % TABLE_SIZE);   
+}
+
+
+/* Determined the number of hash elements in the bucket.
+ *
+ * Parameters: 
+ *              hash: hash where bucket resides
+ *              key: hash key
+ *
+ * Return: Count of elements in hash bucket
+ */
+int getSizeOfBucket(struct hash *hash, char *key) {
+        struct hashElement *element = getHashBucketHead(hash, key);
+        int count = 0;
+
+        for (; element != NULL; element = element->next) {
+                     count++;
+        }
+
+        return count;
 }
 
 
