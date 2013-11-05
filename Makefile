@@ -14,6 +14,7 @@ OBJS+=		$(BIN)/Hash.o
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
 TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o $(BIN)/Utils.o
+TEST_FILTER+=	$(BIN)/Actions.o
 LEX_FILTER=	$(BIN)/parser.tab.o
 
 # Root source directory
