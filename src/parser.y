@@ -282,6 +282,7 @@ simple_stat
 
 var
 : decl_ID_or_err
+	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | ID_or_err
 	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | var PERIOD ID_or_err
