@@ -10,6 +10,9 @@
  TODO:
         - //make function getSizeOfBucket
         - getSizeOfBucket in delete tests
+        - need to free what was malloced in createHash
+        - test for bounds of hash array 0 and table_size
+        - test for keys of incorrect values i.e. =  (is this even allowed in the grammer)
 */
 
 
@@ -23,34 +26,84 @@
  */
 
 
-// Simple hash function for now. Will replace later
-unsigned int getHashedKey(char *string) {
+
+/* Determined the hashed value of a key. This is a simpilifed
+ * hashing function and should not be used in production. Testing
+ * only.
+ *
+ * Parameters: 
+ *              string: string key to be hash
+ *
+ * Return: Unsigned long of hashed key value.
+ */
+unsigned int getHashedKeySimple(char *string) {
         return (string[0] % TABLE_SIZE);   
 }
 
-// unsigned int getHashedKey(char *string) {
-//         unsigned long x = 5381;
-//         int c;
 
-//         for ( int i = 0; i < strlen(string); i++ ) {
-//                 c = string[i];
-//                 x = ((x << 5) + x) + c; //x * 33 + c
-//         }
+/* Determined the hashed value of a key. This is the production
+ * function that should be used. 
+ *
+ * Parameters: 
+ *              string: string key to be hash
+ *
+ * Return: Unsigned long of hashed key value.
+ */
+unsigned int getHashedKeyNormal(char *string) {
+        unsigned long x = 5381;
+        int c;
 
-//         return (x % TABLE_SIZE - 1);   
-// }
+        for ( int i = 0; i < strlen(string); i++ ) {
+                c = string[i];
+                x = ((x << 5) + x) + c; //x * 33 + c
+        }
 
+        return (x % TABLE_SIZE);   
+}
+
+
+/* Gets the index for the hash array for a provided key. This is
+ * done by hashing the key and using that as the array index.
+ *
+ * Parameters:
+ *              hash: hash to search in
+ *              key: hash key
+ *
+ * Return: Returns hashed index value
+ */
+int getHashIndex(struct hash *hash, char *key) {
+        return (*(hash->hashFunction))(key);
+}
+
+
+/* Gets the bucket head element for each hash array. 
+ *
+ * Parameters:
+ *              hash: hash to search in
+ *              key: hash key
+ *
+ * Return: Pointer to element at the head of the bucket list in
+ *              the hash array. If only one element is in the bucket
+ *              returns that one. If no element is in the bucket, returns
+ *              null.
+ */
+struct hashElement *getHashBucketHead(struct hash *hash, char *key) {
+        int index = getHashIndex(hash, key);
+
+        return hash->elements[index];
+}
 
 
 /* Determines if key is in the hash bucket.
  *
  * Parameters: 
+ *              hash: hash to be looked in
  *              key: hash key
  *
  * Return: Boolean: 1 on in bucket and 0 for not in bucket.
  */
-int isKeyInBucket(char *key) {
-        if ( findHashElementByKey(key) != NULL ){
+int isKeyInBucket(struct hash *hash, char *key) {
+        if ( findHashElementByKey(hash, key) != NULL ){
                 return 1;
         }
 
@@ -77,15 +130,18 @@ int isKeysIdentical(struct hashElement *element, char *key) {
 }
 
 
-/* Determines if provided in will cause hash collision
+/* Determines if provided key in will cause hash collision
  *
  * Parameters: 
+ *              hash: hash to be looked
  *              key: hash key
  *
  * Return: Boolean: 1 on collision and 0 for no collision.
  */
-int isKeyCollison(char *key) {
-        if ( symbolTable[getHashedKey(key)] != NULL) {
+int isKeyCollison(struct hash *hash, char *key) {
+        int index = getHashIndex(hash, key);
+
+        if ( hash->elements[index] != NULL) {
                 return 1;
         }
 
@@ -130,11 +186,11 @@ void deleteHashBucket(struct hashElement *current) {
  *
  * Return: void
  */
-void destroySymbolTable() {
+void destroyHash(struct hash *hash) {
         for (int i = 0; i < TABLE_SIZE; ++i) {
-                if ( symbolTable[i] != NULL ) {     
-                        deleteHashBucket(symbolTable[i]);
-                        symbolTable[i] = NULL;     
+                if ( hash->elements[i] != NULL ) {     
+                        deleteHashBucket(hash->elements[i]);
+                        hash->elements[i] = NULL;     
                 }
         }
 }
@@ -143,6 +199,7 @@ void destroySymbolTable() {
 /* Deletes element in symbole table indicated by the key.
  *
  * Parameters: 
+ *              hash: hash that will be deleted from
  *              key: hash key
  *
  * Return: 0 on success
@@ -150,9 +207,10 @@ void destroySymbolTable() {
  * 
  * TODO: errors on delete?
  */
-int deleteHashElement(char *key) {
-        struct hashElement *element = findHashElementByKey(key);
+int deleteHashElement(struct hash *hash, char *key) {
+        struct hashElement *element = findHashElementByKey(hash, key);
         struct hashElement *temp;
+        int index = getHashIndex(hash, key);
 
         if ( element == NULL ) {
                 return 1;
@@ -160,7 +218,7 @@ int deleteHashElement(char *key) {
 
         //only element in bucket
         if ( element->prev == NULL && element->next == NULL ) {
-                symbolTable[getHashedKey(key)] = NULL;
+                hash->elements[index] = NULL;
                 freeHashElement(element);
                 return 0;
         }
@@ -168,7 +226,7 @@ int deleteHashElement(char *key) {
         //at head of bucket list
         if (element->prev == NULL) {
                 temp = element->next;
-                symbolTable[getHashedKey(key)] = temp;
+                hash->elements[index] = temp;
                 temp->prev = NULL;
 
                 freeHashElement(element);
@@ -195,15 +253,16 @@ int deleteHashElement(char *key) {
 }
 
 
-/* Gets pointer to hash element requested
+/* Gets pointer to hash element requested.
  *
  * Parameters: 
+ *              hash: hash to be looked in
  *              key: hash key
  *
  * Return: Pointer to struct hashElement
  */
-struct hashElement *findHashElementByKey(char *key) {
-        struct hashElement *element = symbolTable[getHashedKey(key)];
+struct hashElement *findHashElementByKey(struct hash *hash, char *key) {
+        struct hashElement *element  = getHashBucketHead(hash, key);
 
         if ( element == NULL) {
                 return NULL;
@@ -227,40 +286,6 @@ struct hashElement *findHashElementByKey(char *key) {
 }
 
 
-/* Prints the symbol table to stdout. 
- *
- * Parameters: void
- *
- * Return: void
- *
- * TODO: Add values for the symbol info 
- *              and remove value attribute.
- */
-void dumpSymbolTable() {
-        struct hashElement *element;
-
-        printf("\n\nDUMPING HASH:\n");
-
-        for ( int i = 0; i < TABLE_SIZE; ++i) {
-                if ( symbolTable[i] != NULL ) {
-                        element = symbolTable[i];
-
-                        printf("Element: %d:\n", i);
-                    
-                        for (; element != NULL; element = element->next) {
-                                printf("\tKey: %s\n", element->key);
-                                printf("\tValue: %d\n", element->value);
-                                printf("\tElement Pointer: %p\n", element);
-                                printf("\tPrev pointer: %p\n", element->prev);
-                                printf("\tNext pointer: %p\n\n",element->next);
-                        }
-                }
-        }
-
-        printf("DUMP COMPLETE.\n\n");
-}
-
-
 /* Creates and allocs memory for a struct hashElement.
  *
  * Parameters: 
@@ -273,7 +298,8 @@ void dumpSymbolTable() {
  * TODO: add real parameters for when adding symbols to table   
  *              - add symbol null pointer
  */
-struct hashElement *createNewElement(char *key, int value) {
+// struct hashElement *createNewElement(char *key, int value) {
+struct hashElement *allocHashElement(char *key, int value) {    
         struct hashElement *element = malloc(sizeof(struct hashElement));
 
         if (element == NULL ) {
@@ -301,7 +327,6 @@ struct hashElement *createNewElement(char *key, int value) {
  *              newElement: new elment to append
  *
  * Return: void
- *
  */
 void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newElement) {
     struct hashElement *current = bucketHead;
@@ -316,6 +341,7 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
 /* Creates an entry in the symbol table for the key supplied.
  *      
  * Parameters: 
+ *              hash: hash for element to be created in
  *              key: hash key
  *              value: int value for testing (WILL BE REMOVED!
  *                      and replaced with real symbol info)
@@ -324,15 +350,15 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
  * 
  * TODO: add real parameters for when adding symbols to table      
 */
-int createHashElement(char *key, int value) {
+int createHashElement(struct hash *hash, char *key, int value) {
         struct hashElement *element;
-        int index = getHashedKey(key);
+        int index = getHashIndex(hash, key);
 
-        element = createNewElement(key, value);  
+        element = allocHashElement(key, value);  
 
-        if ( isKeyCollison(key) ) {
+        if ( isKeyCollison(hash, key) ) {
 
-                if ( isKeyInBucket(key) ) {
+                if ( isKeyInBucket(hash, key) ) {
                         if (HASH_DEBUG) {
                                 printf("Error: Hash key already used! Will not reset. Skipping...\n");  
                         }
@@ -344,10 +370,10 @@ int createHashElement(char *key, int value) {
                         printf("We have a hash collision. Creating bucket list element...\n"); 
                 }
 
-                appendToHashBucket(symbolTable[index], element);          
+                appendToHashBucket(hash->elements[index], element);          
         }
         else {
-                symbolTable[index] = element;     
+                hash->elements[index] = element;     
         }    
 
         if (HASH_DEBUG) {
@@ -356,3 +382,59 @@ int createHashElement(char *key, int value) {
 
         return 0;
 }
+
+
+/* Creates an hash data structure.
+ *
+ * Parameters:
+ *              hashFunction: pointer to function, this points
+ *                      to hashing function
+ *
+ * Return: createHash: created hash struct
+ */
+struct hash *createHash(unsigned int (*hashFunction)(char *)) {
+        struct hash *hash = malloc(sizeof(struct hash));
+        hash->hashFunction = hashFunction;
+
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                hash->elements[i] = NULL;
+        }
+
+        return hash;
+}
+
+
+/* Prints the hash to stdout. 
+ *
+ * Parameters: void
+ *
+ * Return: void
+ *
+ * TODO: Add values for the symbol info 
+ *              and remove value attribute.
+ */
+void dumpHash(struct hash *hash) {
+        struct hashElement *element;
+
+        printf("\n\nDUMPING HASH:\n");
+
+        for ( int i = 0; i < TABLE_SIZE; ++i) {
+                if ( hash->elements[i] != NULL ) {
+                        element = hash->elements[i];
+
+                        printf("Element: %d:\n", i);
+                    
+                        for (; element != NULL; element = element->next) {
+                                printf("\tKey: %s\n", element->key);
+                                printf("\tValue: %d\n", element->value);
+                                printf("\tElement Pointer: %p\n", element);
+                                printf("\tPrev pointer: %p\n", element->prev);
+                                printf("\tNext pointer: %p\n\n",element->next);
+                        }
+                }
+        }
+
+        printf("DUMP COMPLETE.\n\n");
+}
+
+

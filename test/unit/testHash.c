@@ -21,85 +21,150 @@
 */ 
 
 
-// char *test_getErrorTypeString() {
-// 	char *syntax = "Syntax";
-// 	char *semantic = "Semantic";
 
 
-// 	mu_assert("getErrorTypeString returned wrong string.",
-// 	    strcmp(dump(SYNTAX), syntax) == 0);
+// char *test_getHashedKey() {
+// /*test 1: Hash function in bounds.*/
+// 	// mu_assert("Hash function returing values out of bounds.", 
+//  // 		(getHashedKey("e") < TABLE_SIZE));
+
 // 	return NULL;
 // }
 
+// // char *test_() {
+// // /*test 1: .*/
+// // 	mu_assert(".", 
+// //  		);
+
+// // 	return NULL;
+// // }
 
 
 
-char *test_dumpEmptySymbolTable() {
-/*test 1: Empty symbol table seg fault teset.*/
-	dumpSymbolTable();
-	mu_assert("Call to dumper does not seg fault.", 1);
+char *test_getHashedKeySimple() {
+	//with table size of 100
+	mu_assert("Hash function calulated 'h' incorrectly.",
+		getHashedKeySimple("h") == 4);
 
-/*test 2: Copy stdout to to buffer and compare out of empty symbol table.*/
-	char buffer[100] = {0};
-	int out_pipe[2];
-	int saved_stdout = dup(STDOUT_FILENO); /* save stdout for display later */
+	mu_assert("Hash function calulated 'J' incorrectly.",
+		getHashedKeySimple("J") == 74);
 
-	pipe(out_pipe);						/* make a pipe */
-	dup2(out_pipe[1], STDOUT_FILENO);   /* redirect stdout to the pipe */
-	close(out_pipe[1]);
+	mu_assert("Hash function calulated 'K' incorrectly.",
+		getHashedKeySimple("K") != 2);
 
- 	dumpSymbolTable();		/* anything sent to printf should now go down the pipe */
- 	fflush(stdout);
+        return NULL;
+}
 
- 	read(out_pipe[0], buffer, 100); /* read from pipe into buffer */
- 	dup2(saved_stdout, STDOUT_FILENO);  /* reconnect stdout for testing */
+char *test_getHashedKeyNormal() {       
+	//with table size of 100
+	mu_assert("Hash function calulated 'b' incorrectly.",
+		getHashedKeyNormal("b") == 71);
 
- 	char expectedOutput[33] = "\n\nDUMPING HASH:\nDUMP COMPLETE.\n\n";
+	mu_assert("Hash function calulated 'Joe' incorrectly.",
+		getHashedKeyNormal("Joe") == 47);
 
-	mu_assert("Hash dumper gives unexpected output on empty hash.", 
- 		strcmp(expectedOutput, buffer) == 0);
+        return NULL;
+}
 
+char *test_destroyHash() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
 	return NULL;
 }
 
+char *test_createHash() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-char *test_getHashedKey() {
-/*test 1: Hash function in bounds.*/
-	// mu_assert("Hash function returing values out of bounds.", 
- // 		(getHashedKey("e") < TABLE_SIZE));
+	int index = (*(symbolTable->hashFunction))("b");
+	mu_assert("Hash function does not caluculate expected value for key 'b'.",
+		index == 98);
+	
+	index = (*(symbolTable->hashFunction))("a");
+	mu_assert("Hash function does not caluculate expected value for key 'a'.",
+		index == 97);	
+
+	for (int i = 0; i < TABLE_SIZE; ++i) {
+		mu_assert("Empty table bucket does not equal NULL.", 
+			symbolTable->elements[i] == NULL);
+	}
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
 	return NULL;
 }
 
-// char *test_() {
-// /*test 1: .*/
-// 	mu_assert(".", 
-//  		);
+char *test_getHashIndex() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-// 	return NULL;
-// }
+	int index = getHashIndex(symbolTable, "b");
+	mu_assert("getHashIndex does not return expected value on key 'b'", 
+		index == 98);
+
+	index = getHashIndex(symbolTable, "W");
+	mu_assert("getHashIndex does not return expected value on key 'b'", 
+		index == 87);
+
+	index = getHashIndex(symbolTable, "=");
+	mu_assert("getHashIndex does not return expected value on key 'b'", 
+		index == 61);			
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
+	return NULL;
+}
 
 char *test_isKeyCollison() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
 	mu_assert("Collision on empty symbol table.", 
- 		isKeyCollison("blue") == 0);
+ 		isKeyCollison(symbolTable, "blue") == 0);
 
 
-	createHashElement("blue", 456666);
-	mu_assert("Could not find key collision where one should exist.", 
- 		isKeyCollison("blue") == 1);
+	// createHashElement("blue", 456666);
+	// mu_assert("Could not find key collision where one should exist.", 
+ // 		isKeyCollison("blue") == 1);
 
-	mu_assert("Found key collision where one should not exist.", 
- 		isKeyCollison("green") == 0); 			
+	// mu_assert("Found key collision where one should not exist.", 
+ // 		isKeyCollison("green") == 0); 			
 
-	destroySymbolTable();
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
 }
 
 
-char *test_createNewElement() {
-	struct hashElement *element = createNewElement("blue", 123);
+char *test_createHashElement() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	mu_assert("Could not created element in empty table.", 
+ 		createHashElement(symbolTable, "blue", 123) == 0);
+
+	mu_assert("Could not create element where bucket collison happened.", 
+ 		createHashElement(symbolTable, "boo", 123) == 0);
+
+	mu_assert("Over written hash value.", 
+ 		createHashElement(symbolTable, "blue", 456) == 1);	
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
+	return NULL;
+}
+
+
+char *test_allocHashElement() {
+	struct hashElement *element = allocHashElement("blue", 123);
 
 	mu_assert("Unable to create hash element.", 
  		element != NULL);
@@ -119,36 +184,10 @@ char *test_createNewElement() {
 	return NULL;
 }
 
-char *test_isKeysIdentical() {
-	struct hashElement *element = createNewElement("blue", 123);
-
-	mu_assert("Keys idenitcal but evaluating to different.", 
- 		isKeysIdentical(element, "blue") == 1);
-
-	mu_assert("Keys differnt but evaluating to same.", 
- 		isKeysIdentical(element, "green") == 0);	
-
-	return NULL;
-}
-
-
-//THIS IS BROKEN!!!!!!!!!!!!!!!!
-// char *test_findHashElementByKey() {
-// 	struct hashElement *element = createNewElement("blue", 123);
-
-// 	mu_assert("Could not find element that should be table.", 
-//  		findHashElementByKey("blue") != NULL);
-
-// 	mu_assert("Found element that should not be table.", 
-//  		findHashElementByKey("green") == NULL);
-
-
-// 	return NULL;
-// }
 
 char *test_appendToHashBucket() {
-	struct hashElement *element1 = createNewElement("blue", 123);
-	struct hashElement *element2 = createNewElement("green", 456);
+	struct hashElement *element1 = allocHashElement("blue", 123);
+	struct hashElement *element2 = allocHashElement("green", 456);
 
 	appendToHashBucket(element1, element2);
 	mu_assert("Call to appendToHashBucket does not seg fault.", 1);
@@ -174,40 +213,151 @@ char *test_appendToHashBucket() {
 	return NULL;
 }
 
-char *test_createHashElement() {
+char *test_isKeysIdentical() {
+	struct hashElement *element = allocHashElement("blue", 123);
+
+	mu_assert("Keys idenitcal but evaluating to different.", 
+ 		isKeysIdentical(element, "blue") == 1);
+
+	mu_assert("Keys differnt but evaluating to same.", 
+ 		isKeysIdentical(element, "green") == 0);	
+
+	return NULL;
+}
+
+char *test_findHashElementByKey() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	createHashElement(symbolTable, "blue", 123);
+
+	mu_assert("Could not find element that should be table.", 
+ 		findHashElementByKey(symbolTable, "blue") != NULL);
+
+	mu_assert("Found element that should not be table.", 
+ 		findHashElementByKey(symbolTable, "green") == NULL);
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
+	return NULL;
+}
+
+char *test_isKeyInBucket() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	createHashElement(symbolTable, "blue", 123);
+	createHashElement(symbolTable, "boo", 23456);
+	createHashElement(symbolTable, "bobby", 123);
+
+	mu_assert("Could not find expected key 'blue' in bucket.", 
+		isKeyInBucket(symbolTable, "blue") == 1 );		
+
+	mu_assert("Could not find expected key 'blue' in bucket.", 
+		isKeyInBucket(symbolTable, "bobby") == 1 );			
+
+	mu_assert("Could not find expected key 'blue' in bucket.", 
+		isKeyInBucket(symbolTable, "gree") == 0 );		
+
+	mu_assert("Could not find expected key 'blue' in bucket.", 
+		isKeyInBucket(symbolTable, "boo") == 1 );		
 	
-	destroySymbolTable();
-	mu_assert("Could not created element in empty table.", 
- 		createHashElement("blue", 123) == 0);
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
-	mu_assert("Over written hash value.", 
- 		createHashElement("blue", 456) == 1);	
+	return NULL;
+}
 
-	mu_assert("Could not create element where hash collison happened.", 
- 		createHashElement("b", 456666) == 0);	
+char *test_getHashBucketHead() {
+	struct hash *symbolTable = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	destroySymbolTable();
+	createHashElement(symbolTable, "blue", 123);
+	createHashElement(symbolTable, "boo", 23456);
+	createHashElement(symbolTable, "bobby", 123);
+
+	mu_assert("Returned pointer when NULL was expected in getHashBucketHead.", 
+		getHashBucketHead(symbolTable, "gree") == NULL );
+
+	mu_assert("Returned bucket head is incorrect.", 
+		getHashBucketHead(symbolTable, "b") == findHashElementByKey(symbolTable, "blue") );
+
+	mu_assert("Returned bucket head is incorrect.", 
+		getHashBucketHead(symbolTable, "bobby") != findHashElementByKey(symbolTable, "bobby") );
+	
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
+	return NULL;
+}
+
+char *test_dumpHash() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	dumpHash(hash);
+	mu_assert("Hash dump seg faults.", 1);
+
+/*test 2: Copy stdout to to buffer and compare out of empty symbol table.*/
+	char buffer[100] = {0};
+	int out_pipe[2];
+	int saved_stdout = dup(STDOUT_FILENO); /* save stdout for display later */
+
+	pipe(out_pipe);						/* make a pipe */
+	dup2(out_pipe[1], STDOUT_FILENO);   /* redirect stdout to the pipe */
+	close(out_pipe[1]);
+
+ 	dumpHash(hash);		/* anything sent to printf should now go down the pipe */
+ 	fflush(stdout);
+
+ 	read(out_pipe[0], buffer, 100);  /*read from pipe into buffer */
+ 	dup2(saved_stdout, STDOUT_FILENO);  /* reconnect stdout for testing */
+
+ 	char expectedOutput[33] = "\n\nDUMPING HASH:\nDUMP COMPLETE.\n\n";
+
+	mu_assert("Hash dumper gives unexpected output on empty hash.", 
+ 		strcmp(expectedOutput, buffer) == 0);	
+	
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
+	hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	// createHashElement(hash, "blue", 123);
+	// createHashElement(hash, "boo", 23456);
+	// createHashElement(hash, "bobby", 123);
+
+	// dumpHash(hash);
+
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
 }
 
 char *test_deleteHashElement_begining() {
-   	createHashElement("GREEN", 7);
-	createHashElement("bb", 6);
-	createHashElement("bbb", 888);
-	createHashElement("bbbb", 753);
+	struct hash *hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	struct hashElement *element = findHashElementByKey("bb");
+   	createHashElement(hash, "GREEN", 7);
+	createHashElement(hash, "bb", 6);
+	createHashElement(hash, "bbb", 888);
+	createHashElement(hash, "bbbb", 753);
+	
+	struct hashElement *element = findHashElementByKey(hash, "bb");
 	struct hashElement *newHead = element->next;
 
+	int index  = getHashIndex(hash, "b");
 	mu_assert("unexpected element at head of bucket list.", 
- 		symbolTable[getHashedKey("b")] == element);
+ 		hash->elements[index] == element);
 
 	mu_assert("Delete function did not remove begining element.", 
- 		deleteHashElement("bb") == 0);
+ 		deleteHashElement(hash, "bb") == 0);
 
 	mu_assert("Begining element not deleted.", 
- 		symbolTable[getHashedKey("b")] == newHead);
+ 		hash->elements[index] == newHead);
 
 	mu_assert("Did not delete front of list propertly.", 
  		newHead->prev == NULL);
@@ -215,25 +365,29 @@ char *test_deleteHashElement_begining() {
 	mu_assert("Resulting bucket should have more than one element.", 
  		newHead->next != NULL);	
 
-	destroySymbolTable();
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
 }
 
 char *test_deleteHashElement_end() {
-   	createHashElement("GREEN", 7);
-	createHashElement("bb", 6);
-	createHashElement("bbb", 888);
-	createHashElement("bbbb", 753);
+	struct hash *hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	struct hashElement *element = findHashElementByKey("bbbb");
+   	createHashElement(hash, "GREEN", 7);
+	createHashElement(hash, "bb", 6);
+	createHashElement(hash, "bbb", 888);
+	createHashElement(hash, "bbbb", 753);
+
+	struct hashElement *element = findHashElementByKey(hash, "bbbb");
 	struct hashElement *newTail = element->prev;
 
 	mu_assert("unexpected element at end of list.", 
  		element->next == NULL);
 
 	mu_assert("Delete function did not remove end element.", 
- 		deleteHashElement("bbbb") == 0);
+ 		deleteHashElement(hash, "bbbb") == 0);
 
 	mu_assert("End element not deleted.", 
  		newTail->next == NULL);
@@ -241,21 +395,24 @@ char *test_deleteHashElement_end() {
 	mu_assert("Did not delete end of list propertly.", 
  		newTail->prev != NULL);
 
-	destroySymbolTable();
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
 }
 
-
 char *test_deleteHashElement_middle() {
-   	createHashElement("GREEN", 7);
-	createHashElement("bb", 6);
-	createHashElement("bbb", 888);
-	createHashElement("bbbb", 753);
+	struct hash *hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	struct hashElement *element = findHashElementByKey("bbb");
-	struct hashElement *head = findHashElementByKey("bb");
-	struct hashElement *tail = findHashElementByKey("bbbb");
+   	createHashElement(hash, "GREEN", 7);
+	createHashElement(hash, "bb", 6);
+	createHashElement(hash, "bbb", 888);
+	createHashElement(hash, "bbbb", 753);
+
+	struct hashElement *element = findHashElementByKey(hash, "bbb");
+	struct hashElement *head = findHashElementByKey(hash, "bb");
+	struct hashElement *tail = findHashElementByKey(hash, "bbbb");
 
 	mu_assert("unexpected element after head.", 
  		head->next == element);
@@ -264,7 +421,7 @@ char *test_deleteHashElement_middle() {
  		tail->prev == element);
 
 	mu_assert("Delete function did not remove middle element.", 
- 		deleteHashElement("bbb") == 0);
+ 		deleteHashElement(hash, "bbb") == 0);
 
 	mu_assert("Did not reset next in list propertly.", 
  		head->next == tail);
@@ -272,47 +429,62 @@ char *test_deleteHashElement_middle() {
 	mu_assert("Did not reset prev in list propertly", 
  		tail->prev == head);
 
-	destroySymbolTable();
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
 }
 
 char *test_deleteHashElement_single() {
-   	createHashElement("GREEN", 7);
-	createHashElement("bb", 6);
-	createHashElement("bbb", 888);
-	createHashElement("bbbb", 753);
+   	struct hash *hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	struct hashElement *element = findHashElementByKey("GREEN");
+	createHashElement(hash, "GREEN", 7);
+	createHashElement(hash, "bb", 6);
+	createHashElement(hash, "bbb", 888);
+	createHashElement(hash, "bbbb", 753);
+
+	int index  = getHashIndex(hash, "G");
+	struct hashElement *element = findHashElementByKey(hash, "GREEN");
 
 	mu_assert("unexpected element at in single bucket list.", 
- 		symbolTable[getHashedKey("G")] == element);
+ 		hash->elements[index] == element);
 
 	mu_assert("Delete function did not remove single bucket element.", 
- 		deleteHashElement("GREEN") == 0);
+ 		deleteHashElement(hash, "GREEN") == 0);
 
 	mu_assert("Single element not deleted.", 
- 		symbolTable[getHashedKey("G")] == NULL);
+ 		hash->elements[index] == NULL);
 
-	destroySymbolTable();
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
+
 	return NULL;
 }
 
 
-
 char * test_all_Hash() {
-	mu_run_test(test_dumpEmptySymbolTable);
-	mu_run_test(test_getHashedKey);
+	// mu_run_test(test_getHashedKey);
+	
+	
+	mu_run_test(test_createHash);
+	mu_run_test(test_destroyHash);
+	mu_run_test(test_getHashIndex);
 	mu_run_test(test_isKeyCollison);
-	mu_run_test(test_createNewElement);
-	mu_run_test(test_isKeysIdentical);
-	// mu_run_test(test_findHashElementByKey);
+	mu_run_test(test_allocHashElement);
 	mu_run_test(test_appendToHashBucket);
+	mu_run_test(test_isKeysIdentical);
 	mu_run_test(test_createHashElement);
+	mu_run_test(test_findHashElementByKey);
+	mu_run_test(test_isKeyInBucket);
+	mu_run_test(test_getHashBucketHead);
+	// mu_run_test(test_dumpHash);		
 	mu_run_test(test_deleteHashElement_begining);
 	mu_run_test(test_deleteHashElement_end);
 	mu_run_test(test_deleteHashElement_middle);
 	mu_run_test(test_deleteHashElement_single);
+	mu_run_test(test_getHashedKeySimple);
+	mu_run_test(test_getHashedKeyNormal);
 
 	return NULL;
 }
