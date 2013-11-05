@@ -15,21 +15,11 @@
 
 /*TODO:
 	- dump table with something in it.
-	- create tests for test_getHashedKey once
-		using real hash function
 	- change tests once real hash functions is created
+	- test bound conditions on hash functions
 */ 
 
 
-
-
-// char *test_getHashedKey() {
-// /*test 1: Hash function in bounds.*/
-// 	// mu_assert("Hash function returing values out of bounds.", 
-//  // 		(getHashedKey("e") < TABLE_SIZE));
-
-// 	return NULL;
-// }
 
 // // char *test_() {
 // // /*test 1: .*/
@@ -42,9 +32,12 @@
 
 
 char *test_getHashedKeySimple() {
-	//with table size of 100
-	// mu_assert("Hash function calulated 'h' incorrectly.",
-	// 	getHashedKeySimple("h") == 4);
+	//with table size of 1000
+	mu_assert("Hash function calulated '0' incorrectly.",
+		getHashedKeySimple("0") == 48);
+
+	mu_assert("Hash function calulated 'h' incorrectly.",
+		getHashedKeySimple("h") == 104);
 
 	mu_assert("Hash function calulated 'J' incorrectly.",
 		getHashedKeySimple("J") == 74);
@@ -56,12 +49,12 @@ char *test_getHashedKeySimple() {
 }
 
 char *test_getHashedKeyNormal() {       
-	//with table size of 100
-	// mu_assert("Hash function calulated 'b' incorrectly.",
-	// 	getHashedKeyNormal("b") == 71);
+	//with table size of 1000
+	mu_assert("Hash function calulated 'b' incorrectly.",
+		getHashedKeyNormal("b") == 671);
 
-	// mu_assert("Hash function calulated 'Joe' incorrectly.",
-	// 	getHashedKeyNormal("Joe") == 47);
+	mu_assert("Hash function calulated 'Joe' incorrectly.",
+		getHashedKeyNormal("Joe") == 347);
 
         return NULL;
 }
@@ -70,6 +63,11 @@ char *test_destroyHash() {
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
+	for (int i = 0; i < TABLE_SIZE; ++i) {
+		mu_assert("destroyed bucket does not equal NULL.", 
+			symbolTable->elements[i] == NULL);
+	}	
+
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
@@ -77,6 +75,7 @@ char *test_destroyHash() {
 }
 
 char *test_createHash() {
+//simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -96,10 +95,30 @@ char *test_createHash() {
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
+//normal hash function	
+	symbolTable = createHash(&getHashedKeyNormal);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	index = (*(symbolTable->hashFunction))("A");
+	mu_assert("Hash function does not caluculate expected value for key 'A'.",
+		index == 638);
+	
+	index = (*(symbolTable->hashFunction))("aaa");
+	mu_assert("Hash function does not caluculate expected value for key 'a'.",
+		index == 928);	
+
+	for (int i = 0; i < TABLE_SIZE; ++i) {
+		mu_assert("Empty table bucket does not equal NULL.", 
+			symbolTable->elements[i] == NULL);
+	}
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
 	return NULL;
 }
 
 char *test_getHashIndex() {
+//simple hash function	
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -118,9 +137,26 @@ char *test_getHashIndex() {
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
+//normal hash function	
+	symbolTable = createHash(&getHashedKeyNormal);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	index = getHashIndex(symbolTable, "b");
+	mu_assert("getHashIndex does not return expected value on key 'b'", 
+		index == 671);
+
+	index = getHashIndex(symbolTable, "W");
+	mu_assert("getHashIndex does not return expected value on key 'b'", 
+		index == 660);			
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
 	return NULL;
 }
 
+
+//not testing on normal hash to hard to find collisons
 char *test_isKeyCollison() {
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -128,13 +164,12 @@ char *test_isKeyCollison() {
 	mu_assert("Collision on empty symbol table.", 
  		isKeyCollison(symbolTable, "blue") == 0);
 
+	createHashElement(symbolTable, "blue", 456666);
+	mu_assert("Could not find key collision where one should exist.", 
+ 		isKeyCollison(symbolTable, "blue") == 1);
 
-	// createHashElement("blue", 456666);
-	// mu_assert("Could not find key collision where one should exist.", 
- // 		isKeyCollison("blue") == 1);
-
-	// mu_assert("Found key collision where one should not exist.", 
- // 		isKeyCollison("green") == 0); 			
+	mu_assert("Found key collision where one should not exist.", 
+ 		isKeyCollison(symbolTable, "green") == 0); 			
 
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
@@ -144,6 +179,7 @@ char *test_isKeyCollison() {
 
 
 char *test_createHashElement() {
+//simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -158,6 +194,19 @@ char *test_createHashElement() {
 
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
+
+//normal hash function
+	symbolTable = createHash(&getHashedKeyNormal);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	mu_assert("Could not created element in empty table.", 
+ 		createHashElement(symbolTable, "blue", 123) == 0);
+
+	mu_assert("Could not create element where bucket collison happened.", 
+ 		createHashElement(symbolTable, "boo", 123) == 0);
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
 }
@@ -226,6 +275,7 @@ char *test_isKeysIdentical() {
 }
 
 char *test_findHashElementByKey() {
+//simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -240,9 +290,26 @@ char *test_findHashElementByKey() {
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
+//normal hash function
+	symbolTable = createHash(&getHashedKeyNormal);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	createHashElement(symbolTable, "teekkekkke", 123);
+
+	mu_assert("Could not find element that should be table.", 
+ 		findHashElementByKey(symbolTable, "teekkekkke") != NULL);
+
+	mu_assert("Found element that should not be table.", 
+ 		findHashElementByKey(symbolTable, "green") == NULL);
+
+	destroyHash(symbolTable);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
+
 	return NULL;
 }
 
+
+//can't test on normal hash function. can't find collisons
 char *test_isKeyInBucket() {
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -269,6 +336,7 @@ char *test_isKeyInBucket() {
 	return NULL;
 }
 
+//can't test on normal hash function. can't find collisons
 char *test_getHashBucketHead() {
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -337,6 +405,7 @@ char *test_dumpHash() {
 	return NULL;
 }
 
+//can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_begining() {
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -371,6 +440,7 @@ char *test_deleteHashElement_begining() {
 	return NULL;
 }
 
+//can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_end() {
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -401,6 +471,7 @@ char *test_deleteHashElement_end() {
 	return NULL;
 }
 
+//can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_middle() {
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -436,6 +507,7 @@ char *test_deleteHashElement_middle() {
 }
 
 char *test_deleteHashElement_single() {
+//simple hash function	
    	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -446,6 +518,30 @@ char *test_deleteHashElement_single() {
 
 	int index  = getHashIndex(hash, "G");
 	struct hashElement *element = findHashElementByKey(hash, "GREEN");
+
+	mu_assert("unexpected element at in single bucket list.", 
+ 		hash->elements[index] == element);
+
+	mu_assert("Delete function did not remove single bucket element.", 
+ 		deleteHashElement(hash, "GREEN") == 0);
+
+	mu_assert("Single element not deleted.", 
+ 		hash->elements[index] == NULL);
+
+	destroyHash(hash);
+	mu_assert("Call to destroyHash does not seg fault.", 1);
+
+//normal hash function
+	hash = createHash(&getHashedKeySimple);
+	mu_assert("Call to createHash does not seg fault.", 1);	
+
+	createHashElement(hash, "GREEN", 7);
+	createHashElement(hash, "bb", 6);
+	createHashElement(hash, "bbb", 888);
+	createHashElement(hash, "bbbb", 753);
+
+	index  = getHashIndex(hash, "G");
+	element = findHashElementByKey(hash, "GREEN");
 
 	mu_assert("unexpected element at in single bucket list.", 
  		hash->elements[index] == element);
@@ -516,7 +612,6 @@ char *test_getSizeOfBucket() {
 
 char * test_all_Hash() {
 	// mu_run_test(test_getHashedKey);
-	
 	
 	mu_run_test(test_createHash);
 	mu_run_test(test_destroyHash);
