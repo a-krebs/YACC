@@ -61,7 +61,6 @@ test_newTypeSymFromSym()
 
 
 	newTypeSym = newTypeSymFromSym(lvl, id, typeSym);
-	if (!newTypeSym) printf("da fuck");
 	mu_assert("newTypeSym should not be null", newTypeSym);
 	mu_assert("newTypeSym should have kindPtr equivalent to kindPtr of test"
 	    "type", newTypeSym->kindPtr.TypeKind = typeSym->kindPtr.TypeKind);

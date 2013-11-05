@@ -5,6 +5,8 @@
 #ifndef TYPE_H
 #define TYPE_H
 
+#define TYPESTR_LEN 64
+
 #include "Definitions.h"
 
 
@@ -14,7 +16,9 @@
 
 
 /* Function declarations */
+int areSameType(Symbol *, Symbol *);
 int isOrdinal(type_t);
+char *typeToString(type_t);
 struct Array *newArray(Symbol *, Symbol *);
 struct Subrange *newSubrange(Symbol*, Symbol *);
 Type newAnonConstType(AnonConstVal, type_t);

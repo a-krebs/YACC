@@ -7,13 +7,13 @@
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
 OBJS+=		$(BIN)/ProgList.o $(BIN)/ParamArray.o $(BIN)/Symbol.o 
-OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o
+OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
-TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o
+TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o $(BIN)/Utils.o
 LEX_FILTER=	$(BIN)/parser.tab.o
 
 # Root source directory
@@ -110,6 +110,9 @@ $(BIN)/Error.o: $(SRC)/Error.c $(SRC)/Error.h
 	$(COMPILE)
 
 $(BIN)/Kind.o: $(SRC)/Kind.c $(SRC)/Kind.h $(SRC)/Definitions.h
+	$(COMPILE)
+
+$(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
 $(BIN)/ParamArray.o: $(SRC)/ParamArray.c $(SRC)/ParamArray.h

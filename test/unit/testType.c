@@ -10,6 +10,22 @@
 #include "testType.h"
 
 char *
+test_areSameType()
+{
+	Symbol *s1 = setUpTypeSymbol();
+	Symbol *s2 = setUpTypeSymbol();
+
+	mu_assert("s1 and s2 are NOT the exact same type",
+	    !areSameType(s1, s2));
+
+	s1->kindPtr.TypeKind = s2->kindPtr.TypeKind;
+	mu_assert("s1 and s2 are of the exact same type",
+	    areSameType(s1, s2));
+	return NULL;
+
+}
+
+char *
 test_isOrdinal()
 {
 	mu_assert("isOrdinal() should return false for REAL_T",
@@ -43,6 +59,7 @@ test_setTypePtr()
 char *
 test_all_Type()
 {
+	mu_run_test(test_areSameType);
 	mu_run_test(test_setTypePtr);
 	mu_run_test(test_isOrdinal);
 	return NULL;

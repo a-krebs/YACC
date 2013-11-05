@@ -10,6 +10,66 @@
 
 #include "Type.h"
 
+char typeStr[TYPESTR_LEN];
+
+/*
+ * Returns true if the two Symbols of kind TYPE are the EXACT same type.
+ */
+int
+areSameType(Symbol *s1, Symbol *s2)
+{
+	if ((!s1) || (!s2)) return 0;
+	if ( !(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
+	return (s1->kindPtr.TypeKind == s2->kindPtr.TypeKind);
+}
+
+
+/*
+ * Returns true if the two symbols are compatible string types (i.e.,
+ * both strings of the same length)
+ */
+int
+areCompatibleStrings(Symbol *s1, Symbol *s2)
+{
+	/* TODO: record errors */
+	if ((!s1) || (!s2)) return 0;
+	if (!(s1->kind == TYPE_KIND) || (s2->kind == TYPE_KIND)) return 0;
+	if (!(s1->kindPtr.TypeKind->type == STRING_T) ||
+	    !(s2->kindPtr.TypeKind->type == STRING_T)) return 0;
+	
+	return (s1->kindPtr.TypeKind->typePtr.String->strlen ==
+	    s2->kindPtr.TypeKind->typePtr.String->strlen);	
+}
+
+
+/*
+ * Returns true if the two type symbols are of operator compatible types.
+ */
+int
+areOpCompatible(Symbol *s1, Symbol *s2) 
+{
+	/*TODO: record errors */
+	type_t s1_t, s2_t;	
+
+	if ((!s1) || (!s2)) /* record error */ return 0;
+	if (!(s1->kind == TYPE_KIND) || (s2->kind == TYPE_KIND)) return 0;
+
+	s1_t = s1->kindPtr.TypeKind->type;
+	s2_t = s2->kindPtr.TypeKind->type;
+
+	if (s1_t == STRING_T)
+	    return areCompatibleStrings(s1, s2);
+
+	if (!(s1_t == s2_t) && !((s1_t == INTEGER_T) && (s2_t == REAL_T)) &&
+	    !( (s1_t == REAL_T) && (s2_t == INTEGER_T))) {
+		/* print error stuff */
+		return 0;
+	}
+
+	if ((s1_t == INTEGER_T) || (s1_t == REAL_T)) return 1;
+	return 0;
+}
+
 /*
  * Determines if the given type_t is an ordinal type.
  */
@@ -45,12 +105,6 @@ setTypePtr(Type *new, Type old, type_t type)
 		new->Integer->value = old.Integer->value;
 		new->Integer = old.Integer;
 		break;
-	case FUNCTION_T:
-		new->Function = old.Function;
-		break;
-	case PROCEDURE_T:
-		new->Procedure = old.Procedure;
-		break;	
 	case REAL_T:
 		new->Real->value = old.Real->value;
 		new->Real = old.Real;
@@ -220,4 +274,46 @@ typeMemoryFailure()
 {
 	err(1, "Failed to allocate memory for new anonymous constant type!");
 	exit(1);
+}
+
+char *
+typeToString(type_t type)
+{
+	memset(typeStr, '\0', TYPESTR_LEN);
+	switch (type) {
+	case ARRAY_T:
+		strcpy(typeStr, "ARRAY");
+		break;
+	case BOOLEAN_T:
+		strcpy(typeStr, "BOOLEAN");
+		break;
+	case CHAR_T:
+		strcpy(typeStr, "CHARACTER");
+		break;
+	case INTEGER_T:
+		strcpy(typeStr, "INTEGER");
+		break;
+	case REAL_T:
+		strcpy(typeStr, "REAL");
+		break;
+	case RECORD_T:
+		strcpy(typeStr, "RECORD");
+		break;
+	case SCALAR_T:
+		strcpy(typeStr, "SCALAR");
+		break;
+	case STRING_T:
+		strcpy(typeStr, "STRING");
+		break;
+	case SUBRANGE_T:
+		strcpy(typeStr, "SUBRANGE");
+		break;
+	case VOID_T:
+		strcpy(typeStr, "VOID");
+	default:
+		/* NOT REACHED */
+		strcpy(typeStr, "UNKNOWN");
+	}
+
+	return typeStr;
 }

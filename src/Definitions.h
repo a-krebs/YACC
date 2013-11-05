@@ -10,8 +10,6 @@ typedef enum {
 	BOOLEAN_T,
 	CHAR_T,
 	INTEGER_T,
-	FUNCTION_T,
-	PROCEDURE_T,
 	REAL_T,
 	RECORD_T,	
 	SCALAR_T,
@@ -41,16 +39,20 @@ typedef union type_union {
 typedef enum {
 	CONST_KIND,	/* constant value */
 	FUNC_KIND,	/* function declaration */
+	PARAM_KIND,	/* parameter declaration */
 	PROC_KIND,	/* procedure declaration */
 	TYPE_KIND,	/* type declaration */
 	VAR_KIND	/* variable declaration */
 } kind_t;
 
 
-
+/*
+ * TODO: params need to be a kind
+ * TODO: need function newVarFromParam..... NO! just use newVariableSym
+ *	 and pass it param->name, typeSymPtr
+ */
 struct Param {
-	char *name;			/* TODO: name unnecessary, work it out
-					 * of code */
+	char *name;			
 	type_t type;	/* probably unnecessary now that we're pting to sym */
 	struct Symbol *typeSymPtr;	/* note: PAL specifications requires
 					 * that all procs/funcs have params
