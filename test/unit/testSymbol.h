@@ -3,6 +3,7 @@
 
 Symbol * setUpTypeSymbol();
 
+char * test_newTypeSymFromSym();
 char * test_newVariableSym();
 char * test_newSubrangeSym();
 char * test_newParameter;

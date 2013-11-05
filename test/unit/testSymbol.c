@@ -16,6 +16,7 @@
 int yylineno;
 int colno;
 
+
 /*
  * TODO: make this function accept type_t arg so it can set up types
  * of different types.
@@ -38,7 +39,8 @@ setUpTypeSymbol()
 	}
 	strcpy(typeSym->name, id);
 	typeSym->kind = TYPE_KIND;
-	typeSym->kindPtr.TypeKind = calloc(1, sizeof(Type));
+	
+	allocateKindPtr(typeSym);
 	typeSym->kindPtr.TypeKind->typePtr.Integer = calloc(1, sizeof(struct Integer));
 	if (!typeSym->kindPtr.TypeKind->typePtr.Integer) {
 		err(1, 
@@ -48,6 +50,31 @@ setUpTypeSymbol()
 	typeSym->kindPtr.TypeKind->typePtr.Integer->value = INTLOW_VAL;
 	return typeSym; 	
 }
+
+char *
+test_newTypeSymFromSym()
+{
+	Symbol *typeSym = setUpTypeSymbol();
+	Symbol *newTypeSym = NULL;
+	int lvl = 10; 
+	char id[] = "testArray";	
+
+
+	newTypeSym = newTypeSymFromSym(lvl, id, typeSym);
+	if (!newTypeSym) printf("da fuck");
+	mu_assert("newTypeSym should not be null", newTypeSym);
+	mu_assert("newTypeSym should have kindPtr equivalent to kindPtr of test"
+	    "type", newTypeSym->kindPtr.TypeKind = typeSym->kindPtr.TypeKind);
+	mu_assert("newTypeSym should have expected id",
+	    strcmp(id, newTypeSym->name) == 0);
+	mu_assert("newTypeSym should be at expected lexical level",
+	    newTypeSym->lvl = lvl);
+	mu_assert("newTypeSym should NOT be a type originator",
+	    newTypeSym->typeOriginator == 0);
+
+	return NULL;
+}
+
 
 char *
 test_newVariableSym()
@@ -129,6 +156,7 @@ test_newSubrangeSym()
 char *
 test_all_Symbol()
 {
+	mu_run_test(test_newTypeSymFromSym);
 //	mu_run_test(test_newSubrangeSym);
 	mu_run_test(test_newVariableSym);
 	return NULL;

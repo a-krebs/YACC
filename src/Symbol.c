@@ -13,42 +13,44 @@ extern int colno;
 static char *errMsg;
 
 /*
- * Constructs a	named array symbol given a ptr to an array type symbol.
- * (so the new symbol will either be constructed from an anonymous array
- * type symbol or be a "copy" of another named array type symbol) 
+ * Constructs a	named type symbol given a ptr to another type symbol.
+ * (so the new symbol will either be constructed from an anonymous type symbol
+ * or be a copy of another named symbol) 
  */
 Symbol *
-newArraySymFromSym(int lvl, char *id, Symbol *arrayTypeSym)
+newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 {
-	Symbol *newArraySym = NULL;
-	struct Array *oldArray = NULL;
-
-	if (!arrayTypeSym) {
+	Symbol *newTypeSym = NULL;
+	size_t len;
+	if (!typeSym) {
+		printf("hello");
 		return NULL;
 	}
 
-	if (!arrayTypeSym->kindPtr.TypeKind->typePtr.Array) {
+	if (typeSym->kind != TYPE_KIND) {
+		/* Trying to construct type symbol from non-type symbol */
+		printf("from");
 		return NULL;
 	}
 
 	if (!id) {
+		printf("here");
 		/* Error: trying to create named symbol from NULL id */
 		return NULL;
 	}
 
+	newTypeSym = calloc(1, sizeof(Symbol));
+	if (!newTypeSym) {exit(1); /* blah blah */ }
 
-	oldArray = arrayTypeSym->kindPtr.TypeKind->typePtr.Array;
+	len = strlen(id);
+	newTypeSym->name = calloc(1, sizeof(char)*len);
+	if (!newTypeSym->name) {printf("hey");exit(1);}
 
-	/* TODO: check arrayTypeSym baseTypeSym and indexTypeSym */
-
-
-	newArraySym = newAnonArraySym(lvl, oldArray->baseTypeSym,
-					   oldArray->indexTypeSym);
-
-	strcpy(newArraySym->name, id);
-	newArraySym->kind = TYPE_KIND;
-	newArraySym->kindPtr.TypeKind->type = ARRAY_T;	
-	return newArraySym;
+	strcpy(newTypeSym->name, id);
+	newTypeSym->kind = TYPE_KIND;
+	newTypeSym->kindPtr = typeSym->kindPtr;
+	newTypeSym->typeOriginator = 0;
+	return newTypeSym;
 }
 
 /*
@@ -83,18 +85,11 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	/* Set symbol entries for this symbol */
 	newArraySym->name = NULL;
 	newArraySym->kind = TYPE_KIND;
-	
 	allocateKindPtr(newArraySym);
-
-	//newArraySym->kindPtr.TypeKind = calloc(1, sizeof(Type));
-	//if (!newArraySym->kindPtr.TypeKind) {
-	//	err(1, "Failed to allocate memory for Type struct!");
-	//	exit(1);
-	//}
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
 	newArraySym->lvl = lvl;
-	
+	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
 }
 

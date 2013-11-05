@@ -138,14 +138,13 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 type_t
 getType(Symbol *s)
 {
-	if (!s) /* should probably exit program */ return 0;
-	if (!s->kindPtr.ConstKind) /* no memory allocated to kindPtr */ return 0;
+	if (!s) /* should probably exit program */ return VOID_T;
+	if (!s->kindPtr.ConstKind) /* kindPtr no allocated  */ return VOID_T;
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
 	case PROC_KIND:
-		/* should return void or something */
-		return 0;
+		return VOID_T;
 	case FUNC_KIND:
 		return s->kindPtr.FuncKind->typeSym->kindPtr.TypeKind->type;
 	case TYPE_KIND:
@@ -154,7 +153,7 @@ getType(Symbol *s)
 		return s->kindPtr.VarKind->typeSym->kindPtr.TypeKind->type;
 	default:
 		/* NOT REACHED */
-		return 0;
+		return VOID_T;
 	}	
 }
 

@@ -12,7 +12,9 @@
 void
 allocateKindPtr(Symbol *s)
 {
+	s->typeOriginator = 0;
 	if (!s) return;
+	s->typeOriginator = 0;	
 	switch (s->kind) {
 	case CONST_KIND: 
 		s->kindPtr.ConstKind = allocateConstantKind();
@@ -25,6 +27,7 @@ allocateKindPtr(Symbol *s)
 		break;
 	case TYPE_KIND:
 		s->kindPtr.TypeKind = allocateTypeKind();
+		s->typeOriginator = 1;
 		break;
 	case VAR_KIND:
 		s->kindPtr.VarKind = allocateVariableKind();

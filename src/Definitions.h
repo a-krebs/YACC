@@ -17,6 +17,7 @@ typedef enum {
 	SCALAR_T,
 	STRING_T,
 	SUBRANGE_T,
+	VOID_T,		/* special type for return type of procedures */
 } type_t;
 
 typedef union type_union {
@@ -185,7 +186,8 @@ struct Symbol {
 	char *name;	/* the name associated with the entry */
 	kind_t kind;	/* the kind associated with this entry */
 	Kind kindPtr;	/* kind specific description of symbol */
-	int lvl;	/* the lexical level at which the entry is defined */	
+	int lvl;	/* the lexical level at which the entry is defined */
+	int typeOriginator; /* set if the symbol is the originator of its kindPtr*/	
 };
 
 /* typedef Symbol to make it easier to work with */
