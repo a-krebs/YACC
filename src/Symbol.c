@@ -23,18 +23,15 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 	Symbol *newTypeSym = NULL;
 	size_t len;
 	if (!typeSym) {
-		printf("hello");
 		return NULL;
 	}
 
 	if (typeSym->kind != TYPE_KIND) {
 		/* Trying to construct type symbol from non-type symbol */
-		printf("from");
 		return NULL;
 	}
 
 	if (!id) {
-		printf("here");
 		/* Error: trying to create named symbol from NULL id */
 		return NULL;
 	}
@@ -44,7 +41,7 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 
 	len = strlen(id);
 	newTypeSym->name = calloc(1, sizeof(char)*len);
-	if (!newTypeSym->name) {printf("hey");exit(1);}
+	if (!newTypeSym->name) exit(1);
 
 	strcpy(newTypeSym->name, id);
 	newTypeSym->kind = TYPE_KIND;
