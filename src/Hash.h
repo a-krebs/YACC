@@ -3,7 +3,7 @@
 
 
 /* Macros and const string variable declarations. */
-#define TABLE_SIZE 100
+#define TABLE_SIZE 1000
 #define HASH_DEBUG 0
 
 
@@ -45,6 +45,7 @@ void dumpHash(struct hash *hash);
 int deleteHashElement(struct hash *hash, char *key);
 unsigned int getHashedKeySimple(char *string);
 unsigned int getHashedKeyNormal(char *string);
+int getSizeOfBucket(struct hash *hash, char *key);
 
 
 #endif

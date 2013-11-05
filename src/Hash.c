@@ -8,8 +8,6 @@
 
 /*
  TODO:
-        - //make function getSizeOfBucket
-        - getSizeOfBucket in delete tests
         - need to free what was malloced in createHash
         - test for bounds of hash array 0 and table_size
         - test for keys of incorrect values i.e. =  (is this even allowed in the grammer)
@@ -24,6 +22,19 @@
  * Return:
  *
  */
+
+
+
+int getSizeOfBucket(struct hash *hash, char *key) {
+        struct hashElement *element = getHashBucketHead(hash, key);
+        int count = 0;
+
+        for (; element != NULL; element = element->next) {
+                     count++;
+        }
+
+        return count;
+}
 
 
 
