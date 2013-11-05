@@ -369,3 +369,43 @@ ProxySymbol *proxyStringLiteral(char *value) {
 	// TODO implment
 	return NULL;
 }
+
+/*
+ * Invoke procedure with given name.
+ *
+ * The argument argv contains a list of arguments.
+ */
+void procInvok(char *id, ProxySymbol *argv) {
+	// TODO
+}
+
+/*
+ * Invoke function with the given name.
+ *
+ * The argument argv contains a list of arguments.
+ *
+ * Return a ProxySymbol containing the type returned.
+ */
+ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
+	return NULL;
+}
+
+/*
+ * Create an argument list for function and procedure invokation.
+ *
+ * Return a pointer to a ProxySymbol containing the list.
+ */
+ProxySymbol *createArgList(ProxySymbol *arg) {
+	return NULL;
+}
+
+/*
+ * Concatenate two lists of arguments, maintaining order.
+ *
+ * Return a pointer to a list containing both sets of arguments.
+ * Whether to add the arguments to one of the lists or two make a third
+ * list and add all arguments is up to implementation.
+ */
+ProxySymbol *concatArgLists(ProxySymbol *list1, ProxySymbol *list2) {
+	return list1;
+}

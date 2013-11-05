@@ -275,7 +275,6 @@ simple_stat
 : var ASSIGN expr
 	{ assignOp($<proxy>1, $<proxy>3); }
 | proc_invok
-	{ /* TODO */ }
 | compound_stat
 ;
 
@@ -379,24 +378,47 @@ unsigned_num
 ;
 
 proc_invok
-: plist_finvok R_PAREN
+: plist_pinvok R_PAREN
+	{ /* Action is performed one level lower */ }
 | ID_or_err L_PAREN R_PAREN
+	{ /* TODO might want to explicitly use an empty arg list here */ 
+	  procInvok($<id>1, NULL); }
+;
+
+// duplicated once for functions and once for procedures
+plist_pinvok
+: ID_or_err L_PAREN parm
+	{ procInvok($<id>1, $<proxy>3); }
+| plist_pinvok comma_or_error parm
+	{ // parm returns the list of arguments
+	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
 ;
 
 func_invok
 : plist_finvok R_PAREN
+	{ /* Action is performed one level lower */
+	  $<proxy>$ = $<proxy>1; }
 | ID_or_err L_PAREN R_PAREN
+	{ /* TODO might want to explicitly use an empty arg list here */
+	  $<proxy>$ = funcInvok($<id>1, NULL); }
 | plist_finvok error R_PAREN
-	{ yyerrok; }
+	{ $<proxy>$ = funcInvok($<id>1, NULL);
+	  yyerrok; }
 ;
 
+// duplicated once for functions and once for procedures
 plist_finvok
 : ID_or_err L_PAREN parm
+	{ $<proxy>$ = funcInvok($<id>1, $<proxy>3); }
 | plist_finvok comma_or_error parm
+	{ // parm returns the list of arguments
+	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
 ;
 
 parm
 : expr
+	{ // TODO can we use the same action as for function decl?
+	  $<proxy>$ = createArgList($<proxy>1); }
 ;
 
 struct_stat

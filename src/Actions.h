@@ -63,3 +63,9 @@ ProxySymbol *unaryNotOp(ProxySymbol*);
 ProxySymbol *proxyIntLiteral(int);
 ProxySymbol *proxyRealLiteral(double);
 ProxySymbol *proxyStringLiteral(char*);
+
+/* procedure and function invokations */
+void prodInvok(char*, ProxySymbol*);
+ProxySymbol *funcInvok(char*, ProxySymbol*);
+ProxySymbol *createArgList(ProxySymbol*);
+ProxySymbol *concatArgLists(ProxySymbol*, ProxySymbol*);
