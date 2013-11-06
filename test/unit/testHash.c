@@ -980,6 +980,62 @@ char * test_deleteSymbol() {
 
 	return NULL;
 }
+	
+char *test_popLexLevel(){
+	struct hash *hash = createHash(&getHashedKeySimple);	
+
+	mu_assert("Unexpected return of popLexLevel, test1",
+		popLexLevel(hash) == 1);
+
+	setLexLevel(hash, 1);
+	mu_assert("Unexpected return of popLexLevel, test2",
+		popLexLevel(hash) == 0);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	// dumpHash(hash);
+
+	mu_assert("Unexpected return of popLexLevel, test3",
+		popLexLevel(hash) == 0);
+
+	// dumpHash(hash);
+
+	setLexLevel(hash, 0);
+	mu_assert("Unexpected return of popLexLevel, test4",
+		popLexLevel(hash) == 1);
+
+	// dumpHash(hash);
+
+	setLexLevel(hash, 1);
+	struct Symbol *symbol4 = createTestSymbol(1, "yellow");
+	createHashElement(hash, "yellow", symbol4);
+	symbol4 = createTestSymbol(1, "indigo");
+	createHashElement(hash, "indigo", symbol4);	
+	symbol4 = createTestSymbol(1, "bobby");
+	createHashElement(hash, "bobby", symbol4);
+
+	// dumpHash(hash);	
+
+	mu_assert("Unexpected return of popLexLevel, test5",
+		popLexLevel(hash) == 0);	
+
+	// dumpHash(hash);	
+
+	return NULL;
+}
+
 
 
 char * test_all_Hash() {
@@ -1015,6 +1071,7 @@ char * test_all_Hash() {
 	mu_run_test(test_getLengthOfSymbolList);
 	mu_run_test(test_isOnlySymbolInList);
 	mu_run_test(test_deleteSymbol);
+	mu_run_test(test_popLexLevel);
 
 	return NULL;
 }

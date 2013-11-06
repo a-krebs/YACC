@@ -13,6 +13,7 @@
         - test for bounds of hash array 0 and table_size
         - test for keys of incorrect values i.e. =  (is this even allowed in the grammer)
         - need to free symbol member when deleting
+        - DOES LEX LEVEL NEED TO BE LOWERED IN POPLEXLEVEL?
 */
 
 
@@ -722,38 +723,38 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
 }
 
 
+/* Pops all the symbols in the symbol table with the current lexical
+ * level. TODO: should level be decremented at end?
+ *
+ * Parameters: 
+ *              hash: hash to pop symbols from
+ *
+ * Return: 0 on success
+ *         1 on could not find element to delete
+*/
+ int popLexLevel(struct hash *hash) {
+        struct hashElement *element;
+        struct Symbol *symbol;
+        int lexLevel = getCurrentLexLevel(hash);
 
-// int popLexLevel(hash) {
-//         int lexLevel = getCurrentLexLevel(hash);
-//         struct hashElement *element;
-//         char *key;
-//         struct Symbol *symbol;
-//         int retval;
+        if (lexLevel == 0) {
+                if (HASH_DEBUG) { printf("Cannot pop lexical levels when already at level 0.\n");}
+                return 1;
+        }
 
-//         if (lexLevel == 0) {
-//                 if (HASH_DEBUG) { printf("Cannot pop lexical levels when already at level 0.\n");}
-//                 return 1;
-//         }
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                element = hash->elements[i];
 
-//         for (int i = 0; i < TABLE_SIZE; ++i) {
-//                 if ( hash->elements[i] != NULL ) {      //can get rid of 
-//                         element = hash->elements[i];
+                for(; element != NULL; element = element->next) {
+                        symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
 
-//                         for(; element != NULL; element = element->next) {
-//                                 key = element->key;
+                        if (symbol != NULL) {
+                                if (deleteSymbolAtLexLevel(hash, element->key, lexLevel) != 0) {
+                                        return 1;
+                                }
+                        }
+                }
+        }
 
-//                                 symbol = findSymbolByLexLevel(hash, key, lexLevel);
-
-//                                 if (symbol != NULL) {
-//                                         retval = deleteSymbolAtLexLevel(hash, key, lexLevel);
-
-//                                         if (retval != 0) {
-//                                                 return 1;
-//                                         }
-//                                 }
-//                         }
-//                 }
-//         }
-
-//         return 0;
-// }
+        return 0;
+}
