@@ -11,24 +11,13 @@
 
 #include "testHash.h"
 #include "Hash.h"
+#include "Definitions.h"
 
 
 /*TODO:
 	- dump table with something in it.
-	- change tests once real hash functions is created
 	- test bound conditions on hash functions
 */ 
-
-
-
-// // char *test_() {
-// // /*test 1: .*/
-// // 	mu_assert(".", 
-// //  		);
-
-// // 	return NULL;
-// // }
-
 
 
 char *test_getHashedKeySimple() {
@@ -158,13 +147,14 @@ char *test_getHashIndex() {
 
 //not testing on normal hash to hard to find collisons
 char *test_isKeyCollison() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
 	mu_assert("Collision on empty symbol table.", 
  		isKeyCollison(symbolTable, "blue") == 0);
 
-	createHashElement(symbolTable, "blue", 456666);
+	createHashElement(symbolTable, "blue", symbol);
 	mu_assert("Could not find key collision where one should exist.", 
  		isKeyCollison(symbolTable, "blue") == 1);
 
@@ -179,18 +169,19 @@ char *test_isKeyCollison() {
 
 
 char *test_createHashElement() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 //simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
 	mu_assert("Could not created element in empty table.", 
- 		createHashElement(symbolTable, "blue", 123) == 0);
+ 		createHashElement(symbolTable, "blue", symbol) == 0);
 
 	mu_assert("Could not create element where bucket collison happened.", 
- 		createHashElement(symbolTable, "boo", 123) == 0);
+ 		createHashElement(symbolTable, "boo", symbol) == 0);
 
 	mu_assert("Over written hash value.", 
- 		createHashElement(symbolTable, "blue", 456) == 1);	
+ 		createHashElement(symbolTable, "blue", symbol) == 1);	
 
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
@@ -200,10 +191,10 @@ char *test_createHashElement() {
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
 	mu_assert("Could not created element in empty table.", 
- 		createHashElement(symbolTable, "blue", 123) == 0);
+ 		createHashElement(symbolTable, "blue", symbol) == 0);
 
 	mu_assert("Could not create element where bucket collison happened.", 
- 		createHashElement(symbolTable, "boo", 123) == 0);
+ 		createHashElement(symbolTable, "boo", symbol) == 0);
 
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
@@ -213,16 +204,18 @@ char *test_createHashElement() {
 
 
 char *test_allocHashElement() {
-	struct hashElement *element = allocHashElement("blue", 123);
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct hashElement *element = allocHashElement("blue", symbol);
 
-	mu_assert("Unable to create hash element.", 
+	mu_assert("Unable to create hash element, expected NULL.", 
  		element != NULL);
 
 	mu_assert("Incorrect key in hash element.", 
  		strcmp(element->key, "blue") == 0);
 
 	mu_assert("Incorrect value in hash element.", 
- 		element->value == 123);
+
+ 		element->symbol == symbol);
 
 	mu_assert("Hash element not assigned but prev pointing at not NULL.", 
  		element->prev == NULL);
@@ -235,8 +228,9 @@ char *test_allocHashElement() {
 
 
 char *test_appendToHashBucket() {
-	struct hashElement *element1 = allocHashElement("blue", 123);
-	struct hashElement *element2 = allocHashElement("green", 456);
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct hashElement *element1 = allocHashElement("blue", symbol);
+	struct hashElement *element2 = allocHashElement("green", symbol);
 
 	appendToHashBucket(element1, element2);
 	mu_assert("Call to appendToHashBucket does not seg fault.", 1);
@@ -263,7 +257,8 @@ char *test_appendToHashBucket() {
 }
 
 char *test_isKeysIdentical() {
-	struct hashElement *element = allocHashElement("blue", 123);
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct hashElement *element = allocHashElement("blue", symbol);
 
 	mu_assert("Keys idenitcal but evaluating to different.", 
  		isKeysIdentical(element, "blue") == 1);
@@ -275,11 +270,13 @@ char *test_isKeysIdentical() {
 }
 
 char *test_findHashElementByKey() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+
 //simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	createHashElement(symbolTable, "blue", 123);
+	createHashElement(symbolTable, "blue", symbol);
 
 	mu_assert("Could not find element that should be table.", 
  		findHashElementByKey(symbolTable, "blue") != NULL);
@@ -294,7 +291,7 @@ char *test_findHashElementByKey() {
 	symbolTable = createHash(&getHashedKeyNormal);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	createHashElement(symbolTable, "teekkekkke", 123);
+	createHashElement(symbolTable, "teekkekkke", symbol);
 
 	mu_assert("Could not find element that should be table.", 
  		findHashElementByKey(symbolTable, "teekkekkke") != NULL);
@@ -311,12 +308,13 @@ char *test_findHashElementByKey() {
 
 //can't test on normal hash function. can't find collisons
 char *test_isKeyInBucket() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	createHashElement(symbolTable, "blue", 123);
-	createHashElement(symbolTable, "boo", 23456);
-	createHashElement(symbolTable, "bobby", 123);
+	createHashElement(symbolTable, "blue", symbol);
+	createHashElement(symbolTable, "boo", symbol);
+	createHashElement(symbolTable, "bobby", symbol);
 
 	mu_assert("Could not find expected key 'blue' in bucket.", 
 		isKeyInBucket(symbolTable, "blue") == 1 );		
@@ -338,12 +336,13 @@ char *test_isKeyInBucket() {
 
 //can't test on normal hash function. can't find collisons
 char *test_getHashBucketHead() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	createHashElement(symbolTable, "blue", 123);
-	createHashElement(symbolTable, "boo", 23456);
-	createHashElement(symbolTable, "bobby", 123);
+	createHashElement(symbolTable, "blue", symbol);
+	createHashElement(symbolTable, "boo", symbol);
+	createHashElement(symbolTable, "bobby", symbol);
 
 	mu_assert("Returned pointer when NULL was expected in getHashBucketHead.", 
 		getHashBucketHead(symbolTable, "gree") == NULL );
@@ -379,7 +378,7 @@ char *test_dumpHash() {
  	dumpHash(hash);		/* anything sent to printf should now go down the pipe */
  	fflush(stdout);
 
- 	read(out_pipe[0], buffer, 100);  /*read from pipe into buffer */
+ 	read(out_pipe[0], buffer, 100);  //read from pipe into buffer 
  	dup2(saved_stdout, STDOUT_FILENO);  /* reconnect stdout for testing */
 
  	char expectedOutput[33] = "\n\nDUMPING HASH:\nDUMP COMPLETE.\n\n";
@@ -407,13 +406,14 @@ char *test_dumpHash() {
 
 //can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_begining() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-   	createHashElement(hash, "GREEN", 7);
-	createHashElement(hash, "bb", 6);
-	createHashElement(hash, "bbb", 888);
-	createHashElement(hash, "bbbb", 753);
+   	createHashElement(hash, "GREEN", symbol);
+	createHashElement(hash, "bb", symbol);
+	createHashElement(hash, "bbb", symbol);
+	createHashElement(hash, "bbbb", symbol);
 	
 	struct hashElement *element = findHashElementByKey(hash, "bb");
 	struct hashElement *newHead = element->next;
@@ -442,13 +442,14 @@ char *test_deleteHashElement_begining() {
 
 //can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_end() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-   	createHashElement(hash, "GREEN", 7);
-	createHashElement(hash, "bb", 6);
-	createHashElement(hash, "bbb", 888);
-	createHashElement(hash, "bbbb", 753);
+   	createHashElement(hash, "GREEN", symbol);
+	createHashElement(hash, "bb", symbol);
+	createHashElement(hash, "bbb", symbol);
+	createHashElement(hash, "bbbb", symbol);
 
 	struct hashElement *element = findHashElementByKey(hash, "bbbb");
 	struct hashElement *newTail = element->prev;
@@ -473,13 +474,14 @@ char *test_deleteHashElement_end() {
 
 //can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_middle() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-   	createHashElement(hash, "GREEN", 7);
-	createHashElement(hash, "bb", 6);
-	createHashElement(hash, "bbb", 888);
-	createHashElement(hash, "bbbb", 753);
+   	createHashElement(hash, "GREEN", symbol);
+	createHashElement(hash, "bb", symbol);
+	createHashElement(hash, "bbb", symbol);
+	createHashElement(hash, "bbbb", symbol);
 
 	struct hashElement *element = findHashElementByKey(hash, "bbb");
 	struct hashElement *head = findHashElementByKey(hash, "bb");
@@ -507,14 +509,15 @@ char *test_deleteHashElement_middle() {
 }
 
 char *test_deleteHashElement_single() {
-//simple hash function	
+// simple hash function	
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
    	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	createHashElement(hash, "GREEN", 7);
-	createHashElement(hash, "bb", 6);
-	createHashElement(hash, "bbb", 888);
-	createHashElement(hash, "bbbb", 753);
+	createHashElement(hash, "GREEN", symbol);
+	createHashElement(hash, "bb", symbol);
+	createHashElement(hash, "bbb", symbol);
+	createHashElement(hash, "bbbb", symbol);
 
 	int index  = getHashIndex(hash, "G");
 	struct hashElement *element = findHashElementByKey(hash, "GREEN");
@@ -535,10 +538,10 @@ char *test_deleteHashElement_single() {
 	hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
-	createHashElement(hash, "GREEN", 7);
-	createHashElement(hash, "bb", 6);
-	createHashElement(hash, "bbb", 888);
-	createHashElement(hash, "bbbb", 753);
+	createHashElement(hash, "GREEN", symbol);
+	createHashElement(hash, "bb", symbol);
+	createHashElement(hash, "bbb", symbol);
+	createHashElement(hash, "bbbb", symbol);
 
 	index  = getHashIndex(hash, "G");
 	element = findHashElementByKey(hash, "GREEN");
@@ -561,21 +564,22 @@ char *test_deleteHashElement_single() {
 
 char *test_getSizeOfBucket() {
 //simple hash	
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
    	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
 	mu_assert("Expected empty bucket.",
 		getSizeOfBucket(hash, "blue") == 0);
 
-	createHashElement(hash, "blue", 58);
+	createHashElement(hash, "blue", symbol);
 
 	mu_assert("Expected bucket size of 1.",
 		getSizeOfBucket(hash, "blue") == 1);
 
-	createHashElement(hash, "red", 58);
-	createHashElement(hash, "ruby", 58);
-	createHashElement(hash, "rouse", 58);
-	createHashElement(hash, "rose", 58);
+	createHashElement(hash, "red", symbol);
+	createHashElement(hash, "ruby", symbol);
+	createHashElement(hash, "rouse", symbol);
+	createHashElement(hash, "rose", symbol);
 
 	mu_assert("Expected bucket size of 4.",
 		getSizeOfBucket(hash, "r") == 4);
@@ -590,13 +594,13 @@ char *test_getSizeOfBucket() {
 	mu_assert("Expected empty bucket.",
 		getSizeOfBucket(hash, "blue") == 0);
 
-	createHashElement(hash, "blue", 58);
+	createHashElement(hash, "blue", symbol);
 
 	mu_assert("Expected bucket size of 1.",
 		getSizeOfBucket(hash, "blue") == 1);
 
-	createHashElement(hash, "red", 58);
-	createHashElement(hash, "rose", 58);
+	createHashElement(hash, "red", symbol);
+	createHashElement(hash, "rose", symbol);
 
 	mu_assert("Expected bucket size of 0.",
 		getSizeOfBucket(hash, "r") == 0);
