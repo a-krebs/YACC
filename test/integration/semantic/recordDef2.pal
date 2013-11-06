@@ -23,5 +23,6 @@ begin
 	myInt := r2.b;
 	myInt := r2.c;			// error not a member
 	r1.y := r2;
+	r2.c := 2;			// error not a member
 	r2.a := r1;			// error
 end.
