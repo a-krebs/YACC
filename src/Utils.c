@@ -57,10 +57,3 @@ isUnaryOperator(int op)
 	return 0;
 
 }
-
-
-Symbol *
-numOpResult(Symbol * lhs, Symbol * rhs, int op) {
-
-return NULL;
-}

@@ -30,61 +30,69 @@ extern int colno;
  */
 Symbol *assertOpCompat(
     Symbol *type1, int opToken, Symbol *type2) {
-
+	
 	type_t s1_t, s2_t;
 	char *errMsg;	
 	s1_t = getType(type1);
 	s2_t = getType(type2);
 
-
 	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
 	 * it is a unary operator) then we assume the best */ 
-	if ( (!type1) && (isUnaryOperator(opToken))) {
+	if ((!type1) && (isUnaryOperator(opToken))) {
 		if ((s2_t == REAL_T) || (s2_t == INTEGER_T)) return type2;
 		return NULL; /* else error */
 	} else if (!type1) return NULL; /* else it was an error */
 
-	if (!areOpCompatible(type2, type2)) return NULL; /* errors recorded
-							  * in called func */
-	/*
-	 * Now, we know type1 and type2 are op compatible (e.g., the exact
-	 * same type, an int/real pair, or two strings with the same number
-	 * of elements.   
-	 */
 
-	if (isRelationalOperator(opToken)) {
-		if (!(isSimpleType(s1_t)) || !(isSimpleType(s2_t)) ||
-		    (s1_t != STRING_T)) {
-			/* non-simple, non-string types, relational
-			 * operator cannot be applied */
-			return NULL;
-		}
-		/* return pointer to predefined boolean type symbol */
+	/* Only simple and string types are compatible with operators */
+	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) ||
+	    (s1_t != STRING_T)) {
+		/* TODO: record error */
 		return NULL;
 	}
 
+	/* If operator is a logical operator, we only accept boolean types */
 	if (isLogicalOperator(opToken)) {
-		/* Boolean operators work only on a pair of boolean types */
 		if ((s1_t != BOOLEAN_T) || (s2_t != BOOLEAN_T)) return NULL;
 		/* Else return pointer to pre-defined boolean type */
 		return type1; 
 	}
 
-	if (s1_t == STRING_T) return NULL; /* not relational operator with
-					    * string types => failure */
-	/*
-	 *  
- 	 */ 
-	if (s1_t == s2_t) return type1;
-
-	switch (opToken) {
-		case EQUAL:
-			break;
-		default:
-			// TODO error
-			break;
+	/* If the operator is relational, we just need op compatible types */
+	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
+		return NULL;
 	}
-	return NULL;
+
+	if (areArithmeticCompatible(type1, type2)) {
+		switch (opToken) {
+			case PLUS:
+			case MINUS:
+			case MULTIPLY:
+				if (areBothInts(type1, type2)) {
+					/* Return pointer to int type */
+					return NULL;
+				}
+				else return NULL; /* ret ptr to real type */
+				break;
+			case DIVIDE:
+				/* return pointer to real type */
+				return NULL;
+			case DIV:
+			case MOD:
+				if (areBothInts(type1, type2)) {
+					/* return ptr to int type */
+					return NULL;
+				}
+				break;
+			default:
+				/* NOT REACHED */
+				break;	
+		}
+	}
+
+	/* Fell through to here, must have been an error */
+	
+
 }
 
 /*
@@ -126,7 +134,15 @@ void exitTypeDeclPart(void) {
  * Create a new type identifier symbol in the symbol table.
  */
 void doTypeDecl(char *id, Symbol *type) {
-	// TODO assign type to id
+	Symbol * newTypeSym = NULL;
+	int lvl = 0;	/* TODO: make this get actual lex lvl */
+	
+	newTypeSym = newTypeSymFromSym(lvl, id, type);
+	if (newTypeSym) {
+		/* add to symbol table */
+	}
+
+	/* Else, error.  newTypeSymFromSym performs error checking */
 }
 
 /*
@@ -162,6 +178,16 @@ Symbol *createScalarListType(char *id) {
  * Create a new array type given the index type and base type.
  */
 Symbol *createArrayType(Symbol *index, Symbol *base) {
+	Symbol * newArraySym = NULL;
+	int lvl = 0;	/* TODO: get actual lexical level */
+
+	newArraySym = newAnonArraySym(lvl, base, index);
+	if (newArraySym) {
+		/* TODO: Add to symbol table */
+		return newArraySym;
+	}
+
+	/* Else, error.  Error reporting done in newAnonArraySym() */	
 	return NULL;
 }
 

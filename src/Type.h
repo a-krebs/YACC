@@ -16,7 +16,13 @@
 
 
 /* Function declarations */
+int areArithmeticCompatible(Symbol *, Symbol *);
+
+int areBothInts(Symbol *, Symbol *);
+
 int areOpCompatible(Symbol *, Symbol *);
+
+int areCompatibleStrings(Symbol *, Symbol *);
 
 int areSameType(Symbol *, Symbol *);
 

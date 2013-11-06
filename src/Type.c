@@ -10,8 +10,6 @@
 
 #include "Type.h"
 
-char typeStr[TYPESTR_LEN];
-
 /*
  * Returns true if the two Symbols of kind TYPE are the EXACT same type.
  */
@@ -21,6 +19,30 @@ areSameType(Symbol *s1, Symbol *s2)
 	if ((!s1) || (!s2)) return 0;
 	if ( !(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
 	return (s1->kindPtr.TypeKind == s2->kindPtr.TypeKind);
+}
+
+/*
+ * Returns true if the two Symbols are arithmetic compatible.
+ */
+int
+areArithmeticCompatible(Symbol *s1, Symbol *s2)
+{
+	type_t s1_t, s2_t;
+
+	s1_t = getType(s1);
+	s2_t = getType(s2);
+
+	return (((s1_t == INTEGER_T) || (s1_t == REAL_T)) && 
+	    ((s2_t == INTEGER_T) || (s2_t == REAL_T)));	
+}
+
+/*
+ * Returns true if both symbols are of integer type.
+ */
+int
+areBothInts(Symbol *s1, Symbol *s2)
+{
+	return ((getType(s1) == INTEGER_T) && (getType(s2) == INTEGER_T));
 }
 
 
@@ -57,16 +79,30 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 	s1_t = s1->kindPtr.TypeKind->type;
 	s2_t = s2->kindPtr.TypeKind->type;
 
+	/* If one is a string, then both need to be strings to be compatible */
 	if (s1_t == STRING_T)
 	    return areCompatibleStrings(s1, s2);
 
-	if (!(s1_t == s2_t) && !((s1_t == INTEGER_T) && (s2_t == REAL_T)) &&
-	    !( (s1_t == REAL_T) && (s2_t == INTEGER_T))) {
-		/* print error stuff */
+	/* 
+	 * Already handled case where operators are strings, so now
+	 * we know if either type is not a simple type then they are not
+	 * operator compatible (even if they are the exact same type as no
+	 * operator we support works on non-simple, non-string types 
+	 */
+	if ((!isSimpleType(s1_t)) || !(isSimpleType(s1_t))) {
 		return 0;
 	}
 
-	if ((s1_t == INTEGER_T) || (s1_t == REAL_T)) return 1;
+	/* If we get here, we have two simple types.  So if they are
+	 * of the type_t, we know they are operator compatible (for at least
+	 * relational operators) */
+	if (s1_t == s2_t)
+		return 1;
+
+	/* Finally, if types is a mixed int/real pair, they're compatible */
+	if ( ((s1_t == INTEGER_T) && (s2_t == REAL_T)) ||
+	    ((s1_t == REAL_T) && (s2_t == INTEGER_T)) ) return 1;
+
 	return 0;
 }
 
@@ -299,6 +335,7 @@ typeMemoryFailure()
 char *
 typeToString(type_t type)
 {
+	static char typeStr[TYPESTR_LEN];
 	memset(typeStr, '\0', TYPESTR_LEN);
 	switch (type) {
 	case ARRAY_T:

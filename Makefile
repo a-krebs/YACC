@@ -86,7 +86,7 @@ lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
 
 # Build test executable
-test: CFLAGS+= -g -Isrc/
+test: CFLAGS+= -g -Isrc/ -DTEST
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)

@@ -12,6 +12,10 @@ Symbol *newSubrangeSym(int, Symbol *, Symbol *);
 Symbol *newVariableSym(int, char *, Symbol *);
 Symbol *newProcedureSym(int, char *, struct ParamArray *);
 
+/* Symbol creation from ProxySymbol functions */
+Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
+
+
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
 

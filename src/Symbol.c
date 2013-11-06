@@ -325,6 +325,15 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 /* 	return newConstSym; */
 /* } */
 
+/*
+ * TODO: proxy symbol will have kindPtr to pre-defined kind?
+ */
+Symbol *
+newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
+{
+	return NULL;
+}
+
 
 /*
  * Returns a pointer to the Symbol of TYPE_KIND defining the type for the
