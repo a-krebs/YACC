@@ -10,17 +10,15 @@
 /* Global variables. */
 struct hashElement {
     char *key;
-    int value;
     struct Symbol *symbol;
     struct hashElement *prev;
     struct hashElement *next;
 };
 
-// struct hashElement *symbolTable[TABLE_SIZE];
-
 struct hash {
     struct hashElement *elements[TABLE_SIZE];
     unsigned int (*hashFunction)();
+    unsigned long long int lexLevel;
 };
 
 
@@ -41,9 +39,11 @@ void deleteHashBucket(struct hashElement *current);
 void destroyHash(struct hash *hash);
 int deleteHashElement(struct hash *hash, char *key);
 struct hashElement *findHashElementByKey(struct hash *hash, char *key);
-struct hashElement *allocHashElement(char *key, int value);
+// struct hashElement *allocHashElement(char *key, int value);
+struct hashElement *allocHashElement(char *key, struct Symbol *symbolPtr);
 void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newElement);
-int createHashElement(struct hash *hash, char *key, int value);
+// int createHashElement(struct hash *hash, char *key, int value);
+int createHashElement(struct hash *hash, char *key, struct Symbol *symbolPtr);
 struct hash *createHash(unsigned int (*hashFunction)(char *));
 void dumpHash(struct hash *hash);
 
