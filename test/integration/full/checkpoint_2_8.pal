@@ -1,0 +1,7 @@
+{}
+{
+	Team YACC Checkpoint 2 Test 0
+}
+program test0(input, output);
+begin
+end.

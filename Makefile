@@ -222,9 +222,13 @@ integration_tests:
 	@mv $(EXE).bak $(EXE)
 	@mv $(LEXTEST_EXE).bak $(LEXTEST_EXE)
 	@echo "SYNTAX TESTS:"
-	@cd test && python testRunner.py -x -d ./integration/syntax
+	@-cd test && python testRunner.py -x -d ./integration/syntax
+	@echo "CHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
+	@-cd test && python testRunner.py -x -i -d ./integration/semantic
 	@echo "\nSEMANTIC TESTS:"
-	@cd test && python testRunner.py -c -d ./integration/semantic
+	@-cd test && python testRunner.py -c -d ./integration/semantic
+	@echo "\nFULL TESTS:"
+	@-cd test && python testRunner.py -d ./integration/full
 
 # remove all .lst files
 clean_lst:
