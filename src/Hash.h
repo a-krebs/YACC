@@ -18,7 +18,7 @@ struct hashElement {
 struct hash {
     struct hashElement *elements[TABLE_SIZE];
     unsigned int (*hashFunction)();
-    unsigned long long int lexLevel;
+    int lexLevel;
 };
 
 
@@ -46,6 +46,11 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
 int createHashElement(struct hash *hash, char *key, struct Symbol *symbolPtr);
 struct hash *createHash(unsigned int (*hashFunction)(char *));
 void dumpHash(struct hash *hash);
+int getLexLevel(struct hash *hash);
+void setLexLevel(struct hash *hash, int lexLevel);
+int getSymbolLexLevel(struct Symbol *symbol);
+int getCurrentLexLevel(struct hash *hash);
+int appendToSymbolList(struct hash *hash, struct hashElement *element, struct Symbol *symbol);
 
 
 #endif

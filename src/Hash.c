@@ -28,6 +28,43 @@
 
 
 
+/* Sets the current lexical level of the hash. This is 
+ * saved in the symbol table hash struct.
+ *
+ * Parameters:
+ *              hash: hash struct with levLevel member
+ *              lexLevel: number to update the lex level with
+ *
+ * Return: void
+ */
+void setLexLevel(struct hash *hash, int lexLevel) {
+        hash->lexLevel = lexLevel;
+}
+
+
+/* Gets the lexical level of the passed symbol.
+ *
+ * Parameters:
+ *              symbol: symbol to be searched
+ *
+ * Return: symbol's lexical level
+ */
+int getSymbolLexLevel(struct Symbol *symbol) {
+        return symbol->lvl;
+}
+
+/* Gets the current lexical level of the hash. This is 
+ * saved in the symbol table hash struct.
+ *
+ * Parameters:
+ *              hash: hash struct with levLevel member
+ *
+ * Return: Current lexical level of hash.
+ */
+int getCurrentLexLevel(struct hash *hash) {
+        return hash->lexLevel;
+}
+
 
 /* Determined the hashed value of a key. This is a simpilifed
  * hashing function and should not be used in production. Testing
@@ -337,6 +374,53 @@ struct hashElement *allocHashElement(char *key, struct Symbol *symbolPtr) {
 }
 
 
+/* Appends onto the symbol linked list of an element in the hash.
+ *      
+ * Parameters: 
+ *              hash: hash for element to be created in
+ *              element: pointer to hashElement
+ *              symbol: pointer to symbol struct to saved in 
+ *                  hash element.
+ *
+ * Return: 0 on success
+ *         1 current lex level and symbol's lex level differ
+ *         2 element on hash table has symbol set to NULL
+ *         3 element's symbol list head lex level same as symbol's
+ *         4 symbol's lex level lower than element's symbol list head
+*/
+int appendToSymbolList(struct hash *hash, struct hashElement *element, struct Symbol *symbol) {
+        int symbolLexLevel = getSymbolLexLevel(symbol);
+
+        if (symbolLexLevel != getCurrentLexLevel(hash) ) {
+                if (HASH_DEBUG) { printf("The current lex level is not the same as the passed symbol.\n"); }
+                return 1;
+        }
+
+        struct Symbol *elementSymbolListHead = element->symbol;
+        int listHeadLexLevel = getSymbolLexLevel(elementSymbolListHead);
+
+        if (elementSymbolListHead == NULL) {
+                if (HASH_DEBUG) { printf("Element's symbol pointer points to NULL.\n"); }
+                return 2;
+        }
+
+        if ( symbolLexLevel == listHeadLexLevel ) {
+                if (HASH_DEBUG) { printf("Element's symbol list head equal to passed symbol lex level.\n"); }
+                return 3;
+        }
+
+        if ( symbolLexLevel < listHeadLexLevel ) {
+                if (HASH_DEBUG) { printf("Element's symbol list head higner than passed symbol lex level.\n"); }
+                return 4;
+        }
+
+        symbol->next = elementSymbolListHead;
+        element->symbol = symbol;
+
+        return 0;
+}
+
+
 /* Appends the hashElement pointed to by newElement to the 
  * end of the linked list pointed to by bucketHead
  *
@@ -364,33 +448,33 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
  *              symbol: pointer to symbol struct to saved in 
  *                  hash element.
  *
- * Returns: Boolean: 1 on success and 0 and failure.     
+ * Returns: Boolean: 0 on success and 1 and failure.     
 */
-int createHashElement(struct hash *hash, char *key, struct Symbol *symbolPtr) {
+int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
         struct hashElement *element;
-        int index = getHashIndex(hash, key);
+        int index = getHashIndex(hash, key);      
+        int retval;   
+        
+        //check to see if a element in the table already exists with same key name
+        if ( isKeyInBucket(hash, key) ) {
+                element = findHashElementByKey(hash, key);
 
-        element = allocHashElement(key, symbolPtr);  
+                retval = appendToSymbolList(hash, element, symbol);
+                return retval;
+                // return 1;
+        }
 
+        element = allocHashElement(key, symbol); 
+
+        //check to see if the key will create a hash collison
         if ( isKeyCollison(hash, key) ) {
+                if ( HASH_DEBUG ) { printf("Key %s causes collision. Appending to bucket.\n", key); } 
 
-                if ( isKeyInBucket(hash, key) ) {
-                        if (HASH_DEBUG) {
-                                printf("Error: Hash key already used! Will not reset. Skipping...\n");  
-                        }
-
-                        return 1;
-                }
-
-                if (HASH_DEBUG) {
-                        printf("We have a hash collision. Creating bucket list element...\n"); 
-                }
-
-                appendToHashBucket(hash->elements[index], element);          
+                appendToHashBucket(hash->elements[index], element);
         }
         else {
-                hash->elements[index] = element;     
-        }    
+               hash->elements[index] = element;  
+        }
 
         if (HASH_DEBUG) {
                 printf("Created hash element with data:\n\tkey: %s\n\tsymbol pointer: %p\n", element->key, element->symbol);  
@@ -411,6 +495,7 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbolPtr) {
 struct hash *createHash(unsigned int (*hashFunction)(char *)) {
         struct hash *hash = malloc(sizeof(struct hash));
         hash->hashFunction = hashFunction;
+        hash->lexLevel = 0;             //default value
 
         for (int i = 0; i < TABLE_SIZE; ++i) {
                 hash->elements[i] = NULL;
@@ -428,6 +513,7 @@ struct hash *createHash(unsigned int (*hashFunction)(char *)) {
  */
 void dumpHash(struct hash *hash) {
         struct hashElement *element;
+        struct Symbol *symbol;
 
         printf("\n\nDUMPING HASH:\n");
 
@@ -442,8 +528,19 @@ void dumpHash(struct hash *hash) {
                                 printf("\tKey: %s\n", element->key);
                                 printf("\tSymbol pointer: %p\n", element->symbol);
                                 printf("\tPrev pointer: %p\n", element->prev);
-                                printf("\tNext pointer: %p\n\n",element->next);
-                        }
+                                printf("\tNext pointer: %p\n",element->next); 
+
+                                printf("\t\tSymbol INFO:\n"); 
+                                symbol = element->symbol;
+
+                                for (; symbol != NULL; symbol = symbol->next) {
+                                        printf("\t\t\tName: %s\n", symbol->name);
+                                        printf("\t\t\tLex Level: %d\n", symbol->lvl);
+                                        printf("\t\t\tTypeOriginator: %d\n\n", symbol->typeOriginator);
+                                }
+
+                                printf("\n");
+                        }                        
                 }
         }
 
@@ -452,11 +549,5 @@ void dumpHash(struct hash *hash) {
 
 
 
-unsigned long long int getLexLevel(struct hash *hash) {
-        return hash->lexLevel;
-}
 
 
-void setLexLevel(struct hash *hash, unsigned long long int lexLevel) {
-        hash->lexLevel = lexLevel;
-}

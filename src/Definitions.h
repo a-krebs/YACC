@@ -190,7 +190,7 @@ struct Symbol {
 	Kind kindPtr;	/* kind specific description of symbol */
 	int lvl;	/* the lexical level at which the entry is defined */
 	int typeOriginator; /* set if the symbol is the originator of its kindPtr*/
-	struct Symbol *symbol;	
+	struct Symbol *next;	
 };
 
 /* typedef Symbol to make it easier to work with */

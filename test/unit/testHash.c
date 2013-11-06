@@ -81,6 +81,9 @@ char *test_createHash() {
 			symbolTable->elements[i] == NULL);
 	}
 
+	mu_assert("Expected initial lex level of 0",
+		symbolTable->lexLevel == 0);
+
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
@@ -100,6 +103,9 @@ char *test_createHash() {
 		mu_assert("Empty table bucket does not equal NULL.", 
 			symbolTable->elements[i] == NULL);
 	}
+
+	mu_assert("Expected initial lex level of 0",
+		symbolTable->lexLevel == 0);	
 
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
@@ -170,6 +176,7 @@ char *test_isKeyCollison() {
 
 char *test_createHashElement() {
 	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	symbol->lvl = 14;
 //simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
@@ -180,8 +187,27 @@ char *test_createHashElement() {
 	mu_assert("Could not create element where bucket collison happened.", 
  		createHashElement(symbolTable, "boo", symbol) == 0);
 
-	mu_assert("Over written hash value.", 
+	mu_assert("Level of symbol not same as current lex level.", 
  		createHashElement(symbolTable, "blue", symbol) == 1);	
+
+	setLexLevel(symbolTable, 14);
+	mu_assert("Head of symbol linked list hash same lex level as appending symbol.", 
+ 		createHashElement(symbolTable, "blue", symbol) == 3);
+
+	struct Symbol *symbol2 =  malloc(sizeof(struct Symbol));
+	symbol2->lvl = 1;
+	setLexLevel(symbolTable, 1);
+	mu_assert("Appending symbol is at a lower lex level then list head.", 
+ 		createHashElement(symbolTable, "blue", symbol2) == 4);
+
+	symbol2->lvl = 15;
+	setLexLevel(symbolTable, 15);
+	mu_assert("Could not append symbol where expected.", 
+ 		createHashElement(symbolTable, "blue", symbol2) == 0);
+
+	// createHashElement(symbolTable, "green", symbol) ;
+	// createHashElement(symbolTable, "red", symbol) ;
+	// dumpHash(symbolTable);
 
 	destroyHash(symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
@@ -614,6 +640,99 @@ char *test_getSizeOfBucket() {
 }
 
 
+char * test_getLexLevel() {
+	struct hash *hash = createHash(&getHashedKeyNormal);
+	hash->lexLevel = 5;
+
+	mu_assert("Expected lexical level of 5",
+		getCurrentLexLevel(hash) == 5);
+	
+	mu_assert("Expected lexical level of 5",
+		getCurrentLexLevel(hash) != 1);
+
+	return NULL;
+}
+
+char * test_setLexLevel() {
+	struct hash *hash = createHash(&getHashedKeyNormal);
+
+	setLexLevel(hash, 5);
+	mu_assert("Call to setLexLevel seg faulted", 1);
+
+	mu_assert("Expected value of getCurrentLexLevel is 5.",
+		getCurrentLexLevel(hash) == 5);
+
+	return NULL;
+}
+
+
+char * test_getSymbolLexLevel() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	symbol->lvl = 123;
+
+	mu_assert("Unexpected value in symbol lex level.",
+		getSymbolLexLevel(symbol) == 123);	
+
+	return NULL;
+}
+
+char * test_getCurrentLexLevel() {
+	struct hash *hash = createHash(&getHashedKeyNormal);
+	hash->lexLevel = 23;
+
+	mu_assert("Unexpected value in hash lex level.",
+		getCurrentLexLevel(hash) == 23);	
+
+	return NULL;
+}
+
+char * test_appendToSymbolList() {
+	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	symbol->lvl = 0;
+	struct hashElement *element = allocHashElement("weee", symbol);
+	element->symbol = symbol;
+
+	symbol = malloc(sizeof(struct Symbol));
+	symbol->lvl = 1;
+
+	struct hash *hash = createHash(&getHashedKeySimple);
+	hash->lexLevel = 1;
+
+	// printf("Retval: %d\n", appendToSymbolList(hash, element, symbol));
+	mu_assert("Could not append symbol.",
+		appendToSymbolList(hash, element, symbol) == 0);
+
+	symbol = malloc(sizeof(struct Symbol));
+	symbol->lvl = 1;
+	hash->lexLevel = 2;
+
+	mu_assert("Could not append, current lex level not same as symbol.",
+		appendToSymbolList(hash, element, symbol) == 1);
+
+	symbol = malloc(sizeof(struct Symbol));
+	symbol->lvl = 2;
+	hash->lexLevel = 2;
+
+	mu_assert("Could not append symbol.",
+		appendToSymbolList(hash, element, symbol) == 0);
+
+	symbol = malloc(sizeof(struct Symbol));
+	symbol->lvl = 2;
+
+	mu_assert("Could not append, head of symbol list has same lex level as appending symbol.",
+		appendToSymbolList(hash, element, symbol) == 3);	
+
+	symbol = malloc(sizeof(struct Symbol));
+	symbol->lvl = 1;
+	hash->lexLevel = 1;
+
+	mu_assert("Could not append, head of symbol has higher lex level then as appending symbol.",
+		appendToSymbolList(hash, element, symbol) == 4);
+
+	return NULL;
+}
+
+
 char * test_all_Hash() {
 	// mu_run_test(test_getHashedKey);
 	
@@ -636,6 +755,11 @@ char * test_all_Hash() {
 	mu_run_test(test_getHashedKeySimple);
 	mu_run_test(test_getHashedKeyNormal);
 	mu_run_test(test_getSizeOfBucket);
+	mu_run_test(test_getLexLevel); 
+	mu_run_test(test_setLexLevel);
+	mu_run_test(test_getSymbolLexLevel);
+	mu_run_test(test_getCurrentLexLevel);
+	mu_run_test(test_appendToSymbolList);
 
 	return NULL;
 }
