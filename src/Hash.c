@@ -4,6 +4,7 @@
 #include <err.h>
 
 #include "Hash.h"
+#include "Definitions.h"
 
 
 /*
@@ -311,16 +312,13 @@ struct hashElement *findHashElementByKey(struct hash *hash, char *key) {
  *
  * Parameters: 
  *              key: hash key
- *              value: int value for testing (WILL BE REMOVED!
- *                      and replaced with real symbol info)
+ *              symbolPtr: pointer to symbol struct holding
+ *                      symbol info
  *
  * Return: pointer to a newly create struct hashElement.
  *
- * TODO: add real parameters for when adding symbols to table   
- *              - add symbol null pointer
  */
-// struct hashElement *createNewElement(char *key, int value) {
-struct hashElement *allocHashElement(char *key, int value) {    
+struct hashElement *allocHashElement(char *key, struct Symbol *symbolPtr) {    
         struct hashElement *element = malloc(sizeof(struct hashElement));
 
         if (element == NULL ) {
@@ -328,11 +326,10 @@ struct hashElement *allocHashElement(char *key, int value) {
                 exit(EXIT_FAILURE);
         }
 
-        // element->key = strdup(key);
         element->key = malloc(strlen(key) + 1);
         strcpy(element->key, key);
 
-        element->value = value;
+        element->symbol = symbolPtr;
         element->prev = NULL;
         element->next = NULL;
 
@@ -364,18 +361,16 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
  * Parameters: 
  *              hash: hash for element to be created in
  *              key: hash key
- *              value: int value for testing (WILL BE REMOVED!
- *                      and replaced with real symbol info)
+ *              symbol: pointer to symbol struct to saved in 
+ *                  hash element.
  *
- * Returns: Boolean: 1 on success and 0 and failure.
- * 
- * TODO: add real parameters for when adding symbols to table      
+ * Returns: Boolean: 1 on success and 0 and failure.     
 */
-int createHashElement(struct hash *hash, char *key, int value) {
+int createHashElement(struct hash *hash, char *key, struct Symbol *symbolPtr) {
         struct hashElement *element;
         int index = getHashIndex(hash, key);
 
-        element = allocHashElement(key, value);  
+        element = allocHashElement(key, symbolPtr);  
 
         if ( isKeyCollison(hash, key) ) {
 
@@ -398,7 +393,7 @@ int createHashElement(struct hash *hash, char *key, int value) {
         }    
 
         if (HASH_DEBUG) {
-                printf("Created hash element with data:\n\tkey: %s\n\tvalue: %d\n", element->key, element->value);  
+                printf("Created hash element with data:\n\tkey: %s\n\tsymbol pointer: %p\n", element->key, element->symbol);  
         }
 
         return 0;
@@ -458,4 +453,9 @@ void dumpHash(struct hash *hash) {
         printf("DUMP COMPLETE.\n\n");
 }
 
+
+int test( struct Symbol *symbolPtr ) {
+
+        return 1;
+}
 
