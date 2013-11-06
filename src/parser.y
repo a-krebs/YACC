@@ -49,13 +49,17 @@ program
 
 program_head
 : PROGRAM ID_or_err L_PAREN ID_or_err comma_or_error ID_or_err R_PAREN semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl($<id>2, $<id>4, $<id>5);
+	  inDecl = 1; }
 | PROGRAM semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl(NULL, NULL, NULL);
+	  inDecl = 1; }
 | PROGRAM ID_or_err L_PAREN semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl($<id>2, NULL, NULL);
+	  inDecl = 1; }
 | PROGRAM ID_or_err semicolon_or_error
-	{ inDecl = 1; }
+	{ doProgramDecl($<id>2, NULL, NULL);
+	  inDecl = 1; }
 ;
 
 // no | here since this is a list
@@ -106,6 +110,7 @@ type_decl
 
 type
 : structured_type
+	{ $<symbol>$ = $<symbol>1; }
 | simple_type
 	{ $<symbol>$ = $<symbol>1; }
 | scalar_type
@@ -140,11 +145,14 @@ array_type_decl
 : LS_BRACKET array_type RS_BRACKET
 	{ $<symbol>$ = $<symbol>2; }
 | LS_BRACKET error RS_BRACKET
-	{yyerrok;}
+	{ $<symbol>$ = NULL;
+	  yyerrok;}
 | error RS_BRACKET
-	{yyerrok;}
+	{ $<symbol>$ = NULL;
+	  yyerrok;}
 | LS_BRACKET error
-	{yyerrok;}
+	{ $<symbol>$ = NULL;
+	  yyerrok;}
 ;
 
 array_type
@@ -203,8 +211,7 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<proxy>3);
-	  /* TODO check what we're doing for f_parm_decl  */ }
+	{ $<symbol>$ = enterProcDecl($<id>2, $<proxy>3); }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
 	{ $<symbol>$ = enterFuncDecl($<id>2, $<proxy>3); }
 | PROCEDURE ID semicolon_or_error
@@ -224,9 +231,9 @@ f_parm_decl
 	{ $<proxy>$ = $<proxy>2; }
 | L_PAREN R_PAREN
 	{ $<proxy>$ = NULL; }
-// TODO what is this production for?
 | VAR ID error COLON simple_type
-	{yyerrok;}
+	{ $<proxy>$ = NULL;
+	  yyerrok; }
 ;
 
 f_parm_list
@@ -251,7 +258,6 @@ f_parm
 
 compound_stat
 : _BEGIN stat_list END
-	{ /* TODO maybe refactor this into a begin and end part */ }
 ;
 
 stat_list
@@ -269,12 +275,12 @@ simple_stat
 : var ASSIGN expr
 	{ assignOp($<proxy>1, $<proxy>3); }
 | proc_invok
-	{ /* TODO */ }
 | compound_stat
 ;
 
 var
 : decl_ID_or_err
+	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | ID_or_err
 	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | var PERIOD ID_or_err
@@ -284,10 +290,15 @@ var
 ;
 
 subscripted_var
-: var LS_BRACKET expr
-	{ $<proxy>$ = $<proxy>3; }
-| subscripted_var comma_or_error expr
-	{ /* TODO */ }
+: var LS_BRACKET subscripted_var_index
+	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
+| subscripted_var comma_or_error subscripted_var_index
+	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
+;
+
+subscripted_var_index
+: expr
+	{ $<proxy>$ = createArrayIndexList($<proxy>1); }
 ;
 
 expr
@@ -336,13 +347,14 @@ term
 | term AND factor
 	{ $<proxy>$ = andOp($<proxy>1, $<proxy>3); }
 | error
+	{ $<proxy>$ = NULL; }
 ;
 
 factor
 : var
 	{ $<proxy>$ = $<proxy>1; }
 | unsigned_const
-	{ $<proxy>$ = getProxyFromSymbol($<symbol>1); }
+	{ $<proxy>$ = $<proxy>1; }
 | L_PAREN expr R_PAREN_or_error
 	{ $<proxy>$ = $<proxy>2; }
 | func_invok
@@ -358,65 +370,93 @@ R_PAREN_or_error
 
 unsigned_const
 : unsigned_num
-	{ $<symbol>$ = $<symbol>$; }
+	{ $<proxy>$ = $<proxy>1; }
 | STRING_CONST
-	{ $<symbol>$ = anonStringLiteral($<string>1); }
-	// return String struct from Type.h
+	{ $<proxy>$ = proxyStringLiteral($<string>1); }
 ;
 
 unsigned_num
 : INT_CONST
-	{ $<symbol>$ = anonIntLiteral($<integer>1); }
+	{ $<proxy>$ = proxyIntLiteral($<integer>1); }
 | REAL_CONST
-	{ $<symbol>$ = anonRealLiteral($<real>1); }
+	{ $<proxy>$ = proxyRealLiteral($<real>1); }
 ;
 
 proc_invok
-: plist_finvok R_PAREN
+: plist_pinvok R_PAREN
+	{ /* Action is performed one level lower */ }
 | ID_or_err L_PAREN R_PAREN
+	{ /* TODO might want to explicitly use an empty arg list here */ 
+	  procInvok($<id>1, NULL); }
+;
+
+// duplicated once for functions and once for procedures
+plist_pinvok
+: ID_or_err L_PAREN parm
+	{ procInvok($<id>1, $<proxy>3); }
+| plist_pinvok comma_or_error parm
+	{ // parm returns the list of arguments
+	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
 ;
 
 func_invok
 : plist_finvok R_PAREN
+	{ /* Action is performed one level lower */
+	  $<proxy>$ = $<proxy>1; }
 | ID_or_err L_PAREN R_PAREN
+	{ /* TODO might want to explicitly use an empty arg list here */
+	  $<proxy>$ = funcInvok($<id>1, NULL); }
 | plist_finvok error R_PAREN
-	{ yyerrok; }
+	{ $<proxy>$ = funcInvok($<id>1, NULL);
+	  yyerrok; }
 ;
 
+// duplicated once for functions and once for procedures
 plist_finvok
 : ID_or_err L_PAREN parm
+	{ $<proxy>$ = funcInvok($<id>1, $<proxy>3); }
 | plist_finvok comma_or_error parm
+	{ // parm returns the list of arguments
+	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
 ;
 
 parm
 : expr
+	{ // TODO can we use the same action as for function decl?
+	  $<proxy>$ = createArgList($<proxy>1); }
 ;
 
 struct_stat
 : IF expr THEN matched_stat ELSE stat
 | IF expr THEN stat
 | WHILE expr DO stat
+	{ endWhileLoop(); }
 | CONTINUE
+	{ continueLoop(); }
 | EXIT
+	{ exitLoop(); }
 ;
 
 matched_stat
 : simple_stat
 | IF expr THEN matched_stat ELSE matched_stat
 | WHILE expr DO matched_stat
+	{ endWhileLoop(); }
 | CONTINUE
+	{ continueLoop(); }
 | EXIT
+	{ exitLoop(); }
 ;
 
 comma_or_error
 : error COMMA
-	{yyerrok;}
+	{ yyerrok; }
 | COMMA
 ;
 
 semicolon_or_error
 : error SEMICOLON
-	{ yyerrok;}
+	{ yyerrok; }
 | SEMICOLON
 ;
 
