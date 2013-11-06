@@ -126,19 +126,25 @@ $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 $(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Definitions.h
 	$(COMPILE)
 
-$(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
+$(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
 
-$(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
+$(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
+	$(COMPILE)
+
+$(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
+	$(COMPILE)	
+
+$(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
+	$(COMPILE)
+
+$(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
 
 $(BIN)/testProgList.o: $(TEST)/testProgList.c $(TEST)/testProgList.h
 	$(COMPILE)
 
 $(BIN)/testError.o: $(TEST)/testError.c $(TEST)/minunit.h
-	$(COMPILE)
-
-$(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
 	$(COMPILE)
 
 $(BIN)/testErrorLL.o: $(TEST)/testErrorLL.c $(TEST)/testErrorLL.h
@@ -153,14 +159,8 @@ $(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
 $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 	$(COMPILE)
 
-$(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
-	$(COMPILE)	
-
 $(BIN)/testHash.o: $(TEST)/testHash.c $(TEST)/testHash.h
 	$(COMPILE)		
-
-$(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
-	$(COMPILE)
 
 $(BIN)/testActions.o: $(TEST)/testActions.c $(TEST)/testActions.h
 	$(COMPILE)		
@@ -171,11 +171,11 @@ $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
 $(BIN)/tokenTestParser.tab.o: $(SRC)/tokenTestParser.tab.c $(SRC)/lex.yy.c
 	$(BISONFLEXCOMPILE)
 
-$(BIN)/lex.yy.o: $(SRC)/lex.yy.c
-	$(BISONFLEXCOMPILE)
-
 $(SRC)/tokenTestParser.tab.c: $(SRC)/generated_tokenTestParser.y
 	$(YACC)
+
+$(BIN)/lex.yy.o: $(SRC)/lex.yy.c
+	$(BISONFLEXCOMPILE)
 
 $(SRC)/parser.tab.c: $(SRC)/generated_parser.y
 	$(YACC)
