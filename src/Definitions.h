@@ -67,6 +67,12 @@ struct ParamArray {
 	unsigned int nElements;
 };
 
+struct ElementArray {
+	void **data;
+	unsigned int len;
+	unsigned int nElements;
+};
+
 
 struct Array {
 	struct Symbol *baseTypeSym;	/* pointer to struct of base type */

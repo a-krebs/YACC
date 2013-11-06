@@ -2,7 +2,7 @@
 #include "minunit.h"
 #include "testError.h"
 #include "testErrorLL.h"
-#include "testParamArray.h"
+#include "testElementArray.h"
 #include "testProgList.h"
 #include "testKind.h"
 #include "testSymbol.h"
@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
 char *test_all() {
 	mu_run_suite(test_all_Error);
 	mu_run_suite(test_all_ErrorLL);
-	mu_run_suite(test_all_ParamArray);
+	mu_run_suite(test_all_ElementArray);
 	mu_run_suite(test_all_ProgList);
 	mu_run_suite(test_all_Symbol);
 	mu_run_suite(test_all_Kind);
