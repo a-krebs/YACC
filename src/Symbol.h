@@ -20,9 +20,6 @@ Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
  * No creation functions for Char and String as they cannot be the result
  * of operations
  */
-ProxySymbol *newBooleanConstProxySym(int *, Symbol *);
-ProxySymbol *newIntegerConstProxySym(int *, Symbol *);
-ProxySymbol *newRealConstProxySym(double *, Symbol *);
 ProxySymbol *newConstProxySym(void *, Symbol *); 
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
