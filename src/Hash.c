@@ -12,6 +12,7 @@
         - need to free what was malloced in createHash
         - test for bounds of hash array 0 and table_size
         - test for keys of incorrect values i.e. =  (is this even allowed in the grammer)
+        - need to free symbol member when deleting
 */
 
 
@@ -101,7 +102,58 @@ unsigned int getHashedKeyNormal(char *string) {
 }
 
 
-/* Determined the number of hash elements in the bucket.
+/* Gets length of the symbol linked list pointed to by element
+ *
+ * Parameters: 
+ *              element: struct hashElement holding pointer to
+ *                      head of list
+ *
+ * Return: -1 on passed element NULL
+ *         0 when passed element pointers to NULL
+ *         everything else is count of list length
+ */
+int getLengthOfSymbolList(struct hashElement *element) {
+        struct Symbol *symbol;
+        int count = 0;
+
+        if (element == NULL) {
+                return -1;
+        }
+
+        symbol = element->symbol;
+
+        for (; symbol != NULL; symbol = symbol->next) {
+                count++;
+        }
+
+        return count;
+}
+
+
+/* Checks to see if the supplied symbol is the only one in the 
+ * linked list of symbols and that element is pointing to it.
+ *
+ * Parameters: 
+ *              element: struct hashElement holding pointer to
+ *                      head of list
+ *              symbol: symbol to search against
+ *
+ * Return: -1 on passed element NULL
+ *         0 when passed element pointers to NULL
+ *         everything else is count of list length
+ */
+int isOnlySymbolInList(struct hashElement *element, struct Symbol *symbol) {
+        if ( (getLengthOfSymbolList(element) == 1) 
+                && (element->symbol == symbol) ) {
+                return 1;
+        }
+
+        return 0;
+}
+
+
+/* Determined the number of hash elements in the bucket. i.e. lenghth
+ * of linked list.
  *
  * Parameters: 
  *              hash: hash where bucket resides
@@ -114,7 +166,7 @@ int getSizeOfBucket(struct hash *hash, char *key) {
         int count = 0;
 
         for (; element != NULL; element = element->next) {
-                     count++;
+                count++;
         }
 
         return count;
@@ -560,12 +612,12 @@ void dumpHash(struct hash *hash) {
  *
  * Return: Pointer to struct symbol
  */
-struct Symbol *findSymbolByHashElement(struct hash *hash, char *key, int lexLevel) {
+struct Symbol *findSymbolByLexLevel(struct hash *hash, char *key, int lexLevel) {
         struct Symbol *symbol;
         struct hashElement *element = findHashElementByKey(hash, key);
 
         if ( element == NULL ) {
-                if (HASH_DEBUG) { printf("Should not find element.\n"); }
+                if (HASH_DEBUG) { printf("Could not find element.\n"); }
                 return NULL;
         }
 
@@ -597,7 +649,7 @@ struct Symbol *findSymbolByHashElement(struct hash *hash, char *key, int lexLeve
 struct Symbol *getLocalSymbol(struct hash *hash, char *key) {
         int lexLevel = getCurrentLexLevel(hash);
 
-        return findSymbolByHashElement(hash, key, lexLevel);
+        return findSymbolByLexLevel(hash, key, lexLevel);
 }
 
 
@@ -614,7 +666,7 @@ struct Symbol *getGlobalSymbol(struct hash *hash, char *key) {
         struct Symbol *symbol;
 
         for (; lexLevel >= 0; lexLevel--) {
-                symbol = findSymbolByHashElement(hash, key, lexLevel);
+                symbol = findSymbolByLexLevel(hash, key, lexLevel);
 
                 if ( symbol != NULL ) {
                         return symbol;
@@ -623,3 +675,49 @@ struct Symbol *getGlobalSymbol(struct hash *hash, char *key) {
 
         return NULL;
 }
+
+
+/* Finds the requested symbol and deletes it struct at the requested
+ * lexical level. If symbol is is alone in hashElemet, will delete
+ * whole hash element.
+ *
+ * Parameters: 
+ *              hash: hash to be looked in
+ *              key: hash key
+ *              lexLevel: lexical level of symbol to be deleted
+ *
+ * Return: 0 on success
+ *         1 on could not find element to delete
+ *         2 attempted to delete value not at head of list
+*/
+int deleteSymbol(struct hash *hash, char *key, int lexLevel) {
+        struct Symbol *symbol = findSymbolByLexLevel(hash, key, lexLevel);
+        struct hashElement *element = findHashElementByKey(hash, key);
+        int retval;
+
+        //check if symobol valid
+        if ( symbol == NULL ) {        
+                if (HASH_DEBUG) { printf("Could not delete symbol.\n"); }
+                return 1;
+        }
+
+        //only item in list
+        if ( isOnlySymbolInList(element, symbol) ) {
+                retval = deleteHashElement(hash, key);
+                return retval;
+        }
+
+        //at head of list
+        if ( element->symbol == symbol ) {
+                element->symbol = symbol->next;
+                //NEED TO FREE SYMBOL;
+                return 0;
+        }
+
+        if (HASH_DEBUG) {
+                printf("Symbol request to be delete not at head of symbol list.\n");
+        }
+
+        return 2;
+}
+

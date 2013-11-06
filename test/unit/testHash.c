@@ -759,23 +759,23 @@ char *test_findSymbolByHashElement() {
 	setLexLevel(hash, 2);
 	createHashElement(hash, "cherry", symbol3);
 
-	struct Symbol *retSymbol = findSymbolByHashElement(hash, "cherry", 1);
+	struct Symbol *retSymbol = findSymbolByLexLevel(hash, "cherry", 1);
 	mu_assert("Symbol found is not correct, test1.",
 		retSymbol == symbol2);
 
-	retSymbol = findSymbolByHashElement(hash, "charley", 0);
+	retSymbol = findSymbolByLexLevel(hash, "charley", 0);
 	mu_assert("Symbol found is not correct, test2.",
 		retSymbol == symbol0);	
 
-	retSymbol = findSymbolByHashElement(hash, "charley", 1);
+	retSymbol = findSymbolByLexLevel(hash, "charley", 1);
 	mu_assert("Symbol found is not correct, test3.",
 		retSymbol == NULL);	
 
-	retSymbol = findSymbolByHashElement(hash, "cherry", 0);
+	retSymbol = findSymbolByLexLevel(hash, "cherry", 0);
 	mu_assert("Symbol found is not correct, test4.",
 		retSymbol == symbol1);
 
-	retSymbol = findSymbolByHashElement(hash, "cherry", 2);
+	retSymbol = findSymbolByLexLevel(hash, "cherry", 2);
 	mu_assert("Symbol found is not correct, test5.",
 		retSymbol == symbol3);
 
@@ -844,7 +844,7 @@ char * test_getGlobalSymbol() {
 	setLexLevel(hash, 2);
 	createHashElement(hash, "cherry", symbol3);
 
-	dumpHash(hash);
+	// dumpHash(hash);
 
 	struct Symbol *retSymbol = getGlobalSymbol(hash, "cherry");
 	mu_assert("Global symbol found is not correct, test1.",
@@ -860,6 +860,123 @@ char * test_getGlobalSymbol() {
 	retSymbol = getGlobalSymbol(hash, "ruby");
 	mu_assert("Global symbol found is not correct, test3.",
 		retSymbol == symbol4);	
+
+	return NULL;
+}
+
+
+char * test_getLengthOfSymbolList() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	struct hashElement *element = findHashElementByKey(hash, "charley");
+	int len = getLengthOfSymbolList(element);
+	mu_assert("Unexpected returned length, test 1",
+		len == 1);
+
+	element = findHashElementByKey(hash, "cherry");
+	len = getLengthOfSymbolList(element);
+	mu_assert("Unexpected returned length, test 2",
+		len == 3);	
+
+	element = findHashElementByKey(hash, "green");
+	len = getLengthOfSymbolList(element);
+	mu_assert("Unexpected returned length, test 3",
+		len == -1);
+
+	element = findHashElementByKey(hash, "cherry");
+	element->symbol = NULL;
+	len = getLengthOfSymbolList(element);
+	mu_assert("Unexpected returned length, test 4",
+		len == 0);	
+
+	//may be add functionality for null element check
+
+	return NULL;
+}
+
+char * test_isOnlySymbolInList() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	struct hashElement *element = findHashElementByKey(hash, "charley");
+	struct Symbol *retSymbol = getGlobalSymbol(hash, "charley");
+	mu_assert("Unexpected return of isOnlySymbolInList, test 1",
+		isOnlySymbolInList(element, retSymbol) == 1);	
+
+	element = findHashElementByKey(hash, "cherry");
+	retSymbol = getGlobalSymbol(hash, "cherry");
+	mu_assert("Unexpected return of isOnlySymbolInList, test 2",
+		isOnlySymbolInList(element, retSymbol) == 0);		
+
+	return NULL;
+}
+
+
+char * test_deleteSymbol() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	struct Symbol *symbol4 = createTestSymbol(2, "yellow");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "yellow", symbol4);
+	struct hashElement *element = findHashElementByKey(hash, "yellow");
+	element->symbol = NULL;
+
+	// dumpHash(hash);
+	
+	mu_assert("Unexpected return of deleteSymbol, test 1",
+		deleteSymbol(hash, "cherry", 2) == 0);	
+
+	mu_assert("Unexpected return of deleteSymbol, test 2",
+		deleteSymbol(hash, "charley", 0) == 0);		
+
+	mu_assert("Unexpected return of deleteSymbol, test 3",
+		deleteSymbol(hash, "cherry", 0) == 2);	
+
+	mu_assert("Unexpected return of deleteSymbol, test 3",
+		deleteSymbol(hash, "yellow", 2) == 1);	
+
+	// dumpHash(hash);
 
 	return NULL;
 }
@@ -895,6 +1012,9 @@ char * test_all_Hash() {
 	mu_run_test(test_findSymbolByHashElement);
 	mu_run_test(test_getLocalSymbol);
 	mu_run_test(test_getGlobalSymbol);
+	mu_run_test(test_getLengthOfSymbolList);
+	mu_run_test(test_isOnlySymbolInList);
+	mu_run_test(test_deleteSymbol);
 
 	return NULL;
 }
