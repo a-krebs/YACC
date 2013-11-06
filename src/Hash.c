@@ -425,9 +425,6 @@ struct hash *createHash(unsigned int (*hashFunction)(char *)) {
  * Parameters: void
  *
  * Return: void
- *
- * TODO: Add values for the symbol info 
- *              and remove value attribute.
  */
 void dumpHash(struct hash *hash) {
         struct hashElement *element;
@@ -441,9 +438,9 @@ void dumpHash(struct hash *hash) {
                         printf("Element: %d:\n", i);
                     
                         for (; element != NULL; element = element->next) {
+                                printf("\tSelf Pointer: %p\n", element);
                                 printf("\tKey: %s\n", element->key);
-                                printf("\tValue: %d\n", element->value);
-                                printf("\tElement Pointer: %p\n", element);
+                                printf("\tSymbol pointer: %p\n", element->symbol);
                                 printf("\tPrev pointer: %p\n", element->prev);
                                 printf("\tNext pointer: %p\n\n",element->next);
                         }

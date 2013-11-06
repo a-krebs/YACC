@@ -10,13 +10,10 @@
 /* Global variables. */
 struct hashElement {
     char *key;
-    int value;
     struct Symbol *symbol;
     struct hashElement *prev;
     struct hashElement *next;
 };
-
-// struct hashElement *symbolTable[TABLE_SIZE];
 
 struct hash {
     struct hashElement *elements[TABLE_SIZE];
