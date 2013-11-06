@@ -418,6 +418,14 @@ newConstProxySym(void * result, Symbol *typeSym)
 ProxySymbol *
 newBooleanConstProxySym(int *result, Symbol *typeSym)
 {
+	ProxySymbol *constSym = NULL;
+	constSym = calloc(1, sizeof(ProxySymbol));
+	constSym->name = NULL;
+	constSym->kind = CONST_KIND;
+	allocateKindPtr(constSym);
+	/* TODO: set type pointer function!!!! yayayayaya */
+	constSym->kindPtr.ConstKind->typeSym = typeSym;
+	getConstVal(constSym)->Boolean.value = result;
 	return NULL;
 }
 
