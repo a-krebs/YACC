@@ -189,14 +189,15 @@ struct Symbol {
 	kind_t kind;	/* the kind associated with this entry */
 	Kind kindPtr;	/* kind specific description of symbol */
 	int lvl;	/* the lexical level at which the entry is defined */
-	int typeOriginator; /* set if the symbol is the originator of its kindPtr*/	
+	int typeOriginator; /* set if the symbol is the originator of its kindPtr*/
+	struct Symbol *symbol;	
 };
 
 /* typedef Symbol to make it easier to work with */
 typedef struct Symbol Symbol;
 /* typedef a proxy type to hold the same information as symbol, but
  * to not be stored in the symbol table. It is used as an intermediate value
- * when traversing the parse tree.
+ * when traversing the parse tree. 
  */
 typedef Symbol ProxySymbol;
 #endif

@@ -18,6 +18,7 @@ struct hashElement {
 struct hash {
     struct hashElement *elements[TABLE_SIZE];
     unsigned int (*hashFunction)();
+    unsigned long long int lexLevel;
 };
 
 
