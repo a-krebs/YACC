@@ -290,10 +290,15 @@ var
 ;
 
 subscripted_var
-: var LS_BRACKET expr
-	{ $<proxy>$ = $<proxy>3; }
-| subscripted_var comma_or_error expr
-	{ /* TODO */ }
+: var LS_BRACKET subscripted_var_index
+	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
+| subscripted_var comma_or_error subscripted_var_index
+	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
+;
+
+subscripted_var_index
+: expr
+	{ $<proxy>$ = createArrayIndexList($<proxy>1); }
 ;
 
 expr

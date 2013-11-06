@@ -275,6 +275,33 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 	return NULL;
 }
 
+/*
+ * Access an array given the list of indexes.
+ *
+ * Return a ProxySymbol of the expected type.
+ */
+ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol *indexes) {
+	return NULL;
+}
+
+/*
+ * Concatenate two arrays of array indexes, maintaining order.
+ *
+ * Return a pointer to a concatenated list.
+ */
+ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
+	return list1;
+}
+
+/*
+ * Create a new array index list as a ProxySymbol.
+ *
+ * Return a pointer to the new list.
+ */
+ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
+	return NULL;
+}
+
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
