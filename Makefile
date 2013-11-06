@@ -6,7 +6,7 @@
 # this list.
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
-OBJS+=		$(BIN)/ProgList.o $(BIN)/ParamArray.o $(BIN)/Symbol.o 
+OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o $(BIN)/Symbol.o 
 OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
@@ -38,7 +38,7 @@ TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testHash.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
-TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testParamArray.o
+TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
@@ -117,7 +117,7 @@ $(BIN)/Kind.o: $(SRC)/Kind.c $(SRC)/Kind.h $(SRC)/Definitions.h
 $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
-$(BIN)/ParamArray.o: $(SRC)/ParamArray.c $(SRC)/ParamArray.h
+$(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 	$(COMPILE)
 
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
@@ -150,7 +150,7 @@ $(BIN)/testError.o: $(TEST)/testError.c $(TEST)/minunit.h
 $(BIN)/testErrorLL.o: $(TEST)/testErrorLL.c $(TEST)/testErrorLL.h
 	$(COMPILE)
 
-$(BIN)/testParamArray.o: $(TEST)/testParamArray.c $(TEST)/testParamArray.h
+$(BIN)/testElementArray.o: $(TEST)/testElementArray.c $(TEST)/testElementArray.h
 	$(COMPILE)
 
 $(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
