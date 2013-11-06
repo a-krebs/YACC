@@ -451,8 +451,12 @@ void dumpHash(struct hash *hash) {
 }
 
 
-int test( struct Symbol *symbolPtr ) {
 
-        return 1;
+unsigned long long int getLexLevel(struct hash *hash) {
+        return hash->lexLevel;
 }
 
+
+void setLexLevel(struct hash *hash, unsigned long long int lexLevel) {
+        hash->lexLevel = lexLevel;
+}

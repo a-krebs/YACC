@@ -23,6 +23,7 @@ SRC=		src
 BIN=		bin
 # Location of test source files
 TEST=		test/unit
+TEST_FILES=	test/integration
 
 # Location and name of executables along with their object dependencies
 EXE=		$(BIN)/pal
@@ -202,6 +203,7 @@ clean:
 	-rm -f $(SRC)/generated_tokenTestParser.y
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
+	-rm -f ./*.pal
 
 # shortcuts for common actions
 build:
@@ -223,10 +225,16 @@ integration_tests:
 	@mv $(EXE).bak $(EXE)
 	@mv $(LEXTEST_EXE).bak $(LEXTEST_EXE)
 	@echo "SYNTAX TESTS:"
-	@cd test && python testRunner.py -x -d ./integration/syntax
+	@-cd test && python testRunner.py -x -d ./integration/syntax
+	@echo "CHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
+	@-cd test && python testRunner.py -x -i -d ./integration/semantic
 	@echo "\nSEMANTIC TESTS:"
-	@cd test && python testRunner.py -c -d ./integration/semantic
+	@-cd test && python testRunner.py -c -d ./integration/semantic
+	@echo "\nFULL TESTS:"
+	@-cd test && python testRunner.py -d ./integration/full
 
 # remove all .lst files
 clean_lst:
 	find . -name "*.lst" -delete
+
+include Checkpoint2.mk
