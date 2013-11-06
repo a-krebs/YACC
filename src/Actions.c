@@ -393,6 +393,21 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
 }
 
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
+
+	if ((!x) || (!y)) return NULL;
+	
+	/* 
+	 * If x or y is not a constant, we have no responsibility
+	 * with regard to insuring the propogation of a compile time
+	 * known funciton.
+	 */
+	if ((x->kind != CONST_KIND) || (y->kind != CONST_KIND)) {
+		return assertOpCompat(getTypeSym((Symbol *) x), EQUAL, 
+		    getTypeSym((Symbol *)y));
+	}	
+
+	/* Else, we have two CONST_KIND symbols.  We must evaluate */
+
 	return NULL;
 }
 

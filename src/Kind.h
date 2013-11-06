@@ -13,5 +13,6 @@ void allocateKindPtr(Symbol *);
 void allocationErrorCheck(void *);
 
 AnonConstVal *getConstVal(Symbol *);
+
 void copyConstVal(AnonConstVal *, AnonConstVal *, type_t);
 #endif

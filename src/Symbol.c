@@ -395,6 +395,44 @@ getTypeSym(Symbol *s)
 	}
 }
 
+/*
+ * Creates a new CONST_KIND ProxySymbol using the result of a arithmetic,
+ * logical or arithmetic operation on two constants. 
+ */
+ProxySymbol *
+newConstProxySym(void * result, Symbol *typeSym)
+{
+	switch (getType(typeSym)) {
+	case BOOLEAN_T:
+		return newBooleanConstProxySym((int *) result, typeSym);
+	case INTEGER_T:
+		return newIntegerConstProxySym((int *)result, typeSym);
+	case REAL_T:
+		return newRealConstProxySym((double *) result, typeSym);
+	default:
+		/* Shouldn't be reached */
+		return NULL;
+	}
+}
+
+ProxySymbol *
+newBooleanConstProxySym(int *result, Symbol *typeSym)
+{
+	return NULL;
+}
+
+ProxySymbol *
+newIntegerConstProxySym(int *result, Symbol *typeSym)
+{
+	return NULL;
+}
+
+ProxySymbol *
+newRealConstProxySym(double *result, Symbol *typeSym)
+{
+	return NULL;
+}
+
 void
 setSymbolName(Symbol *s, char *id)
 {
