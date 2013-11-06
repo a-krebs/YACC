@@ -13,8 +13,8 @@ OBJS+=		$(BIN)/Hash.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
-TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o $(BIN)/Utils.o
-TEST_FILTER+=	$(BIN)/Actions.o
+TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o #$(BIN)/Utils.o
+#TEST_FILTER+=	$(BIN)/Actions.o
 LEX_FILTER=	$(BIN)/parser.tab.o
 
 # Root source directory
@@ -38,7 +38,7 @@ TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testHash.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testParamArray.o
-TESTOBJS1+=	$(BIN)/testActions.o
+TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -86,7 +86,7 @@ lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
 
 # Build test executable
-test: CFLAGS+= -g -Isrc/ -DTEST
+test: CFLAGS+= -g -Isrc/ -DTESTBUILD
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)
@@ -147,6 +147,9 @@ $(BIN)/testParamArray.o: $(TEST)/testParamArray.c $(TEST)/testParamArray.h
 	$(COMPILE)
 
 $(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
+	$(COMPILE)
+
+$(BIN)/testUtils.o: $(TEST)/testUtils.c $(TEST)/testUtils.h
 	$(COMPILE)
 
 $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h

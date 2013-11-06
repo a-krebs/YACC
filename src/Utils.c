@@ -7,8 +7,12 @@
 #include <stdlib.h>
 
 #include "Utils.h"
+#ifndef TESTBUILD
 #include "parser.tab.h"
-
+#endif
+#ifdef TESTBUILD
+#include "tokens.h"
+#endif
 int
 isLogicalOperator(int op)
 {
@@ -31,15 +35,10 @@ isRelationalOperator(int op)
 {
 	switch (op) {
 	case EQUAL:
-		return 1;
 	case NOT_EQUAL:
-		return 1;
 	case LESS:
-		return 1;
 	case LESS_OR_EQUAL:
-		return 1;
 	case GREATER:
-		return 1;
 	case GREATER_OR_EQUAL:
 		return 1;
 	default:

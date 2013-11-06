@@ -8,8 +8,12 @@
 #include "Type.h"
 #include "Symbol.h"
 #include "Utils.h"
+#ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
-
+#endif
+#ifdef TESTBUILD
+#include "tokens.h"
+#endif
 extern struct hashElement *symbolTable[TABLE_SIZE];
 extern int yylineno;
 extern int colno;
@@ -208,6 +212,14 @@ Symbol *createArrayType(Symbol *index, Symbol *base) {
  * Return the given type.
  */
 Symbol *assertArrIndexType(Symbol *index_type) {
+	type_t sym_t;
+
+	sym_t = getType(index_type);
+
+	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
+		/* Set error */
+		return NULL;
+	}
 	return index_type;
 }
 
