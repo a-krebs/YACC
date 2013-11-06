@@ -344,8 +344,6 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 		return NULL;
 	}
 
-	
-
 	newConstSym = calloc(1, sizeof(Symbol));
 	if (!newConstSym) {
 		err(1, "Failed to allocate memory for new const symbol!");
@@ -357,10 +355,11 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 	newConstSym->kind = CONST_KIND;
 	allocateKindPtr(newConstSym);
 	newConstSym->kindPtr.ConstKind->typeSym = getTypeSym(proxySym);
-	copyConstVal(getConstVal(proxySym), getType(proxySym));
+	copyConstVal(&(newConstSym->kindPtr.ConstKind->value), 
+	    getConstVal(proxySym), getType(proxySym));
 	newConstSym->lvl = lvl;
 
-	return NULL;
+	return newConstSym;
 }
 
 

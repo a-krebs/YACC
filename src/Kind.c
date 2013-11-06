@@ -99,11 +99,10 @@ getConstVal(Symbol *s)
  * Makes a copy of the given AnonConstVal based on type -- used when
  * creating a const symbol from a proxy symbol.
  */
-AnonConstVal *
-copyConstVal(AnonConstVal * acl, type_t type)
+void
+copyConstVal(AnonConstVal *newacl, AnonConstVal * acl, type_t type)
 {
-	AnonConstVal *newacl = calloc(1, sizeof(AnonConstVal));
-	if (!acl) return NULL;
+	if (!acl) return;
 	switch (type) {
 	case BOOLEAN_T:
 		newacl->Boolean.value = acl->Boolean.value;
@@ -115,7 +114,7 @@ copyConstVal(AnonConstVal * acl, type_t type)
 		newacl->Integer.value = acl->Integer.value;
 		break;
 	case REAL_T:
-		newacl->Real.value = newacl->Real.value;
+		newacl->Real.value = acl->Real.value;
 		break;
 	case STRING_T:
 		newacl->String.str = calloc(1, sizeof(AnonConstVal));
@@ -127,9 +126,7 @@ copyConstVal(AnonConstVal * acl, type_t type)
 		strcpy(newacl->String.str, acl->String.str);
 		break;
 	default:
-		/* NOT REACHED */
-		return NULL;	
+		break;
 	}	
-	return acl;
 
 }

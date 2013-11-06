@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "Type.h"
 #include "testKind.h"
 #include "testSymbol.h"
 
@@ -32,16 +33,14 @@ char *
 test_copyConstVal()
 {
 	Symbol *constSym = setUpConstSymbol();
-	AnonConstVal *ret = NULL;
+	AnonConstVal ret;
 
-	ret = copyConstVal(&(constSym->kindPtr.ConstKind->value),
-	    getType(constSym->kindPtr.ConstKind->typeSym));
+	copyConstVal(&ret, (getConstVal(constSym)),
+	    getType(constSym));
 
-	mu_assert("copyConstValue() should not return null on valid input",
-	    ret);
 	mu_assert("copyConstValue() should return a copy of the const val"
 	    "union",
-	    ret->Real.value == getConstVal(constSym)->Real.value);
+	    ret.Real.value == constSym->kindPtr.ConstKind->value.Real.value);
 	return NULL;
 }
 

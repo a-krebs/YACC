@@ -75,9 +75,31 @@ setUpConstSymbol()
 	
 	allocateKindPtr(constSym);
 	constSym->kindPtr.ConstKind->typeSym = setUpTypeSymbol();
+	constSym->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type = REAL_T;
 	constSym->kindPtr.ConstKind->value.Real.value = REAL_VAL;
 	
 	return constSym; 	
+}
+
+char *
+test_newConstSymFromProxy()
+{
+	ProxySymbol *proxySym = (ProxySymbol *) setUpConstSymbol();
+	Symbol *newConstSym = NULL;
+	char id[] = "testSymbol";
+	int lvl = 10;
+
+	newConstSym = newConstSymFromProxy(lvl, id, proxySym);
+	mu_assert("newConstSymFromProxy() should not return null when passed"
+	    " valid input", newConstSym);
+	mu_assert("newConstSymFromProxy() should return a new symbol of kind"
+	    " CONST_KIND", newConstSym->kind == CONST_KIND);
+
+	//free(proxySym->kindPtr.ConstKind);
+	printf("value of newConstSYm = %f", getConstVal(newConstSym)->Real.value);
+	mu_assert("newConstSymFromProxy() should have copy of value it got"
+	    " from proxysymbol evern after proxy is freed",
+	    getConstVal(newConstSym)->Real.value == REAL_VAL);
 }
 
 char *
@@ -184,6 +206,7 @@ test_newSubrangeSym()
 char *
 test_all_Symbol()
 {
+//	mu_run_test(test_newConstSymFromProxy);
 	mu_run_test(test_newTypeSymFromSym);
 //	mu_run_test(test_newSubrangeSym);
 	mu_run_test(test_newVariableSym);

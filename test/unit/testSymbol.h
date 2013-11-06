@@ -6,6 +6,7 @@
 Symbol * setUpTypeSymbol();
 Symbol * setUpConstSymbol();
 
+char * test_newConstSymFromProxy();
 char * test_newTypeSymFromSym();
 char * test_newVariableSym();
 char * test_newSubrangeSym();
