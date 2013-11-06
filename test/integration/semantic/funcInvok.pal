@@ -1,0 +1,21 @@
+{19}
+{
+    Test Case - cannot invoke functions as a statement
+}
+program test(input, output);
+function Func() : integer;
+	var
+		f : integer;
+	begin
+		f := 0;
+	end;
+procedure Proc();
+	var
+		f : integer;
+	begin
+		f := 0;
+	end;
+begin
+	Func();
+	Proc();
+end.
