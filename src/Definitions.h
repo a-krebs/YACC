@@ -13,6 +13,7 @@ typedef enum {
 	REAL_T,
 	RECORD_T,	
 	SCALAR_T,
+	SCALARINT_T,
 	STRING_T,
 	SUBRANGE_T,
 	VOID_T,		/* special type for return type of procedures */

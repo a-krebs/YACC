@@ -396,3 +396,16 @@ typeToString(type_t type)
 
 	return typeStr;
 }
+
+/*
+ * Return a pointer to the typePtr for the given Symbol of kind TYPE_KIND.
+ * Returns null if the given Symbol is not of kind TYPE_KIND.
+ */
+Type *
+getTypePtr(Symbol *s)
+{
+	if (!s) return NULL;
+	if (s->kind != TYPE_KIND) return NULL;
+	return &(s->kindPtr.TypeKind->typePtr);
+
+}

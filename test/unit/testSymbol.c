@@ -216,12 +216,13 @@ char *
 test_newSubrangeSym() 
 {
 	Symbol *subrangeSym = NULL;
-	Symbol *testSymLow = setUpTypeSymbol();
-	Symbol *testSymHigh = setUpTypeSymbol();
+	Symbol *testSymLow = setUpConstSymbol();
+	Symbol *testSymHigh = setUpConstSymbol();
+	Symbol *retSymLow = NULL;
+	Symbol *retSymHigh = NULL;
+
 	int lvl = 102;
-	testSymHigh->typePtr.Integer->value = INTHIGH_VAL;
-	testSymLow->kind = CONST_KIND;
-	testSymHigh->kind = CONST_KIND;	
+	getConstVal(testSymHigh)->Integer.value = INTHIGH_VAL;
 	
 	subrangeSym = newSubrangeSym(lvl, testSymLow, NULL);
 	mu_assert("newSubrangeSym() should return NULL if a symbol arg is NULL",
@@ -235,16 +236,16 @@ test_newSubrangeSym()
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
 	if (!subrangeSym) printf("da fuck!?!?!?!\n");
 	mu_assert("newSubRangeSym() should return expected subrange",
-		  (subrangeSym->typePtr.Subrange->baseType == INTEGER_T) &&
-		  (subrangeSym->typePtr.Subrange->baseTypePtr.Integer ==
-		   testSymLow->typePtr.Integer) &&
-		  (subrangeSym->typePtr.Subrange->low ==
-		   testSymLow->typePtr.Integer->value) &&
-		  (subrangeSym->typePtr.Subrange->high ==
-		   testSymHigh->typePtr.Integer->value) && 
-		  (subrangeSym->lvl == lvl) &&
-		  (subrangeSym->kind == TYPE_KIND) &&
-		  (!subrangeSym->name));
+	     == INTEGER_T) &&
+	    (subrangeSym->typePtr.Subrange->baseTypePtr.Integer ==
+	    testSymLow->typePtr.Integer) &&
+	    (subrangeSym->typePtr.Subrange->low ==
+	    testSymLow->typePtr.Integer->value) &&
+	    (subrangeSym->typePtr.Subrange->high ==
+	    testSymHigh->typePtr.Integer->value) && 
+	    (subrangeSym->lvl == lvl) &&
+	    (subrangeSym->kind == TYPE_KIND) &&
+	    !subrangeSym->name));
 
 	testSymLow->type = ARRAY_T;
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
@@ -253,6 +254,12 @@ test_newSubrangeSym()
 	return NULL;
 }
 */
+char *
+test_newAnonArraySym()
+{
+	Symbol *baseType = setUpConstSymbol();
+	return NULL;
+}
 char *
 test_all_Symbol()
 {

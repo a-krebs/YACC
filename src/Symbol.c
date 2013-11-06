@@ -21,7 +21,6 @@ Symbol *
 newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 {
 	Symbol *newTypeSym = NULL;
-	size_t len;
 	if (!typeSym) {
 		return NULL;
 	}
@@ -39,13 +38,14 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 	newTypeSym = calloc(1, sizeof(Symbol));
 	if (!newTypeSym) {exit(1); /* blah blah */ }
 
-	len = strlen(id);
-	newTypeSym->name = calloc(1, sizeof(char)*len);
-	if (!newTypeSym->name) exit(1);
-
-	strcpy(newTypeSym->name, id);
+	setSymbolName(newTypeSym, id);
 	newTypeSym->kind = TYPE_KIND;
 	newTypeSym->kindPtr = typeSym->kindPtr;
+	
+	/* 
+	 * Type is being constructed from anonymous type, it is NOT a type
+	 * originator
+	 */
 	newTypeSym->typeOriginator = 0;
 	return newTypeSym;
 }
@@ -61,15 +61,23 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	Symbol *newArraySym = NULL;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
 		errMsg = customErrorString("Semantic Error: cannot define"
-					   "array, base type or index type"
-					   "incorrect/undefined? (%d, %d)", 
-					    yylineno, colno);
+		    " array, base type or index type incorrect/undefined?");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
-	if ((indexTypeSym->kindPtr.TypeKind->type != SCALAR_T) &&
-	    (indexTypeSym->kindPtr.TypeKind->type != SUBRANGE_T)) {
-		/* Error */
+
+	if ((baseTypeSym->kind != TYPE_KIND) || 
+	    (baseTypeSym->kind != TYPE_KIND)) {
+		errMsg = customErrorString("Cannot create array with given"
+		    "base type");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	if ((getType(indexTypeSym) != SCALAR_T) &&
+	    (getType(indexTypeSym) != SUBRANGE_T)) {
+		errMsg = customErrorString("Trying to index array using non-"
+		    "index type %s", typeToString(getType(indexTypeSym)));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
@@ -145,7 +153,6 @@ Symbol *
 newVariableSym(int lvl, char *id, Symbol* typeSym)
 {
 	Symbol *newVar = NULL;	/* new symbol to be created */
-	size_t len;
 	/*
 	 * Before making any allocations, we assure that the given
 	 * symbol typeSym is in fact a type and that we can use it
@@ -180,15 +187,7 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 		exit(1);
 	}
 	
-	/* Set variable name <- id */
-	len = strlen(id);
-	newVar->name = calloc(1, (sizeof(char))*len);
-	if (!newVar->name) {
-		err(1, "Failed to allocate memory for new symbol name!");
-		exit(1);
-	}
-
-	strcpy(newVar->name, id);
+	setSymbolName(newVar, id);
 	newVar->kind = VAR_KIND;
 	allocateKindPtr(newVar);
 	newVar->kindPtr.VarKind->typeSym = typeSym;
@@ -200,12 +199,12 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
  * Constructs an anonymous subrange symbol.
  */
 Symbol *
-newSubrangeSym(int lvl, Symbol *constSymLow,
-	        Symbol *constSymHigh)
+newSubrangeSym(int lvl, ProxySymbol *constSymLow,
+	        ProxySymbol *constSymHigh)
 {
 	Symbol *newSubrangeSym = NULL;
-	Symbol *lowSymType = constSymLow->kindPtr.ConstKind->typeSym;
-	Symbol *highSymType = constSymHigh->kindPtr.ConstKind->typeSym;
+	Symbol *lowSymType = getTypeSym(constSymLow);
+	Symbol *highSymType = getTypeSym(constSymHigh);
 	
 	/*
 	 * We must assure that we are constructing a subrange
@@ -223,13 +222,12 @@ newSubrangeSym(int lvl, Symbol *constSymLow,
 		return NULL;
 	}
 
-	if (lowSymType->kindPtr.TypeKind->type != 
-	    highSymType->kindPtr.TypeKind->type) {
+	if (getType(constSymLow) != getType(constSymHigh)) {
 		/* Error:  Mismatched types for subrange indices */
 		return NULL;
 	}
 
-	if (!isOrdinal(lowSymType->kindPtr.TypeKind->type)) {
+	if (!isOrdinal(getType(constSymLow))) {
 		/*
 		 * Error: trying to construct subrange from non ordinal
 		 * types
@@ -254,11 +252,9 @@ newSubrangeSym(int lvl, Symbol *constSymLow,
 	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
 								  constSymLow,
 								  constSymHigh);
-
-	newSubrangeSym->kind = TYPE_KIND;
 	newSubrangeSym->name = NULL;
 	newSubrangeSym->lvl = lvl;
-	
+	newSubrangeSym->typeOriginator = 1;	
 	return newSubrangeSym;
 }
 
