@@ -51,6 +51,10 @@ void setLexLevel(struct hash *hash, int lexLevel);
 int getSymbolLexLevel(struct Symbol *symbol);
 int getCurrentLexLevel(struct hash *hash);
 int appendToSymbolList(struct hash *hash, struct hashElement *element, struct Symbol *symbol);
+struct Symbol *findSymbolByHashElement(struct hash *hash, char *key, int lexLevel);
+struct Symbol *getLocalSymbol(struct hash *hash, char *key);
+struct Symbol *getGlobalSymbol(struct hash *hash, char *key);
+
 
 
 #endif
