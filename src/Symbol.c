@@ -418,15 +418,18 @@ newConstProxySym(void * result, Symbol *typeSym)
 ProxySymbol *
 newBooleanConstProxySym(int *result, Symbol *typeSym)
 {
-	ProxySymbol *constSym = NULL;
+	Symbol *constSym = NULL;
 	constSym = calloc(1, sizeof(ProxySymbol));
+	if (!constSym) {
+		err(1, "Failed to allocate memory for new constant symbol!");
+		exit(1);
+	}
 	constSym->name = NULL;
 	constSym->kind = CONST_KIND;
-	allocateKindPtr(constSym);
-	/* TODO: set type pointer function!!!! yayayayaya */
-	constSym->kindPtr.ConstKind->typeSym = typeSym;
-	getConstVal(constSym)->Boolean.value = result;
-	return NULL;
+	allocateKindPtr((Symbol *)constSym);
+	setTypeSym(constSym, typeSym);	
+	getConstVal(constSym)->Boolean.value = *result;
+	return (ProxySymbol *) constSym;
 }
 
 ProxySymbol *

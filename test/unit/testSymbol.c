@@ -42,7 +42,8 @@ setUpTypeSymbol()
 	typeSym->kind = TYPE_KIND;
 	
 	allocateKindPtr(typeSym);
-	typeSym->kindPtr.TypeKind->typePtr.Integer = calloc(1, sizeof(struct Integer));
+	typeSym->kindPtr.TypeKind->typePtr.Integer =
+	     calloc(1, sizeof(struct Integer));
 	if (!typeSym->kindPtr.TypeKind->typePtr.Integer) {
 		err(1, 
 		    "Failed to allocate memory for test type symbol typeptr!");
@@ -95,11 +96,30 @@ test_newConstSymFromProxy()
 	mu_assert("newConstSymFromProxy() should return a new symbol of kind"
 	    " CONST_KIND", newConstSym->kind == CONST_KIND);
 
-	//free(proxySym->kindPtr.ConstKind);
-	printf("value of newConstSYm = %f", getConstVal(newConstSym)->Real.value);
+	free(proxySym->kindPtr.ConstKind);
 	mu_assert("newConstSymFromProxy() should have copy of value it got"
 	    " from proxysymbol evern after proxy is freed",
 	    getConstVal(newConstSym)->Real.value == REAL_VAL);
+	return NULL;
+}
+
+char *
+test_newBooleanConstProxySym()
+{
+	ProxySymbol *constProxySym = NULL;
+	Symbol *typeSym = setUpTypeSymbol();
+	int result = 210;
+
+	constProxySym = newBooleanConstProxySym(&result, typeSym);
+	mu_assert("newBooleanConstProxySym() should not return NULL ProxySymbol"
+	    " when given valid input", constProxySym);
+
+	mu_assert("newBooleanConstProxySym() should return const kind Proxy "
+	    "Symbol with the expected attributes",
+	    (constProxySym->kind == CONST_KIND) &&
+	    (getConstVal(constProxySym)->Boolean.value == result) &&
+	    (getTypeSym(constProxySym) == typeSym));
+	return NULL;
 }
 
 char *
@@ -206,7 +226,8 @@ test_newSubrangeSym()
 char *
 test_all_Symbol()
 {
-//	mu_run_test(test_newConstSymFromProxy);
+	mu_run_test(test_newBooleanConstProxySym);
+	mu_run_test(test_newConstSymFromProxy);
 	mu_run_test(test_newTypeSymFromSym);
 //	mu_run_test(test_newSubrangeSym);
 	mu_run_test(test_newVariableSym);

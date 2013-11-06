@@ -40,6 +40,8 @@ Type newAnonConstType(AnonConstVal, type_t);
 
 type_t getType(Symbol *);
 
+void setTypeSym(Symbol *, Symbol *);
+
 void setTypePtr(Type *, Type, type_t);
 
 void typeMemoryFailure();

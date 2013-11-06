@@ -137,6 +137,29 @@ isSimpleType(type_t type)
 	}
 }
 
+/*
+ * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
+ * a pointer to the typeSym defining the type for the given Symbol s.
+ * WARNING: assumes the kindPtr for the given symbol s has been allocated.
+ */
+void
+setTypeSym(Symbol *s, Symbol *typeSym)
+{
+	switch (s->kind) {
+	case CONST_KIND:
+		s->kindPtr.ConstKind->typeSym = typeSym;
+		break;
+	case FUNC_KIND:
+		s->kindPtr.FuncKind->typeSym = typeSym;
+		break;
+	case VAR_KIND:
+		s->kindPtr.VarKind->typeSym = typeSym;
+		break;
+	default:
+		/* Should not be reached */
+		break;
+	}
+}
 
 /*
  * Set type pointer new to point to type old of type passed as arg.
@@ -249,7 +272,6 @@ type_t
 getType(Symbol *s)
 {
 	if (!s) /* should probably exit program */ return VOID_T;
-	if (!s->kindPtr.ConstKind) /* kindPtr no allocated  */ return VOID_T;
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
