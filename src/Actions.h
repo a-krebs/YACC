@@ -3,6 +3,9 @@
 Symbol *assertOpCompat(Symbol*, int, Symbol*);
 int isAassignmentCompat(Symbol*, Symbol*);
 
+/* program header */
+void doProgramDecl(char*, char*, char*);
+
 /* declaration lists */
 void exitConstDeclPart(void);
 void doConstDecl(char*, ProxySymbol*);
@@ -38,6 +41,9 @@ ProxySymbol *createNewVarParm(char*, Symbol*);
 ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *hashLookupToProxy(char*);
 ProxySymbol *recordAccessToProxy(char*, char*);
+ProxySymbol *arrayIndexAccess(ProxySymbol*, ProxySymbol*);
+ProxySymbol *concatArrayIndexList(ProxySymbol*, ProxySymbol*);
+ProxySymbol *createArrayIndexList(ProxySymbol*);
 ProxySymbol *eqOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *notEqOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *lessOrEqOp(ProxySymbol*, ProxySymbol*);
@@ -54,10 +60,20 @@ ProxySymbol *divideOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *divOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *modOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *andOp(ProxySymbol*, ProxySymbol*);
-ProxySymbol *getProxyFromSymbol(ProxySymbol *symbol);
 ProxySymbol *unaryNotOp(ProxySymbol*);
 
 /* constants */
-void *anonIntLiteral(int);
-void *anonRealLiteral(double);
-void *anonStringLiteral(char*);
+ProxySymbol *proxyIntLiteral(int);
+ProxySymbol *proxyRealLiteral(double);
+ProxySymbol *proxyStringLiteral(char*);
+
+/* procedure and function invokations */
+void prodInvok(char*, ProxySymbol*);
+ProxySymbol *funcInvok(char*, ProxySymbol*);
+ProxySymbol *createArgList(ProxySymbol*);
+ProxySymbol *concatArgLists(ProxySymbol*, ProxySymbol*);
+
+/* loop control */
+void continueLoop(void);
+void exitLoop(void);
+void endWhileLoop(void);

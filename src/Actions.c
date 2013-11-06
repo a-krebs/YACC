@@ -101,6 +101,15 @@ int isAssignmentCompat(Symbol type1, Symbol type2) {
  */
 
 /*
+ * Capture program header definitions of input and output arguments.
+ *
+ * Arguments may be null if program contains errors.
+ */
+void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
+	// TODO
+}
+
+/*
  * Perform actions necessary when exiting const decl part.
  */
 void exitConstDeclPart(void) {
@@ -316,6 +325,33 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 	return NULL;
 }
 
+/*
+ * Access an array given the list of indexes.
+ *
+ * Return a ProxySymbol of the expected type.
+ */
+ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol *indexes) {
+	return NULL;
+}
+
+/*
+ * Concatenate two arrays of array indexes, maintaining order.
+ *
+ * Return a pointer to a concatenated list.
+ */
+ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
+	return list1;
+}
+
+/*
+ * Create a new array index list as a ProxySymbol.
+ *
+ * Return a pointer to the new list.
+ */
+ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
+	return NULL;
+}
+
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
@@ -380,20 +416,15 @@ ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
 	return NULL;
 }
 
-ProxySymbol *getProxyFromSymbol(Symbol *symbol) {
-	return NULL;
-}
-
 ProxySymbol *unaryNotOp(ProxySymbol *x) {
 	return NULL;
 }
 
 /*
- * Make a new anonymous symbol with type integer and given value.
- * Return pointer to the hash symbol.
+ * Make a new ProxySymbol with type integer and given value.
+ * Return pointer to the proxy
  */
-// TODO change return type
-void *anonIntLiteral(int value) {
+ProxySymbol *proxyIntLiteral(int value) {
 	// TODO implement
 	return NULL;
 }
@@ -402,8 +433,7 @@ void *anonIntLiteral(int value) {
  * Make a new anonymous symbol with type real and given value.
  * Return a pointer to the hash symbol.
  */
-// TODO change return type
-void *anonRealLiteral(double value) {
+ProxySymbol *proxyRealLiteral(double value) {
 	// TODO implement
 	return NULL;
 }
@@ -412,8 +442,70 @@ void *anonRealLiteral(double value) {
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
  */
-// TODO change return type
-void *anonStringLiteral(char *value) {
+ProxySymbol *proxyStringLiteral(char *value) {
 	// TODO implment
 	return NULL;
+}
+
+/*
+ * Invoke procedure with given name.
+ *
+ * The argument argv contains a list of arguments.
+ */
+void procInvok(char *id, ProxySymbol *argv) {
+	// TODO
+}
+
+/*
+ * Invoke function with the given name.
+ *
+ * The argument argv contains a list of arguments.
+ *
+ * Return a ProxySymbol containing the type returned.
+ */
+ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
+	return NULL;
+}
+
+/*
+ * Create an argument list for function and procedure invokation.
+ *
+ * Return a pointer to a ProxySymbol containing the list.
+ */
+ProxySymbol *createArgList(ProxySymbol *arg) {
+	return NULL;
+}
+
+/*
+ * Concatenate two lists of arguments, maintaining order.
+ *
+ * Return a pointer to a list containing both sets of arguments.
+ * Whether to add the arguments to one of the lists or two make a third
+ * list and add all arguments is up to implementation.
+ */
+ProxySymbol *concatArgLists(ProxySymbol *list1, ProxySymbol *list2) {
+	return list1;
+}
+
+/*
+ * Encountered 'continue' statement. Verify we're in a while loop and then
+ * continue to next iteration.
+ */
+void continueLoop(void) {
+	// TODO
+}
+
+/*
+ * Encountered 'exit' statement. Verify we're in a while loop and then
+ * exit innermost loop.
+ */
+void exitLoop(void) {
+	// TODO
+}
+
+/*
+ * End of while loop.
+ */
+void endWhileLoop(void) {
+	// TODO
 }
