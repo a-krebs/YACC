@@ -436,3 +436,26 @@ ProxySymbol *createArgList(ProxySymbol *arg) {
 ProxySymbol *concatArgLists(ProxySymbol *list1, ProxySymbol *list2) {
 	return list1;
 }
+
+/*
+ * Encountered 'continue' statement. Verify we're in a while loop and then
+ * continue to next iteration.
+ */
+void continueLoop(void) {
+	// TODO
+}
+
+/*
+ * Encountered 'exit' statement. Verify we're in a while loop and then
+ * exit innermost loop.
+ */
+void exitLoop(void) {
+	// TODO
+}
+
+/*
+ * End of while loop.
+ */
+void endWhileLoop(void) {
+	// TODO
+}

@@ -72,3 +72,8 @@ void prodInvok(char*, ProxySymbol*);
 ProxySymbol *funcInvok(char*, ProxySymbol*);
 ProxySymbol *createArgList(ProxySymbol*);
 ProxySymbol *concatArgLists(ProxySymbol*, ProxySymbol*);
+
+/* loop control */
+void continueLoop(void);
+void exitLoop(void);
+void endWhileLoop(void);

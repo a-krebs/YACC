@@ -430,16 +430,22 @@ struct_stat
 : IF expr THEN matched_stat ELSE stat
 | IF expr THEN stat
 | WHILE expr DO stat
+	{ endWhileLoop(); }
 | CONTINUE
+	{ continueLoop(); }
 | EXIT
+	{ exitLoop(); }
 ;
 
 matched_stat
 : simple_stat
 | IF expr THEN matched_stat ELSE matched_stat
 | WHILE expr DO matched_stat
+	{ endWhileLoop(); }
 | CONTINUE
+	{ continueLoop(); }
 | EXIT
+	{ exitLoop(); }
 ;
 
 comma_or_error
