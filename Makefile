@@ -23,6 +23,7 @@ SRC=		src
 BIN=		bin
 # Location of test source files
 TEST=		test/unit
+TEST_FILES=	test/integration
 
 # Location and name of executables along with their object dependencies
 EXE=		$(BIN)/pal
@@ -199,6 +200,7 @@ clean:
 	-rm -f $(SRC)/generated_tokenTestParser.y
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
+	-rm -f ./*.pal
 
 # shortcuts for common actions
 build:
@@ -227,3 +229,5 @@ integration_tests:
 # remove all .lst files
 clean_lst:
 	find . -name "*.lst" -delete
+
+include Checkpoint2.mk
