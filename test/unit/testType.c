@@ -26,6 +26,17 @@ test_areSameType()
 }
 
 char *
+test_areOpCompatible()
+{
+	Symbol *s1 = setUpTypeSymbol();
+	Symbol *s2 = setUpTypeSymbol();
+
+	mu_assert("two integers are operation compatible",
+	    areOpCompatible(s1, s2));
+	return NULL;
+}
+
+char *
 test_isOrdinal()
 {
 	mu_assert("isOrdinal() should return false for REAL_T",
@@ -39,6 +50,14 @@ test_isOrdinal()
 	mu_assert("isOrdinal() should return 0 for ARRAY_T",
 		  !isOrdinal(ARRAY_T));
 	return NULL;
+}
+
+char *
+test_isSimpleType()
+{
+	mu_assert("INT is a simple type", INTEGER_T);
+	return NULL;
+
 }
 
 char *
@@ -59,8 +78,10 @@ test_setTypePtr()
 char *
 test_all_Type()
 {
+	mu_run_test(test_areOpCompatible);
 	mu_run_test(test_areSameType);
 	mu_run_test(test_setTypePtr);
 	mu_run_test(test_isOrdinal);
+	mu_run_test(test_isSimpleType);
 	return NULL;
 }

@@ -31,6 +31,7 @@ extern int colno;
  * constants).
  *
  * If the types are not combatible for this operator, set error and return NULL.
+ * TODO: right now success returns non-NULL for the benefit of unit tests.
  */
 Symbol *assertOpCompat(
     Symbol *type1, int opToken, Symbol *type2) {
@@ -49,7 +50,7 @@ Symbol *assertOpCompat(
 
 
 	/* Only simple and string types are compatible with operators */
-	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) ||
+	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) &&
 	    (s1_t != STRING_T)) {
 		/* TODO: record error */
 		return NULL;
@@ -64,7 +65,7 @@ Symbol *assertOpCompat(
 
 	/* If the operator is relational, we just need op compatible types */
 	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
-		return NULL;
+		return type1;
 	}
 
 	if (areArithmeticCompatible(type1, type2)) {
@@ -74,18 +75,18 @@ Symbol *assertOpCompat(
 			case MULTIPLY:
 				if (areBothInts(type1, type2)) {
 					/* Return pointer to int type */
-					return NULL;
+					return type1;
 				}
-				else return NULL; /* ret ptr to real type */
+				else return type1; /* ret ptr to real type */
 				break;
 			case DIVIDE:
 				/* return pointer to real type */
-				return NULL;
+				return type1;
 			case DIV:
 			case MOD:
 				if (areBothInts(type1, type2)) {
 					/* return ptr to int type */
-					return NULL;
+					return type1;
 				}
 				break;
 			default:
@@ -96,7 +97,7 @@ Symbol *assertOpCompat(
 
 	/* Fell through to here, must have been an error */
 	
-
+	return NULL;
 }
 
 /*
@@ -134,6 +135,7 @@ void exitConstDeclPart(void) {
  */
 void doConstDecl(char *id, ProxySymbol *proxy) {
 	// TODO implementation.
+	
 }
 
 /*

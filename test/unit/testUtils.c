@@ -26,11 +26,23 @@ test_isRelationalOperator()
 	    isRelationalOperator(EQUAL));
 	mu_assert("AND is not a relational operator",
 	    !isRelationalOperator(AND));
+	return NULL;
+}
+
+
+char *
+test_isUnaryOperator()
+{
+	mu_assert("PLUS is a unary operator", isUnaryOperator(PLUS));
+	mu_assert("MINUS is a unary operator", isUnaryOperator(MINUS));
+	mu_assert("EQUAL is not a unary operator", !isUnaryOperator(EQUAL));
+
 }
 
 char *
 test_all_Utils()
 {
+	mu_run_test(test_isUnaryOperator);
 	mu_run_test(test_isLogicalOperator);
 	mu_run_test(test_isRelationalOperator);
 	return NULL;

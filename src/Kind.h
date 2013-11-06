@@ -12,4 +12,6 @@ struct VariableKind *allocateVariableKind();
 void allocateKindPtr(Symbol *);
 void allocationErrorCheck(void *);
 
+AnonConstVal *getConstVal(Symbol *);
+AnonConstVal *copyConstVal(AnonConstVal *, type_t);
 #endif

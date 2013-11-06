@@ -1,0 +1,96 @@
+/*
+ * Defines the pre-defined types used by the compiler.
+ *
+ * 
+ *
+ */
+
+/*
+ * Notes/thoughts:
+ *	-PARAM =?= Vvar with flag that tells us if it was
+ *	 passed by reference or not???  Do we actually need to know the params
+ *	 for a function ? ..... yes: for semantic checking at invocation
+ *
+ *
+ *	-Does this class pass divine judgment upon the souls of the living
+* 	 and the dead? (smellin like a god class brah)
+ */
+
+
+/*
+ * The kind values an entry in the symbol table can take.
+ */
+typedef enum {
+	CONST,		/* constant value */
+	FUNC,		/* function declaration */
+	PARAM,		/* parameter to function or procedure */
+	PROC,		/* procedure declaration */
+	RET,		/* return type for a function (TODO: necessary??) */
+	TYPE,		/* type declaration */
+	VAR		/* variable declaration */
+} kind_t;
+
+/*
+ * The types of a values which can be associated with various kinds.
+ */
+typedef enum {
+	ARRAY,
+	BOOLEAN,
+	CHAR,
+	INTEGER,
+	REAL,
+	RECORD,	
+	SCALAR,
+	SUBRANGE		
+} type_t;
+
+/*
+ * The object stored at a hash element in the symbol table.
+ * Here we define the name of the entry, what kind it is (e.g., VAR, CONST,
+ * PARAM, ... ), and a pointer to the particular type of kind it is. 
+ * We also have type and typePtr here as well because EVERY entry will have
+ * these fields.
+ */
+struct entry {
+	char *name;
+	kind_t kind;
+	void *kindPtr;
+	type_t type;	/* the type associated with the kind of this entry */
+	void *typePtr;	/* pointer to the type associated with kind of entry */	
+	int lvl;	/* the lexical level at which the entry is defined */	
+};
+
+
+struct Variable {
+	
+}
+
+struct Record {
+	/* each record implemented as its own symbol table */
+};
+
+
+
+struct Procedure {
+	struct ParamArray params;
+
+}
+
+
+/*
+ * TODO: need to check if function actually returns something (i.e., does it
+ *	 reference its own id as l-val in an assignment operation?) ; we won't
+ *	 have time to implement checking if there is a execution path
+ * 	 which results in no return type being set (and thus setting warning/
+ *	 error)
+ */
+struct Function {
+	struct ParamArray params;
+	struct symbol *return_t;
+	/* flag for checking if anything is returned? */	
+
+};
+
+/* Type creation functions */
+
+#endif

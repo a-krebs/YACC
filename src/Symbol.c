@@ -331,6 +331,35 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 Symbol *
 newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 {
+	Symbol * newConstSym = NULL;
+
+	/* Error checking */
+	if (!proxySym) {
+		/* Record error */
+		return NULL;
+	}
+
+	if (proxySym->kind != CONST_KIND) {
+		/* Error: trying to declare constant with non-constant kind */
+		return NULL;
+	}
+
+	
+
+	newConstSym = calloc(1, sizeof(Symbol));
+	if (!newConstSym) {
+		err(1, "Failed to allocate memory for new const symbol!");
+		exit(1);
+	}	
+
+	setSymbolName(newConstSym, id);
+	
+	newConstSym->kind = CONST_KIND;
+	allocateKindPtr(newConstSym);
+	newConstSym->kindPtr.ConstKind->typeSym = getTypeSym(proxySym);
+	copyConstVal(getConstVal(proxySym), getType(proxySym));
+	newConstSym->lvl = lvl;
+
 	return NULL;
 }
 
@@ -365,4 +394,19 @@ getTypeSym(Symbol *s)
 		/* NOT REACHED */
 		return NULL;
 	}
+}
+
+void
+setSymbolName(Symbol *s, char *id)
+{
+	size_t len;
+	if (!id) return;
+	
+	len = strlen(id);
+	s->name = calloc(1, sizeof(char)*len);
+	if (!s->name) {
+		err(1, "Failed to allocate memory for symbol name!");
+		exit(1);
+	}
+	strcpy(s->name, id);
 }

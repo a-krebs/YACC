@@ -74,7 +74,7 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 	type_t s1_t, s2_t;	
 
 	if ((!s1) || (!s2)) /* record error */ return 0;
-	if (!(s1->kind == TYPE_KIND) || (s2->kind == TYPE_KIND)) return 0;
+	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
 
 	s1_t = s1->kindPtr.TypeKind->type;
 	s2_t = s2->kindPtr.TypeKind->type;

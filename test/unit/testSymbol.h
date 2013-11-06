@@ -4,6 +4,7 @@
 #include "../../src/Symbol.h"
 
 Symbol * setUpTypeSymbol();
+Symbol * setUpConstSymbol();
 
 char * test_newTypeSymFromSym();
 char * test_newVariableSym();

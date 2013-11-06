@@ -18,6 +18,7 @@ Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
 
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
+void setSymbolName(Symbol *, char *);
 
 struct Param *newParameter(char *, Symbol *);
 #endif

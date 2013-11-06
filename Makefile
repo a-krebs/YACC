@@ -39,7 +39,7 @@ TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testHash.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testParamArray.o
-TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o
+TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -148,6 +148,9 @@ $(BIN)/testParamArray.o: $(TEST)/testParamArray.c $(TEST)/testParamArray.h
 	$(COMPILE)
 
 $(BIN)/testType.o: $(TEST)/testType.c $(TEST)/testType.h
+	$(COMPILE)
+
+$(BIN)/testKind.o: $(TEST)/testKind.c $(TEST)/testKind.h
 	$(COMPILE)
 
 $(BIN)/testUtils.o: $(TEST)/testUtils.c $(TEST)/testUtils.h

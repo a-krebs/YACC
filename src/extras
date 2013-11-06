@@ -1,0 +1,7 @@
+structured_type         
+: ARRAY LS_BRACKET array_type RS_BRACKET OF type
+| ARRAY LS_BRACKET error RS_BRACKET OF type
+| RECORD field_list END
+;
+
+

@@ -16,6 +16,7 @@
 int yylineno;
 int colno;
 
+double REAL_VAL = 123.321;
 
 /*
  * TODO: make this function accept type_t arg so it can set up types
@@ -47,8 +48,36 @@ setUpTypeSymbol()
 		    "Failed to allocate memory for test type symbol typeptr!");
 		exit(1);
 	}
+	
+	typeSym->kindPtr.TypeKind->type = INTEGER_T;
 	typeSym->kindPtr.TypeKind->typePtr.Integer->value = INTLOW_VAL;
 	return typeSym; 	
+}
+
+Symbol *
+setUpConstSymbol()
+{
+	char id[] = "testType";
+	Symbol *constSym = calloc(1, sizeof(Symbol));
+	size_t len = strlen(id);
+	if (!constSym) {
+		err(1, "Failed to allocate memory for test type symbol!");
+		exit(1);
+	}
+
+	constSym->name = calloc(1, (sizeof(char))*len);
+	if (!constSym->name) {
+		err(1, "Failed to allocate memory for test type symbol name!");
+		exit(1);
+	}
+	strcpy(constSym->name, id);
+	constSym->kind = CONST_KIND;
+	
+	allocateKindPtr(constSym);
+	constSym->kindPtr.ConstKind->typeSym = setUpTypeSymbol();
+	constSym->kindPtr.ConstKind->value.Real.value = REAL_VAL;
+	
+	return constSym; 	
 }
 
 char *

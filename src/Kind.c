@@ -1,6 +1,7 @@
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "Kind.h"
 
@@ -86,4 +87,49 @@ allocationErrorCheck(void *p)
 		err(1, "Failed to allocate memory for kind ptr!");
 		exit(1);
 	}
+}
+
+AnonConstVal *
+getConstVal(Symbol *s)
+{
+	return &(s->kindPtr.ConstKind->value);
+}
+
+/*
+ * Makes a copy of the given AnonConstVal based on type -- used when
+ * creating a const symbol from a proxy symbol.
+ */
+AnonConstVal *
+copyConstVal(AnonConstVal * acl, type_t type)
+{
+	AnonConstVal *newacl = calloc(1, sizeof(AnonConstVal));
+	if (!acl) return NULL;
+	switch (type) {
+	case BOOLEAN_T:
+		newacl->Boolean.value = acl->Boolean.value;
+		break;
+	case CHAR_T:
+		newacl->Char.value = acl->Char.value;
+		break;
+	case INTEGER_T:
+		newacl->Integer.value = acl->Integer.value;
+		break;
+	case REAL_T:
+		newacl->Real.value = newacl->Real.value;
+		break;
+	case STRING_T:
+		newacl->String.str = calloc(1, sizeof(AnonConstVal));
+		if (!newacl->String.str) {
+			err(1, "failed to allocate memory for string literal!");
+			exit(1);
+		}
+		newacl->String.strlen = acl->String.strlen;
+		strcpy(newacl->String.str, acl->String.str);
+		break;
+	default:
+		/* NOT REACHED */
+		return NULL;	
+	}	
+	return acl;
+
 }
