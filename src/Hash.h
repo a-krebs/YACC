@@ -56,7 +56,7 @@ struct Symbol *getLocalSymbol(struct hash *hash, char *key);
 struct Symbol *getGlobalSymbol(struct hash *hash, char *key);
 int getLengthOfSymbolList(struct hashElement *element);
 int isOnlySymbolInList(struct hashElement *element, struct Symbol *symbol);
-int deleteSymbol(struct hash *hash, char *key, int lexLevel);
+int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel);
 
 
 #endif

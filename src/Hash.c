@@ -684,13 +684,13 @@ struct Symbol *getGlobalSymbol(struct hash *hash, char *key) {
  * Parameters: 
  *              hash: hash to be looked in
  *              key: hash key
- *              lexLevel: lexical level of symbol to be deleted
+ *              lexLevel: lexical level of symbol to  be deleted
  *
  * Return: 0 on success
  *         1 on could not find element to delete
  *         2 attempted to delete value not at head of list
 */
-int deleteSymbol(struct hash *hash, char *key, int lexLevel) {
+int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         struct Symbol *symbol = findSymbolByLexLevel(hash, key, lexLevel);
         struct hashElement *element = findHashElementByKey(hash, key);
         int retval;
@@ -721,3 +721,39 @@ int deleteSymbol(struct hash *hash, char *key, int lexLevel) {
         return 2;
 }
 
+
+
+// int popLexLevel(hash) {
+//         int lexLevel = getCurrentLexLevel(hash);
+//         struct hashElement *element;
+//         char *key;
+//         struct Symbol *symbol;
+//         int retval;
+
+//         if (lexLevel == 0) {
+//                 if (HASH_DEBUG) { printf("Cannot pop lexical levels when already at level 0.\n");}
+//                 return 1;
+//         }
+
+//         for (int i = 0; i < TABLE_SIZE; ++i) {
+//                 if ( hash->elements[i] != NULL ) {      //can get rid of 
+//                         element = hash->elements[i];
+
+//                         for(; element != NULL; element = element->next) {
+//                                 key = element->key;
+
+//                                 symbol = findSymbolByLexLevel(hash, key, lexLevel);
+
+//                                 if (symbol != NULL) {
+//                                         retval = deleteSymbolAtLexLevel(hash, key, lexLevel);
+
+//                                         if (retval != 0) {
+//                                                 return 1;
+//                                         }
+//                                 }
+//                         }
+//                 }
+//         }
+
+//         return 0;
+// }

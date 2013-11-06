@@ -964,17 +964,17 @@ char * test_deleteSymbol() {
 
 	// dumpHash(hash);
 	
-	mu_assert("Unexpected return of deleteSymbol, test 1",
-		deleteSymbol(hash, "cherry", 2) == 0);	
+	mu_assert("Unexpected return of deleteSymbolAtLexLevel, test 1",
+		deleteSymbolAtLexLevel(hash, "cherry", 2) == 0);	
 
-	mu_assert("Unexpected return of deleteSymbol, test 2",
-		deleteSymbol(hash, "charley", 0) == 0);		
+	mu_assert("Unexpected return of deleteSymbolAtLexLevel, test 2",
+		deleteSymbolAtLexLevel(hash, "charley", 0) == 0);		
 
-	mu_assert("Unexpected return of deleteSymbol, test 3",
-		deleteSymbol(hash, "cherry", 0) == 2);	
+	mu_assert("Unexpected return of deleteSymbolAtLexLevel, test 3",
+		deleteSymbolAtLexLevel(hash, "cherry", 0) == 2);	
 
-	mu_assert("Unexpected return of deleteSymbol, test 3",
-		deleteSymbol(hash, "yellow", 2) == 1);	
+	mu_assert("Unexpected return of deleteSymbolAtLexLevel, test 3",
+		deleteSymbolAtLexLevel(hash, "yellow", 2) == 1);	
 
 	// dumpHash(hash);
 
