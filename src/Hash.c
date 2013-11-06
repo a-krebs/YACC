@@ -448,7 +448,11 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
  *              symbol: pointer to symbol struct to saved in 
  *                  hash element.
  *
- * Returns: Boolean: 0 on success and 1 and failure.     
+ * Returns: 0 on success 
+ *         1 current lex level and symbol's lex level differ
+ *         2 element on hash table has symbol set to NULL
+ *         3 element's symbol list head lex level same as symbol's
+ *         4 symbol's lex level lower than element's symbol list head    
 */
 int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
         struct hashElement *element;
@@ -461,7 +465,6 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
 
                 retval = appendToSymbolList(hash, element, symbol);
                 return retval;
-                // return 1;
         }
 
         element = allocHashElement(key, symbol); 
@@ -548,6 +551,75 @@ void dumpHash(struct hash *hash) {
 }
 
 
+/* Gets pointer to symbol requested.
+ *
+ * Parameters: 
+ *              hash: hash to be looked in
+ *              key: hash key
+ *              lexLevel: requested level in symbol
+ *
+ * Return: Pointer to struct symbol
+ */
+struct Symbol *findSymbolByHashElement(struct hash *hash, char *key, int lexLevel) {
+        struct Symbol *symbol;
+        struct hashElement *element = findHashElementByKey(hash, key);
+
+        if ( element == NULL ) {
+                if (HASH_DEBUG) { printf("Should not find element.\n"); }
+                return NULL;
+        }
+
+        symbol = element->symbol;
+
+        if ( symbol == NULL ) {
+                if (HASH_DEBUG) { printf("Pointer to symbol in element is null.\n"); }
+                return NULL;
+        }        
+
+        for (; symbol != NULL; symbol = symbol->next) {
+                if ( getSymbolLexLevel(symbol) == lexLevel ) {
+                        return symbol;
+                }
+        }
+
+        return NULL;
+}
 
 
+/* Gets pointer to request symbol at the local lexical level.
+ *
+ * Parameters: 
+ *              hash: hash to be looked in
+ *              key: hash key
+ *
+ * Return: Pointer to struct symbol
+ */
+struct Symbol *getLocalSymbol(struct hash *hash, char *key) {
+        int lexLevel = getCurrentLexLevel(hash);
 
+        return findSymbolByHashElement(hash, key, lexLevel);
+}
+
+
+/* Gets pointer to request symbol at the global lexical level.
+ *
+ * Parameters: 
+ *              hash: hash to be looked in
+ *              key: hash key
+ *
+ * Return: Pointer to struct symbol
+ */
+struct Symbol *getGlobalSymbol(struct hash *hash, char *key) {
+        int lexLevel = getCurrentLexLevel(hash);
+        struct Symbol *symbol;
+
+        for (; lexLevel >= 0; lexLevel--) {
+                symbol = findSymbolByHashElement(hash, key, lexLevel);
+
+                if ( symbol != NULL ) {
+                        return symbol;
+                }
+        }
+
+        return NULL;
+}

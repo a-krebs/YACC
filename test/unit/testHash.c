@@ -732,6 +732,138 @@ char * test_appendToSymbolList() {
 	return NULL;
 }
 
+struct Symbol *createTestSymbol(int lexLevel, char *key) {
+	struct Symbol *symbol = malloc(sizeof(struct Symbol));
+	symbol->lvl = lexLevel;
+	symbol->name = key;
+	symbol->typeOriginator = 0;
+
+	return symbol;
+}
+
+char *test_findSymbolByHashElement() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+	// printf("Retval: %d\n", retval);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	struct Symbol *retSymbol = findSymbolByHashElement(hash, "cherry", 1);
+	mu_assert("Symbol found is not correct, test1.",
+		retSymbol == symbol2);
+
+	retSymbol = findSymbolByHashElement(hash, "charley", 0);
+	mu_assert("Symbol found is not correct, test2.",
+		retSymbol == symbol0);	
+
+	retSymbol = findSymbolByHashElement(hash, "charley", 1);
+	mu_assert("Symbol found is not correct, test3.",
+		retSymbol == NULL);	
+
+	retSymbol = findSymbolByHashElement(hash, "cherry", 0);
+	mu_assert("Symbol found is not correct, test4.",
+		retSymbol == symbol1);
+
+	retSymbol = findSymbolByHashElement(hash, "cherry", 2);
+	mu_assert("Symbol found is not correct, test5.",
+		retSymbol == symbol3);
+
+	// dumpHash(hash);
+
+	return NULL;
+}
+
+
+char * test_getLocalSymbol() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	// setLexLevel(hash, 2);
+	struct Symbol *retSymbol = getLocalSymbol(hash, "cherry");
+	mu_assert("Local symbol found is not correct, test1.",
+		retSymbol == symbol3);
+
+	setLexLevel(hash, 1);
+	retSymbol = getLocalSymbol(hash, "cherry");
+	mu_assert("Local symbol found is not correct, test2.",
+		retSymbol == symbol2);	
+
+	setLexLevel(hash, 0);
+	retSymbol = getLocalSymbol(hash, "charley");
+	mu_assert("Local symbol found is not correct, test3.",
+		retSymbol == symbol0);	
+
+	setLexLevel(hash, 3);
+	retSymbol = getLocalSymbol(hash, "charley");
+	mu_assert("Local symbol found is not correct, test3.",
+		retSymbol == NULL);
+
+	// dumpHash(hash);
+
+	return NULL;
+}
+
+char * test_getGlobalSymbol() {
+	struct hash *hash = createHash(&getHashedKeySimple);
+
+	struct Symbol *symbol0 = createTestSymbol(0, "charley");
+	createHashElement(hash, "charley", symbol0);
+
+	struct Symbol *symbol1 = createTestSymbol(0, "cherry");
+	createHashElement(hash, "cherry", symbol1);
+
+	struct Symbol *symbol2 = createTestSymbol(1, "cherry");
+	setLexLevel(hash, 1);
+	createHashElement(hash, "cherry", symbol2);
+
+	struct Symbol *symbol3 = createTestSymbol(2, "cherry");
+	setLexLevel(hash, 2);
+	createHashElement(hash, "cherry", symbol3);
+
+	dumpHash(hash);
+
+	struct Symbol *retSymbol = getGlobalSymbol(hash, "cherry");
+	mu_assert("Global symbol found is not correct, test1.",
+		retSymbol == symbol3);
+
+	retSymbol = getGlobalSymbol(hash, "charley");
+	mu_assert("Global symbol found is not correct, test2.",
+		retSymbol == symbol0);	
+
+	struct Symbol *symbol4 = createTestSymbol(2, "ruby");
+	createHashElement(hash, "ruby", symbol4);
+
+	retSymbol = getGlobalSymbol(hash, "ruby");
+	mu_assert("Global symbol found is not correct, test3.",
+		retSymbol == symbol4);	
+
+	return NULL;
+}
+
 
 char * test_all_Hash() {
 	// mu_run_test(test_getHashedKey);
@@ -760,6 +892,9 @@ char * test_all_Hash() {
 	mu_run_test(test_getSymbolLexLevel);
 	mu_run_test(test_getCurrentLexLevel);
 	mu_run_test(test_appendToSymbolList);
+	mu_run_test(test_findSymbolByHashElement);
+	mu_run_test(test_getLocalSymbol);
+	mu_run_test(test_getGlobalSymbol);
 
 	return NULL;
 }
