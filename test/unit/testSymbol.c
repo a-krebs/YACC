@@ -83,6 +83,54 @@ setUpConstSymbol()
 }
 
 char *
+test_newConstProxySym()
+{
+	ProxySymbol *constProxySym = NULL;
+	Symbol *typeSym = setUpTypeSymbol();
+	int intResult = 123;
+	double doubleResult = 123.321;
+
+	typeSym->kindPtr.TypeKind->type = BOOLEAN_T;
+	constProxySym = newConstProxySym(&(intResult), typeSym);
+
+	mu_assert("newConstProxySym() should not return NULL ProxySymbol"
+	    " when given valid input", constProxySym);
+
+	mu_assert("newConstProxySym() should return boolean const kind Proxy "
+	    "Symbol with the expected attributes",
+	    (constProxySym->kind == CONST_KIND) &&
+	    (getConstVal(constProxySym)->Boolean.value == intResult) &&
+	    (getTypeSym(constProxySym) == typeSym));
+	
+
+	typeSym->kindPtr.TypeKind->type = REAL_T;
+	constProxySym = newConstProxySym(&(doubleResult), typeSym);
+
+	mu_assert("newConstProxySym() should not return NULL ProxySymbol"
+	    " when given valid input", constProxySym);
+
+	mu_assert("newConstProxySym() should return real const kind Proxy "
+	    "Symbol with the expected attributes",
+	    (constProxySym->kind == CONST_KIND) &&
+	    (getConstVal(constProxySym)->Real.value == doubleResult) &&
+	    (getTypeSym(constProxySym) == typeSym));
+
+	typeSym->kindPtr.TypeKind->type = INTEGER_T;
+	constProxySym = newConstProxySym(&(intResult), typeSym);
+
+	mu_assert("newConstProxySym() should not return NULL ProxySymbol"
+	    " when given valid input", constProxySym);
+
+	mu_assert("newConstProxySym() should return integer const kind Proxy "
+	    "Symbol with the expected attributes",
+	    (constProxySym->kind == CONST_KIND) &&
+	    (getConstVal(constProxySym)->Integer.value == intResult) &&
+	    (getTypeSym(constProxySym) == typeSym));
+
+	return NULL;
+}
+
+char *
 test_newConstSymFromProxy()
 {
 	ProxySymbol *proxySym = (ProxySymbol *) setUpConstSymbol();
@@ -103,24 +151,6 @@ test_newConstSymFromProxy()
 	return NULL;
 }
 
-char *
-test_newBooleanConstProxySym()
-{
-	ProxySymbol *constProxySym = NULL;
-	Symbol *typeSym = setUpTypeSymbol();
-	int result = 210;
-
-	constProxySym = newBooleanConstProxySym(&result, typeSym);
-	mu_assert("newBooleanConstProxySym() should not return NULL ProxySymbol"
-	    " when given valid input", constProxySym);
-
-	mu_assert("newBooleanConstProxySym() should return const kind Proxy "
-	    "Symbol with the expected attributes",
-	    (constProxySym->kind == CONST_KIND) &&
-	    (getConstVal(constProxySym)->Boolean.value == result) &&
-	    (getTypeSym(constProxySym) == typeSym));
-	return NULL;
-}
 
 char *
 test_newTypeSymFromSym()
@@ -226,7 +256,7 @@ test_newSubrangeSym()
 char *
 test_all_Symbol()
 {
-	mu_run_test(test_newBooleanConstProxySym);
+	mu_run_test(test_newConstProxySym);
 	mu_run_test(test_newConstSymFromProxy);
 	mu_run_test(test_newTypeSymFromSym);
 //	mu_run_test(test_newSubrangeSym);

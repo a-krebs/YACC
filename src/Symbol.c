@@ -402,46 +402,40 @@ getTypeSym(Symbol *s)
 ProxySymbol *
 newConstProxySym(void * result, Symbol *typeSym)
 {
+	Symbol *constSym = NULL;
+	double *doubleResult;
+	int *intResult;
+	
+	constSym = calloc(1, sizeof(ProxySymbol));
+	if (!constSym) {
+		err(1, "Failed to allocate memory for new constant proxy "
+		    "symbol!");
+		exit(1);
+	}
+
+	constSym->name = NULL;
+	constSym->kind = CONST_KIND;
+	allocateKindPtr(constSym);
+	setTypeSym(constSym, typeSym);
+	
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:
-		return newBooleanConstProxySym((int *) result, typeSym);
+		intResult = (int *) result;
+		getConstVal(constSym)->Boolean.value = *intResult;
+		break;
 	case INTEGER_T:
-		return newIntegerConstProxySym((int *)result, typeSym);
+		intResult = (int *) result;
+		getConstVal(constSym)->Integer.value = *intResult;
+		break;
 	case REAL_T:
-		return newRealConstProxySym((double *) result, typeSym);
+		doubleResult = (double *) result;
+		getConstVal(constSym)->Real.value = *doubleResult;
+		break;
 	default:
 		/* Shouldn't be reached */
 		return NULL;
 	}
-}
-
-ProxySymbol *
-newBooleanConstProxySym(int *result, Symbol *typeSym)
-{
-	Symbol *constSym = NULL;
-	constSym = calloc(1, sizeof(ProxySymbol));
-	if (!constSym) {
-		err(1, "Failed to allocate memory for new constant symbol!");
-		exit(1);
-	}
-	constSym->name = NULL;
-	constSym->kind = CONST_KIND;
-	allocateKindPtr((Symbol *)constSym);
-	setTypeSym(constSym, typeSym);	
-	getConstVal(constSym)->Boolean.value = *result;
 	return (ProxySymbol *) constSym;
-}
-
-ProxySymbol *
-newIntegerConstProxySym(int *result, Symbol *typeSym)
-{
-	return NULL;
-}
-
-ProxySymbol *
-newRealConstProxySym(double *result, Symbol *typeSym)
-{
-	return NULL;
 }
 
 void
