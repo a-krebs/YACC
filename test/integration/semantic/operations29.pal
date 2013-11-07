@@ -16,12 +16,12 @@ var
 begin
 	// equality
 
-	b := r < i;
-	b := r < b;	// error
-	b := r < r;
-	b := r < c;	// error
-	b := r < foo;	// error
-	b := r < bar;
+	b := r > i;
+	b := r > b;	// error
+	b := r > r;
+	b := r > c;	// error
+	b := r > foo;	// error
+	b := r > bar;
 	
-	i := i < i;	// error
+	i := i > i;	// error
 end.

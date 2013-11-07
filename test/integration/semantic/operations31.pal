@@ -15,12 +15,12 @@ var
 	c : colour;
 begin
 	// equality
-	b := foo < i;	// error
-	b := foo < b;	// error
-	b := foo < r;	// error
-	b := foo < c;	// error
-	b := foo < foo;	
-	b := foo < bar;	// error
+	b := foo > i;	// error
+	b := foo > b;	// error
+	b := foo > r;	// error
+	b := foo > c;	// error
+	b := foo > foo;	
+	b := foo > bar;	// error
 
-	i := i < i;	// error
+	i := i > i;	// error
 end.
