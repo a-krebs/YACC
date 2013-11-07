@@ -208,7 +208,7 @@ Symbol *simpleTypeLookup(char *id) {
 	Symbol *s = getGlobalSymbol(symbolTable, id);
 	if (!s) {
 		errMsg = customErrorString("The identifier %s has not been "
-		  "defined.", s->name);
+		  "defined.", id);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
