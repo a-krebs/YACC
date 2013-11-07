@@ -245,11 +245,11 @@ Symbol *createScalarListType(char *id) {
  */
 Symbol *createArrayType(Symbol *index, Symbol *base) {
 	Symbol * newArraySym = NULL;
-	int lvl = 0;	/* TODO: get actual lexical level */
-
+	int lvl = getCurrentLexLevel(symbolTable);
+	
 	newArraySym = newAnonArraySym(lvl, base, index);
 	if (newArraySym) {
-		/* TODO: Add to symbol table */
+		createHashElement(symbolTable, NULL, newArraySym);
 		return newArraySym;
 	}
 
@@ -270,7 +270,10 @@ Symbol *assertArrIndexType(Symbol *index_type) {
 	sym_t = getType(index_type);
 
 	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
-		/* Set error */
+		errMsg = customErrorString("Invalid array index type %s. "
+		    " Must be of type SUBRANGE or of type SCALAR", 
+		    typeToString(sym_t));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 	return index_type;
@@ -284,7 +287,7 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  */
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
-	int lvl = 0;
+	int lvl = getCurrentLexLevel(symbolTable);
 	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
 	return s;
 }
