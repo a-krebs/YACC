@@ -7,7 +7,9 @@
 
 #include "ElementArray.h"
 #include "Error.h"
+#include "Globals.h"
 #include "Hash.h"
+#include "PreDef.h"
 #include "Type.h"
 #include "Symbol.h"
 #include "Utils.h"
@@ -17,7 +19,6 @@
 #ifdef TESTBUILD
 #include "tokens.h"
 #endif
-extern struct hashElement *symbolTable[TABLE_SIZE];
 extern int yylineno;
 extern int colno;
 
@@ -70,7 +71,7 @@ Symbol *assertOpCompat(
 
 	/* If the operator is relational, we just need op compatible types */
 	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
-		return type1;
+		return getPreDefBool(preDefTypeSymbols);
 	}
 
 	if (areArithmeticCompatible(type1, type2)) {
@@ -79,14 +80,13 @@ Symbol *assertOpCompat(
 			case MINUS:
 			case MULTIPLY:
 				if (areBothInts(type1, type2)) {
-					/* Return pointer to int type */
 					return type1;
 				}
-				else return type1; /* ret ptr to real type */
+				else return getPreDefReal(
+				    preDefTypeSymbols);
 				break;
 			case DIVIDE:
-				/* return pointer to real type */
-				return type1;
+				return getPreDefReal(preDefTypeSymbols);
 			case DIV:
 			case MOD:
 				if (areBothInts(type1, type2)) {
@@ -137,6 +137,8 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
+
+	// TODO: same a proc decl probably
 	// TODO push lexical level, figure this out
 }
 
@@ -153,12 +155,19 @@ void exitConstDeclPart(void) {
  */
 void doConstDecl(char *id, ProxySymbol *proxy) {
 	Symbol *s = NULL;
-	int lvl = 0;
-	s = newConstSymFromProxy(lvl, id, proxy);		
+	int lvl = getCurrentLexLevel(symbolTable);
+	
+	/* Perform lookup for identifier in current lexical level */
+	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		/* Add s to symbol table */
+		/* throw symbol already declated at local lvl error */
 	}
 
+	/* Else we can try to make new const  and add it to symbol table */	
+	s = newConstSymFromProxy(lvl, id, proxy);		
+	if (s) {
+		createHashElement(symbolTable, id, s);
+	}
 }
 
 /*
