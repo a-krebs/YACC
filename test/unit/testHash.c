@@ -1084,6 +1084,15 @@ char *test_decrementLexLevel() {
 }
 
 
+char *test_nullHashNames() {
+	// struct hash *hash = createHash(&getHashedKeyNormal);	
+
+	
+	
+	return NULL;
+}
+
+
 char * test_all_Hash() {
 	// mu_run_test(test_getHashedKey);
 	
@@ -1120,6 +1129,7 @@ char * test_all_Hash() {
 	mu_run_test(test_popLexLevel);
 	mu_run_test(test_incrementLexLevel);
 	mu_run_test(test_decrementLexLevel);
+	mu_run_test(test_nullHashNames);
 
 	return NULL;
 }
