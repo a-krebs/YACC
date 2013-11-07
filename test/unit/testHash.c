@@ -1031,11 +1031,66 @@ char *test_popLexLevel(){
 	mu_assert("Unexpected return of popLexLevel, test5",
 		popLexLevel(hash) == 0);	
 
+	mu_assert("popLexLevel did not decrement lex level",
+		getCurrentLexLevel(hash) == 0);
+
 	// dumpHash(hash);	
 
 	return NULL;
 }
 
+
+char *test_incrementLexLevel() {
+	struct hash *hash = createHash(&getHashedKeySimple);	
+
+	mu_assert("Unexpected lexical level from incrementLexLevel, test1",
+		getCurrentLexLevel(hash) == 0);
+
+	mu_assert("Unexpected lexical level from incrementLexLevel, test2",
+		incrementLexLevel(hash) == 0);		
+
+	hash = NULL;
+	mu_assert("Unexpected lexical level from incrementLexLevel, test3",
+		incrementLexLevel(hash) == 1);		
+
+	hash = createHash(&getHashedKeySimple);	
+
+	incrementLexLevel(hash);
+	mu_assert("Unexpected lexical level from incrementLexLevel, test4",
+		1 == getCurrentLexLevel(hash));	
+	
+	return NULL;
+}
+
+
+char *test_decrementLexLevel() {
+	struct hash *hash = createHash(&getHashedKeySimple);	
+
+	mu_assert("Unexpected lexical level from decrementLexLevel, test1",
+		getCurrentLexLevel(hash) == 0);
+
+	// 
+	mu_assert("Unexpected lexical level from decrementLexLevel, test2",
+		decrementLexLevel(hash) == 1);		
+
+	incrementLexLevel(hash);
+	mu_assert("Unexpected lexical level from decrementLexLevel, test3",
+		decrementLexLevel(hash) == 0);	
+
+
+	incrementLexLevel(hash);
+	incrementLexLevel(hash);
+	incrementLexLevel(hash);
+	decrementLexLevel(hash);
+	mu_assert("Unexpected lexical level from decrementLexLevel, test4",
+		getCurrentLexLevel(hash) == 2);	
+
+	hash = NULL;
+	mu_assert("Unexpected lexical level from incrementLexLevel, test5",
+		incrementLexLevel(hash) == 1);		
+	
+	return NULL;
+}
 
 
 char * test_all_Hash() {
@@ -1072,6 +1127,8 @@ char * test_all_Hash() {
 	mu_run_test(test_isOnlySymbolInList);
 	mu_run_test(test_deleteSymbol);
 	mu_run_test(test_popLexLevel);
+	mu_run_test(test_incrementLexLevel);
+	mu_run_test(test_decrementLexLevel);
 
 	return NULL;
 }
