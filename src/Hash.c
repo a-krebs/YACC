@@ -30,7 +30,8 @@
 
 
 
-/* Sets the current lexical level of the hash. This is 
+/* FOR TESTING USE ONLY. DO NOT USE!!!!!!!!
+ * Sets the current lexical level of the hash. This is 
  * saved in the symbol table hash struct.
  *
  * Parameters:
@@ -41,6 +42,50 @@
  */
 void setLexLevel(struct hash *hash, int lexLevel) {
         hash->lexLevel = lexLevel;
+}
+
+
+/* 
+ * Increments the current lexical level of the hash. This is 
+ * saved in the symbol table hash struct.
+ *
+ * Parameters:
+ *              hash: hash struct with levLevel member
+ *
+ * Return: 0 successs
+ *         1 failure
+ */
+int incrementLexLevel(struct hash *hash) {
+        if (hash == NULL) {
+                return 1;
+        }
+
+        hash->lexLevel = hash->lexLevel + 1;
+        return 0;        
+}
+
+
+/*
+ * Decrements the current lexical level of the hash. This is 
+ * saved in the symbol table hash struct.
+ *
+ * Parameters:
+ *              hash: hash struct with levLevel member
+ *
+ * Return: 0 successs
+ *         1 failure
+ */
+int decrementLexLevel(struct hash *hash) {
+        if (hash == NULL) {
+                return 1;
+        }
+
+        if (hash->lexLevel == 0) {
+                return 1;
+        }
+
+        hash->lexLevel = hash->lexLevel - 1;
+        return 0;
 }
 
 
@@ -724,7 +769,7 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
 
 
 /* Pops all the symbols in the symbol table with the current lexical
- * level. TODO: should level be decremented at end?
+ * level. 
  *
  * Parameters: 
  *              hash: hash to pop symbols from
@@ -755,6 +800,8 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
                         }
                 }
         }
+
+        hash->lexLevel = hash->lexLevel - 1;
 
         return 0;
 }
