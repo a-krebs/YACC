@@ -329,6 +329,29 @@ test_newAnonScalarSym()
 char *
 test_isConstInScalar()
 {
+	Symbol *ss = NULL;
+	Symbol *c1 = setUpIntConst();
+	Symbol *c2 = setUpIntConst();
+	Symbol *c3 = setUpIntConst();
+	struct ElementArray *ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, c1);
+	appendElement(ea, c2);
+	int lvl = 0;
+	char id[] = "hello";
+
+	ss = newAnonScalarSym(lvl, ea);
+	mu_assert("isConstInScalar() should recognize c1 appears in scalar",
+	    isConstInScalar(c1, ss));
+	c3->lvl = 102;
+	mu_assert("isConstInScalar() should recognize c3 does not appear in "
+	    "scalar", !isConstInScalar(c3, ss));
+	c1->name = id;
+	mu_assert("isConstInScalar() should recognize c1 is not in scalar "
+	    "even though it appears in element array", 
+	    !isConstInScalar(ss, c1));
+
+	
 	return NULL;
 }
 
@@ -363,5 +386,6 @@ test_all_Symbol()
 	mu_run_test(test_newSubrangeSym);
 	mu_run_test(test_newAnonScalarSym);
 	mu_run_test(test_newVariableSym);
+	mu_run_test(test_isConstInScalar);
 	return NULL;
 }

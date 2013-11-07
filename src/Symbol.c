@@ -543,6 +543,10 @@ setSymbolName(Symbol *s, char *id)
 /*
  * Determines if the given symbol is a const which appears in the given
  * symbol of kind TYPE_KIND and type SCALAR_T
+ * Why checking by name and lexical level is enough: each identifier
+ * only appears once per scope.  If def hidden later, lvl is enough
+ * to tell us that the id no longer refers to a const inside the
+ * scalar list.
  */
 int
 isConstInScalar(Symbol *constSym, Symbol *scalarSym)
