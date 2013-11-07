@@ -419,6 +419,10 @@ ProxySymbol *hashLookupToProxy(char *id) {
 	return newProxySymFromSym(s);	
 }
 
+
+/*
+ * id1 == name of record, id3 == name of field we are trying to access
+ */
 ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 	return NULL;
 }
@@ -428,9 +432,9 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
  *
  * Return a ProxySymbol of the expected type.
  */
-ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indexes) {
+ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	/* Record specific errors in isValidArrayAccess */
-	if (isValidArrayAccess((Symbol *) var, indexes)) {
+	if (isValidArrayAccess((Symbol *) var, indices)) {
 		return newProxySymFromSym(getTypeSym((Symbol *) var));
 	}
 	return NULL;
@@ -448,7 +452,14 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indexes) {
  * Return a pointer to a concatenated list.
  */
 ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
-	return list1;
+	/*
+	 * b/c we are parsing right to left, make list2 the head of the
+	 * linked list of proxy symbols
+ 	 * TODO: confirm this with Aaron
+	 */
+
+	list1->next = list2;
+	return list2;
 }
 
 /*
@@ -457,7 +468,8 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
  * Return a pointer to the new list.
  */
 ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
-	return NULL;
+	exp->next = NULL;
+	return exp;
 }
 
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {

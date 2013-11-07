@@ -25,7 +25,13 @@ ProxySymbol *newProxySymFromSym(Symbol *);
 
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
+Symbol *getArrayIndexSym(Symbol *);
+Symbol *getArrayBaseSym(Symbol *);
+int getArrayDim(Symbol *s);
+int getSymbolListLength(Symbol *s);
 void setSymbolName(Symbol *, char *);
+
+
 
 int isValidProcInvocation(Symbol *, struct ElementArray *);
 Symbol * isValidFuncInvocation(Symbol *, struct ElementArray *);

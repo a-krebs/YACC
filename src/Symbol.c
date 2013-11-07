@@ -519,8 +519,111 @@ setSymbolName(Symbol *s, char *id)
 	strcpy(s->name, id);
 }
 
+
+/*
+ * Given a linked list of ProxySymbols, returns the type which results
+ * from using the linked list of ProxySymbols to access the array given
+ * by var.
+ */
 Symbol *
 isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 {
-	return NULL;
+	Symbol *arrayTypeSym = NULL;
+	Symbol *indexTypeSym = NULL;
+	Symbol *arg = indices;
+	int i, arrayDim, nArgs;
+
+	arrayTypeSym = getTypeSym(var);
+
+	if (getType(arrayTypeSym) != ARRAY_T) {
+		errMsg = customErrorString("Trying to access by indices %s "
+		    " which is not of type ARRAY but of type %s", var->name,
+		    typeToString(getType(arrayTypeSym)));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	arrayDim = getArrayDim(arrayTypeSym);
+	nArgs = getSymbolListLength(indices);
+
+	if (arrayDim != nArgs) {
+		errMsg = customErrorString("Trying to access array %s of "
+		    "dimension %d with %d index/indices.", var->name,
+		    arrayDim, nArgs);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	indexTypeSym = getArrayIndexSym(arrayTypeSym);
+	for (i = 0; i < nArgs; i++) {
+	
+		if (!areSameType(indexTypeSym, getTypeSym(arg))) {
+			errMsg = customErrorString("Invalid array subscript. "
+			    " Expected type %s at position %d but got %s",
+			    typeToString(getType(indexTypeSym)), i,
+			    typeToString(getType(arg)));
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+			return NULL;
+		}
+	}
+
+	/* Got here, it was a valid array access!  YAY! */	
+	return getArrayBaseSym(arrayTypeSym);
+}
+
+/*
+ * Follows the chains of next pointer to get the size of the Symbol linked
+ * list.
+ */
+int
+getSymbolListLength(Symbol *s)
+{	
+	int len = 0;
+	while (s) {
+		len++;
+		s = s->next;
+	}
+	return s;
+}
+
+/*
+ * Returns the dimension of the given array (assumes that the given
+ * Symbol describing the array is the "first dimensional array")
+ */
+int
+getArrayDim(Symbol *s)
+{
+	Symbol *nextIndexSym = NULL;
+	int dim = 0;	
+
+	if (getType(s) == ARRAY_T) dim++;
+	else return dim;
+
+	nextIndexSym = getArrayIndexSym(s);
+	while (nextIndexSym != NULL) {
+		dim++;
+		nextIndexSym = getArrayIndexSym(nextIndexSym);
+	}
+	return dim;
+
+}
+
+/*
+ * Returns the symbol which indexes the array.
+ */
+Symbol *
+getArrayIndexSym(Symbol *s)
+{
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	return getTypePtr(s)->Array->indexTypeSym;
+}
+
+Symbol *
+getArrayBaseSym(Symbol *s)
+{
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	return getTypePtr(s)->Array->baseTypeSym;
+
 }
