@@ -637,8 +637,8 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 			errMsg = customErrorString("Invalid array "
 			    "subscript.  Expected type %s at position "
 			    "%d but got %s",
-		    	    typeToString(getType(indexTypeSym))), i,
-		    	    typeToString(getType(arg));
+		    	    typeToString(getType(indexTypeSym)), i,
+		    	    typeToString(getType(arg)));
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 			return NULL;
 		}
