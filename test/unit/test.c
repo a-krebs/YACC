@@ -10,6 +10,7 @@
 #include "testHash.h"
 #include "testActions.h"
 #include "testUtils.h"
+#include "testPreDef.h"
 
 int tests_run = 0;
 
@@ -39,5 +40,6 @@ char *test_all() {
 	mu_run_suite(test_all_Hash);
 	mu_run_suite(test_all_Actions);
 	mu_run_suite(test_all_Utils);
+	mu_run_suite(test_all_PreDef);
 	return NULL;
 }
