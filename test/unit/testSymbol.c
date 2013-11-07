@@ -10,6 +10,7 @@
 
 #include "testSymbol.h"
 #include "Type.h"
+#include "Symbol.h"
 
 #define INTLOW_VAL 12
 #define INTHIGH_VAL 23423
@@ -57,6 +58,25 @@ setUpTypeSymbol()
 }
 
 Symbol *
+setUpIntConst()
+{
+	char id[] = "testType";
+	Symbol *constSym = calloc(1, sizeof(Symbol));
+	if (!constSym) {
+		err(1, "Failed to allocate memory for test type symbol!");
+		exit(1);
+	}
+
+	setSymbolName(constSym, id);
+	constSym->kind = CONST_KIND;
+	allocateKindPtr(constSym);
+	constSym->kindPtr.ConstKind->typeSym = setUpTypeSymbol();
+	constSym->kindPtr.ConstKind->value.Integer.value = INTLOW_VAL;
+	return constSym; 	
+}
+
+
+Symbol *
 setUpConstSymbol()
 {
 	char id[] = "testType";
@@ -81,6 +101,27 @@ setUpConstSymbol()
 	constSym->kindPtr.ConstKind->value.Real.value = REAL_VAL;
 	
 	return constSym; 	
+}
+
+char *
+test_newAnonArraySym()
+{
+	Symbol *newArraySym = NULL;
+	Symbol *lowConst = setUpIntConst();
+	Symbol *highConst = setUpIntConst();
+	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
+	Symbol *baseTypeSym = setUpTypeSymbol();
+	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+
+	mu_assert("newArraySym should not be NULL", newArraySym); 
+	mu_assert("newArraySym should have subrange as expected",
+	    getTypePtr(newArraySym)->Array->indexTypeSym == subrangeSym);
+	mu_assert("newArraySym should have base type as expecte",
+	    getTypePtr(newArraySym)->Array->baseTypeSym == baseTypeSym);
+	mu_assert("newArraySym should be at the expected lexical level",
+	    newArraySym->lvl == 10);
+
+	return NULL;
 }
 
 char *
@@ -235,7 +276,6 @@ test_newSubrangeSym()
 		  !subrangeSym);
 
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
-	if (!getTypePtr(subrangeSym)) printf("\n\n9098098098098\n");
 	mu_assert("newSubRangeSym() should return expected subrange",
 	    (getTypePtr(subrangeSym)->Subrange->low == INTLOW_VAL));
 
@@ -247,14 +287,9 @@ test_newSubrangeSym()
 }
 
 char *
-test_newAnonArraySym()
-{
-	Symbol *baseType = setUpConstSymbol();
-	return NULL;
-}
-char *
 test_all_Symbol()
 {
+	mu_run_test(test_newAnonArraySym);
 	mu_run_test(test_newConstProxySym);
 	mu_run_test(test_newConstSymFromProxy);
 	mu_run_test(test_newTypeSymFromSym);

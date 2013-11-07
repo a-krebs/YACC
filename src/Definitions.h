@@ -55,16 +55,18 @@ typedef enum {
  * TODO: need function newVarFromParam..... NO! just use newVariableSym
  *	 and pass it param->name, typeSymPtr
  */
-struct Param {
-	char *name;			
-	type_t type;	/* probably unnecessary now that we're pting to sym */
-	struct Symbol *typeSymPtr;	/* note: PAL specifications requires
-					 * that all procs/funcs have params
-					 * have already defined types, so no
-					 * anon types as param types */
+struct ParamKind {
+	struct Symbol *typeSym;
+	int byRef;	/* flaged indicated if the param was passed by ref */	
 };
 
-/* Param Array defined here to avoid incestuous circular .h includes :( */
+struct Param {
+	char *name;
+	type_t type;
+	struct Symbol *typeSym;
+	
+};
+
 struct ParamArray {
 	struct Param **data;
 	unsigned int len;
@@ -160,6 +162,7 @@ typedef union anonymous_constant_value {
 typedef union kind_union {
 	struct ConstantKind * ConstKind;
 	struct FunctionKind * FuncKind;
+	struct ParamKind * ParamKind;
 	struct ProcedureKind * ProcKind;
 	struct TypeKind * TypeKind;
 	struct VariableKind * VarKind;

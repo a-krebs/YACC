@@ -10,6 +10,7 @@ struct ProcedureKind *allocateProcedureKind();
 struct TypeKind *allocateTypeKind();
 struct VariableKind *allocateVariableKind();
 void allocateKindPtr(Symbol *);
+struct ParamKind * allocateParamKind();
 void allocationErrorCheck(void *);
 
 AnonConstVal *getConstVal(Symbol *);

@@ -5,8 +5,10 @@
 
 Symbol * setUpTypeSymbol();
 Symbol * setUpConstSymbol();
+Symbol * setUpIntConst();
 
-char *test_newConstProxySym();
+char * test_newAnonArraySym();
+char * test_newConstProxySym();
 char * test_newConstSymFromProxy();
 char * test_newTypeSymFromSym();
 char * test_newVariableSym();

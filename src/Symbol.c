@@ -99,51 +99,6 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 }
 
 
-/* /\* */
-/*  * Creates a new parameter to be attached to a function.  */
-/*  * NOTE: each call to newParameter must be followed by a call to newVariable() */
-/*  *       in order to make the parameter available as a local variable in */
-/*  *       procedure/function definition body. */
-/*  *\/ */
-/* struct Param * */
-/* newParameter(char *id, Symbol *typeSym) */
-/* { */
-/* 	struct Param *newParam = NULL; */
-/* 	size_t len; */
-
-/* 	if (!typeSym) { */
-/* 		/\* Record error *\/ */
-/* 		return NULL; */
-/* 	} */
-/* 	if (typeSym->kind != TYPE_KIND) { */
-/* 		/\* Record error *\/ */
-/* 		return NULL; */
-/* 	} */
-
-/* 	if (!id) { */
-/* 		/\* Error: canot have anonymous parameters! *\/ */
-/* 		return NULL; */
-/* 	} */
-	
-/* 	len = strlen(id); */
-/* 	if (!len) { */
-/* 		/\* Cannot have param with 0 length name! *\/ */
-/* 		return NULL; */
-/* 	} */
-
-/* 	newParam = calloc(1, sizeof(struct Param)); */
-/* 	if (!newParam) { */
-/* 		err(1, "Failed to allocate memory for new parameter!"); */
-/* 		exit(1); */
-/* 	} */
-
-/* 	strcpy(newParam->name, id); */
-/* 	newParam->type = typeSym->type; */
-/* 	setTypePtr(&(newParam->typePtr), typeSym->typePtr, typeSym->type); */
-/* 	return newParam; */
-/* } */
-
-
 /*
  * Creates a new variable struct to be added to the symbol table
  * given an identifier and an entry in the symbol table which is a type.
@@ -195,6 +150,32 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 	return newVar;
 }
 
+
+Symbol *
+newParameterSym(int lvl, char *id, Symbol *typeSym)
+{
+	Symbol *newParamSym = NULL;
+	if (!typeSym) {
+		return NULL;
+	}
+
+	if (!id) {
+		return NULL;
+	}
+
+	newParamSym = calloc(1, sizeof(Symbol));
+	if (!newParamSym) {
+		err(1, "Failed to allocate memory for new parameter symbol!");
+		exit(1);
+	}
+
+	setSymbolName(newParamSym, id);
+	newParamSym->kind = PARAM_KIND;
+	allocateKindPtr(newParamSym);
+	newParamSym->kindPtr.ParamKind->typeSym = typeSym;
+	newParamSym->lvl = lvl;
+	return newParamSym;	
+}
 /*
  * Constructs an anonymous subrange symbol.
  */
@@ -203,8 +184,6 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 	        ProxySymbol *constSymHigh)
 {
 	Symbol *newSubrangeSym = NULL;
-	Symbol *lowSymType = getTypeSym(constSymLow);
-	Symbol *highSymType = getTypeSym(constSymHigh);
 	
 	/*
 	 * We must assure that we are constructing a subrange
@@ -212,21 +191,18 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 	 * the value of constSymLow is less than the value of constSymHigh.
 	 */
 	if ((!constSymLow) || (!constSymHigh)) {
-		printf("11111111111111");
 		/* Error */
 		return NULL;
 	}
 
 	if ((constSymLow->kind != CONST_KIND) ||
 	    (constSymHigh->kind != CONST_KIND)) {
-		printf("2222222222222222222");	
 	/*Error: subranges indices not constants */
 		return NULL;
 	}
 
 	if (getType(constSymLow) != getType(constSymHigh)) {
 		/* Error:  Mismatched types for subrange indices */
-		printf("333333333333333333");
 		return NULL;
 	}
 
@@ -235,7 +211,6 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 		 * Error: trying to construct subrange from non ordinal
 		 * types
 		 */
-		printf("44444444444444444");
 		return NULL;
 	}
 
@@ -284,18 +259,15 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
  * Creates a new procedure symbol entry to be placed in the symbol table.
  */
 Symbol *
-newProcedureSym(int lvl, char *id, struct ParamArray *pa)
+newProcedureSym(int lvl, char *id, struct ElementArray *pa)
 {
-
+	return NULL;
+	/*
 	Symbol *newProcSym = NULL;
 	size_t len;
 	if (!pa) {
-		/* Don't pass NULL if no params, pass empty param array. */
-		return NULL;
-	}
 
 	if (!id) {
-		/* Cannot create anonymous procedure! */
 		return NULL;
 	}
 
@@ -310,13 +282,13 @@ newProcedureSym(int lvl, char *id, struct ParamArray *pa)
 
 	len = strlen(id);
 	if (!len) {
-		/* procdure cannot have 0 length name */
 		return NULL;
 	}
 	strcpy(newProcSym->name, id);
 	newProcSym->kindPtr.ProcKind->params = pa;
 	newProcSym->lvl = lvl;
 	return newProcSym;
+	*/
 }
 
 /* Symbol* */

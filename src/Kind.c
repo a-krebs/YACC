@@ -23,6 +23,9 @@ allocateKindPtr(Symbol *s)
 	case FUNC_KIND:
 		s->kindPtr.FuncKind = allocateFunctionKind();
 		break;
+	case PARAM_KIND:
+		s->kindPtr.ParamKind = allocateParamKind();
+		break;
 	case PROC_KIND:
 		s->kindPtr.ProcKind = allocateProcedureKind();
 		break;
@@ -53,6 +56,14 @@ allocateFunctionKind()
 	struct FunctionKind *fk = calloc(1, sizeof(struct FunctionKind));
 	allocationErrorCheck(fk);
 	return fk;
+}
+
+struct ParamKind *
+allocateParamKind()
+{
+	struct ParamKind *pk = calloc(1, sizeof(struct ParamKind));
+	allocationErrorCheck(pk);
+	return pk;
 }
 
 struct ProcedureKind *

@@ -10,7 +10,9 @@ Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
 Symbol *newSubrangeSym(int, Symbol *, Symbol *);
 Symbol *newVariableSym(int, char *, Symbol *);
-Symbol *newProcedureSym(int, char *, struct ParamArray *);
+Symbol *newProcedureSym(int, char *, struct ElementArray *);
+Symbol *newParamSym(int, char *, Symbol *);
+
 
 /* Symbol creation from ProxySymbol functions */
 Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
