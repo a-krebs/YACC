@@ -20,6 +20,9 @@
 extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
+// extern struct preDefTypeSymbols *preDefTypeSymbols;
+// extern struct hash *symbolTable;
+
 
 
 /*
@@ -145,7 +148,9 @@ int main( int argc, char *argv[] )
 
 	/* initizie symbol table and pre-defitions */
 	initialize();
-
+	// dumpHash(symbolTable);
+	// printf("%p\n", getPreDefBool(preDefTypeSymbols));
+	
 	/* parse file */
 	yyparse();
 

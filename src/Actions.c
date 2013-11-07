@@ -7,7 +7,9 @@
 
 #include "ElementArray.h"
 #include "Error.h"
+#include "Globals.h"
 #include "Hash.h"
+#include "PreDef.h"
 #include "Type.h"
 #include "Symbol.h"
 #include "Utils.h"
@@ -17,7 +19,6 @@
 #ifdef TESTBUILD
 #include "tokens.h"
 #endif
-extern struct hashElement *symbolTable[TABLE_SIZE];
 extern int yylineno;
 extern int colno;
 
@@ -70,7 +71,7 @@ Symbol *assertOpCompat(
 
 	/* If the operator is relational, we just need op compatible types */
 	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
-		return type1;
+		return getPreDefBool(preDefTypeSymbols);
 	}
 
 	if (areArithmeticCompatible(type1, type2)) {
@@ -79,14 +80,13 @@ Symbol *assertOpCompat(
 			case MINUS:
 			case MULTIPLY:
 				if (areBothInts(type1, type2)) {
-					/* Return pointer to int type */
 					return type1;
 				}
-				else return type1; /* ret ptr to real type */
+				else return getPreDefReal(
+				    preDefTypeSymbols);
 				break;
 			case DIVIDE:
-				/* return pointer to real type */
-				return type1;
+				return getPreDefReal(preDefTypeSymbols);
 			case DIV:
 			case MOD:
 				if (areBothInts(type1, type2)) {
@@ -137,6 +137,8 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
+
+	// TODO: same a proc decl probably
 	// TODO push lexical level, figure this out
 }
 
@@ -153,12 +155,19 @@ void exitConstDeclPart(void) {
  */
 void doConstDecl(char *id, ProxySymbol *proxy) {
 	Symbol *s = NULL;
-	int lvl = 0;
-	s = newConstSymFromProxy(lvl, id, proxy);		
+	int lvl = getCurrentLexLevel(symbolTable);
+	
+	/* Perform lookup for identifier in current lexical level */
+	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		/* Add s to symbol table */
+		/* throw symbol already declated at local lvl error */
 	}
 
+	/* Else we can try to make new const  and add it to symbol table */	
+	s = newConstSymFromProxy(lvl, id, proxy);		
+	if (s) {
+		createHashElement(symbolTable, id, s);
+	}
 }
 
 /*
@@ -172,14 +181,18 @@ void exitTypeDeclPart(void) {
  * Create a new type identifier symbol in the symbol table.
  */
 void doTypeDecl(char *id, Symbol *type) {
-	Symbol * newTypeSym = NULL;
-	int lvl = 0;	/* TODO: make this get actual lex lvl */
-	
-	newTypeSym = newTypeSymFromSym(lvl, id, type);
-	if (newTypeSym) {
-		/* add to symbol table */
-	}
+	Symbol * s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
 
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		/* throw already defined error */
+	}
+	
+	s = newTypeSymFromSym(lvl, id, type);
+	if (s) {
+		createHashElement(symbolTable, id, s);	
+	}
 	/* Else, error.  newTypeSymFromSym performs error checking */
 }
 
@@ -191,7 +204,22 @@ void doTypeDecl(char *id, Symbol *type) {
  * Return a pointer to the type.
  */
 Symbol *simpleTypeLookup(char *id) {
-	return NULL;
+	
+	Symbol *s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		errMsg = customErrorString("The identifier %s has not been "
+		  "defined.", s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	if (s->kind != TYPE_KIND) {
+		errMsg = customErrorString("The identifier %s is not a type. ",
+		    s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+	/* Else, we return the given type */
+	return s;
 }
 
 /*
@@ -217,11 +245,11 @@ Symbol *createScalarListType(char *id) {
  */
 Symbol *createArrayType(Symbol *index, Symbol *base) {
 	Symbol * newArraySym = NULL;
-	int lvl = 0;	/* TODO: get actual lexical level */
-
+	int lvl = getCurrentLexLevel(symbolTable);
+	
 	newArraySym = newAnonArraySym(lvl, base, index);
 	if (newArraySym) {
-		/* TODO: Add to symbol table */
+		createHashElement(symbolTable, NULL, newArraySym);
 		return newArraySym;
 	}
 
@@ -242,7 +270,10 @@ Symbol *assertArrIndexType(Symbol *index_type) {
 	sym_t = getType(index_type);
 
 	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
-		/* Set error */
+		errMsg = customErrorString("Invalid array index type %s. "
+		    " Must be of type SUBRANGE or of type SCALAR", 
+		    typeToString(sym_t));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 	return index_type;
@@ -256,7 +287,7 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  */
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
-	int lvl = 0;
+	int lvl = getCurrentLexLevel(symbolTable);
 	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
 	return s;
 }

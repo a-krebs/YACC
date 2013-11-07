@@ -2,6 +2,7 @@
 #include "Type.h"
 #include "Kind.h"
 #include "Symbol.h"
+#include "Hash.h"
 
 Symbol *getPreDefBool(struct preDefTypeSymbols *preDefTypeSymbols) {
 	return preDefTypeSymbols->boolean;
@@ -22,23 +23,6 @@ Symbol *getPreDefReal(struct preDefTypeSymbols *preDefTypeSymbols) {
 	return preDefTypeSymbols->real;
 }
 
-
-// struct Symbol *createPreDefBool() {
-// 	struct Symbol *symbol = malloc(sizeof(struct Symbol));
-
-// 	setSymbolName(symbol, "boolean");
-// 	symbol->kind = TYPE_KIND;
-
-// 	allocateKindPtr(symbol);
-// 	symbol->kindPtr.TypeKind->type = BOOLEAN_T;
-// 	getTypePtr(symbol)->Boolean = malloc(sizeof(struct Boolean));
-
-// 	symbol->lvl = 0; ///fix this
-// 	symbol->typeOriginator = 1;
-// 	symbol->next = NULL;
-
-// 	return symbol;
-// }
 
 struct Symbol *createPreDef(char *name, type_t type) {
 	struct Symbol *symbol = malloc(sizeof(struct Symbol));
@@ -76,10 +60,15 @@ struct Symbol *createPreDef(char *name, type_t type) {
 
 struct preDefTypeSymbols *initializePredDefs() {
 	struct preDefTypeSymbols *preDefs = malloc(sizeof(struct preDefTypeSymbols));	
-	preDefs->boolean = createPreDef("boolean", TYPE_KIND);
-	preDefs->chars = createPreDef("char", TYPE_KIND);
-	preDefs->integer = createPreDef("integer", TYPE_KIND);
-	preDefs->real = createPreDef("real", TYPE_KIND);
+	preDefs->boolean = createPreDef(BOOLEAN_KEY, TYPE_KIND);
+	preDefs->chars = createPreDef(CHAR_KEY, TYPE_KIND);
+	preDefs->integer = createPreDef(INTEGER_KEY, TYPE_KIND);
+	preDefs->real = createPreDef(REAL_KEY, TYPE_KIND);
+
+	createHashElement(symbolTable, BOOLEAN_KEY, preDefs->boolean);
+	createHashElement(symbolTable, CHAR_KEY, preDefs->chars);
+	createHashElement(symbolTable, INTEGER_KEY, preDefs->integer);
+	createHashElement(symbolTable, REAL_KEY, preDefs->real);
 
 	return preDefs;
 }
