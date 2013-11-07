@@ -98,6 +98,21 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	return newArraySym;
 }
 
+Symbol *
+newAnonScalarSym(int lvl, struct ElementArray *ea)
+{
+	Symbol *newAnonScalar = NULL;
+	newAnonScalar = calloc(1, sizeof(Symbol));
+
+	newAnonScalar->name = NULL;
+	newAnonScalar->type = TYPE_KIND;
+	allocateKindPtr(newAnonScalar);
+	getTypePtr(newAnonScalar)->Scalar->consts = ea;
+	newAnonScalar->typeOriginator = 1;
+	newAnonScalar->lvl = lvl;
+	return newAnonScalar;
+}
+
 
 /*
  * Creates a new variable struct to be added to the symbol table
@@ -521,9 +536,45 @@ setSymbolName(Symbol *s, char *id)
 
 
 /*
+ * Determines if the given symbol is a const which appears in the given
+ * symbol of kind TYPE_KIND and type SCALAR_T
+ */
+int
+isConstInScalar(Symbol *constSym, Symbol *scalarSym)
+{
+	struct ElementArray *consts = NULL;
+	Symbol *c = NULL;
+	int i;
+	if (!(constSym) || !(scalarSym)) return 0;
+	if ((getType(constSym) != INTEGER_T) ||
+	    (getType(scalarSym) != SCALAR_T) ||
+	    (constSym->kind != CONST_KIND) ||
+	    (scalarSym->kind != TYPE_KIND)) {
+		return 0;
+	} 
+
+	if (!constSym->name) return 0;
+
+	consts = getTypePtr(scalarSym)->Scalar->consts;
+
+	for(i = 0; i < consts->nElements; i++) {
+		c = (Symbol *) getElementAt(ea, i);
+		if ((strcmp(c->name, constSym->name) == 0) &&
+		    (c->lvl == constSym->lvl)) {
+			return 1;	
+		}
+	}	
+	return 0;
+}
+
+/*
  * Given a linked list of ProxySymbols, returns the type which results
  * from using the linked list of ProxySymbols to access the array given
  * by var.
+ *
+ * TODO: if index is const not part of scalar, see if its value falls in the
+ * allowable range.
+ *
  */
 Symbol *
 isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
@@ -542,7 +593,6 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
-
 	arrayDim = getArrayDim(arrayTypeSym);
 	nArgs = getSymbolListLength(indices);
 
@@ -556,7 +606,10 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 
 	indexTypeSym = getArrayIndexSym(arrayTypeSym);
 	for (i = 0; i < nArgs; i++) {
-	
+// TODO:
+// need to get base type of the index sym for the array and compare that to the
+// type of the index.  this happens different based on if the index
+// type is a subrange or a scalar	
 		if (!areSameType(indexTypeSym, getTypeSym(arg))) {
 			errMsg = customErrorString("Invalid array subscript. "
 			    " Expected type %s at position %d but got %s",
@@ -583,7 +636,7 @@ getSymbolListLength(Symbol *s)
 		len++;
 		s = s->next;
 	}
-	return s;
+	return len;
 }
 
 /*
@@ -595,17 +648,12 @@ getArrayDim(Symbol *s)
 {
 	Symbol *nextIndexSym = NULL;
 	int dim = 0;	
-
-	if (getType(s) == ARRAY_T) dim++;
-	else return dim;
-
 	nextIndexSym = getArrayIndexSym(s);
 	while (nextIndexSym != NULL) {
 		dim++;
 		nextIndexSym = getArrayIndexSym(nextIndexSym);
 	}
 	return dim;
-
 }
 
 /*

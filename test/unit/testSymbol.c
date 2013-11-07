@@ -307,12 +307,32 @@ test_newSubrangeSym()
 }
 
 char *
+test_isValidArrayAccess()
+{
+	Symbol *newArraySym = NULL;
+	Symbol *lowConst = setUpIntConst();
+	Symbol *highConst = setUpIntConst();
+	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
+	Symbol *baseTypeSym = setUpTypeSymbol();
+	Symbol *var = NULL;
+	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+	var = newVariableSym(10, "hello", newArraySym);	
+	ProxySymbol *index1 = (ProxySymbol *) lowConst;
+
+//	mu_assert("isValidArrayAccess() should recognize valid array access",
+//	    isValidArrayAccess(newArraySym, index1)); 
+	return NULL;
+
+}
+
+char *
 test_all_Symbol()
 {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
 	mu_run_test(test_newConstProxySym);
 	mu_run_test(test_newConstSymFromProxy);
+	mu_run_test(test_isValidArrayAccess);
 	mu_run_test(test_newTypeSymFromSym);
 	mu_run_test(test_newSubrangeSym);
 	mu_run_test(test_newVariableSym);
