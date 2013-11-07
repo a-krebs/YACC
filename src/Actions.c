@@ -181,14 +181,18 @@ void exitTypeDeclPart(void) {
  * Create a new type identifier symbol in the symbol table.
  */
 void doTypeDecl(char *id, Symbol *type) {
-	Symbol * newTypeSym = NULL;
-	int lvl = 0;	/* TODO: make this get actual lex lvl */
-	
-	newTypeSym = newTypeSymFromSym(lvl, id, type);
-	if (newTypeSym) {
-		/* add to symbol table */
-	}
+	Symbol * s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
 
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		/* throw already defined error */
+	}
+	
+	s = newTypeSymFromSym(lvl, id, type);
+	if (s) {
+		createHashElement(symbolTable, id, s);	
+	}
 	/* Else, error.  newTypeSymFromSym performs error checking */
 }
 
@@ -200,7 +204,22 @@ void doTypeDecl(char *id, Symbol *type) {
  * Return a pointer to the type.
  */
 Symbol *simpleTypeLookup(char *id) {
-	return NULL;
+	
+	Symbol *s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		errMsg = customErrorString("The identifier %s has not been "
+		  "defined.", s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	if (s->kind != TYPE_KIND) {
+		errMsg = customErrorString("The identifier %s is not a type. ",
+		    s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+	/* Else, we return the given type */
+	return s;
 }
 
 /*
