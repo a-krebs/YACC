@@ -10,6 +10,7 @@ Symbol * setUpIntConst();
 char * test_newAnonArraySym();
 char * test_newConstProxySym();
 char * test_newConstSymFromProxy();
+char * test_newParamSym();
 char * test_newTypeSymFromSym();
 char * test_newVariableSym();
 char * test_newSubrangeSym();

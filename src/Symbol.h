@@ -23,6 +23,7 @@ Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
  * of operations
  */
 ProxySymbol *newConstProxySym(void *, Symbol *); 
+ProxySymbol *newStringProxySym(int, char *, int);
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
 void setSymbolName(Symbol *, char *);

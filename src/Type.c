@@ -275,6 +275,8 @@ getType(Symbol *s)
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
+	case PARAM_KIND:
+		return s->kindPtr.ParamKind->typeSym->kindPtr.TypeKind->type;
 	case PROC_KIND:
 		return VOID_T;
 	case FUNC_KIND:

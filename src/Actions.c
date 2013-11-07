@@ -3,6 +3,9 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "Definitions.h"
+
+#include "ElementArray.h"
 #include "Error.h"
 #include "Hash.h"
 #include "Type.h"
@@ -480,8 +483,8 @@ ProxySymbol *unaryNotOp(ProxySymbol *x) {
  * Return pointer to the proxy
  */
 ProxySymbol *proxyIntLiteral(int value) {
-	// TODO implement
-	return NULL;
+	Symbol *integerType = NULL;
+	return newConstProxySym(&value, integerType); 
 }
 	
 /*
@@ -489,8 +492,8 @@ ProxySymbol *proxyIntLiteral(int value) {
  * Return a pointer to the hash symbol.
  */
 ProxySymbol *proxyRealLiteral(double value) {
-	// TODO implement
-	return NULL;
+	Symbol *realType = NULL;
+	return newConstProxySym(&value, realType);
 }
 
 /*
@@ -498,8 +501,11 @@ ProxySymbol *proxyRealLiteral(double value) {
  * Return a pointer to the hash symbol.
  */
 ProxySymbol *proxyStringLiteral(char *value) {
-	// TODO implment
-	return NULL;
+	// TODO: we require the length of the string in order
+	// to avoid the cases where the string literal may have null
+	// bytes.
+	int lvl = 0, strlen = 0;
+	return newStringProxySym(lvl, value, strlen);
 }
 
 /*
@@ -519,16 +525,27 @@ void procInvok(char *id, ProxySymbol *argv) {
  * Return a ProxySymbol containing the type returned.
  */
 ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
+
 	return NULL;
 }
 
 /*
- * Create an argument list for function and procedure invokation.
+ * Create an argument list for function and procedure invocation.
  *
  * Return a pointer to a ProxySymbol containing the list.
  */
-ProxySymbol *createArgList(ProxySymbol *arg) {
-	return NULL;
+struct ElementArray *createArgList(ProxySymbol *arg) {
+	struct ElementArray * ea = NULL;
+
+	if (!arg) {
+		/* ERROR */
+		return NULL;
+	}
+
+	ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, getTypeSym(arg));	
+	return ea;
 }
 
 /*

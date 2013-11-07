@@ -125,6 +125,26 @@ test_newAnonArraySym()
 }
 
 char *
+test_newParamSym()
+{
+	Symbol *newParamSym = NULL;
+	Symbol *typeSym = setUpTypeSymbol();
+	char id[] = "testParam";
+	int lvl = 12;
+	
+	newParamSym = newParameterSym(lvl, id, typeSym);
+	mu_assert("newParamSYm should not be null", newParamSym);
+	mu_assert("newParamSym should have type as expected",
+	    getTypeSym(newParamSym) == typeSym);
+	mu_assert("newParamSym should be at expected lexical level",
+	   newParamSym->lvl == lvl);
+	mu_assert("newParamSym should have the name as expected",
+	    strcmp(id, newParamSym->name) == 0);
+	return NULL;
+
+}
+
+char *
 test_newConstProxySym()
 {
 	ProxySymbol *constProxySym = NULL;
@@ -289,6 +309,7 @@ test_newSubrangeSym()
 char *
 test_all_Symbol()
 {
+	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
 	mu_run_test(test_newConstProxySym);
 	mu_run_test(test_newConstSymFromProxy);

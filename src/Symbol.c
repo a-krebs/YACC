@@ -150,7 +150,6 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 	return newVar;
 }
 
-
 Symbol *
 newParameterSym(int lvl, char *id, Symbol *typeSym)
 {
@@ -366,17 +365,15 @@ getTypeSym(Symbol *s)
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym;
+	case PARAM_KIND:
+		return s->kindPtr.ParamKind->typeSym;
 	case PROC_KIND: 
 		/* Procedures do not have associate type symbols */
 		return NULL;
 	case FUNC_KIND:
 		return s->kindPtr.FuncKind->typeSym;
 	case TYPE_KIND:
-		/* 
-		 * Symbol is itself a type symbol -- its typePtr may
-		 * depend on other type (potentially multiple) Symbols
-		 * so we need to call more specific functions */
-		return NULL;
+		return s;
 	case VAR_KIND:
 		return s->kindPtr.VarKind->typeSym;
 	default:
@@ -426,6 +423,29 @@ newConstProxySym(void * result, Symbol *typeSym)
 		return NULL;
 	}
 	return (ProxySymbol *) constSym;
+}
+
+ProxySymbol *
+newStringProxySym(int lvl, char *str, int strlen)
+{
+	ProxySymbol *newStringSym = NULL;
+	newStringSym = calloc(1, sizeof (ProxySymbol));
+	newStringSym->name = NULL;
+	newStringSym->kind = TYPE_KIND;
+	allocateKindPtr(newStringSym);
+	getTypePtr(newStringSym)->String->strlen = strlen;
+	
+	if (strlen) {
+		getTypePtr(newStringSym)->String->str = 
+		    calloc(1, sizeof(char)*strlen);
+		if (!getTypePtr(newStringSym)->String->str) {
+			err(1, "Failed to allocate memory for new string");
+			exit(1);
+		}
+	}
+	newStringSym->lvl = lvl;
+	newStringSym->typeOriginator = 1;
+	return newStringSym;	
 }
 
 void

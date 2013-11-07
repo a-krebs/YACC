@@ -5,6 +5,7 @@
       char *id;
       double real;
       int integer;
+	struct ElementArray *elemarray;
       Symbol *symbol;
       ProxySymbol *proxy;
 }
