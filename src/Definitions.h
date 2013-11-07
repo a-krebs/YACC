@@ -131,8 +131,7 @@ struct Subrange {
 };
 
 struct Scalar {
-	struct Symbol *consts;	/* linked list of const syms in scalar 
-				 * enumeration */
+	struct ElementArray *consts;
 };
 
 

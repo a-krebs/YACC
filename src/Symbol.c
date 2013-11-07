@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ElementArray.h"
 #include "Error.h"
 #include "Type.h"
 #include "Symbol.h"
@@ -105,7 +106,7 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 	newAnonScalar = calloc(1, sizeof(Symbol));
 
 	newAnonScalar->name = NULL;
-	newAnonScalar->type = TYPE_KIND;
+	newAnonScalar->kind = TYPE_KIND;
 	allocateKindPtr(newAnonScalar);
 	getTypePtr(newAnonScalar)->Scalar->consts = ea;
 	newAnonScalar->typeOriginator = 1;
@@ -558,7 +559,7 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
 	consts = getTypePtr(scalarSym)->Scalar->consts;
 
 	for(i = 0; i < consts->nElements; i++) {
-		c = (Symbol *) getElementAt(ea, i);
+		c = (Symbol *) getElementAt(consts, i);
 		if ((strcmp(c->name, constSym->name) == 0) &&
 		    (c->lvl == constSym->lvl)) {
 			return 1;	
