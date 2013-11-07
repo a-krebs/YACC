@@ -425,7 +425,7 @@ getTypeSym(Symbol *s)
 	case PARAM_KIND:
 		return s->kindPtr.ParamKind->typeSym;
 	case PROC_KIND: 
-		/* Procedures do not have associate type symbols */
+		/* Procedures do not have associated type symbols */
 		return NULL;
 	case FUNC_KIND:
 		return s->kindPtr.FuncKind->typeSym;
@@ -590,7 +590,7 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	Symbol *arrayTypeSym = NULL;
 	Symbol *indexTypeSym = NULL;
 	Symbol *arg = indices;
-	int i, arrayDim, nArgs;
+	int i, arrayDim, nArgs, typeErr = 0;
 
 	arrayTypeSym = getTypeSym(var);
 
@@ -618,20 +618,48 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 // need to get base type of the index sym for the array and compare that to the
 // type of the index.  this happens different based on if the index
 // type is a subrange or a scalar	
-		if (!areSameType(indexTypeSym, getTypeSym(arg))) {
-			errMsg = customErrorString("Invalid array subscript. "
-			    " Expected type %s at position %d but got %s",
-			    typeToString(getType(indexTypeSym)), i,
-			    typeToString(getType(arg)));
+		switch (getType(indexTypeSym)) {
+			case SCALAR_T:
+				if (!isConstInScalar(arg, indexTypeSym))
+				    typeErr = 1;
+				break;
+			case SUBRANGE_T:
+				if (!areSameType(
+				    getSubrangeBaseTypeSym(indexTypeSym),
+				    getTypeSym(arg))) typeErr = 1;
+				break;
+			default:
+				if (!areSameType(indexTypeSym,
+				     getTypeSym(arg))) typeErr = 1;
+				break;	
+		}
+		if (typeErr) {
+			errMsg = customErrorString("Invalid array "
+			    "subscript.  Expected type %s at position "
+			    "%d but got %s",
+		    	    typeToString(getType(indexTypeSym))), i,
+		    	    typeToString(getType(arg));
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 			return NULL;
 		}
+		indexTypeSym = getArrayIndexSym(arrayTypeSym);
 	}
 
 	/* Got here, it was a valid array access!  YAY! */	
 	return getArrayBaseSym(arrayTypeSym);
 }
 
+/*
+ * Returns a pointer to the type symbol defining the base type for the given
+ * subrange symbol.
+ */
+Symbol *
+getSubrangeBaseTypeSym(Symbol *sr) {
+	if (!sr) return NULL;
+	if (getType(sr) != SUBRANGE_T) return NULL;
+	return getTypePtr(sr)->Subrange->baseTypeSym;
+
+}
 /*
  * Follows the chains of next pointer to get the size of the Symbol linked
  * list.

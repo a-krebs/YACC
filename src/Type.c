@@ -264,7 +264,7 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 
 	s->low = low;
 	s->high = high;
-	s->baseTypeSym = lowSym;
+	s->baseTypeSym = typeSym;
 	return s;
 }
 

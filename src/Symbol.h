@@ -29,6 +29,7 @@ ProxySymbol *newProxySymFromSym(Symbol *);
 Symbol *getTypeSym(Symbol *);
 Symbol *getArrayIndexSym(Symbol *);
 Symbol *getArrayBaseSym(Symbol *);
+Symbol *getSubrangeBaseTypeSym(Symbol *);
 int getArrayDim(Symbol *s);
 int getSymbolListLength(Symbol *s);
 void setSymbolName(Symbol *, char *);
