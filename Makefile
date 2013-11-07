@@ -11,6 +11,7 @@ OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
+OBJS+=		$(BIN)/Init.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
