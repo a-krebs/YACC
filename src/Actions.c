@@ -321,11 +321,16 @@ void exitProcOrFuncDecl(void) {
  *
  * Return a pointer to the procedure.
  */
-Symbol *enterProcDecl(char *id, ProxySymbol *argv) {
+Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 
-	
+	Symbol *procSym = NULL;
+	int lvl = 0;
 	/* TODO: local lookup of id in symbol table */
-	return NULL;
+	
+	/* if the above lookup returned nothing... */
+
+	procSym = newProcSym(lvl, id, ea);
+	return procSym;
 }
 
 /*
@@ -336,8 +341,14 @@ Symbol *enterProcDecl(char *id, ProxySymbol *argv) {
  * 
  * Return a pointer to the procedure.
  */
-Symbol *enterFuncDecl(char *id, ProxySymbol *argv) {
-	return NULL;
+Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
+	Symbol *funcSym = NULL;
+	int lvl = 0;
+
+	/* TODO: local lookup of id in symbol table */
+
+	funcSym = newFuncSym(lvl, id, typeSym, ea);
+	return funcSym;
 }
 
 /*

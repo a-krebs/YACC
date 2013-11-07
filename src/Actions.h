@@ -30,8 +30,8 @@ Symbol *doVarDecl(char*, Symbol*);
 /* proc and function decls */
 Symbol *doVarDecl(char*, Symbol*);
 void exitProcOrFuncDecl(void);
-Symbol *enterProcDecl(char*, ProxySymbol*);
-Symbol *enterFuncDecl(char*, ProxySymbol*);
+Symbol *enterProcDecl(char*, struct ElementArray *);
+Symbol *enterFuncDecl(char*, struct ElementArray *, Symbol *);
 struct ElementArray *createParmList(Symbol*);
 struct ElementArray *appendParmToParmList(struct ElementArray*, Symbol*);
 Symbol *createNewParm(char*, Symbol*);
