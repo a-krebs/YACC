@@ -46,7 +46,10 @@ typedef enum {
 	VAR_KIND	/* variable declaration */
 } kind_t;
 
-
+typedef enum {
+	PARAM_ELEMENT,
+	SYMBOL_ELEMENT	
+} element_t;
 /*
  * TODO: params need to be a kind
  * TODO: need function newVarFromParam..... NO! just use newVariableSym
@@ -202,6 +205,7 @@ struct Symbol {
 
 /* typedef Symbol to make it easier to work with */
 typedef struct Symbol Symbol;
+typedef struct Param Param;
 /* typedef a proxy type to hold the same information as symbol, but
  * to not be stored in the symbol table. It is used as an intermediate value
  * when traversing the parse tree. 

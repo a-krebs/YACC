@@ -148,7 +148,7 @@ test_freeElementArray(){
 	appendElement(ea,constSymbol);
 	appendElement(ea,typeSymbol);
 
-	freeElementArray(ea);
+	freeElementArray(ea,SYMBOL_ELEMENT);
 	
 	mu_assert("freeElementArray() should free param array pointer witnout \
 		  segfaulting", 1);

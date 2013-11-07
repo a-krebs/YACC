@@ -13,7 +13,7 @@
 struct ElementArray *newElementArray();
 void appendElement(struct ElementArray *, void *);
 void *getElementAt(struct ElementArray *, unsigned int);
-void freeElementArray(struct ElementArray *); 
+void freeElementArray(struct ElementArray *,element_t); 
 void growElementArray(struct ElementArray *); 
 
 #endif

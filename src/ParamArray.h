@@ -13,7 +13,7 @@
 struct ParamArray *newParamArray();
 void appendParam(struct ParamArray *, struct Param *);
 struct Param *getParam(struct ParamArray *, unsigned int);
-void freeParamArray(struct ParamArray *); 
+void freeParamArray(struct ParamArray *,element_t); 
 void growParamArray(struct ParamArray *); 
 
 #endif
