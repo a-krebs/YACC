@@ -565,8 +565,11 @@ ProxySymbol *proxyStringLiteral(char *value) {
  *
  * The argument argv contains a list of arguments.
  */
-void procInvok(char *id, ProxySymbol *argv) {
-	// TODO
+void procInvok(char *id, struct ElementArray *ea) {
+
+	/* TODO: global lookup for id */
+	/* if lookup successful, make sure it is a process */
+	/* if lookup successful, call isValidProcInvoke(symbol, ea) */
 }
 
 /*

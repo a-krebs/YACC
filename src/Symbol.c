@@ -419,6 +419,25 @@ getTypeSym(Symbol *s)
 	}
 }
 
+ProxySymbol *
+newProxySymFromSym(Symbol *s)
+{
+	ProxySymbol *ps = NULL;
+	if (!s) return NULL;
+
+	ps = calloc(1, sizeof(ProxySymbol));
+	if (s->name) {
+		setSymbolName((Symbol *)ps, s->name);
+	}
+
+	ps->kind = s->kind;
+	ps->kindPtr = s->kindPtr;
+	ps->typeOriginator = 0;
+	ps->lvl = s->lvl;
+	return ps;
+}
+
+
 /*
  * Creates a new CONST_KIND ProxySymbol using the result of a arithmetic,
  * logical or arithmetic operation on two constants. 
