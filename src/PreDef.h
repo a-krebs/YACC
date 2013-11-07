@@ -12,6 +12,10 @@
 
 
 /* Macros and const string variable declarations. */
+#define BOOLEAN_KEY "boolean"
+#define CHAR_KEY "char"
+#define INTEGER_KEY "integer"
+#define REAL_KEY "real"
 
 /* Global variables. */
 struct preDefTypeSymbols {

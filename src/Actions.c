@@ -37,7 +37,7 @@ Symbol *assertOpCompat(
     Symbol *type1, int opToken, Symbol *type2) {
 	
 	type_t s1_t, s2_t;
-	char *errMsg;	
+	// char *errMsg;	
 	s1_t = getType(type1);
 	s2_t = getType(type2);
 

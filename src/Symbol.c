@@ -203,8 +203,8 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 	        ProxySymbol *constSymHigh)
 {
 	Symbol *newSubrangeSym = NULL;
-	Symbol *lowSymType = getTypeSym(constSymLow);
-	Symbol *highSymType = getTypeSym(constSymHigh);
+	// Symbol *lowSymType = getTypeSym(constSymLow);
+	// Symbol *highSymType = getTypeSym(constSymHigh);
 	
 	/*
 	 * We must assure that we are constructing a subrange
