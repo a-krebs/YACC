@@ -801,7 +801,7 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
                 }
         }
 
-        hash->lexLevel = hash->lexLevel - 1;
+        decrementLexLevel(hash);
 
         return 0;
 }
