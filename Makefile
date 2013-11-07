@@ -11,6 +11,7 @@ OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
+OBJS+=		$(BIN)/Init.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -143,6 +144,9 @@ $(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
 
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	
+
+$(BIN)/Init.o: $(SRC)/Init.c $(SRC)/Init.h 
+	$(COMPILE)		
 
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
