@@ -212,18 +212,21 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 	 * the value of constSymLow is less than the value of constSymHigh.
 	 */
 	if ((!constSymLow) || (!constSymHigh)) {
+		printf("11111111111111");
 		/* Error */
 		return NULL;
 	}
 
 	if ((constSymLow->kind != CONST_KIND) ||
 	    (constSymHigh->kind != CONST_KIND)) {
-		/*Error: subranges indices not constants */
+		printf("2222222222222222222");	
+	/*Error: subranges indices not constants */
 		return NULL;
 	}
 
 	if (getType(constSymLow) != getType(constSymHigh)) {
 		/* Error:  Mismatched types for subrange indices */
+		printf("333333333333333333");
 		return NULL;
 	}
 
@@ -232,12 +235,31 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 		 * Error: trying to construct subrange from non ordinal
 		 * types
 		 */
+		printf("44444444444444444");
 		return NULL;
 	}
 
 	/*
 	 * Insure that values are bounded correctly (dependent on type ).
 	 */
+
+	switch(getType(constSymLow)) {
+	case INTEGER_T:
+		if (getConstVal(constSymLow)->Integer.value >
+		    getConstVal(constSymHigh)->Integer.value) return NULL;
+		break;
+	case BOOLEAN_T:
+		if (getConstVal(constSymLow)->Boolean.value >
+		    getConstVal(constSymHigh)->Boolean.value) return NULL;
+		break;
+	case CHAR_T:
+		if (getConstVal(constSymLow)->Char.value >
+		    getConstVal(constSymHigh)->Char.value) return NULL;
+		break;
+	default:
+		return NULL;
+	}
+
 
 	newSubrangeSym = calloc(1, sizeof(Symbol));
 	if (!newSubrangeSym) {

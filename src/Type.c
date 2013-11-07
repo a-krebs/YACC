@@ -406,6 +406,7 @@ getTypePtr(Symbol *s)
 {
 	if (!s) return NULL;
 	if (s->kind != TYPE_KIND) return NULL;
+	printf("\n\n\n--------------------------------------\n\n\n");
 	return &(s->kindPtr.TypeKind->typePtr);
 
 }

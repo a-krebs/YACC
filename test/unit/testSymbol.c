@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "testSymbol.h"
+#include "Type.h"
 
 #define INTLOW_VAL 12
 #define INTHIGH_VAL 23423
@@ -211,17 +212,17 @@ test_newVariableSym()
 		(varTypeSym == typeSym));
 	return NULL;
 }
-/*
+
 char *
 test_newSubrangeSym() 
 {
 	Symbol *subrangeSym = NULL;
 	Symbol *testSymLow = setUpConstSymbol();
 	Symbol *testSymHigh = setUpConstSymbol();
-	Symbol *retSymLow = NULL;
-	Symbol *retSymHigh = NULL;
-
 	int lvl = 102;
+	getTypeSym(testSymLow)->kindPtr.TypeKind->type = INTEGER_T;
+	getTypeSym(testSymHigh)->kindPtr.TypeKind->type = INTEGER_T;
+	getConstVal(testSymLow)->Integer.value = INTLOW_VAL;
 	getConstVal(testSymHigh)->Integer.value = INTHIGH_VAL;
 	
 	subrangeSym = newSubrangeSym(lvl, testSymLow, NULL);
@@ -234,26 +235,17 @@ test_newSubrangeSym()
 		  !subrangeSym);
 
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
-	if (!subrangeSym) printf("da fuck!?!?!?!\n");
+	if (!getTypePtr(subrangeSym)) printf("\n\n9098098098098\n");
 	mu_assert("newSubRangeSym() should return expected subrange",
-	     == INTEGER_T) &&
-	    (subrangeSym->typePtr.Subrange->baseTypePtr.Integer ==
-	    testSymLow->typePtr.Integer) &&
-	    (subrangeSym->typePtr.Subrange->low ==
-	    testSymLow->typePtr.Integer->value) &&
-	    (subrangeSym->typePtr.Subrange->high ==
-	    testSymHigh->typePtr.Integer->value) && 
-	    (subrangeSym->lvl == lvl) &&
-	    (subrangeSym->kind == TYPE_KIND) &&
-	    !subrangeSym->name));
+	    (getTypePtr(subrangeSym)->Subrange->low == INTLOW_VAL));
 
-	testSymLow->type = ARRAY_T;
+	getTypeSym(testSymLow)->kindPtr.TypeKind->type = SCALAR_T;
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
 	mu_assert("newSubrangeSym() should return null when symbol types \
 		   mistmatch.", !subrangeSym);
 	return NULL;
 }
-*/
+
 char *
 test_newAnonArraySym()
 {
@@ -266,7 +258,7 @@ test_all_Symbol()
 	mu_run_test(test_newConstProxySym);
 	mu_run_test(test_newConstSymFromProxy);
 	mu_run_test(test_newTypeSymFromSym);
-//	mu_run_test(test_newSubrangeSym);
+	mu_run_test(test_newSubrangeSym);
 	mu_run_test(test_newVariableSym);
 	return NULL;
 }
