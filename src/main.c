@@ -7,6 +7,7 @@
 #include "Hash.h"
 /* must include for symbol typedef to work with parser. */
 #include "Symbol.h"
+#include "Init.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -19,7 +20,7 @@
 extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
-extern struct hashElement *symbolTable[TABLE_SIZE];
+
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -141,6 +142,9 @@ int main( int argc, char *argv[] )
 		return EXIT_FAILURE;
 	}
 	yyin = fp;
+
+	/* initizie symbol table and pre-defitions */
+	initialize();
 
 	/* parse file */
 	yyparse();

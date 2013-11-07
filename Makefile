@@ -145,6 +145,9 @@ $(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	
 
+$(BIN)/Init.o: $(SRC)/Init.c $(SRC)/Init.h 
+	$(COMPILE)		
+
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
 
