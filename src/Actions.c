@@ -503,6 +503,15 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
 	 * linked list of proxy symbols
  	 * TODO: confirm this with Aaron
 	 */
+	if ((!list1) && (!list2)) {
+		return NULL;
+	}
+	if (!list1) {
+		return list2;
+	}
+	if (!list2) {
+		return list1;
+	}
 
 	list1->next = list2;
 	return list2;
@@ -514,6 +523,9 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
  * Return a pointer to the new list.
  */
 ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
+	if (!exp) {
+		return NULL;
+	}
 	exp->next = NULL;
 	return exp;
 }

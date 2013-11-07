@@ -592,6 +592,10 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	Symbol *arg = indices;
 	int i, arrayDim, nArgs, typeErr = 0;
 
+	if (!var) {
+		return NULL;
+	}
+
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
