@@ -46,10 +46,6 @@ typedef enum {
 	VAR_KIND	/* variable declaration */
 } kind_t;
 
-typedef enum {
-	PARAM_ELEMENT,
-	SYMBOL_ELEMENT	
-} element_t;
 /*
  * TODO: params need to be a kind
  * TODO: need function newVarFromParam..... NO! just use newVariableSym

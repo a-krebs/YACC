@@ -86,30 +86,16 @@ getElementAt(struct ElementArray *ea, unsigned int i)
 /*
  * Free all memory associated with the given elements array.
  */
-void freeElementArray(struct ElementArray *ea, element_t elementType ) {
+void freeElementArray(struct ElementArray *ea) {
 	int i;
-
-	switch(elementType){
-	case PARAM_ELEMENT:
-		for (i = 0; i < (ea->nElements-1); i++) {
-			free(((Symbol **)ea->data)[i]->name);
-			free(ea->data[i]);
-		}
-		
-		free(ea);
-		break;
-		
-	case SYMBOL_ELEMENT:
-		for (i = 0; i < (ea->nElements-1); i++) {
-			free(((Param **)ea->data)[i]->name);
-			free(ea->data[i]);
-		}
 	
-		free(ea);
-		break;
-	default:
-		break;
+	for (i = 0; i < (ea->nElements-1); i++) {
+		free(((Symbol **)ea->data)[i]->name);
+		free(ea->data[i]);
 	}
+	free(ea);
+	
+	
 }
 
 

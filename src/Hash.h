@@ -58,6 +58,8 @@ int getLengthOfSymbolList(struct hashElement *element);
 int isOnlySymbolInList(struct hashElement *element, struct Symbol *symbol);
 int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel);
 int popLexLevel(struct hash *hash);
+int incrementLexLevel(struct hash *hash);
+int decrementLexLevel(struct hash *hash);
 
 
 
