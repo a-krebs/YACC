@@ -769,7 +769,7 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
 
 
 /* Pops all the symbols in the symbol table with the current lexical
- * level. 
+ * level. Then decrements the lexical level by one.
  *
  * Parameters: 
  *              hash: hash to pop symbols from

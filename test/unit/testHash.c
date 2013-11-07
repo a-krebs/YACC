@@ -732,15 +732,6 @@ char * test_appendToSymbolList() {
 	return NULL;
 }
 
-struct Symbol *createTestSymbol(int lexLevel, char *key) {
-	struct Symbol *symbol = malloc(sizeof(struct Symbol));
-	symbol->lvl = lexLevel;
-	symbol->name = key;
-	symbol->typeOriginator = 0;
-
-	return symbol;
-}
-
 char *test_findSymbolByHashElement() {
 	struct hash *hash = createHash(&getHashedKeySimple);
 

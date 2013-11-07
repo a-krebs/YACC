@@ -10,6 +10,7 @@ OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o $(BIN)/Symbol.o
 OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
+OBJS+=		$(BIN)/PreDef.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -40,6 +41,8 @@ TESTOBJS1+=	$(BIN)/testHash.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
+TESTOBJS1+=	$(BIN)/testingUtils.o
+TESTOBJS1+=	$(BIN)/testPreDef.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -138,6 +141,9 @@ $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 $(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
+$(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
+	$(COMPILE)	
+
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
 
@@ -169,7 +175,13 @@ $(BIN)/testHash.o: $(TEST)/testHash.c $(TEST)/testHash.h
 	$(COMPILE)		
 
 $(BIN)/testActions.o: $(TEST)/testActions.c $(TEST)/testActions.h
-	$(COMPILE)		
+	$(COMPILE)
+
+$(BIN)/testingUtils.o: $(TEST)/testingUtils.c $(TEST)/testingUtils.h $(SRC)/Definitions.h
+	$(COMPILE)
+
+$(BIN)/testPreDef.o: $(TEST)/testPreDef.c $(TEST)/testPreDef.h
+	$(COMPILE)
 
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
 	$(BISONFLEXCOMPILE)
