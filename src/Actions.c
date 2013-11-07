@@ -20,6 +20,9 @@
 extern struct hashElement *symbolTable[TABLE_SIZE];
 extern int yylineno;
 extern int colno;
+
+static char *errMsg;
+
 /*
  * Utility functions. Can maybe be refactored into own module.
  */
@@ -40,7 +43,6 @@ Symbol *assertOpCompat(
     Symbol *type1, int opToken, Symbol *type2) {
 	
 	type_t s1_t, s2_t;
-	char *errMsg;	
 	s1_t = getType(type1);
 	s2_t = getType(type2);
 
@@ -107,9 +109,22 @@ Symbol *assertOpCompat(
  * Return 0 if the given types are assignment compatible, otherwise return
  * non-zero
  */
-int isAssignmentCompat(Symbol type1, Symbol type2) {
-	// TODO implement
-	return -1;
+int isAssignmentCompat(Symbol * type1, Symbol * type2) {
+	
+	if (areSameType(type1, type2)) {
+		return 1;
+	} else if (areCompatibleStrings(type1, type2)) {
+		return 1;
+	} else if ((getType(type1) == REAL_T) && 
+	    (getType(type2) == INTEGER_T)) {
+		return 1;
+	}
+
+	errMsg = customErrorString("The type %s cannot be assigned a value "
+	    "of type %s", typeToString(getType(type1)), 
+	    typeToString(getType(type2)));
+	recordError(errMsg, yylineno, colno, SEMANTIC);
+	return 0;
 }
 
 /*
