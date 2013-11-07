@@ -462,3 +462,46 @@ setSymbolName(Symbol *s, char *id)
 	}
 	strcpy(s->name, id);
 }
+
+/*
+ * Create a new symbol for a record type defintion to be added to the symbol
+ * table.
+ * 
+ * Takes the name of the record type and a single ProxySymbol for the first
+ * record member.
+ *
+ * Additional members can be appended to the record type later.
+ */
+
+Symbol *
+newVariableSym(int lvl, char *id, struct *ElementArray)
+{
+	Symbol *newVar = NULL;	/* new symbol to be created */
+
+	if (typeSym->kind != TYPE_KIND) {
+		/* ERROR:
+		 * Trying to create var using symbol other than a type.
+		 * Call an error recording function.
+		 */
+		return NULL;
+	}
+
+	if (!id) {
+		/*Error: cannot have anonymous variable! */
+		return NULL;
+	}
+		
+
+	newVar = calloc(1, sizeof(Symbol));
+	if (!newVar) {
+		err(1, "Failed to allocate memory for new symbol!");
+		exit(1);
+	}
+	
+	setSymbolName(newVar, id);
+	newVar->kind = VAR_KIND;
+	allocateKindPtr(newVar);
+	newVar->kindPtr.VarKind->typeSym = typeSym;
+	newVar->lvl = lvl;
+	return newVar;
+}

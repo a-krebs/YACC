@@ -138,7 +138,7 @@ structured_type
 : ARRAY array_type_decl OF type
 	{ $<symbol>$ = createArrayType($<symbol>2, $<symbol>4); }
 | RECORD field_list END
-	{ $<symbol>$ = $<symbol>2; }
+	{ $<symbol>$ = createRecordType($<symbol>2); }
 ;
 
 array_type_decl
@@ -164,9 +164,9 @@ array_type
 
 field_list
 : field
-	{ $<symbol>$ = createRecordType($<proxy>1); }
+	{ $<elemarray>$ = createRecordMemberList($<proxy>1); }
 | field_list SEMICOLON field
-	{ $<symbol>$ = appendFieldToRecordType($<symbol>1, $<proxy>3); }
+	{ $<elemarray>$ = appendToRecordMemberLists($<elemarray>1, $<proxy>3); }
 ;
 
 field
