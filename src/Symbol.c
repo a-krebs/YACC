@@ -109,6 +109,7 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 	newAnonScalar->kind = TYPE_KIND;
 	allocateKindPtr(newAnonScalar);
 
+	newAnonScalar->kindPtr.TypeKind->type = SCALAR_T;
 	getTypePtr(newAnonScalar)->Scalar = calloc(1, sizeof(struct Scalar));	
 
 	getTypePtr(newAnonScalar)->Scalar->consts = ea;
