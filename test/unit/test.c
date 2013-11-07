@@ -12,9 +12,19 @@
 #include "testUtils.h"
 #include "testPreDef.h"
 
+/* Include globals */
+#include "Globals.h"
+#include "Init.h"
+
 int tests_run = 0;
 
+extern struct hash *symbolTable;
+extern struct preDefTypeSymbols *preDefTypeSymbols;
+
 int main(int argc, char *argv[]) {
+
+	initialize();
+
 	char *result = test_all();
 	if (result != NULL) {
 		printf("%s\n", result);
