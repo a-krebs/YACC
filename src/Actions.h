@@ -70,8 +70,8 @@ ProxySymbol *proxyStringLiteral(char*);
 /* procedure and function invokations */
 void prodInvok(char*, ProxySymbol*);
 ProxySymbol *funcInvok(char*, ProxySymbol*);
-ProxySymbol *createArgList(ProxySymbol*);
-ProxySymbol *concatArgLists(ProxySymbol*, ProxySymbol*);
+struct ElementArray *createArgList(Symbol*);
+struct ElementArray *concatArgLists(struct ElementArray*, Symbol*);
 
 /* loop control */
 void continueLoop(void);

@@ -322,8 +322,15 @@ Symbol *enterFuncDecl(char *id, ProxySymbol *argv) {
  *
  * Return a pointer to the parameter list.
  */
-ProxySymbol *createParmList(ProxySymbol *parm) {
-	return NULL;
+struct ElementArray *createParmList(Symbol *parm) {
+	struct ElementArray *ea = NULL;
+
+	if (!parm) return NULL;
+
+	ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, parm);
+	return ea;	
 }
 
 /*
@@ -341,8 +348,11 @@ ProxySymbol *appendParmToParmList(
  *
  * Return a pointer to the new parameter.
  */
-ProxySymbol *createNewParm(char *id, Symbol *type) {
-	return NULL;
+Symbol *createNewParm(char *id, Symbol *type) {
+	int lvl = 0;
+
+	if ((!id) || (!type)) return NULL;
+	return newParamSym(lvl, id, type);
 }
 
 /*
@@ -534,14 +544,13 @@ ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
  *
  * Return a pointer to a ProxySymbol containing the list.
  */
-struct ElementArray *createArgList(ProxySymbol *arg) {
+struct ElementArray *createArgList(Symbol *arg) {
 	struct ElementArray * ea = NULL;
 
 	if (!arg) {
 		/* ERROR */
 		return NULL;
 	}
-
 	ea = newElementArray();
 	growElementArray(ea);
 	appendElement(ea, getTypeSym(arg));	
@@ -555,8 +564,10 @@ struct ElementArray *createArgList(ProxySymbol *arg) {
  * Whether to add the arguments to one of the lists or two make a third
  * list and add all arguments is up to implementation.
  */
-ProxySymbol *concatArgLists(ProxySymbol *list1, ProxySymbol *list2) {
-	return list1;
+struct ElementArray *concatArgLists(struct ElementArray *ea, Symbol *arg) {
+	if ((!ea) || (!arg)) return NULL;
+	appendElement(ea, arg);	
+	return ea;
 }
 
 /*

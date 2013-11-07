@@ -396,7 +396,7 @@ plist_pinvok
 	{ procInvok($<id>1, $<proxy>3); }
 | plist_pinvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<symbol>3); }
 ;
 
 func_invok
@@ -417,13 +417,14 @@ plist_finvok
 	{ $<proxy>$ = funcInvok($<id>1, $<proxy>3); }
 | plist_finvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<symbol>3); }
+
 ;
 
 parm
 : expr
 	{ // TODO can we use the same action as for function decl?
-	  $<elemarray>$ = createArgList($<proxy>1); }
+	  $<elemarray>$ = createArgList($<symbol>1); }
 ;
 
 struct_stat

@@ -127,19 +127,19 @@ test_newAnonArraySym()
 char *
 test_newParamSym()
 {
-	Symbol *newParamSym = NULL;
+	Symbol *s = NULL;
 	Symbol *typeSym = setUpTypeSymbol();
 	char id[] = "testParam";
 	int lvl = 12;
 	
-	newParamSym = newParameterSym(lvl, id, typeSym);
-	mu_assert("newParamSYm should not be null", newParamSym);
+	s = newParamSym(lvl, id, typeSym);
+	mu_assert("newParamSYm should not be null", s);
 	mu_assert("newParamSym should have type as expected",
-	    getTypeSym(newParamSym) == typeSym);
+	    getTypeSym(s) == typeSym);
 	mu_assert("newParamSym should be at expected lexical level",
-	   newParamSym->lvl == lvl);
+	   s->lvl == lvl);
 	mu_assert("newParamSym should have the name as expected",
-	    strcmp(id, newParamSym->name) == 0);
+	    strcmp(id, s->name) == 0);
 	return NULL;
 
 }

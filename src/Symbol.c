@@ -151,7 +151,7 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 }
 
 Symbol *
-newParameterSym(int lvl, char *id, Symbol *typeSym)
+newParamSym(int lvl, char *id, Symbol *typeSym)
 {
 	Symbol *newParamSym = NULL;
 	if (!typeSym) {
