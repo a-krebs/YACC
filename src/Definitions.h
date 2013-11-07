@@ -171,11 +171,11 @@ struct ConstantKind {
 
 struct FunctionKind {
 	struct Symbol *typeSym;
-	struct ParamArray *params;
+	struct ElementArray *params;
 };
 
 struct ProcedureKind {
-	struct ParamArray *params;
+	struct ElementArray *params;
 };
 
 struct TypeKind {

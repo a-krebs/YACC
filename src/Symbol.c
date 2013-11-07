@@ -175,6 +175,43 @@ newParamSym(int lvl, char *id, Symbol *typeSym)
 	newParamSym->lvl = lvl;
 	return newParamSym;	
 }
+
+/*
+ * Constructs a new procedure symbol.
+ */
+Symbol *
+newProcSym(int lvl, char *id, struct ElementArray *ea)
+{
+	Symbol *s = NULL;
+	/* Error checking */
+	
+	s = calloc(1, sizeof(Symbol));
+	setSymbolName(s, id);
+	s->kind = PROC_KIND;
+	allocateKindPtr(s);
+	s->kindPtr.ProcKind->params = ea;
+	s->lvl = lvl;
+	s->typeOriginator = 0;
+	return s;	
+}
+
+/*
+ * Constructs a new function symbol.
+ */
+Symbol *
+newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
+{
+	Symbol *s = NULL;
+
+	s = calloc(1, sizeof(Symbol));
+	setSymbolName(s, id);
+	s->kind = FUNC_KIND;
+	allocateKindPtr(s);
+	s->kindPtr.FuncKind->params = ea;
+	s->kindPtr.FuncKind->typeSym = typeSym;
+	return s;
+}
+
 /*
  * Constructs an anonymous subrange symbol.
  */

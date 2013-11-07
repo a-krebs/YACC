@@ -32,10 +32,10 @@ Symbol *doVarDecl(char*, Symbol*);
 void exitProcOrFuncDecl(void);
 Symbol *enterProcDecl(char*, ProxySymbol*);
 Symbol *enterFuncDecl(char*, ProxySymbol*);
-ProxySymbol *createParmList(ProxySymbol*);
-ProxySymbol *appendParmToParmList(ProxySymbol*, ProxySymbol*);
-ProxySymbol *createNewParm(char*, Symbol*);
-ProxySymbol *createNewVarParm(char*, Symbol*);
+struct ElementArray *createParmList(Symbol*);
+struct ElementArray *appendParmToParmList(struct ElementArray*, Symbol*);
+Symbol *createNewParm(char*, Symbol*);
+Symbol *createNewVarParm(char*, Symbol*);
 
 /* expressions and operators */
 ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);

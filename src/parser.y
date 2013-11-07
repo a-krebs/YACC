@@ -238,21 +238,21 @@ f_parm_decl
 
 f_parm_list
 : f_parm
-	{ $<proxy>$ = createParmList($<proxy>1); }
+	{ $<elemarray>$ = createParmList($<symbol>1); }
 | f_parm_list semicolon_or_error f_parm
-	{ $<proxy>$ = appendParmToParmList($<proxy>1, $<proxy>2); }
+	{ $<elemarray>$ = appendParmToParmList($<elemarray>1, $<symbol>2); }
 ;
 
 f_parm
 : ID COLON simple_type
-	{ $<proxy>$ = createNewParm($<id>1, $<symbol>3); }
+	{ $<symbol>$ = createNewParm($<id>1, $<symbol>3); }
 | VAR ID COLON simple_type
-	{ $<proxy>$ = createNewVarParm($<id>2, $<symbol>4); }
+	{ $<symbol>$ = createNewVarParm($<id>2, $<symbol>4); }
 | ID error COLON simple_type
-	{ $<proxy>$ = createNewParm($<id>1, $<symbol>3);
+	{ $<symbol>$ = NULL;//$<proxy>$ = createNewParm($<id>1, $<symbol>3);
 	  yyerrok; }
 | VAR ID error COLON simple_type
-	{ $<proxy>$ = createNewVarParm($<id>2, $<symbol>4);
+	{ $<symbol>$ = NULL;//$<proxy>$ = createNewVarParm($<id>2, $<symbol>4);
 	  yyerrok; }
 ;
 

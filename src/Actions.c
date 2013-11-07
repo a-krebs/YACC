@@ -122,7 +122,7 @@ int isAssignmentCompat(Symbol type1, Symbol type2) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
-	// TODO
+	// TODO push lexical level, figure this out
 }
 
 /*
@@ -137,8 +137,13 @@ void exitConstDeclPart(void) {
  * Extract the value and type information from the proxy.
  */
 void doConstDecl(char *id, ProxySymbol *proxy) {
-	// TODO implementation.
-	
+	Symbol *s = NULL;
+	int lvl = 0;
+	s = newConstSymFromProxy(lvl, id, proxy);		
+	if (s) {
+		/* Add s to symbol table */
+	}
+
 }
 
 /*
@@ -235,7 +240,10 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  * Return a pointer to the new subrange type.
  */
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
-	return NULL;
+	Symbol *s = NULL;
+	int lvl = 0;
+	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
+	return s;
 }
 
 /*
@@ -280,6 +288,18 @@ void exitVarDeclPart(void) {
  * Return a pointer to type.
  */
 Symbol *doVarDecl(char *id, Symbol *type) {
+	Symbol *s = NULL;
+	int lvl = 0;
+	/* TODO: do local look up for symbol */
+
+	if ((!id) || !(type)) return NULL;
+
+	s = newVariableSym(lvl, id, type);
+
+	if (s) {
+		/* TODO: add s to the symbol table */
+	}
+
 	return type;
 }
 
@@ -302,6 +322,9 @@ void exitProcOrFuncDecl(void) {
  * Return a pointer to the procedure.
  */
 Symbol *enterProcDecl(char *id, ProxySymbol *argv) {
+
+	
+	/* TODO: local lookup of id in symbol table */
 	return NULL;
 }
 
@@ -338,9 +361,12 @@ struct ElementArray *createParmList(Symbol *parm) {
  *
  * Return a poinnter to the parameter list.
  */
-ProxySymbol *appendParmToParmList(
-    ProxySymbol *parm_list, ProxySymbol *new_parm) {
-	return parm_list;
+struct ElementArray *appendParmToParmList(
+    struct ElementArray *ea, Symbol *parm) {
+
+	if ( !(ea) || !(parm) ) return NULL;
+	appendElement(ea, parm);	
+	return ea;
 }
 
 /*
@@ -349,6 +375,9 @@ ProxySymbol *appendParmToParmList(
  * Return a pointer to the new parameter.
  */
 Symbol *createNewParm(char *id, Symbol *type) {
+	
+	/* TODO: NO LOOKUP IN SYMBOL TABLE NECESSARY */
+
 	int lvl = 0;
 
 	if ((!id) || (!type)) return NULL;
@@ -360,8 +389,10 @@ Symbol *createNewParm(char *id, Symbol *type) {
  *
  * Return a pointer to the new parameter.
  */
-ProxySymbol *createNewVarParm(char *id, Symbol *type) {
-	return NULL;
+Symbol *createNewVarParm(char *id, Symbol *type) {
+	Symbol *s = createNewParm(id, type);
+	if (s) s->kindPtr.ParamKind->byRef = 1;
+	return s;
 }
 
 /*

@@ -12,7 +12,8 @@ Symbol *newSubrangeSym(int, Symbol *, Symbol *);
 Symbol *newVariableSym(int, char *, Symbol *);
 Symbol *newProcedureSym(int, char *, struct ElementArray *);
 Symbol *newParamSym(int, char *, Symbol *);
-
+Symbol *newFuncSym(int, char *, Symbol *, struct ElementArray *);
+Symbol *newProcSym(int, char *, struct ElementArray *);
 
 /* Symbol creation from ProxySymbol functions */
 Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
