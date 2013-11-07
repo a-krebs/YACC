@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ElementArray.h"
 #include "testSymbol.h"
 #include "Type.h"
 #include "Symbol.h"
@@ -307,6 +308,31 @@ test_newSubrangeSym()
 }
 
 char *
+test_newAnonScalarSym()
+{
+	Symbol *ss = NULL;
+	Symbol *c = setUpIntConst();
+	struct ElementArray *ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, c);
+	int lvl = 0;
+
+	ss = newAnonScalarSym(lvl, ea);
+	mu_assert("newAnonScalar is not NULL when given valid inputs", ss);
+	mu_assert("newAnonScalar should have lvl as epxected", ss->lvl == lvl);
+	mu_assert("newAnonScalar should have expected symbol in its element "
+	    "array", getElementAt(getTypePtr(ss)->Scalar->consts, 0) == c); 
+	
+	return NULL;
+}
+
+char *
+test_isConstInScalar()
+{
+	return NULL;
+}
+
+char *
 test_isValidArrayAccess()
 {
 	Symbol *newArraySym = NULL;
@@ -335,6 +361,7 @@ test_all_Symbol()
 	mu_run_test(test_isValidArrayAccess);
 	mu_run_test(test_newTypeSymFromSym);
 	mu_run_test(test_newSubrangeSym);
+	mu_run_test(test_newAnonScalarSym);
 	mu_run_test(test_newVariableSym);
 	return NULL;
 }

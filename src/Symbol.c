@@ -108,6 +108,9 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 	newAnonScalar->name = NULL;
 	newAnonScalar->kind = TYPE_KIND;
 	allocateKindPtr(newAnonScalar);
+
+	getTypePtr(newAnonScalar)->Scalar = calloc(1, sizeof(struct Scalar));	
+
 	getTypePtr(newAnonScalar)->Scalar->consts = ea;
 	newAnonScalar->typeOriginator = 1;
 	newAnonScalar->lvl = lvl;
@@ -572,7 +575,6 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
  * Given a linked list of ProxySymbols, returns the type which results
  * from using the linked list of ProxySymbols to access the array given
  * by var.
- *
  * TODO: if index is const not part of scalar, see if its value falls in the
  * allowable range.
  *
