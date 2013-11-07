@@ -518,3 +518,9 @@ setSymbolName(Symbol *s, char *id)
 	}
 	strcpy(s->name, id);
 }
+
+Symbol *
+isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
+{
+	return NULL;
+}

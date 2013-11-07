@@ -19,10 +19,6 @@ Symbol *newProcSym(int, char *, struct ElementArray *);
 Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
 
 /* ProxySymbol creations functions */
-/* 
- * No creation functions for Char and String as they cannot be the result
- * of operations
- */
 ProxySymbol *newConstProxySym(void *, Symbol *); 
 ProxySymbol *newStringProxySym(int, char *, int);
 ProxySymbol *newProxySymFromSym(Symbol *);
@@ -30,6 +26,10 @@ ProxySymbol *newProxySymFromSym(Symbol *);
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
 void setSymbolName(Symbol *, char *);
+
+int isValidProcInvocation(Symbol *, struct ElementArray *);
+Symbol * isValidFuncInvocation(Symbol *, struct ElementArray *);
+Symbol * isValidArrayAccess(Symbol *, ProxySymbol *);
 
 struct Param *newParameter(char *, Symbol *);
 #endif

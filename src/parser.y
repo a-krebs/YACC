@@ -228,7 +228,7 @@ proc_heading
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
-	{ $<proxy>$ = $<proxy>2; }
+	{ $<elemarray>$ = $<elemarray>2; }
 | L_PAREN R_PAREN
 	{ $<proxy>$ = NULL; }
 | VAR ID error COLON simple_type
@@ -291,7 +291,7 @@ var
 
 subscripted_var
 : var LS_BRACKET subscripted_var_index
-	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
+	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<elemarray>3);  }
 | subscripted_var comma_or_error subscripted_var_index
 	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
 ;

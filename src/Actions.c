@@ -413,7 +413,10 @@ void assignOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 ProxySymbol *hashLookupToProxy(char *id) {
-	return NULL;
+	Symbol *s = NULL;
+	//s = getGlobalSymbol(hash, id);
+	if (!s) /* global lookup failed error (make function) */ return NULL;
+	return newProxySymFromSym(s);	
 }
 
 ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
@@ -425,10 +428,20 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
  *
  * Return a ProxySymbol of the expected type.
  */
-ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol *indexes) {
+ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indexes) {
+	/* Record specific errors in isValidArrayAccess */
+	if (isValidArrayAccess((Symbol *) var, indexes)) {
+		return newProxySymFromSym(getTypeSym((Symbol *) var));
+	}
 	return NULL;
 }
-
+/*
+ * TODO: cannot use element array to construct list of proxy syms
+ * as we are never explicitly constructing a list, just creating a bunch
+ * of expressions which have to be proxy symbols.  How to do this this then?
+ * Da Hack: link proxy symbols resulting from expressions through the
+ * symbol's *next ptr!  
+ */
 /*
  * Concatenate two arrays of array indexes, maintaining order.
  *
@@ -456,10 +469,8 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	 * with regard to insuring the propogation of a compile time
 	 * known funciton.
 	 */
-	if ((x->kind != CONST_KIND) || (y->kind != CONST_KIND)) {
-		return assertOpCompat(getTypeSym((Symbol *) x), EQUAL, 
-		    getTypeSym((Symbol *)y));
-	}	
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), EQUAL, getTypeSym((Symbol *)y)));
 
 	/* Else, we have two CONST_KIND symbols.  We must evaluate */
 
@@ -467,11 +478,13 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
@@ -579,7 +592,7 @@ void procInvok(char *id, struct ElementArray *ea) {
  *
  * Return a ProxySymbol containing the type returned.
  */
-ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
+ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 
 	return NULL;
 }
