@@ -51,4 +51,10 @@ begin
 	i := pred(b);
 
 	b := odd(i);
+
+	b := true;
+
+	b := false;
+
+	i := maxint;
 end.

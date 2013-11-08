@@ -69,5 +69,7 @@ struct Symbol *createPreDefProc(char *name);
 struct Symbol *createPreDefFunc(char *name); 
 int initializePreDefProc();
 int initializePreDefFunc();
-
+int initializePreDefConstants();
+Symbol *createNewBoolConst(char*, int);
+Symbol *createNewIntConst(char*, int);
 #endif

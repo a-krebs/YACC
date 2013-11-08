@@ -34,16 +34,16 @@ struct Symbol *createPreDefType(char *name, type_t type) {
 	symbol->kindPtr.TypeKind->type = type;
 
 	if ( strcmp(name, "boolean") == 0 ) {
-		getTypePtr(symbol)->Boolean = malloc(sizeof(struct Boolean));
+		getTypePtr(symbol)->Boolean = calloc(1, sizeof(struct Boolean));
 	}
 	else if ( strcmp(name, "char") == 0 ) {
-		getTypePtr(symbol)->Char = malloc(sizeof(struct Char));
+		getTypePtr(symbol)->Char = calloc(1, sizeof(struct Char));
 	}
 	else if ( strcmp(name, "integer") == 0 ) {
-		getTypePtr(symbol)->Integer = malloc(sizeof(struct Integer));
+		getTypePtr(symbol)->Integer = calloc(1, sizeof(struct Integer));
 	}
 	else if ( strcmp(name, "real") == 0 ) {
-		getTypePtr(symbol)->Real = malloc(sizeof(struct Real));
+		getTypePtr(symbol)->Real = calloc(1, sizeof(struct Real));
 	}
 	else {
 		err(2, "Could not determine type asked in pre-def.");
@@ -191,4 +191,58 @@ int initializePreDefFunc() {
 	createHashElement(symbolTable, PRED, symbol);
 
 	return 0;
+}
+
+int initializePreDefConstants() {
+	Symbol *symbol = NULL;
+
+	symbol = createNewBoolConst("true", 1);
+	createHashElement(symbolTable, "true", symbol);
+
+	symbol = createNewBoolConst("false", 0);
+	createHashElement(symbolTable, "false", symbol);
+
+	// TODO set max in value
+	symbol = createNewIntConst("maxint", 0);
+	createHashElement(symbolTable, "maxint", symbol);
+
+	return 0;
+}
+
+Symbol *createNewBoolConst(char *name, int val) {
+	Symbol *symbol = NULL;
+
+	symbol = calloc(1, sizeof(Symbol));
+	if (!symbol) {
+		err(1, "Failed to allocate memory for new const symbol!");
+		exit(EXIT_FAILURE);
+	}
+	setSymbolName(symbol, name);
+	symbol->kind = CONST_KIND;
+	allocateKindPtr(symbol);
+
+	symbol->kindPtr.ConstKind->typeSym = getPreDefBool(preDefTypeSymbols);
+	symbol->kindPtr.ConstKind->value.Boolean.value = val;
+	symbol->lvl = getCurrentLexLevel(symbolTable);
+
+	return symbol;
+}
+
+Symbol *createNewIntConst(char *name, int val) {
+	Symbol *symbol = NULL;
+
+	symbol = calloc(1, sizeof(Symbol));
+	if (!symbol) {
+		err(1, "Failed to allocate memory for new const symbol!");
+		exit(EXIT_FAILURE);
+	}
+	setSymbolName(symbol, name);
+	symbol->kind = CONST_KIND;
+	allocateKindPtr(symbol);
+
+	symbol->kindPtr.ConstKind->typeSym = getPreDefInt(preDefTypeSymbols);
+	symbol->kindPtr.ConstKind->value.Integer.value = val;
+	symbol->lvl = getCurrentLexLevel(symbolTable);
+
+	return symbol;
 }

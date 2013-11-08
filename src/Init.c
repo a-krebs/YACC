@@ -15,6 +15,8 @@ int initialize() {
 
 	initializePreDefProc();
 	initializePreDefFunc();
+	initializePreDefConstants();
+
 	errors = NULL;
 	
 	whileLoopDepth = 0;
