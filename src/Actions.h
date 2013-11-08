@@ -14,8 +14,8 @@ void doTypeDecl(char*, Symbol*);
 
 /* types */
 Symbol *simpleTypeLookup(char*);
-Symbol *appendToScalarListType(Symbol*, char*);
-Symbol *createScalarListType(char*);
+struct ElementArray *appendToScalarListType(struct ElementArray *, char *);
+struct ElementArray *createScalarList(char*);
 Symbol *createArrayType(Symbol*, Symbol*);
 Symbol *assertArrIndexType(Symbol*);
 Symbol *createRangeType(ProxySymbol*, ProxySymbol*);
@@ -24,6 +24,8 @@ struct ElementArray *createRecordMemberList(ProxySymbol*);
 struct ElementArray *appendToRecordMemberList(
     struct ElementArray*, ProxySymbol*);
 ProxySymbol *newRecordFieldProxy(char*, Symbol*);
+struct ElementArray *createScalarList(char *);
+Symbol *createScalarListType(struct ElementArray *);
 
 /* var decl list */
 void exitVarDeclPart(void);

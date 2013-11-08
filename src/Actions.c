@@ -123,7 +123,7 @@ Symbol *assertOpCompat(
  * non-zero
  */
 int isAssignmentCompat(Symbol * type1, Symbol * type2) {
-	
+
 	if (areSameType(type1, type2)) {
 		return 1;
 	} else if (areCompatibleStrings(type1, type2)) {
@@ -133,8 +133,8 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
 		return 1;
 	}
 
-	errMsg = customErrorString("The type %s cannot be assigned a value "
-	    "of type %s", typeToString(getType(type1)), 
+	errMsg = customErrorString("The type %s cannot be assigned a value"
+	    " of type %s", typeToString(getType(type1)), 
 	    typeToString(getType(type2)));
 	recordError(errMsg, yylineno, colno, SEMANTIC);
 	return 0;
@@ -177,7 +177,8 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 		return;
 	}
 
-	/* Else we can try to make new const  and add it to symbol table */	
+	/* Else we can try to make new const  and add it to symbol table
+*/	
 	s = newConstSymFromProxy(lvl, id, proxy);		
 	if (s) {
 		createHashElement(symbolTable, id, s);
@@ -240,17 +241,58 @@ Symbol *simpleTypeLookup(char *id) {
  *
  * Return scalar_list
  */
-Symbol *appendToScalarListType(Symbol *scalar_list, char *new_id) {
-	return scalar_list;
+struct ElementArray *appendToScalarListType(struct ElementArray *ea,
+    char *id) {
+	Symbol *s = NULL;
+	if (!ea) return NULL;
+	
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		alreadyDefinedError(id);
+		return NULL;
+	}
+	s = (Symbol *) newConstProxySym(&ea->nElements, 
+	    getPreDefInt(preDefTypeSymbols));
+	s->lvl = getCurrentLexLevel(symbolTable);
+	setSymbolName(s, id);
+	createHashElement(symbolTable, s->name, s);
+	appendElement(ea, s);
+	return ea;
 }
+
+struct ElementArray * createScalarList(char *id) {
+	Symbol *s = NULL;	
+	struct ElementArray *ea = NULL;
+	int value = 0;
+
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		alreadyDefinedError(id);
+		return NULL;
+	}
+	s = (Symbol *) newConstProxySym(&value, 
+	    getPreDefInt(preDefTypeSymbols));
+	setSymbolName(s, id);
+	s->lvl = getCurrentLexLevel(symbolTable);
+	createHashElement(symbolTable, s->name, s);
+	ea = newElementArray();
+	appendElement(ea, s);
+	return ea;
+}
+
 
 /*
  * Create a new scalar list type with id as the only member.
  *
  * Return a pointer to the new scalar list
  */
-Symbol *createScalarListType(char *id) {
-	return NULL;
+Symbol *createScalarListType(struct ElementArray *ea) {
+	Symbol *s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
+	if (!ea) return NULL;
+	s = newAnonScalarSym(lvl, ea);
+	createHashElement(symbolTable, NULL, s);
+	return s;
 }
 
 /*
@@ -456,7 +498,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 
 	Symbol *s = NULL;
 	int lvl = getCurrentLexLevel(symbolTable);
-	
+	incrementLexLevel(symbolTable);
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
 		/* throw already defined error */
@@ -578,10 +620,8 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	/* Record specific errors in isValidArrayAccess */
 	if ((!indices) || (!var)) return NULL;	
-	if (isValidArrayAccess((Symbol *) var, indices)) {
-		return newProxySymFromSym(getTypeSym((Symbol *) var));
-	}
-	return NULL;
+	return isValidArrayAccess((Symbol *) var, indices);
+
 }
 /*
  * TODO: cannot use element array to construct list of proxy syms
