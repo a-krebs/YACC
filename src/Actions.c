@@ -903,3 +903,8 @@ void exitLoop(void) {
 void endWhileLoop(void) {
 	// TODO
 }
+
+int getStrlen(struct String s)
+{
+	return s.strlen;
+}
