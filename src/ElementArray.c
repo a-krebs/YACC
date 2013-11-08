@@ -72,12 +72,12 @@ appendElement(struct ElementArray *ea, void *element)
 
 struct ElementArray *
 appendElementArray(struct ElementArray *ea1, struct ElementArray *ea2){	
-	
-	;
-	
+
+	void **tmp = NULL;		
 	int i ;
 	int appendIndex ; /* the starting index of second array.*/
 	
+
 	if(!ea1 || !ea2){
 		err(1, "One of the element arrays is a null pointer!");
 		exit(1);
@@ -88,13 +88,15 @@ appendElementArray(struct ElementArray *ea1, struct ElementArray *ea2){
 	
 	ea1->nElements += ea2->nElements; 
 	
-	ea1->data = realloc(ea1->data,sizeof(void *)*(ea1->len));
+	tmp = realloc(ea1->data,sizeof(void *)*(ea1->len));
 	
-	if(!ea1->data){
+	if(!tmp){
 		err(1, "Failled reallocate memory to grow elements array!");
 		exit(1);
 	}
-		
+	
+	tmp = ea1->data;
+
 	for(i= appendIndex; i < ea1->nElements ; i++ ){
 		ea1->data[i] = ea2->data[i-appendIndex];
 	}

@@ -694,10 +694,15 @@ ProxySymbol *proxyStringLiteral(char *value) {
  * The argument argv contains a list of arguments.
  */
 void procInvok(char *id, struct ElementArray *ea) {
-
-	/* TODO: global lookup for id */
-	/* if lookup successful, make sure it is a process */
-	/* if lookup successful, call isValidProcInvoke(symbol, ea) */
+	Symbol *s = NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return;
+	}
+	if (!ea) return;
+	isValidProcInvocation(s, ea);
+	
 }
 
 /*
@@ -740,13 +745,13 @@ struct ElementArray *createArgList(Symbol *arg) {
 struct ElementArray *concatArgLists(
     struct ElementArray *arr1, struct ElementArray *arr2) {
 	
+	struct ElementArray *ea;
 	if ((!arr1) && (!arr2)) return NULL;
 	if (!arr1) return arr2;
 	if (!arr2) return arr1;
 
-	// TODO concatenate the lists
-
-	return NULL;
+	ea = appendElementArray(arr1, arr2);
+	return ea;
 }
 
 /*

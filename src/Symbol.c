@@ -12,6 +12,7 @@ extern int yylineno;
 extern int colno;
 
 static char *errMsg;
+struct Error *e;
 
 /*
  * Constructs a	named type symbol given a ptr to another type symbol.
@@ -585,6 +586,42 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
 	return 0;
 }
 
+int
+isValidProcInvocation(Symbol *s, struct ElementArray *ea)
+{
+	struct ElementArray *params = NULL;
+	Symbol *passedParam, *expectedParam = NULL;
+	int i;
+
+	params = s->kindPtr.ProcKind->params;
+	if (params->nElements != ea->nElements) {
+		errMsg = customErrorString("Procedure %s expects %d "
+		    "parameters, got %d", s->name, params->nElements,
+		    ea->nElements);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		printError(e);	
+		return 1;	
+	}
+
+
+	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
+		passedParam = (Symbol *) getElementAt(ea, i);
+		expectedParam = (Symbol *) getElementAt(params, i);
+		if (!areSameType(passedParam, expectedParam)) {
+			errMsg = customErrorString("Procedure %s expectes "
+			    "argument of type %s at index %d, but got "
+			    "argument of type %s", s->name,
+			    typeToString(getType(expectedParam)),
+			    typeToString(getType(passedParam)));
+			e = recordError(errMsg, yylineno, colno, SEMANTIC);
+			printError(e);
+			return 0;
+		}
+	}
+	return 1;
+}
+
+
 /*
  * Given a linked list of ProxySymbols, returns the type which results
  * from using the linked list of ProxySymbols to access the array given
@@ -627,10 +664,6 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 
 	indexTypeSym = getArrayIndexSym(arrayTypeSym);
 	for (i = 0; i < nArgs; i++) {
-// TODO:
-// need to get base type of the index sym for the array and compare that to the
-// type of the index.  this happens different based on if the index
-// type is a subrange or a scalar	
 		switch (getType(indexTypeSym)) {
 			case SCALAR_T:
 				if (!isConstInScalar(arg, indexTypeSym))
