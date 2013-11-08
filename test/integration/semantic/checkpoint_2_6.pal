@@ -1,7 +1,33 @@
-{}
+{14,22,29}
 {
-	Team YACC Checkpoint 2 Test 6
+	Team YACC Checkpoint 2 Test 6 (check array)
+
+	line 13: low and high index are in different type.(error 1)
+	line 22: c is incompatiable arg for procedure test().(error 2)
+	line 22: d is undefined in procedure test(error 3)
 }
-program test6(input, output);
+program test6(input,output);
+type
+    intArray = array[1..10]of integer;
+    realArray = array[2..12]of real; 
+    badArray = array['a'..12]of char;
+    {error 1}
+var
+    	a: integer;
+	b: char;
+	c: intArray;
+procedure test(a:integer; c:intArray);
 begin
+	test(c,c); {error 2 } 
+	
+	a:=a+a;
+	a:=a+a;
+	a:=a+a;
+	a:=a+a;
+	
+	test(a,d); {error 3 }
+end;	
+begin
+	realArray[1]:=38218333;
 end.
+
