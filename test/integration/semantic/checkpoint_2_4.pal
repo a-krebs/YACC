@@ -1,4 +1,4 @@
-{}
+{4007,8995,8996}
 {
 	Team YACC Checkpoint 2 Test 4
 
@@ -12,7 +12,6 @@
 
 }
 program test4(input, output);
-<<<<<<< HEAD
 var
 	a : integer;
 	b : integer;
@@ -4004,9 +4003,8 @@ function scope1() : integer;
 	var
 		c : integer;
 		d : integer;
-	z := 5
-
 	begin
+		z := 5;
 		a := 2;
 		b := 2;
 	end;
@@ -8990,14 +8988,8 @@ function scope1() : integer;
 		a := 2;
 		b := 2;
 	end;
-=======
-type
-	colours = (green,and,yellow,purple,hills);
-	int = integer;
-var
-	ll : array [10..100] of array [colours] of ['a'..'z'] of int;
->>>>>>> 48e0f2b77c720ab60b040f85de0e466986164419
 begin
+
 	a := 1;
 	b := 1;
 	i := i / i; {error}
