@@ -778,8 +778,9 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
-		errMsg = customErrorString("Trying to access by indices %s "
-		    " which is not of type ARRAY but of type %s", var->name,
+		errMsg = customErrorString("Trying to access by "
+		    "subscription %s which is not of type ARRAY but of "
+		    "type %s", var->name,
 		    typeToString(getType(arrayTypeSym)));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
