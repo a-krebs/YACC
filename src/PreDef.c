@@ -72,9 +72,6 @@ struct preDefTypeSymbols *initializePreDefTypes() {
 
 	return preDefs;
 }
-<<<<<<< .merge_file_yZSrdt
-=======
-
 
 struct Symbol *createPreDefProc(char *name) {
 	struct Symbol *symbol;
@@ -116,4 +113,3 @@ int initializePreDefProc() {
 
 	return 0;
 }
->>>>>>> .merge_file_qUP0Pp
