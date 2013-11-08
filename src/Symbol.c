@@ -572,11 +572,8 @@ ProxySymbol *
 newStringProxySym(int lvl, char *str, int strlen)
 {
 	ProxySymbol *newStringSym = NULL;
-	AnonConstVal anonStr;
 
 	newStringSym = calloc(1, sizeof (ProxySymbol));
-	anonStr.String.str = str;
-	anonStr.String.strlen = strlen;
 
 	newStringSym->name = NULL;
 	newStringSym->kind = CONST_KIND;
