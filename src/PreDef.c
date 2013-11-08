@@ -95,10 +95,36 @@ struct Symbol *createPreDefProc(char *name) {
 	return symbol;
 }
 
+struct Symbol *createPreDefFunc(char *name) {
+	struct Symbol *symbol;
+
+	symbol = calloc(1, sizeof(struct Symbol));
+	
+	if (symbol == NULL) {
+		err(1, "Failed to allocate memory for symbol name!");
+		exit(EXIT_FAILURE);
+	}
+
+	setSymbolName(symbol, name);
+	symbol->kind = FUNC_KIND;
+
+	allocateKindPtr(symbol);
+	symbol->kindPtr.FuncKind->params = NULL;
+	symbol->kindPtr.FuncKind->typeSym = NULL;
+
+
+	symbol->lvl = getCurrentLexLevel(symbolTable);
+	symbol->typeOriginator = 0;
+	symbol->next = NULL;
+
+	return symbol;
+}
+
 
 int initializePreDefProc() {
 	struct Symbol *symbol;
 
+	/* IO functions */
 	symbol = createPreDefProc(WRITE);
 	createHashElement(symbolTable, WRITE, symbol);
 
@@ -110,6 +136,59 @@ int initializePreDefProc() {
 
 	symbol = createPreDefProc(READLN);
 	createHashElement(symbolTable, READLN, symbol);
+
+	return 0;
+}
+
+
+int initializePreDefFunc() {
+	struct Symbol *symbol;
+
+	/* IO functions */
+	symbol = createPreDefFunc(ODD);
+	createHashElement(symbolTable, ODD, symbol);
+
+	symbol = createPreDefFunc(ABS);
+	createHashElement(symbolTable, ABS, symbol);
+
+	symbol = createPreDefFunc(SQR);
+	createHashElement(symbolTable, SQR, symbol);
+
+	symbol = createPreDefFunc(SQRT);
+	createHashElement(symbolTable, SQRT, symbol);
+
+	symbol = createPreDefFunc(SIN);
+	createHashElement(symbolTable, SIN, symbol);
+
+	symbol = createPreDefFunc(COS);
+	createHashElement(symbolTable, COS, symbol);
+
+	symbol = createPreDefFunc(EXP);
+	createHashElement(symbolTable, EXP, symbol);
+
+	symbol = createPreDefFunc(LN);
+	createHashElement(symbolTable, LN, symbol);
+
+	symbol = createPreDefFunc(ARCTAN);
+	createHashElement(symbolTable, ARCTAN, symbol);
+
+	symbol = createPreDefFunc(TRUNC);
+	createHashElement(symbolTable, TRUNC, symbol);
+
+	symbol = createPreDefFunc(ROUND);
+	createHashElement(symbolTable, ROUND, symbol);
+
+	symbol = createPreDefFunc(ORD);
+	createHashElement(symbolTable, ORD, symbol);
+
+	symbol = createPreDefFunc(CHR);
+	createHashElement(symbolTable, CHR, symbol);
+
+	symbol = createPreDefFunc(SUCC);
+	createHashElement(symbolTable, SUCC, symbol);
+
+	symbol = createPreDefFunc(PRED);
+	createHashElement(symbolTable, PRED, symbol);
 
 	return 0;
 }
