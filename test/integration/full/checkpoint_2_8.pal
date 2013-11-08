@@ -1,4 +1,4 @@
-{26, 29}
+{29, 32, 38, 42, 44, 45, 46}
 {
 	Team YACC checkpoint 2 test 8
 	lots of tests to do with records.
@@ -17,6 +17,9 @@ var
 	myr : r;
 	myI : integer;
 	myR : real;
+	i : integer;
+	b : boolean;
+	r2 : real;
 procedure foo(a : integer; b : integer);
 begin
 end;
@@ -27,4 +30,20 @@ begin
 	myI := myr.r.i;
 
 	foo(a, 10);	// error
+	// unary minus
+	
+
+	r2 := -r2;
+	r2 := -i;
+	i := -r2;	// error
+	i := -i;
+
+	b := r2 = i;
+	b := r2 = b;	// error
+	b := r2 = r2;
+	b := r2 = c;	// error
+	b := r2 = foo;	// error
+	b := r2 = bar;	// error
+	
 end.
+
