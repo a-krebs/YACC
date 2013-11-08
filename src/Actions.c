@@ -492,8 +492,10 @@ Symbol *doVarDecl(char *id, Symbol *type) {
  * This is a good time to pop lexical level.
  */
 void exitProcOrFuncDecl(void) {
+#if DEBUG
 	printf("Popping lex level at line %d, from %d to %d\n", yylineno,
 	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
+#endif
 	popLexLevel(symbolTable);
 }
 
