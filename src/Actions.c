@@ -243,6 +243,7 @@ Symbol *simpleTypeLookup(char *id) {
 		errMsg = customErrorString("The identifier %s is not a type. ",
 		    s->name);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return getTypeSym(s);
 	}
 	/* Else, we return the given type */
 	return s;
