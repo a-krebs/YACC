@@ -728,7 +728,8 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 			    "argument of type %s", s->name, i,
 			    typeToString(getType(expectedParam)),
 			    typeToString(getType(passedParam)));
-			e = recordError(errMsg, yylineno, colno, SEMANTIC);
+			e = recordError(errMsg, yylineno, colno,
+			     SEMANTIC);
 			printError(e);
 			return 0;
 		}
@@ -745,8 +746,7 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 
 	// make sure we're given a func and not a proc
 	if (s->kind != FUNC_KIND) {
-		errMsg = customErrorString("Identifier %s cannot be called "
-		    "as a function.", s->name);
+		errMsg = customErrorString("Identifier %s cannot be " 			"called as a function.", s->name);
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
 		return 0;
 	}
@@ -852,8 +852,6 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 
 	/* Else are ready to return the base type */
 
-	arrayTypeSym = getArrayBaseSym(arrayTypeSym);
-	//printf("%s\n", typeToString(getType(arrayTypeSym)));
 	if (arg) {
 		/* Didn't exhaust args, but exhausted arrays.
 		 * Return arrayTypeSym */
@@ -861,7 +859,7 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 		    yylineno, colno, SEMANTIC);
 		return arrayTypeSym;
 	} 
-	return getArrayBaseSym(arrayTypeSym);
+	return arrayTypeSym;
 }
 
 
@@ -1150,11 +1148,11 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 	} else if (
 	    (strcmp(name, "trunc") == 0) ||
 	    (strcmp(name, "round") == 0) ||
-	    (strcmp(name, "ord") == 0)
+	    (strcmp(name, "chr") == 0)
 	){
 		return getPreDefInt(preDefTypeSymbols);
 	} else if (
-	    (strcmp(name, "chr") == 0)
+	    (strcmp(name, "ord") == 0)
 	){
 		return getPreDefChar(preDefTypeSymbols);
 	} else if (

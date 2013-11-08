@@ -731,6 +731,7 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
  * Return a pointer to a concatenated list.
  */
 ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
+	Symbol *tmp;
 	/*
 	 * b/c we are parsing right to left, make list2 the head of the
 	 * linked list of proxy symbols
@@ -745,8 +746,10 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
 	if (!list2) {
 		return list1;
 	}
+	tmp = list1;
+	while (tmp->next != NULL) tmp = tmp->next;
+	tmp->next = list2;
 
-	list2->next = list1;
 	return list1;
 }
 

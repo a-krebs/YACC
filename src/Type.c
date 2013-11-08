@@ -289,7 +289,6 @@ struct Record *newRecord() {
 		err(1, "Failed to allocate memory for new record!");
 		exit(1);
 	}
-
 	/* give the record its own hash table */
 	r->hash = createHash(&getHashedKeyNormal);
 
@@ -382,7 +381,7 @@ Type newAnonConstType(AnonConstVal value, type_t type)
 void
 typeMemoryFailure()
 {
-	err(1, "Failed to allocate memory for new anonymous constant type!");
+	err(1, "Failed to allocate memory for new anonymous constant " 		"type!");
 	exit(1);
 }
 
