@@ -82,9 +82,17 @@ SED_INCLUDE= 	sed -e "/<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->/r\
 all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
-debug: CFLAGS+= -g -DDEBUG -DYYDEBUG=1
+debug: CFLAGS+= -g
 debug: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug: $(EXE)
+
+debug_verbose: CFLAGS+= -g -DDEBUG -DYYDEBUG=1
+debug_verbose: YACCFLAGS += --report-file=$(BISONREPORT) -v
+debug_verbose: $(EXE)
+
+debug_hash: CFLAGS+= -g -DHASHDEBUG
+debug_hash: YACCFLAGS += --report-file=$(BISONREPORT) -v
+debug_hash: $(EXE)
 
 # Build main using tokenTestParser.y to analyze lexical tokens
 lextest: CFLAGS+= -g -DLEXTEST_DEBUG

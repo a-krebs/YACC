@@ -4,8 +4,11 @@
 
 /* Macros and const string variable declarations. */
 #define TABLE_SIZE 1000
-#define HASH_DEBUG 1
-
+#if HASHDEBUG
+	#define HASH_DEBUG 1
+#else
+	#define HASH_DEBUG 0
+#endif
 
 /* Global variables. */
 struct hashElement {
