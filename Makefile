@@ -230,7 +230,8 @@ clean:
 	-rm -f $(SRC)/generated_tokenTestParser.y
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
-	-rm -f ./*.pal
+	-rm -f 0.pal 1.pal 2.pal 3.pal 4.pal
+	-rm -f 5.pal 6.pal 7.pal 8.pal 9.pal
 
 # shortcuts for common actions
 build:

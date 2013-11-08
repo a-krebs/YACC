@@ -289,10 +289,16 @@ var
 	{ $<proxy>$ = $<proxy>1; }
 ;
 
+
 subscripted_var
-: var LS_BRACKET subscripted_var_index
-	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<elemarray>3);  }
-| subscripted_var comma_or_error subscripted_var_index
+: var LS_BRACKET subscripted_var_index_list
+	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
+;
+
+subscripted_var_index_list
+: subscripted_var_index
+	{ $<proxy>$ = $<proxy>1;  }
+| subscripted_var_index_list comma_or_error subscripted_var_index
 	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
 ;
 

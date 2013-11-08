@@ -68,7 +68,7 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	}
 
 	if ((baseTypeSym->kind != TYPE_KIND) || 
-	    (baseTypeSym->kind != TYPE_KIND)) {
+	    (baseTypeSym->kind != TYPE_KIND)) {	
 		errMsg = customErrorString("Cannot create array with given"
 		    "base type");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
@@ -94,6 +94,7 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	allocateKindPtr(newArraySym);
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
+	newArraySym->kindPtr.TypeKind->type = ARRAY_T;
 	newArraySym->lvl = lvl;
 	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
@@ -505,12 +506,18 @@ ProxySymbol *
 newStringProxySym(int lvl, char *str, int strlen)
 {
 	ProxySymbol *newStringSym = NULL;
+	AnonConstVal anonStr;
+
 	newStringSym = calloc(1, sizeof (ProxySymbol));
+	anonStr.String.str = str;
+	anonStr.String.strlen = strlen;
+
 	newStringSym->name = NULL;
 	newStringSym->kind = TYPE_KIND;
 	allocateKindPtr(newStringSym);
-	newStringSym->kindPtr.TypeKind->typePtr.String = 
-	    calloc(1, sizeof(struct String));
+	newStringSym->kindPtr.TypeKind->type = STRING_T;
+	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
+	    anonStr, STRING_T);
 	getTypePtr(newStringSym)->String->strlen = strlen;
 	
 	if (strlen) {
