@@ -19,7 +19,14 @@ areSameType(Symbol *s1, Symbol *s2)
 {
 	if ((!s1) || (!s2)) return 0;
 	if ( !(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
-	return (s1->kindPtr.TypeKind == s2->kindPtr.TypeKind);
+
+	if(s1->kindPtr.TypeKind == s2->kindPtr.TypeKind) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+	// return (s1->kindPtr.TypeKind == s2->kindPtr.TypeKind);
 }
 
 /*

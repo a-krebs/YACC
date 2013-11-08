@@ -762,7 +762,7 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
-			    "argument of type %s", s->name,
+			    "argument of type %s", s->name, i,
 			    typeToString(getType(expectedParam)),
 			    typeToString(getType(passedParam)));
 			e = recordError(errMsg, yylineno, colno, SEMANTIC);
