@@ -1,0 +1,24 @@
+{14,15,16,19,20,21}
+{
+    Test that operations work
+}
+program test(input, output);
+var
+	i : integer;
+	b : boolean;
+	r : real;
+begin
+	
+	// div
+
+	i := r div r;	// error
+	i := r div i;	// error
+	i := i div r;	// error
+	i := i div i;
+
+	r := r div r;	// error
+	r := r div i;	// error
+	r := i div r;	// error
+	r := i div i;	
+	
+end.

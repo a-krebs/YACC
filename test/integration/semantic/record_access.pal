@@ -1,0 +1,17 @@
+{16}
+
+program test(in, out);
+type
+	r = record
+		i : integer;
+		r : real
+	end;
+var
+	myr : r;
+	myI : integer;
+	myR : real;
+begin
+	myI := myr.i;
+	myR := myr.r;
+	myI := myI.r;	// error
+end.

@@ -64,6 +64,13 @@ Symbol *assertOpCompat(
 		opError(typeToString(s2_t), opToken, typeToString(s2_t));
 		return NULL; /* else it was an error */
 	}
+
+	if ( (isRelationalOperator(opToken) && areSameType(type1, type2) ) &&
+	    	getType(type1) == SCALAR_T ) {
+		return getPreDefBool(preDefTypeSymbols); 
+	}
+
+
 	/* Only simple and string types are compatible with operators */
 	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) &&
 	    (s1_t != STRING_T)) {
@@ -83,7 +90,7 @@ Symbol *assertOpCompat(
 	}
 
 	/* If the operator is relational, we just need op compatible types */
-	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
+	if ( isRelationalOperator(opToken) && areOpCompatible(type1, type2) ) {
 		return getPreDefBool(preDefTypeSymbols);
 	}
 
@@ -123,7 +130,7 @@ Symbol *assertOpCompat(
  * non-zero
  */
 int isAssignmentCompat(Symbol * type1, Symbol * type2) {
-	
+
 	if (areSameType(type1, type2)) {
 		return 1;
 	} else if (areCompatibleStrings(type1, type2)) {
@@ -133,8 +140,8 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
 		return 1;
 	}
 
-	errMsg = customErrorString("The type %s cannot be assigned a value "
-	    "of type %s", typeToString(getType(type1)), 
+	errMsg = customErrorString("The type %s cannot be assigned a value"
+	    " of type %s", typeToString(getType(type1)), 
 	    typeToString(getType(type2)));
 	recordError(errMsg, yylineno, colno, SEMANTIC);
 	return 0;
@@ -177,7 +184,8 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 		return;
 	}
 
-	/* Else we can try to make new const  and add it to symbol table */	
+	/* Else we can try to make new const  and add it to symbol table
+*/	
 	s = newConstSymFromProxy(lvl, id, proxy);		
 	if (s) {
 		createHashElement(symbolTable, id, s);
@@ -240,17 +248,58 @@ Symbol *simpleTypeLookup(char *id) {
  *
  * Return scalar_list
  */
-Symbol *appendToScalarListType(Symbol *scalar_list, char *new_id) {
-	return scalar_list;
+struct ElementArray *appendToScalarListType(struct ElementArray *ea,
+    char *id) {
+	Symbol *s = NULL;
+	if (!ea) return NULL;
+	
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		alreadyDefinedError(id);
+		return NULL;
+	}
+	s = (Symbol *) newConstProxySym(&ea->nElements, 
+	    getPreDefInt(preDefTypeSymbols));
+	s->lvl = getCurrentLexLevel(symbolTable);
+	setSymbolName(s, id);
+	createHashElement(symbolTable, s->name, s);
+	appendElement(ea, s);
+	return ea;
 }
+
+struct ElementArray * createScalarList(char *id) {
+	Symbol *s = NULL;	
+	struct ElementArray *ea = NULL;
+	int value = 0;
+
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		alreadyDefinedError(id);
+		return NULL;
+	}
+	s = (Symbol *) newConstProxySym(&value, 
+	    getPreDefInt(preDefTypeSymbols));
+	setSymbolName(s, id);
+	s->lvl = getCurrentLexLevel(symbolTable);
+	createHashElement(symbolTable, s->name, s);
+	ea = newElementArray();
+	appendElement(ea, s);
+	return ea;
+}
+
 
 /*
  * Create a new scalar list type with id as the only member.
  *
  * Return a pointer to the new scalar list
  */
-Symbol *createScalarListType(char *id) {
-	return NULL;
+Symbol *createScalarListType(struct ElementArray *ea) {
+	Symbol *s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
+	if (!ea) return NULL;
+	s = newAnonScalarSym(lvl, ea);
+	createHashElement(symbolTable, NULL, s);
+	return s;
 }
 
 /*
@@ -440,7 +489,7 @@ Symbol *doVarDecl(char *id, Symbol *type) {
  * This is a good time to pop lexical level.
  */
 void exitProcOrFuncDecl(void) {
-	// TODO
+	popLexLevel(symbolTable);
 }
 
 /*
@@ -453,19 +502,30 @@ void exitProcOrFuncDecl(void) {
  * Return a pointer to the procedure.
  */
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
-
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
-	
-	s = getLocalSymbol(symbolTable, id);
-	if (s) {
-		/* throw already defined error */
+
+	if (!id) {
 		return NULL;
 	}
 
-	if (!ea) return NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
+	incrementLexLevel(symbolTable);
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		errMsg = customErrorString("Procedure with name %s "
+		    "is already defined.",id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	if (!ea) {
+		ea = newElementArray();
+	}
 	s = newProcSym(lvl, id, ea);
-	if (s) createHashElement(symbolTable, id, s);
+	if (createHashElement(symbolTable, id, s) != 0) {
+		// TODO error
+	}
+	incrementLexLevel(symbolTable);
 	return s;
 }
 
@@ -483,12 +543,28 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		// throw already defined error
+		errMsg = customErrorString("Function with name %s "
+		    "is already defined.",id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
-	if ((!ea) || (!typeSym)) return NULL;
+	if (!ea) {
+		ea = newElementArray();
+	}
+
+	if (!typeSym) {
+		errMsg = customErrorString("Function with name %s "
+		    "has no return type, assuming INTEGER.",id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		typeSym = getPreDefInt(preDefTypeSymbols);
+	}
+
 	s = newFuncSym(lvl, id, typeSym, ea);
+	if (createHashElement(symbolTable, id, s) != 0) {
+		// TODO error
+	}
+	incrementLexLevel(symbolTable);
 	return s;
 }
 
@@ -566,8 +642,30 @@ ProxySymbol *hashLookupToProxy(char *id) {
 /*
  * id1 == name of record, id3 == name of field we are trying to access
  */
-ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
-	return NULL;
+ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
+	Symbol *s = NULL;
+	struct Record *r = NULL;
+
+	if ((!p) || (!id)) return NULL;
+
+	s = getTypeSym(p);
+	if (getType(s) != RECORD_T) {
+		errMsg = customErrorString("Cannot get field %s from %s. "
+		    "Identifier %s is not a record.", id, p->name, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	
+	r = s->kindPtr.TypeKind->typePtr.Record;
+
+	s = getGlobalSymbol(r->hash, id);
+	if (!s) {
+		errMsg = customErrorString("Field %s does not exist in %s.",
+		    id, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	return newProxySymFromSym(s);
 }
 
 /*
@@ -578,10 +676,8 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	/* Record specific errors in isValidArrayAccess */
 	if ((!indices) || (!var)) return NULL;	
-	if (isValidArrayAccess((Symbol *) var, indices)) {
-		return newProxySymFromSym(getTypeSym((Symbol *) var));
-	}
-	return NULL;
+	return isValidArrayAccess((Symbol *) var, indices);
+
 }
 /*
  * TODO: cannot use element array to construct list of proxy syms
@@ -611,8 +707,8 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
 		return list1;
 	}
 
-	list1->next = list2;
-	return list2;
+	list2->next = list1;
+	return list1;
 }
 
 /*
@@ -744,17 +840,18 @@ ProxySymbol *proxyRealLiteral(double value) {
 	return newConstProxySym(&value, realType);
 }
 
+ProxySymbol *proxyCharLiteral(struct String s) {
+	Symbol *charType = getPreDefChar(preDefTypeSymbols);
+	return newConstProxySym((s.str+1), charType);
+}
+
 /*
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
  */
-ProxySymbol *proxyStringLiteral(char *value) {
-	// TODO: we require the length of the string in order
-	// to avoid the cases where the string literal may have null
-	// bytes.
+ProxySymbol *proxyStringLiteral(struct String s) {
 	int lvl = getCurrentLexLevel(symbolTable);
-	int strlen = 0;
-	return newStringProxySym(lvl, value, strlen);
+	return newStringProxySym(lvl, (s.str+1), s.strlen);
 }
 
 /*
@@ -769,9 +866,11 @@ void procInvok(char *id, struct ElementArray *ea) {
 		notDefinedError(id);
 		return;
 	}
-	if (!ea) return;
+	if (!ea) {
+		ea = newElementArray();
+	}
+	// this prints errors, so call it but ignore return value
 	isValidProcInvocation(s, ea);
-	
 }
 
 /*
@@ -782,6 +881,19 @@ void procInvok(char *id, struct ElementArray *ea) {
  * Return a ProxySymbol containing the type returned.
  */
 ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
+	Symbol *s = NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return NULL;
+	}
+	if (!argv) {
+		argv = newElementArray();
+	}
+
+	if (isValidFuncInvocation(s, argv)) {
+		return getTypeSym(s);
+	}
 
 	return NULL;
 }
@@ -844,4 +956,9 @@ void exitLoop(void) {
  */
 void endWhileLoop(void) {
 	// TODO
+}
+
+int getStrlen(struct String s)
+{
+	return s.strlen;
 }

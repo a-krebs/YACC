@@ -1,0 +1,10 @@
+{}
+{
+    Test Case
+}
+program test(input, output);
+function wrtln(false : integer) : integer;
+begin
+end;
+begin
+end.

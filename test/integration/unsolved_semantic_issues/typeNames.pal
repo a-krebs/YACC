@@ -1,0 +1,35 @@
+{}
+{
+    Test type equality
+
+    make 3 names for integer, then round-robin assign them to make sure
+    they're all compatible.
+}
+program test(input, output);
+type
+	int = integer;
+	int2 = integer;
+	int3 = int;
+var
+	a : integer;
+	b : int;
+	c : int2;
+	d : int3;
+begin
+	a := a;
+	a := b;
+	a := c;
+	a := d;
+	b := a;
+	b := b;
+	b := c;
+	b := d;
+	c := a;
+	c := b;
+	c := c;
+	c := d;
+	d := a;
+	d := b;
+	d := c;
+	d := d;
+end.

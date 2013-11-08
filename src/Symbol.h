@@ -33,7 +33,7 @@ Symbol *getSubrangeBaseTypeSym(Symbol *);
 int getArrayDim(Symbol *s);
 int getSymbolListLength(Symbol *s);
 void setSymbolName(Symbol *, char *);
-
+Symbol * getArrayTerminalTypeSym(Symbol *);
 
 /* Semantic validation functions */
 int isConstInScalar(Symbol *, Symbol *);

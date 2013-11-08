@@ -1,0 +1,35 @@
+{21,22,25,26,27,28,31,32}
+{
+    Test Case
+}
+program test(input, output);
+type
+	rec1 = record
+		i : integer
+		end;
+	rec2 = record
+		i : integer
+		end;
+var
+	e : rec1;
+	f : rec1;
+	g : rec2;
+	h : rec2;
+begin
+	e := e;
+	e := f;
+	e := g;		// error
+	e := h;		// error
+	f := e;
+	f := f;
+	f := g;		// error
+	f := h;		// error
+	g := e;		// error
+	g := f;		// error
+	g := g;
+	g := h;
+	h := e;		// error
+	h := f;		// error
+	h := g;
+	h := h;
+end.

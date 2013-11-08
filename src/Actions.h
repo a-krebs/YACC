@@ -14,8 +14,8 @@ void doTypeDecl(char*, Symbol*);
 
 /* types */
 Symbol *simpleTypeLookup(char*);
-Symbol *appendToScalarListType(Symbol*, char*);
-Symbol *createScalarListType(char*);
+struct ElementArray *appendToScalarListType(struct ElementArray *, char *);
+struct ElementArray *createScalarList(char*);
 Symbol *createArrayType(Symbol*, Symbol*);
 Symbol *assertArrIndexType(Symbol*);
 Symbol *createRangeType(ProxySymbol*, ProxySymbol*);
@@ -24,6 +24,8 @@ struct ElementArray *createRecordMemberList(ProxySymbol*);
 struct ElementArray *appendToRecordMemberList(
     struct ElementArray*, ProxySymbol*);
 ProxySymbol *newRecordFieldProxy(char*, Symbol*);
+struct ElementArray *createScalarList(char *);
+Symbol *createScalarListType(struct ElementArray *);
 
 /* var decl list */
 void exitVarDeclPart(void);
@@ -42,7 +44,7 @@ Symbol *createNewVarParm(char*, Symbol*);
 /* expressions and operators */
 ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *hashLookupToProxy(char*);
-ProxySymbol *recordAccessToProxy(char*, char*);
+ProxySymbol *recordAccessToProxy(ProxySymbol*, char*);
 ProxySymbol *arrayIndexAccess(ProxySymbol*, ProxySymbol*);
 ProxySymbol *concatArrayIndexList(ProxySymbol*, ProxySymbol*);
 ProxySymbol *createArrayIndexList(ProxySymbol*);
@@ -67,7 +69,8 @@ ProxySymbol *unaryNotOp(ProxySymbol*);
 /* constants */
 ProxySymbol *proxyIntLiteral(int);
 ProxySymbol *proxyRealLiteral(double);
-ProxySymbol *proxyStringLiteral(char*);
+ProxySymbol *proxyStringLiteral(struct String);
+ProxySymbol *proxyCharLiteral(struct String);
 
 /* procedure and function invokations */
 void prodInvok(char*, struct ElementArray*);
@@ -79,3 +82,6 @@ struct ElementArray *concatArgLists(struct ElementArray*, struct ElementArray*);
 void continueLoop(void);
 void exitLoop(void);
 void endWhileLoop(void);
+
+/* utils */
+int getStrlen(struct String);

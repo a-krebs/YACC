@@ -124,14 +124,14 @@ simple_type
 
 scalar_type
 : L_PAREN scalar_list R_PAREN
-	{ $<symbol>$ = $<symbol>2; }
+	{ $<symbol>$ = createScalarListType($<elemarray>2); }
 ;
 
 scalar_list
 : scalar_list comma_or_error ID_or_err
-	{ $<symbol>$ = appendToScalarListType($<symbol>1, $<id>3); }
+	{ $<elemarray>$ = appendToScalarListType($<elemarray>1, $<id>3); }
 | ID_or_err
-	{ $<symbol>$ = createScalarListType($<id>1); }
+	{ $<elemarray>$ = createScalarList($<id>1); }
 ;
 
 structured_type
@@ -240,7 +240,7 @@ f_parm_list
 : f_parm
 	{ $<elemarray>$ = createParmList($<symbol>1); }
 | f_parm_list semicolon_or_error f_parm
-	{ $<elemarray>$ = appendParmToParmList($<elemarray>1, $<symbol>2); }
+	{ $<elemarray>$ = appendParmToParmList($<elemarray>1, $<symbol>3); }
 ;
 
 f_parm
@@ -284,7 +284,7 @@ var
 | ID_or_err
 	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | var PERIOD ID_or_err
-	{ $<proxy>$ = recordAccessToProxy($<id>1, $<id>3 ); }
+	{ $<proxy>$ = recordAccessToProxy($<proxy>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
 	{ $<proxy>$ = $<proxy>1; }
 ;
@@ -378,7 +378,11 @@ unsigned_const
 : unsigned_num
 	{ $<proxy>$ = $<proxy>1; }
 | STRING_CONST
-	{ $<proxy>$ = proxyStringLiteral($<string>1); }
+	{ 
+	    if (getStrlen($<string>1) <= 1) {
+	        $<proxy>$ = proxyCharLiteral($<string>1); 
+	} else { $<proxy>$ = proxyStringLiteral($<string>1);} 
+	}
 ;
 
 unsigned_num
@@ -389,17 +393,15 @@ unsigned_num
 ;
 
 proc_invok
-: plist_pinvok R_PAREN
-	{ /* Action is performed one level lower */ }
+: plist_pinvok
+	{ /* Action is performed one level lower and nothing returned */ }
 | ID_or_err L_PAREN R_PAREN
 	{ /* TODO might want to explicitly use an empty arg list here */ 
 	  procInvok($<id>1, NULL); }
 ;
 
-
-
 func_invok
-: plist_finvok R_PAREN
+: plist_finvok
 	{ /* Action is performed one level lower */
 	  $<proxy>$ = $<proxy>1; }
 | ID_or_err L_PAREN R_PAREN
@@ -413,33 +415,27 @@ func_invok
 
 // duplicated once for functions and once for procedures
 plist_pinvok
-: ID_or_err L_PAREN parm_list
+: ID_or_err L_PAREN parm_list R_PAREN
 	{ procInvok($<id>1, $<elemarray>3); }
-//| plist_pinvok comma_or_error parm
-//	{ // parm returns the list of arguments
-//	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+| ID_or_err error R_PAREN
 ;
 
 // duplicated once for functions and once for procedures
 plist_finvok
-: ID_or_err L_PAREN parm_list
+: ID_or_err L_PAREN parm_list R_PAREN
 	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
-//| plist_finvok comma_or_error parm
-//	{ // parm returns the list of arguments
-//	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+/*| ID_or_err error R_PAREN */
 ;
 
 parm_list
-: parm 	{ $<elemarray>$ = $<elemarray>1;}
+: parm
+	{ $<elemarray>$ = $<elemarray>1; }
 | parm_list comma_or_error parm
-	{ 	  
-	    $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
-;
+	{ $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 
 parm
 : expr
 	{ // TODO can we use the same action as for function decl?
-	  //$<elemarray>$ = createArgList($<proxy>1); }
 	  $<elemarray>$ = createArgList($<proxy>1); }
 ;
 

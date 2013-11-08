@@ -1,0 +1,26 @@
+{10,11,15,16,21,23,25}
+{
+    Test array indexing
+}
+program test(input, output);
+const
+	i = 21;
+type
+	colours = (red,green,blue);
+	blues = (lightBlue,darkBlue,blue);	// error
+	blue = blues;				// error
+	list = array[1..10] of blues;
+	list2 = array[2..20] of colours;
+var
+	a : colours;				// error
+	b : blues;				// error
+	c : list;
+	d : list2;
+	x : integer;
+begin
+	i := x;					// error
+	b := c[5];
+	d[3] := green;				// error
+	d[6] := d[red];
+	d[i] := d[red];				// error index out of range
+end.

@@ -278,7 +278,6 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 	/*
 	 * Insure that values are bounded correctly (dependent on type ).
 	 */
-
 	switch(getType(constSymLow)) {
 	case INTEGER_T:
 		if (getConstVal(constSymLow)->Integer.value >
@@ -473,6 +472,7 @@ newConstProxySym(void * result, Symbol *typeSym)
 	Symbol *constSym = NULL;
 	double *doubleResult;
 	int *intResult;
+	char *charResult;
 	
 	constSym = calloc(1, sizeof(ProxySymbol));
 	if (!constSym) {
@@ -491,6 +491,9 @@ newConstProxySym(void * result, Symbol *typeSym)
 		intResult = (int *) result;
 		getConstVal(constSym)->Boolean.value = *intResult;
 		break;
+	case CHAR_T:
+		charResult = (char *) result;
+		getConstVal(constSym)->Char.value = *charResult;
 	case INTEGER_T:
 		intResult = (int *) result;
 		getConstVal(constSym)->Integer.value = *intResult;
@@ -674,31 +677,44 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
 	return 0;
 }
 
-int
-isValidProcInvocation(Symbol *s, struct ElementArray *ea)
+/*
+ * Return 1 if valid invocation, 0 otherwise.
+ */
+int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 {
 	struct ElementArray *params = NULL;
 	Symbol *passedParam, *expectedParam = NULL;
 	int i;
 
+	// make sure we're given a proc and not a func
+	if (s->kind != PROC_KIND) {
+		errMsg = customErrorString("Identifier %s cannot be called "
+		    "as a procedure.", s->name);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+
 	params = s->kindPtr.ProcKind->params;
-	if (params->nElements != ea->nElements) {
+	if (!params) {
+		// special built-in proc that takes unlimited args
+		// TODO for now just assuming all arguments are valid
+		return 1;
+	} else if (params->nElements != ea->nElements) {
 		errMsg = customErrorString("Procedure %s expects %d "
 		    "parameters, got %d", s->name, params->nElements,
 		    ea->nElements);
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
-		printError(e);	
-		return 1;	
+		return 0;	
 	}
 
 
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(passedParam, expectedParam)) {
-			errMsg = customErrorString("Procedure %s expectes "
+		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
+			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
-			    "argument of type %s", s->name,
+			    "argument of type %s", s->name, i,
 			    typeToString(getType(expectedParam)),
 			    typeToString(getType(passedParam)));
 			e = recordError(errMsg, yylineno, colno, SEMANTIC);
@@ -716,8 +732,21 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	Symbol *passedParam, *expectedParam = NULL;
 	int i;
 
+	// make sure we're given a func and not a proc
+	if (s->kind != FUNC_KIND) {
+		errMsg = customErrorString("Identifier %s cannot be called "
+		    "as a function.", s->name);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+
 	params = s->kindPtr.FuncKind->params;
-	if (params->nElements != ea->nElements) {
+	if (!params) {
+		// special case of predefined-function
+		// TODO check what types are acceptable,
+		// for now assuming all types
+		return getTypeSym(s);
+	} else if (params->nElements != ea->nElements) {
 		errMsg = customErrorString("Procedure %s expects %d "
 		    "parameters, got %d", s->name, params->nElements,
 		    ea->nElements);
@@ -730,7 +759,7 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < params->nElements; i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(passedParam, expectedParam)) {
+		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name,
@@ -767,8 +796,9 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
-		errMsg = customErrorString("Trying to access by indices %s "
-		    " which is not of type ARRAY but of type %s", var->name,
+		errMsg = customErrorString("Trying to access by "
+		    "subscription %s which is not of type ARRAY but of "
+		    "type %s", var->name,
 		    typeToString(getType(arrayTypeSym)));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
@@ -814,8 +844,10 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	}
 
 	/* Got here, it was a valid array access!  YAY! */	
-	return getArrayBaseSym(arrayTypeSym);
+	return getArrayTerminalTypeSym(arrayTypeSym);
 }
+
+
 
 /*
  * Returns a pointer to the type symbol defining the base type for the given
@@ -869,6 +901,20 @@ getArrayIndexSym(Symbol *s)
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
 	return getTypePtr(s)->Array->indexTypeSym;
+}
+
+Symbol *
+getArrayTerminalTypeSym(Symbol *s)
+{
+	Symbol *baseSym = NULL;
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	baseSym = getTypePtr(s)->Array->baseTypeSym;
+	while (getType(baseSym) == ARRAY_T) {
+		baseSym = getTypePtr(baseSym)->Array->baseTypeSym;
+	}
+	return baseSym;
+
 }
 
 Symbol *
