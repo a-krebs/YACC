@@ -4,6 +4,7 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
+#include "args.h"
 
 struct ErrorLL *errors = NULL;
 
@@ -45,6 +46,10 @@ appendError(struct ErrorLL **eLL, struct Error *e)
 		t2->error = e;
 		t2->next = NULL;
 		t1->next = t2;
+	}
+
+	if (givenArgs.q == 0) {
+		printError(e);
 	}
 }
 

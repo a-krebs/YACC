@@ -518,8 +518,5 @@ yyerror(char *s) {
 #if DEBUG
         printf("New error on line %d\n", yylineno);
 #endif
-	if (givenArgs.q == 0) {
-        	printError(e);
-	}
         if (errMsg) free(errMsg);
 }
