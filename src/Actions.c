@@ -298,7 +298,42 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
  * Return a pointer to the new record type symbol.
  */
 Symbol *createRecordType(struct ElementArray *fields) {
-	return NULL;
+	Symbol *recType = NULL;
+	Symbol *newField = NULL;
+	int lexLvl = -1;
+	int recordLexLvl = -1;
+	ProxySymbol *f = NULL;
+	struct hash *recHash = NULL;
+	char *fieldId;
+
+	lexLvl = getCurrentLexLevel(symbolTable);
+
+	recType = newRecordTypeSym(lexLvl, NULL);
+	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
+
+	recordLexLvl = getCurrentLexLevel(recHash);
+
+	for (int i = 0; i < fields->nElements; i++) {
+		f = getElementAt(fields, i);
+		if (!f) continue;
+		fieldId = f->name;
+
+		if (!fieldId) {
+			// TODO error
+		}
+
+		newField = newVariableSym(recordLexLvl, fieldId, getTypeSym(f));
+
+		if (getLocalSymbol(recHash, fieldId) != NULL) {
+			// TODO error
+		}
+		
+		if (createHashElement(recHash, fieldId, newField) != 0) {
+			// TODO error
+		}
+	}
+
+	return recType;
 }
 
 /*
@@ -314,7 +349,7 @@ struct ElementArray *createRecordMemberList(ProxySymbol *field) {
 	if (field) {
 		appendElement(ea, field);
 	}
-	return ea;	
+	return ea;
 }
 
 /*
@@ -342,8 +377,7 @@ ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
 	if (!id) return NULL;
 	if (!type) return NULL;
 
-	newField = newProxySymFromSym(type);
-	setSymbolName(newField, id);
+	newField = newVariableSym(0, id, type);
 	return newField;
 }
 

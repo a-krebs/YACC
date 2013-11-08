@@ -562,12 +562,6 @@ Symbol *newRecordTypeSym(int lvl, char *id)
 {
 	Symbol *newRecType = NULL;	/* new symbol to be created */
 
-	if (!id) {
-		/*Error: cannot have anonymous variable! */
-		return NULL;
-	}
-		
-
 	newRecType = calloc(1, sizeof(Symbol));
 	if (!newRecType) {
 		err(1, "Failed to allocate memory for new symbol!");
@@ -818,3 +812,4 @@ getArrayBaseSym(Symbol *s)
 	return getTypePtr(s)->Array->baseTypeSym;
 
 }
+
