@@ -570,7 +570,7 @@ char *createNameForAnonType(struct Symbol *symbol) {
 
         size = snprintf(NULL, 0, "%f", tim);
         name = malloc(size + 1);
-        sprintf(name, "%f", tim);
+        sprintf(name, "test%d", 12);
 
         symbol->name = name;
 

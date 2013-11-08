@@ -124,14 +124,14 @@ simple_type
 
 scalar_type
 : L_PAREN scalar_list R_PAREN
-	{ $<symbol>$ = $<symbol>2; }
+	{ $<symbol>$ = createScalarListType($<elemarray>2); }
 ;
 
 scalar_list
 : scalar_list comma_or_error ID_or_err
-	{ $<symbol>$ = appendToScalarListType($<symbol>1, $<id>3); }
+	{ $<elemarray>$ = appendToScalarListType($<elemarray>1, $<id>3); }
 | ID_or_err
-	{ $<symbol>$ = createScalarListType($<id>1); }
+	{ $<elemarray>$ = createScalarList($<id>1); }
 ;
 
 structured_type

@@ -825,8 +825,10 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	}
 
 	/* Got here, it was a valid array access!  YAY! */	
-	return getArrayBaseSym(arrayTypeSym);
+	return getArrayTerminalTypeSym(arrayTypeSym);
 }
+
+
 
 /*
  * Returns a pointer to the type symbol defining the base type for the given
@@ -880,6 +882,20 @@ getArrayIndexSym(Symbol *s)
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
 	return getTypePtr(s)->Array->indexTypeSym;
+}
+
+Symbol *
+getArrayTerminalTypeSym(Symbol *s)
+{
+	Symbol *baseSym = NULL;
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	baseSym = getTypePtr(s)->Array->baseTypeSym;
+	while (getType(baseSym) == ARRAY_T) {
+		baseSym = getTypePtr(baseSym)->Array->baseTypeSym;
+	}
+	return baseSym;
+
 }
 
 Symbol *
