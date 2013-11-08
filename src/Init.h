@@ -19,7 +19,7 @@
 /* Global variables. */
 extern struct preDefTypeSymbols *preDefTypeSymbols;
 extern struct hash *symbolTable;
-
+extern unsigned long long whileLoopDepth;
 
 /* Non-C99 compliant function prototypes. */
 

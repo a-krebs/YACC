@@ -941,7 +941,11 @@ struct ElementArray *concatArgLists(
  * continue to next iteration.
  */
 void continueLoop(void) {
-	// TODO
+	if (whileLoopDepth <= 0) {
+		errMsg = customErrorString("A continue statement is only "
+		    "allowed inside a while loop.");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
 }
 
 /*
@@ -949,12 +953,16 @@ void continueLoop(void) {
  * exit innermost loop.
  */
 void exitLoop(void) {
-	// TODO
+	if (whileLoopDepth <= 0) {
+		errMsg = customErrorString("An exit statement is only "
+		    "allowed inside a while loop.");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
 }
 
 /*
  * End of while loop.
  */
 void endWhileLoop(void) {
-	// TODO
+	whileLoopDepth--;
 }

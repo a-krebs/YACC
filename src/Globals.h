@@ -11,6 +11,7 @@
 struct hash *symbolTable;
 struct preDefTypeSymbols *preDefTypeSymbols;
 
+unsigned long long whileLoopDepth;
 
 /* Non-C99 compliant function prototypes. */
 
