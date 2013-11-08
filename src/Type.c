@@ -382,44 +382,31 @@ typeMemoryFailure()
 char *
 typeToString(type_t type)
 {
-	static char typeStr[TYPESTR_LEN];
-	memset(typeStr, '\0', TYPESTR_LEN);
 	switch (type) {
 	case ARRAY_T:
-		strcpy(typeStr, "ARRAY");
-		break;
+		return "ARRAY";
 	case BOOLEAN_T:
-		strcpy(typeStr, "BOOLEAN");
-		break;
+		return "BOOLEAN";
 	case CHAR_T:
-		strcpy(typeStr, "CHARACTER");
-		break;
+		return "CHARACTER";
 	case INTEGER_T:
-		strcpy(typeStr, "INTEGER");
-		break;
+		return "INTEGER";
 	case REAL_T:
-		strcpy(typeStr, "REAL");
-		break;
+		return "REAL";
 	case RECORD_T:
-		strcpy(typeStr, "RECORD");
-		break;
+		return "RECORD";
 	case SCALAR_T:
-		strcpy(typeStr, "SCALAR");
-		break;
+		return "SCALAR";
 	case STRING_T:
-		strcpy(typeStr, "STRING");
-		break;
+		return "STRING";
 	case SUBRANGE_T:
-		strcpy(typeStr, "SUBRANGE");
-		break;
+		return "SUBRANGE";
 	case VOID_T:
-		strcpy(typeStr, "VOID");
+		return "VOID";
 	default:
 		/* NOT REACHED */
-		strcpy(typeStr, "UNKNOWN");
+		return "UNKNOWN";
 	}
-
-	return typeStr;
 }
 
 /*

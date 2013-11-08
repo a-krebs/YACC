@@ -241,9 +241,7 @@ unit_tests:
 	make clean && make test
 	./bin/test
 
-# @ symbols supress printing commands that are executed
-# -s flag on make suppressess all output from make
-integration_tests:
+integration_tests_base:
 	@make -s build
 	@mv $(EXE) $(EXE).bak
 	@make -s clean
@@ -252,12 +250,39 @@ integration_tests:
 	@make -s clean
 	@mv $(EXE).bak $(EXE)
 	@mv $(LEXTEST_EXE).bak $(LEXTEST_EXE)
+
+
+# @ symbols supress printing commands that are executed
+# -s flag on make suppressess all output from make
+integration_tests:
+	@make -s integration_tests_base
+	@make -s syntax_tests_
+	@make -s semantic_tests_
+	@make -s full_tests_
+
+syntax_tests:
+	@make -s integration_tests_base
+	@make -s syntax_tests_
+
+syntax_tests_:
 	@echo "SYNTAX TESTS:"
 	@-cd test && python testRunner.py -x -d ./integration/syntax
+
+semantic_tests:
+	@make -s integration_tests_base
+	@make -s semantic_tests_
+
+semantic_tests_:
 	@echo "CHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
 	@-cd test && python testRunner.py -x -i -d ./integration/semantic
 	@echo "\nSEMANTIC TESTS:"
 	@-cd test && python testRunner.py -c -d ./integration/semantic
+
+full_tests:
+	@make -s integration_tests_base
+	@make -s full_tests_
+	
+full_tests_:
 	@echo "\nFULL TESTS:"
 	@-cd test && python testRunner.py -d ./integration/full
 

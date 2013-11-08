@@ -46,8 +46,8 @@ int inDecl = 0;
 
 %{
 	if (nErrors >= MAXERRORS) {
-		fprintf(stderr, "Maximum number of errors recorded.  Parsing\
-				 will stop.\n");
+		fprintf(stderr, "Maximum number of errors recorded. Parsing "
+		    "will stop.\n");
 		return 0;
 
 	}
