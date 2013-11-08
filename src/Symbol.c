@@ -52,6 +52,7 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 	 * Type is being constructed from anonymous type, it is NOT a type
 	 * originator
 	 */
+	newTypeSym->lvl = lvl;
 	newTypeSym->typeOriginator = 0;
 	return newTypeSym;
 }

@@ -3,6 +3,7 @@
 	Team YACC Checkpoint 2 Test 2
 
 	Test the built-in functions combined with scope
+	This file contains no errors
 }
 program test0(input, output);
 var
@@ -51,4 +52,10 @@ begin
 	i := pred(b);
 
 	b := odd(i);
+
+	b := true;
+
+	b := false;
+
+	i := maxint;
 end.
