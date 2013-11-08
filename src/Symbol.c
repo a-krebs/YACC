@@ -683,6 +683,14 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 	Symbol *passedParam, *expectedParam = NULL;
 	int i;
 
+	// make sure we're given a proc and not a func
+	if (s->kind != PROC_KIND) {
+		errMsg = customErrorString("Identifier %s cannot be called "
+		    "as a procedure.", s->name);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+
 	params = s->kindPtr.ProcKind->params;
 	if (!params) {
 		// special built-in proc that takes unlimited args
@@ -693,7 +701,6 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 		    "parameters, got %d", s->name, params->nElements,
 		    ea->nElements);
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
-		printError(e);	
 		return 0;	
 	}
 
@@ -721,6 +728,14 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	struct ElementArray *params = NULL;
 	Symbol *passedParam, *expectedParam = NULL;
 	int i;
+
+	// make sure we're given a func and not a proc
+	if (s->kind != FUNC_KIND) {
+		errMsg = customErrorString("Identifier %s cannot be called "
+		    "as a function.", s->name);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
 
 	params = s->kindPtr.FuncKind->params;
 	if (!params) {
