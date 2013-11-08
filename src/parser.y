@@ -378,7 +378,11 @@ unsigned_const
 : unsigned_num
 	{ $<proxy>$ = $<proxy>1; }
 | STRING_CONST
-	{ $<proxy>$ = proxyStringLiteral($<string>1); }
+	{ 
+	    if (getStrlen($<string>1) <= 1) {
+	        $<proxy>$ = proxyCharLiteral($<string>1); 
+	} else { $<proxy>$ = proxyStringLiteral($<string>1);} 
+	}
 ;
 
 unsigned_num

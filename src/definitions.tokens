@@ -1,7 +1,7 @@
 %error-verbose
 %union {
       char character;
-      char *string;
+      struct String string;
       char *id;
       double real;
       int integer;
