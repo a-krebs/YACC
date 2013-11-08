@@ -337,7 +337,14 @@ struct ElementArray *appendToRecordMemberList(
  * Return a pointer to the new proxy.
  */
 ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
-	return NULL;
+	ProxySymbol *newField = NULL;
+
+	if (!id) return NULL;
+	if (!type) return NULL;
+
+	newField = newProxySymFromSym(type);
+	setSymbolName(newField, id);
+	return newField;
 }
 
 /*
