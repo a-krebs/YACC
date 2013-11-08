@@ -9,6 +9,7 @@
 #include "Error.h"
 #include "ErrorLL.h"
 #include "Symbol.h"
+#include "Globals.h"
 
 #ifndef LEXTEST_DEBUG
 #include "parser.tab.h"
@@ -26,6 +27,7 @@ extern YYABORT;
 extern int nErrors;
 int colno = 1;
 extern void yyerror(char *);
+extern unsigned long long whileLoopDepth;
 
 /* 
  * Flag to set if we're in constant declaration.
@@ -170,7 +172,8 @@ comment.");
 "function"			{ return(FUNCTION); }
 "of"				{ return(OF); }
 "record"			{ return(RECORD); }
-"while"				{ return(WHILE); }
+"while"				{ whileLoopDepth++;
+				  return(WHILE); }
 "const"				{ return(CONST); }
 "else"				{ return(ELSE); }
 "if"				{ return(IF); }

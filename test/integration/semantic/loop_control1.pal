@@ -1,0 +1,10 @@
+{9}
+program test(in, out);
+begin
+	while (1=1) do
+	begin
+		continue;
+	end;
+
+	continue;
+end.

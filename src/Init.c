@@ -15,7 +15,8 @@ int initialize() {
 
 	initializePreDefProc();
 	errors = NULL;
-
+	
+	whileLoopDepth = 0;
 
 	return 0;
 }
