@@ -1,9 +1,9 @@
-{19,24,29}
+{19,24,30}
 {
 		Team YACC Checkpoint 2 Test 7
 	line 19 variable c is not in ordinal type (error 1)
-	line 23 writeln cannot be called without any arguments (error 2)
-	line 29 passing a function to writeln as a parameter (error 3)
+	line 24 writeln cannot be called without any arguments (error 2)
+	line 30 passing a function to writeln as a parameter (error 3)
 	
 }
 program io(input,output);
