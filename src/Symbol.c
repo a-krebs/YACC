@@ -1008,7 +1008,7 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 		if ( (type != CHAR_T) && (type != INTEGER_T) &&
 		    (type != REAL_T) && (type != STRING_T) ) {
 			errMsg = customErrorString("Invalid argument "
-			    "of type %d passed to procedure %s.",
+			    "of type %s passed to procedure %s.",
 			    typeToString(type), s->name);
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 			valid = 0;
