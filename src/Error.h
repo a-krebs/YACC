@@ -3,7 +3,7 @@
 
 #include "ErrorLL.h"
 
-#define MAXERRORS 100
+#define MAXERRORS 999999
 #define CUSTOM_ERRMSG_SZ 1024
 
 /* For reporting the type of error. */

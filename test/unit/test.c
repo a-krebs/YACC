@@ -44,6 +44,7 @@ char *test_all() {
 	mu_run_suite(test_all_ErrorLL);
 	mu_run_suite(test_all_ElementArray);
 	mu_run_suite(test_all_ProgList);
+	errors = NULL;
 	mu_run_suite(test_all_Symbol);
 	mu_run_suite(test_all_Kind);
 	mu_run_suite(test_all_Type);
