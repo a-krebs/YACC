@@ -1,0 +1,13 @@
+{10}
+{
+    Test record definitions
+}
+program test(input, output);
+type
+	test = record
+		a : integer;
+		b : integer;
+		a : integer		// error rename not allowed
+	end;
+begin
+end.

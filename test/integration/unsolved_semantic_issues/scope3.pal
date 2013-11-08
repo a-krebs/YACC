@@ -1,0 +1,12 @@
+{11}
+{
+    Test record member scope
+}
+program test(input, output);
+type
+	T1 = record
+		i : integer
+	end;
+begin
+	i := 0;		// i not in scope
+end.

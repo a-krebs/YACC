@@ -64,6 +64,13 @@ Symbol *assertOpCompat(
 		opError(typeToString(s2_t), opToken, typeToString(s2_t));
 		return NULL; /* else it was an error */
 	}
+
+	if ( (isRelationalOperator(opToken) && areSameType(type1, type2) ) &&
+	    	getType(type1) == SCALAR_T ) {
+		return getPreDefBool(preDefTypeSymbols); 
+	}
+
+
 	/* Only simple and string types are compatible with operators */
 	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) &&
 	    (s1_t != STRING_T)) {
@@ -83,7 +90,7 @@ Symbol *assertOpCompat(
 	}
 
 	/* If the operator is relational, we just need op compatible types */
-	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
+	if ( isRelationalOperator(opToken) && areOpCompatible(type1, type2) ) {
 		return getPreDefBool(preDefTypeSymbols);
 	}
 
