@@ -970,6 +970,54 @@ int isElementArraySimple(struct ElementArray *elementArray) {
 	return 1;
 }
 
+int
+isIOProc(Symbol *s) {
+	if (!s) return 0;
+	if (s->kind != PROC_KIND) return 0;
+
+	if (  (	(strcmp(s->name, "read") == 0)	 	||
+	    	(strcmp(s->name, "readln") == 0) 	||
+	    	(strcmp(s->name, "write") == 0) 	||
+	    	(strcmp(s->name, "writeln") == 0) )	&&
+		(s->lvl == 0) ) {
+		return 1;
+	}
+	return 0;
+
+}
+
+int
+isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
+{
+	Symbol *param = NULL;
+	type_t type;
+	int i, nArgs, valid = 1;
+
+	nArgs = ea->nElements;
+
+	if (!nArgs) {
+		errMsg = customErrorString("Procedure %s cannot be "
+		    "called without any arguments.", s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+
+	for (i = 0; i < nArgs; i++) {
+		param = getElementAt(ea, i);
+		type = getType(param);
+		if ( (type != CHAR_T) && (type != INTEGER_T) &&
+		    (type != REAL_T) && (type != STRING_T) ) {
+			errMsg = customErrorString("Invalid argument "
+			    "of type %d passed to procedure %s.",
+			    typeToString(type), s->name);
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+			valid = 0;
+		}
+	}
+	if (!valid) return 0;
+	return 1;
+}
+
 void freeProxySymbol(ProxySymbol *p) {
 	free(p);
 }
