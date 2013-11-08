@@ -152,10 +152,12 @@ test_appendElementArray(){
 	ea3 = appendElementArray(ea1,ea2);
 	mu_assert("appendElementArray() new nElements should equal to size ",ea3->nElements ==(size*2));
 	
+
+
 	for(i = 0; i < ea3->nElements; i++){
 		sym = (Symbol *)getElementAt(ea3,i);
-		mu_assert("appendElementArray() the name of symbol\
-		 should be 'testType'",strcmp(sym->name,typeId)==0);
+		mu_assert("appendElementArray() the name of symbol"
+		 "should be 'testType'",strcmp(sym->name,typeId)==0);
 	}
 	
 	
