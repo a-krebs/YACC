@@ -214,6 +214,9 @@ proc_heading
 	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
 	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
+| FUNCTION ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, NULL); }
+
 | PROCEDURE ID semicolon_or_error
 	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
 	  yyerrok; }
@@ -378,7 +381,11 @@ unsigned_const
 : unsigned_num
 	{ $<proxy>$ = $<proxy>1; }
 | STRING_CONST
-	{ $<proxy>$ = proxyStringLiteral($<string>1); }
+	{ 
+	    if (getStrlen($<string>1) <= 1) {
+	        $<proxy>$ = proxyCharLiteral($<string>1); 
+	} else { $<proxy>$ = proxyStringLiteral($<string>1);} 
+	}
 ;
 
 unsigned_num

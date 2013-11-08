@@ -165,7 +165,50 @@ test_appendElementArray(){
 
 	return NULL;
 }
+char * 
+test_hasDuplicateElement(){
+	int i,size,returnVal;
+	size = 100;
+	Symbol *sym, *sym1, *sym2, *sym3;
+	struct ElememtArray *ea = newElementArray();
+	struct ElememtArray *ea2 = newElementArray();
+	
+	for(i = 0; i < size ; i++){
+		sym = (Symbol *)setUpTypeSymbol();	
+		appendElement(ea,sym);
+	}
+	
+	returnVal = hasDuplicateElement(ea);
+	
+	mu_assert("test_hasDuplicateElement() should return 1 due to duplicates",returnVal == 1);
+	
+	sym = (Symbol *)setUpTypeSymbol();
+	sym->name ="name1";
+	appendElement(ea2,sym);
+	
+	sym1 = (Symbol *)setUpTypeSymbol();
+	sym1->name ="name2";
+	appendElement(ea2,sym1);
+	
+	sym2 = (Symbol *)setUpTypeSymbol();
+	sym2->name ="name3";
+	appendElement(ea2,sym2);
+	
+	sym3 = (Symbol *)setUpTypeSymbol();
+	sym3->name ="name4";
+	appendElement(ea2,sym3);
+	
+	returnVal = hasDuplicateElement(ea2);
+	
+	printf("+++++++++++++++++ return %d ++++++++++++++++++++ \n", returnVal);
+	
+	
+	freeElementArray(ea);
+	return NULL;
+	
+	
 
+}
 char *
 test_freeElementArray(){
 	
@@ -194,6 +237,7 @@ test_all_ElementArray()
 	mu_run_test(test_appendElement);
 	mu_run_test(test_getElementAt);
 	mu_run_test(test_appendElementArray);
+	mu_run_test(test_hasDuplicateElement);
 	mu_run_test(test_freeElementArray);
 	
 	return NULL;

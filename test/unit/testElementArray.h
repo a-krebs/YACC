@@ -12,5 +12,6 @@ char *test_getElementAt();
 char *test_appendElementArray();
 char *test_freeElementArray();
 char *test_all_ElementArray();
+char *test_hasDuplicateElement();
 
 #endif

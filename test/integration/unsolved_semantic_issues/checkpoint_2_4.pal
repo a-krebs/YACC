@@ -1,7 +1,0 @@
-{}
-{
-	Team YACC Checkpoint 2 Test 4
-}
-program test4(input, output);
-begin
-end.

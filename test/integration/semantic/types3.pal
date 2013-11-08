@@ -1,0 +1,31 @@
+{17,18,21,22,23,24,27,28}
+{
+    Test Case
+}
+program test(input, output);
+type
+	slr1 = (red,green,blue);
+	slr2 = (yellow,purple,pink);
+var
+	e : slr1;
+	f : slr1;
+	g : slr2;
+	h : slr2;
+begin
+	e := e;
+	e := f;
+	e := g;		// error
+	e := h;		// error
+	f := e;
+	f := f;
+	f := g;		// error
+	f := h;		// error
+	g := e;		// error
+	g := f;		// error
+	g := g;
+	g := h;
+	h := e;		// error
+	h := f;		// error
+	h := g;
+	h := h;
+end.

@@ -11,7 +11,7 @@ function scope1() : integer;
 	var
 		c : integer;
 		d : integer;
-	function scope2() : intger;
+	function scope2() : integer;
 		var
 			e : integer;
 			f : integer;

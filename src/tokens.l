@@ -96,7 +96,7 @@ int inDecl = 0;
 				}
 
 <INSIDE_BLOCK_COMMENT>[^}]+	{ 
-				  colno += strlen(yytext);
+				  colno += yyleng;
 #if DEBUG
 				  printf("INSIDE BLOCK COMMENT\n");
 #endif
@@ -141,10 +141,16 @@ comment.");
 				}
 
 "'"(([^'\\])|(\\['tn\\]))*"'"		{
+				  char *s;
 #if DEBUG
 				  printf("STRING FOUND\n");
 #endif	
-				  yylval.string = strdup(yytext);
+				  yylval.string.strlen = yyleng - 2;
+				
+				  yylval.string.str = strndup(yytext,
+				      yyleng);
+				  s = yylval.string.str;
+				  *(s+(yyleng-1)) = 0;
 				  return(STRING_CONST);
 				}
 

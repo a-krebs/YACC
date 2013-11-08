@@ -158,7 +158,6 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
 	incrementLexLevel(symbolTable);
-	// TODO: same a proc decl probably
 	// TODO push lexical level, figure this out
 }
 
@@ -503,29 +502,47 @@ void exitProcOrFuncDecl(void) {
  */
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
-
+	Symbol *var = NULL;
+	int lvl = getCurrentLexLevel(symbolTable), i;
 	if (!id) {
+		//TODO: push lvl?
+		incrementLexLevel(symbolTable);
 		return NULL;
 	}
 
-	int lvl = getCurrentLexLevel(symbolTable);
-	incrementLexLevel(symbolTable);
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
 		errMsg = customErrorString("Procedure with name %s "
 		    "is already defined.",id);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
+		incrementLexLevel(symbolTable);
 		return NULL;
 	}
 
 	if (!ea) {
 		ea = newElementArray();
 	}
+
+	if (hasDuplicateElement(ea)) {
+		errMsg = customErrorString("Procedure %s has duplicate "
+		   "argument names.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
 	s = newProcSym(lvl, id, ea);
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error
 	}
 	incrementLexLevel(symbolTable);
+	/* Push params as local variables on new lexical level */
+	lvl = getCurrentLexLevel(symbolTable);
+	for (i = 0; i < ea->nElements; i++) {
+		var = paramToVar(lvl, getElementAt(ea, i));
+		if (!getLocalSymbol(symbolTable, var->name)) {
+			createHashElement(symbolTable, var->name, var);
+		}		
+	}
+
 	return s;
 }
 
@@ -538,8 +555,8 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
  * Return a pointer to the procedure.
  */
 Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
-	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
+	Symbol *s = NULL, *var = NULL;
+	int lvl = getCurrentLexLevel(symbolTable), i;
 
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
@@ -560,11 +577,26 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 		typeSym = getPreDefInt(preDefTypeSymbols);
 	}
 
+	if (hasDuplicateElement(ea)) {
+		errMsg = customErrorString("Procedure %s has duplicate "
+		   "argument names.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
 	s = newFuncSym(lvl, id, typeSym, ea);
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error
 	}
 	incrementLexLevel(symbolTable);
+	incrementLexLevel(symbolTable);
+	/* Push params as local variables on new lexical level */
+	lvl = getCurrentLexLevel(symbolTable);
+	for (i = 0; i < ea->nElements; i++) {
+		var = paramToVar(lvl, getElementAt(ea, i));
+		if (!getLocalSymbol(symbolTable, var->name)) {
+			createHashElement(symbolTable, var->name, var);
+		}		
+	}
 	return s;
 }
 
@@ -840,19 +872,18 @@ ProxySymbol *proxyRealLiteral(double value) {
 	return newConstProxySym(&value, realType);
 }
 
-
+ProxySymbol *proxyCharLiteral(struct String s) {
+	Symbol *charType = getPreDefChar(preDefTypeSymbols);
+	return newConstProxySym((s.str+1), charType);
+}
 
 /*
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
  */
-ProxySymbol *proxyStringLiteral(char *value) {
-	// TODO: we require the length of the string in order
-	// to avoid the cases where the string literal may have null
-	// bytes.
+ProxySymbol *proxyStringLiteral(struct String s) {
 	int lvl = getCurrentLexLevel(symbolTable);
-	int strlen = 0;
-	return newStringProxySym(lvl, value, strlen);
+	return newStringProxySym(lvl, (s.str+1), s.strlen);
 }
 
 /*
@@ -965,4 +996,9 @@ void exitLoop(void) {
  */
 void endWhileLoop(void) {
 	whileLoopDepth--;
+}
+
+int getStrlen(struct String s)
+{
+	return s.strlen;
 }
