@@ -793,6 +793,8 @@ ProxySymbol *proxyRealLiteral(double value) {
 	return newConstProxySym(&value, realType);
 }
 
+
+
 /*
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
