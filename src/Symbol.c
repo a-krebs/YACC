@@ -514,8 +514,10 @@ newStringProxySym(int lvl, char *str, int strlen)
 	newStringSym->name = NULL;
 	newStringSym->kind = TYPE_KIND;
 	allocateKindPtr(newStringSym);
+
 	newStringSym->kindPtr.TypeKind->type = STRING_T;
-	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(anonStr, STRING_T);
+	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
+	    anonStr, STRING_T);
 
 	getTypePtr(newStringSym)->String->strlen = strlen;
 	

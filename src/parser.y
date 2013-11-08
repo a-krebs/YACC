@@ -396,7 +396,7 @@ plist_pinvok
 	{ procInvok($<id>1, $<proxy>3); }
 | plist_pinvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<elemarray>$ = concatArgLists($<elemarray>1, $<symbol>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 ;
 
 func_invok

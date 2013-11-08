@@ -692,10 +692,16 @@ struct ElementArray *createArgList(Symbol *arg) {
  * Whether to add the arguments to one of the lists or two make a third
  * list and add all arguments is up to implementation.
  */
-struct ElementArray *concatArgLists(struct ElementArray *ea, Symbol *arg) {
-	if ((!ea) || (!arg)) return NULL;
-	appendElement(ea, arg);	
-	return ea;
+struct ElementArray *concatArgLists(
+    struct ElementArray *arr1, struct ElementArray *arr2) {
+	
+	if ((!arr1) && (!arr2)) return NULL;
+	if (!arr1) return arr2;
+	if (!arr2) return arr1;
+
+	// TODO concatenate the lists
+
+	return NULL;
 }
 
 /*
