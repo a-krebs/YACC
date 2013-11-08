@@ -307,7 +307,14 @@ Symbol *createRecordType(struct ElementArray *fields) {
  * Return a pointer to the new array.
  */
 struct ElementArray *createRecordMemberList(ProxySymbol *field) {
-	return NULL;
+	struct ElementArray *ea = NULL;
+
+	ea = newElementArray();
+	growElementArray(ea);
+	if (field) {
+		appendElement(ea, field);
+	}
+	return ea;	
 }
 
 /*
@@ -317,6 +324,10 @@ struct ElementArray *createRecordMemberList(ProxySymbol *field) {
  */
 struct ElementArray *appendToRecordMemberList(
     struct ElementArray *array, ProxySymbol *field) {
+	if (!array) return NULL;
+	if (field)  {
+		appendElement(array, field);
+	}
 	return array;
 }
 
