@@ -49,8 +49,10 @@ Symbol *assertOpCompat(
 
 	if ( (!type1) && (!type2)) return NULL;
 
+#if DEBUG
 	printf("\n%s %s %s\n", typeToString(getType(type1)), 
 	opToString(opToken), typeToString(getType(type2)));
+#endif
 	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
 	 * it is a unary operator) then we assume the best */ 
 	if ((!type1) && (isUnaryOperator(opToken))) {
@@ -69,11 +71,15 @@ Symbol *assertOpCompat(
 		return NULL; /* else it was an error */
 	}
 
+	/* If the operator is relational, we just need op compatible types */
+	if ( isRelationalOperator(opToken) && areOpCompatible(type1, type2) ) {
+		return getPreDefBool(preDefTypeSymbols);
+	}	
+
 	if ( (isRelationalOperator(opToken) && areSameType(type1, type2) ) &&
 	    	getType(type1) == SCALAR_T ) {
 		return getPreDefBool(preDefTypeSymbols); 
 	}
-
 
 	/* Only simple and string types are compatible with operators */
 	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) &&
@@ -91,11 +97,6 @@ Symbol *assertOpCompat(
 		}
 		/* Else return pointer to pre-defined boolean type */
 		return getPreDefBool(preDefTypeSymbols); 
-	}
-
-	/* If the operator is relational, we just need op compatible types */
-	if ( isRelationalOperator(opToken) && areOpCompatible(type1, type2) ) {
-		return getPreDefBool(preDefTypeSymbols);
 	}
 
 	if (areArithmeticCompatible(type1, type2)) {
@@ -134,6 +135,7 @@ Symbol *assertOpCompat(
  * non-zero
  */
 int isAssignmentCompat(Symbol * type1, Symbol * type2) {
+	// if (!type1->name) return 0;
 
 	if (areSameType(type1, type2)) {
 		return 1;
@@ -664,6 +666,13 @@ Symbol *createNewVarParm(char *id, Symbol *type) {
  */
 void assignOp(ProxySymbol *x, ProxySymbol *y) {
 	if (!(x) || !(y)) return;
+
+	if ( x->kind == CONST_KIND ) {
+		errMsg = customErrorString("The identifier %s is a constant and cannot be re-assigned a "
+			"value.", x->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	} 
+
 	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
 }
 
@@ -766,7 +775,7 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
 
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 
-	if ((!x) || (!y)) return NULL;
+	if ((!x) || (!y)) return NULL;	
 	
 	/* 
 	 * If x or y is not a constant, we have no responsibility
@@ -891,9 +900,15 @@ ProxySymbol *proxyCharLiteral(struct String s) {
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
  */
-ProxySymbol *proxyStringLiteral(struct String s) {
+Symbol *proxyStringLiteral(struct String s) {
+	Symbol *typeSym;
+	ProxySymbol *proxy;
 	int lvl = getCurrentLexLevel(symbolTable);
-	return newStringProxySym(lvl, (s.str+1), s.strlen);
+	proxy= newStringProxySym(lvl, (s.str+1), s.strlen);
+	typeSym = newStringTypeSym(getCurrentLexLevel(symbolTable), s.strlen);
+	createHashElement(symbolTable, NULL, typeSym);
+	proxy->kindPtr.ConstKind->typeSym = typeSym;
+	return proxy;
 }
 
 /*
@@ -961,6 +976,15 @@ struct ElementArray *createArgList(Symbol *arg) {
 	if (!arg) {
 		/* ERROR */
 		return NULL;
+	}
+
+	// check that arg is not a procedure or function
+	if (	(arg->kind == PROC_KIND) || 
+		(arg->kind == FUNC_KIND) ||
+		(arg->kind == PARAM_KIND)
+	){
+		errMsg = customErrorString("Invaid argument type.");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
 	ea = newElementArray();
 	growElementArray(ea);

@@ -52,6 +52,7 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 	 * Type is being constructed from anonymous type, it is NOT a type
 	 * originator
 	 */
+	newTypeSym->lvl = lvl;
 	newTypeSym->typeOriginator = 0;
 	return newTypeSym;
 }
@@ -520,6 +521,53 @@ newConstProxySym(void * result, Symbol *typeSym)
 	return (ProxySymbol *) constSym;
 }
 
+// ProxySymbol *
+// newStringProxySym(int lvl, char *str, int strlen)
+// {
+// 	ProxySymbol *newStringSym = NULL;
+// 	AnonConstVal anonStr;
+
+// 	newStringSym = calloc(1, sizeof (ProxySymbol));
+// 	anonStr.String.str = str;
+// 	anonStr.String.strlen = strlen;
+
+// 	newStringSym->name = NULL;
+// 	newStringSym->kind = TYPE_KIND;
+// 	allocateKindPtr(newStringSym);
+// 	newStringSym->kindPtr.TypeKind->type = STRING_T;
+// 	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
+// 	    anonStr, STRING_T);
+// 	getTypePtr(newStringSym)->String->strlen = strlen;
+	
+// 	if (strlen) {
+// 		getTypePtr(newStringSym)->String->str = 
+// 		    calloc(1, sizeof(char)*strlen);
+// 		if (!getTypePtr(newStringSym)->String->str) {
+// 			err(1, "Failed to allocate memory for new string");
+// 			exit(1);
+// 		}
+// 	}
+// 	newStringSym->lvl = lvl;
+// 	newStringSym->typeOriginator = 1;
+// 	return newStringSym;	
+// }
+
+Symbol *
+newStringTypeSym(int lexLevel, int strlen) {
+	Symbol *newStringSym = newStringSym = calloc(1, sizeof (Symbol));
+
+	newStringSym = calloc(1, sizeof (ProxySymbol));
+	newStringSym->kind = TYPE_KIND;
+	allocateKindPtr(newStringSym);
+	newStringSym->name = NULL;
+	newStringSym->lvl = lexLevel;
+	newStringSym->kindPtr.TypeKind->type = STRING_T;
+	newStringSym->kindPtr.TypeKind->typePtr.String = calloc(1, sizeof(struct String));
+	getTypePtr(newStringSym)->String->strlen = strlen;
+	return newStringSym;
+
+}
+
 ProxySymbol *
 newStringProxySym(int lvl, char *str, int strlen)
 {
@@ -531,25 +579,19 @@ newStringProxySym(int lvl, char *str, int strlen)
 	anonStr.String.strlen = strlen;
 
 	newStringSym->name = NULL;
-	newStringSym->kind = TYPE_KIND;
+	newStringSym->kind = CONST_KIND;
 	allocateKindPtr(newStringSym);
-	newStringSym->kindPtr.TypeKind->type = STRING_T;
-	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
-	    anonStr, STRING_T);
-	getTypePtr(newStringSym)->String->strlen = strlen;
-	
-	if (strlen) {
-		getTypePtr(newStringSym)->String->str = 
-		    calloc(1, sizeof(char)*strlen);
-		if (!getTypePtr(newStringSym)->String->str) {
-			err(1, "Failed to allocate memory for new string");
-			exit(1);
-		}
-	}
-	newStringSym->lvl = lvl;
-	newStringSym->typeOriginator = 1;
+
+	newStringSym->kindPtr.ConstKind->value.String.str = calloc(1, (sizeof(char)* strlen));
+	strncpy(newStringSym->kindPtr.ConstKind->value.String.str, str, strlen);
+	newStringSym->kindPtr.ConstKind->value.String.strlen = strlen;
+
+	newStringSym->kindPtr.ConstKind->typeSym = calloc(1, sizeof (struct ConstantKind));
+	newStringSym->kindPtr.ConstKind->typeSym = getPreDefString(preDefTypeSymbols);
+
 	return newStringSym;	
 }
+
 
 void
 setSymbolName(Symbol *s, char *id)
