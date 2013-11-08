@@ -502,17 +502,20 @@ void exitProcOrFuncDecl(void) {
  */
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
-
+	Symbol *var = NULL;
+	int lvl = getCurrentLexLevel(symbolTable), i;
 	if (!id) {
+		//TODO: push lvl?
+		incrementLexLevel(symbolTable);
 		return NULL;
 	}
 
-	int lvl = getCurrentLexLevel(symbolTable);
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
 		errMsg = customErrorString("Procedure with name %s "
 		    "is already defined.",id);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
+		incrementLexLevel(symbolTable);
 		return NULL;
 	}
 
@@ -531,6 +534,15 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		// TODO error
 	}
 	incrementLexLevel(symbolTable);
+	/* Push params as local variables on new lexical level */
+	lvl = getCurrentLexLevel(symbolTable);
+	for (i = 0; i < ea->nElements; i++) {
+		var = paramToVar(lvl, getElementAt(ea, i));
+		if (!getLocalSymbol(symbolTable, var->name)) {
+			createHashElement(symbolTable, var->name, var);
+		}		
+	}
+
 	return s;
 }
 
@@ -543,8 +555,8 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
  * Return a pointer to the procedure.
  */
 Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
-	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
+	Symbol *s = NULL, *var = NULL;
+	int lvl = getCurrentLexLevel(symbolTable), i;
 
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
@@ -565,11 +577,26 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 		typeSym = getPreDefInt(preDefTypeSymbols);
 	}
 
+	if (hasDuplicateElement(ea)) {
+		errMsg = customErrorString("Procedure %s has duplicate "
+		   "argument names.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
 	s = newFuncSym(lvl, id, typeSym, ea);
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error
 	}
 	incrementLexLevel(symbolTable);
+	incrementLexLevel(symbolTable);
+	/* Push params as local variables on new lexical level */
+	lvl = getCurrentLexLevel(symbolTable);
+	for (i = 0; i < ea->nElements; i++) {
+		var = paramToVar(lvl, getElementAt(ea, i));
+		if (!getLocalSymbol(symbolTable, var->name)) {
+			createHashElement(symbolTable, var->name, var);
+		}		
+	}
 	return s;
 }
 

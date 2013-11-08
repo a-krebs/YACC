@@ -214,6 +214,9 @@ proc_heading
 	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
 	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
+| FUNCTION ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, NULL); }
+
 | PROCEDURE ID semicolon_or_error
 	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
 	  yyerrok; }
