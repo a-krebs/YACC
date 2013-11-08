@@ -2,9 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
+#include <time.h> 
+#include <sys/time.h>
 
 #include "Hash.h"
 #include "Definitions.h"
+
 
 
 /*
@@ -13,7 +16,8 @@
         - test for bounds of hash array 0 and table_size
         - test for keys of incorrect values i.e. =  (is this even allowed in the grammer)
         - need to free symbol member when deleting
-        - DOES LEX LEVEL NEED TO BE LOWERED IN POPLEXLEVEL?
+        - for createNameForAnonType need to figure out the proper error
+        
 */
 
 
@@ -538,6 +542,38 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
 }
 
 
+char *createNameForAnonType(struct Symbol *symbol) {
+        char *name = NULL;
+        struct timeval tv;
+        double tim;
+        int size;
+
+        if (symbol->kind != TYPE_KIND) {
+                err(1, "Symbol is not TYPE_KIND. Cannot generate name.");
+                exit(EXIT_FAILURE);
+        }
+
+        if ( symbol->kindPtr.TypeKind->type != ARRAY_T
+                && symbol->kindPtr.TypeKind->type != SUBRANGE_T
+                && symbol->kindPtr.TypeKind->type != RECORD_T
+                && symbol->kindPtr.TypeKind->type != SCALAR_T ) {
+                        err(1, "Symbol is not ARRAY_T, SUBRANGE_T, RECORD_T, OR SCALAR_T. Cannot generate name.");
+                        exit(EXIT_FAILURE);
+        }
+
+        gettimeofday(&tv, NULL);
+        tim = tv.tv_sec + ( tv.tv_usec / 1000000.0 );
+
+        size = snprintf(NULL, 0, "%f", tim);
+        name = malloc(size + 1);
+        sprintf(name, "%f", tim);
+
+        symbol->name = name;
+
+        return name;
+}
+
+
 /* Creates an entry in the symbol table for the key supplied.
  *      
  * Parameters: 
@@ -551,11 +587,22 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
  *         2 element on hash table has symbol set to NULL
  *         3 element's symbol list head lex level same as symbol's
  *         4 symbol's lex level lower than element's symbol list head    
+ *         5 could not create a name for null key
 */
 int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
         struct hashElement *element;
-        int index = getHashIndex(hash, key);      
+        int index;
         int retval;   
+
+        if ( key == NULL ) {
+                key = createNameForAnonType(symbol);
+                if (key == NULL) {
+                        return 5;
+                }
+                printf("Hashed value %d\n", getHashIndex(hash, key));
+        }
+
+        index = getHashIndex(hash, key);      
         
         //check to see if a element in the table already exists with same key name
         if ( isKeyInBucket(hash, key) ) {
