@@ -335,17 +335,20 @@ void exitVarDeclPart(void) {
  */
 Symbol *doVarDecl(char *id, Symbol *type) {
 	Symbol *s = NULL;
-	int lvl = 0;
-	/* TODO: do local look up for symbol */
+	int lvl = getCurrentLexLevel(symbolTable);
+
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		/* throw already defined error */
+		return NULL;
+	}
 
 	if ((!id) || !(type)) return NULL;
 
 	s = newVariableSym(lvl, id, type);
-
 	if (s) {
-		/* TODO: add s to the symbol table */
+		createHashElement(symbolTable, id, s);
 	}
-
 	return type;
 }
 
@@ -369,14 +372,19 @@ void exitProcOrFuncDecl(void) {
  */
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 
-	Symbol *procSym = NULL;
-	int lvl = 0;
-	/* TODO: local lookup of id in symbol table */
+	Symbol *s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
 	
-	/* if the above lookup returned nothing... */
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		/* throw already defined error */
+		return NULL;
+	}
 
-	procSym = newProcSym(lvl, id, ea);
-	return procSym;
+	if (!ea) return NULL;
+	s = newProcSym(lvl, id, ea);
+	if (s) createHashElement(symbolTable, id, s);
+	return s;
 }
 
 /*
@@ -388,13 +396,18 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
  * Return a pointer to the procedure.
  */
 Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
-	Symbol *funcSym = NULL;
-	int lvl = 0;
+	Symbol *s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
 
-	/* TODO: local lookup of id in symbol table */
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		// throw already defined error
+		return NULL;
+	}
 
-	funcSym = newFuncSym(lvl, id, typeSym, ea);
-	return funcSym;
+	if ((!ea) || (!typeSym)) return NULL;
+	s = newFuncSym(lvl, id, typeSym, ea);
+	return s;
 }
 
 /*
@@ -404,7 +417,6 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
  */
 struct ElementArray *createParmList(Symbol *parm) {
 	struct ElementArray *ea = NULL;
-
 	if (!parm) return NULL;
 
 	ea = newElementArray();
@@ -421,6 +433,7 @@ struct ElementArray *createParmList(Symbol *parm) {
 struct ElementArray *appendParmToParmList(
     struct ElementArray *ea, Symbol *parm) {
 
+	// TODO: see if parm already exists in element array
 	if ( !(ea) || !(parm) ) return NULL;
 	appendElement(ea, parm);	
 	return ea;
@@ -433,10 +446,7 @@ struct ElementArray *appendParmToParmList(
  */
 Symbol *createNewParm(char *id, Symbol *type) {
 	
-	/* TODO: NO LOOKUP IN SYMBOL TABLE NECESSARY */
-
-	int lvl = 0;
-
+	int lvl = getCurrentLexLevel(symbolTable);
 	if ((!id) || (!type)) return NULL;
 	return newParamSym(lvl, id, type);
 }

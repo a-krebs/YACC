@@ -41,13 +41,11 @@ newElementArray()
 void
 growElementArray(struct ElementArray *ea)
 {		
-	unsigned int len;	
 	if (!ea) {
 		return;
 	}
-	if (!ea->len) len = 2*EA_DEFAULT_SZ;
-	else len = 2 * ea->len;
-	ea->data = realloc(ea->data,sizeof(void *)*(len));
+	ea->len *= 2;
+	ea->data = realloc(ea->data,sizeof(void *)*(ea->len));
 	if (!ea->data) {
 		err(1, "Failled reallocate memory to grow elements array!");
 		exit(1);
