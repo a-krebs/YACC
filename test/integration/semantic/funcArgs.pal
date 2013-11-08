@@ -1,0 +1,24 @@
+{19, 20, 22,23}
+{
+    Test for function arguments 			 
+}
+program test(input, output);
+type
+	string20 = array [1..20] of char;
+var
+	myString : string20;
+	i : integer;
+	r : real;
+	b : boolean;
+function doStrThing(a : string20) : integer;
+	begin
+		doStrThing := 10;
+	end;
+begin
+	i := doStrThing(myString);
+	i := doStrThing(myString, myString);	// error too many args
+	i := doStrThing();			// error too few args
+	r := doStrThing(myString);		
+	b := doStrThing(myString);		// error type mismatch
+	i := doStrThing(b);			// error type mismatch
+end.

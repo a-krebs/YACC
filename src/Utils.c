@@ -26,7 +26,7 @@ void
 opError(char *xType, int op, char *yType)
 {
 	errMsg = customErrorString("Invalid expression. Types %s and %s"   
-	    "not compatible with operator %s", xType, yType,
+	    " not compatible with operator %s", xType, yType,
 	    opToString(op));
 	recordError(errMsg, yylineno, colno, SEMANTIC);
 }
@@ -141,7 +141,12 @@ isRelationalOperator(int op)
 int
 isUnaryOperator(int op)
 {
-	if ((op == PLUS) || (op == MINUS)) return 1;
+	if ( (op == PLUS) || 
+		(op == MINUS) ||
+		   (op == NOT) ) {
+		return 1;
+	}
+
 	return 0;
 
 }
