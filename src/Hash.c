@@ -603,7 +603,7 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
                 if (key == NULL) {
                         return 5;
                 }
-                printf("Hashed value %d\n", getHashIndex(hash, key));
+                //printf("Hashed value %d\n", getHashIndex(hash, key));
         }
 
         index = getHashIndex(hash, key);      

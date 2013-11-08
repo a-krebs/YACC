@@ -40,19 +40,17 @@ test_growElementArray(){
 	
 	struct ElementArray *ea = newElementArray();
 	unsigned int len;
-	
+		
 	growElementArray(ea);
 	
-
-	mu_assert("growElementArray(): The len == 2*(EA_DEFAULT_SZ after we call \
+	mu_assert("growElementArray(): The len == 2*(EA_DEFAULT_SZ after we call\
 		  2*(DEFAULT_SIZE)", ea->len == 2 * EA_DEFAULT_SZ);
-	mu_assert("growElementArray(): should not change nElements \
+	mu_assert("growElementArray(): should not change nElements\
 		  in the array", ea->nElements == 0);
 		  
 	len = ea->len;
 	growElementArray(ea);
-	mu_assert("growParamArray(): should double the \
-		  prev len", ea->len == 2*len);
+	mu_assert("growParamArray(): should be 4*EA_DEFAULT_SZ", ea->len == 4*EA_DEFAULT_SZ);
 	return NULL;
 }
 
@@ -96,6 +94,7 @@ test_appendElement(){
 		  INTLOW_VAL ",(((Symbol **)ea->data)[1]->kindPtr.TypeKind->typePtr.Integer->value == INTLOW_VAL));
 	return NULL;	
 }
+
 char *
 test_getElementAt(){
 	char constId[20] ="testType";
@@ -135,6 +134,37 @@ test_getElementAt(){
 	return NULL;
 	
 }
+char *
+test_appendElementArray(){
+	int i;
+	int size = 20;
+	char typeId[20] = "testType";
+	
+	struct ElementArray *ea1 = newElementArray();
+	struct ElementArray *ea2 = newElementArray();
+	Symbol *sym;
+	struct ElementArray *ea3 ;
+	
+	for(i = 0; i < size; i++){
+		appendElement(ea1,setUpTypeSymbol());
+		appendElement(ea2,setUpTypeSymbol());
+	}
+	ea3 = appendElementArray(ea1,ea2);
+	mu_assert("appendElementArray() new nElements should equal to size ",ea3->nElements ==(size*2));
+	
+
+
+	for(i = 0; i < ea3->nElements; i++){
+		sym = (Symbol *)getElementAt(ea3,i);
+		mu_assert("appendElementArray() the name of symbol"
+		 "should be 'testType'",strcmp(sym->name,typeId)==0);
+	}
+	
+	
+	freeElementArray(ea3);
+
+	return NULL;
+}
 
 char *
 test_freeElementArray(){
@@ -163,6 +193,7 @@ test_all_ElementArray()
 	mu_run_test(test_growElementArray);
 	mu_run_test(test_appendElement);
 	mu_run_test(test_getElementAt);
+	mu_run_test(test_appendElementArray);
 	mu_run_test(test_freeElementArray);
 	
 	return NULL;

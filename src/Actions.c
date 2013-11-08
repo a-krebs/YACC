@@ -150,7 +150,7 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
-
+	incrementLexLevel(symbolTable);
 	// TODO: same a proc decl probably
 	// TODO push lexical level, figure this out
 }
@@ -218,7 +218,6 @@ void doTypeDecl(char *id, Symbol *type) {
  * Return a pointer to the type.
  */
 Symbol *simpleTypeLookup(char *id) {
-	
 	Symbol *s = getGlobalSymbol(symbolTable, id);
 	if (!s) {
 		errMsg = customErrorString("The identifier %s has not been "
@@ -549,6 +548,8 @@ Symbol *createNewVarParm(char *id, Symbol *type) {
  * Perform assignment of x to y.
  */
 void assignOp(ProxySymbol *x, ProxySymbol *y) {
+	if (!(x) || !(y)) return;
+	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
 }
 
 ProxySymbol *hashLookupToProxy(char *id) {
@@ -576,6 +577,7 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
  */
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	/* Record specific errors in isValidArrayAccess */
+	if ((!indices) || (!var)) return NULL;	
 	if (isValidArrayAccess((Symbol *) var, indices)) {
 		return newProxySymFromSym(getTypeSym((Symbol *) var));
 	}
@@ -761,10 +763,15 @@ ProxySymbol *proxyStringLiteral(char *value) {
  * The argument argv contains a list of arguments.
  */
 void procInvok(char *id, struct ElementArray *ea) {
-
-	/* TODO: global lookup for id */
-	/* if lookup successful, make sure it is a process */
-	/* if lookup successful, call isValidProcInvoke(symbol, ea) */
+	Symbol *s = NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return;
+	}
+	if (!ea) return;
+	isValidProcInvocation(s, ea);
+	
 }
 
 /*
@@ -807,13 +814,13 @@ struct ElementArray *createArgList(Symbol *arg) {
 struct ElementArray *concatArgLists(
     struct ElementArray *arr1, struct ElementArray *arr2) {
 	
+	struct ElementArray *ea;
 	if ((!arr1) && (!arr2)) return NULL;
 	if (!arr1) return arr2;
 	if (!arr2) return arr1;
 
-	// TODO concatenate the lists
-
-	return NULL;
+	ea = appendElementArray(arr1, arr2);
+	return ea;
 }
 
 /*

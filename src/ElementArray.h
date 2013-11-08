@@ -8,12 +8,12 @@
 
 #include "Type.h"
 
-#define EA_DEFAULT_SZ 24	/* default initial size of elements array */
+#define EA_DEFAULT_SZ 10	/* default initial size of elements array */
 
 struct ElementArray *newElementArray();
 void appendElement(struct ElementArray *, void *);
 void *getElementAt(struct ElementArray *, unsigned int);
 void freeElementArray(struct ElementArray *); 
 void growElementArray(struct ElementArray *); 
-
+struct ElementArray *appendElementArray(struct ElementArray *, struct ElementArray *);
 #endif
