@@ -6,6 +6,7 @@
 #include "Error.h"
 #include "Type.h"
 #include "Symbol.h"
+#include "Hash.h"
 
 extern int yylineno;
 extern int colno;
@@ -489,7 +490,7 @@ Symbol *newRecordTypeSym(int lvl, char *id)
 	setSymbolName(newRecType, id);
 	newRecType->kind = TYPE_KIND;
 	allocateKindPtr(newRecType);
-	newRecType->kindPtr.type = RECORD_T;
+	newRecType->kindPtr.TypeKind->type = RECORD_T;
 	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
 
 	newRecType->lvl = lvl;
@@ -514,11 +515,10 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	Symbol *newField = NULL;
 	int recordLvl = -1;
 	char *id = NULL;
-	int rval = 0;
 	struct hash *recordHash = NULL;
 
 	/* check arguments */
-	if (!rectype) {
+	if (!recType) {
 		return -1;
 	}
 	if (!newField) {
@@ -529,7 +529,7 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	if (recType->kind != TYPE_KIND) {
 		return 1;
 	}
-	if (recType->kindPtr.type != RECORD_T) {
+	if (recType->kindPtr.TypeKind->type != RECORD_T) {
 		return 1;
 	}
 
@@ -538,9 +538,9 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 		return 2;
 	}
 
-	recordHash = recType->kindPtr.TypeKind.Record->hash;
+	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 	recordLvl = getCurrentLexLevel(recordHash);
-	id = strdup(field->id);
+	id = strdup(field->name);
 
 	newField = newVariableSym(
 	    recordLvl, id, field->kindPtr.VarKind->typeSym);
