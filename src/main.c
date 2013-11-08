@@ -4,6 +4,10 @@
 #include <unistd.h>
 #include "ProgList.h"
 #include "args.h"
+#include "Hash.h"
+/* must include for symbol typedef to work with parser. */
+#include "Symbol.h"
+#include "Init.h"
 
 #if LEXTEST_DEBUG
 	#include "tokenTestParser.tab.h"
@@ -16,6 +20,10 @@
 extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
+// extern struct preDefTypeSymbols *preDefTypeSymbols;
+// extern struct hash *symbolTable;
+
+
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -127,15 +135,22 @@ int main( int argc, char *argv[] )
 
 	/* check that parsing was success */
 	if (argsParsedSuccess != 0) {
+		printf("Argument parsing failed.\n");
 		return EXIT_FAILURE;
 	}
 
 	fp = fopen(givenArgs.inFile, FILE_MODE);
 	if (fp == NULL) {
+		printf("Invalid input file.\n");
 		return EXIT_FAILURE;
 	}
 	yyin = fp;
 
+	/* initizie symbol table and pre-defitions */
+	initialize();
+	// dumpHash(symbolTable);
+	// printf("%p\n", getPreDefBool(preDefTypeSymbols));
+	
 	/* parse file */
 	yyparse();
 

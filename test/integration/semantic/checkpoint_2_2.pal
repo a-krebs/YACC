@@ -1,0 +1,61 @@
+{}
+{
+	Team YACC Checkpoint 2 Test 2
+
+	Test the built-in functions combined with scope
+	This file contains no errors
+}
+program test0(input, output);
+var
+	r : real;
+	i : integer;
+	b : boolean;
+procedure foo();
+	function abs(i : integer) : integer;
+	begin
+	end;
+begin
+end;
+begin
+	r := abs(r);
+	i := abs(i);
+	
+	r := sqr(r);
+	i := sqr(i);
+
+	r := sin(r);
+	r := sin(i);
+
+	r := cos(r);
+	r := cos(i);
+
+	r := exp(r);
+	r := exp(i);
+
+	r := ln(r);
+	r := ln(i);
+
+	r := sqrt(r);
+	r := sqrt(i);
+
+	r := arctan(r);
+	r := arctan(i);
+
+	i := trunc(r);
+
+	i := round(r);
+
+	i := ord(b);
+
+	i := succ(b);
+
+	i := pred(b);
+
+	b := odd(i);
+
+	b := true;
+
+	b := false;
+
+	i := maxint;
+end.

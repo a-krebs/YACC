@@ -5,6 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/* include symbols for token union */
+#include "Symbol.h"
+
 %}
 
 <-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->
@@ -30,11 +33,9 @@ constant_list	:INT_CONST		{printf("INT_CONST \
 					    (%f)\n", $<real>1);}
 		|STRING_CONST           {printf("STRING_CONST \
 					    (%s)\n", $<string>1);}
-types_list	:CHAR			{printf("CHAR\n");}
+types_list	:ARRAY			{printf("ARRAY\n");}
 		|ID                     {printf("ID (%s)\n",$<id>1);}
-		|INT                    {printf("INT\n");}
-		|REAL                   {printf("REAL\n");}
-		|ARRAY			{printf("ARRAY\n");}
+		|DECL_ID                {printf("ID (%s)\n",$<id>1);}
 		;
 
 operators_list	:PLUS                   {printf("PLUS\n");}

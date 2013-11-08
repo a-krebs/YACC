@@ -1,0 +1,28 @@
+{8,22,24,26}
+{
+    Test more record type things
+}
+program test(input, output);
+type
+	recInner = record
+		a : recOuter;		// error not defined yet
+		b : integer
+	end;
+	recOuter = record
+		i : integer;
+		x : integer;
+		y : recInner
+	end;
+var
+	r1 : recOuter;
+	r2 : recInner;
+	myInt : integer;
+begin
+	myInt := r1.y.b;
+	myInt := r2.a;			// error type mismatch
+	myInt := r2.b;
+	myInt := r2.c;			// error not a member
+	r1.y := r2;
+	r2.c := 2;			// error not a member
+	r2.a := r1;			// error
+end.

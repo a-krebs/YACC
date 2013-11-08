@@ -8,6 +8,8 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
+#include "Symbol.h"
+#include "Globals.h"
 
 #ifndef LEXTEST_DEBUG
 #include "parser.tab.h"
@@ -25,6 +27,15 @@ extern YYABORT;
 extern int nErrors;
 int colno = 1;
 extern void yyerror(char *);
+extern unsigned long long whileLoopDepth;
+
+/* 
+ * Flag to set if we're in constant declaration.
+ * 
+ * This will enable/disable parts of the grammar. Specifically, when inDecl == 1
+ * the var production will not reduce to a function invokation.
+ */
+int inDecl = 0;
 %}
 
 %option yylineno
@@ -37,8 +48,8 @@ extern void yyerror(char *);
 
 %{
 	if (nErrors >= MAXERRORS) {
-		fprintf(stderr, "Maximum number of errors recorded.  Parsing\
-				 will stop.\n");
+		fprintf(stderr, "Maximum number of errors recorded. Parsing "
+		    "will stop.\n");
 		return 0;
 
 	}
@@ -61,7 +72,7 @@ extern void yyerror(char *);
 
 "}"             { colno++;
                   struct Error *e = recordError("Closing comment brace '}' "
-                  "found without matching '{'", yylineno, colno);
+                  "found without matching '{'", yylineno, colno, SYNTAX);
                   printError(e);
 #if DEBUG
                   printf("'}' FOUND WITHOUT MATCHING '{'\n");
@@ -85,7 +96,7 @@ extern void yyerror(char *);
 				}
 
 <INSIDE_BLOCK_COMMENT>[^}]+	{ 
-				  colno += strlen(yytext);
+				  colno += yyleng;
 #if DEBUG
 				  printf("INSIDE BLOCK COMMENT\n");
 #endif
@@ -130,10 +141,16 @@ comment.");
 				}
 
 "'"(([^'\\])|(\\['tn\\]))*"'"		{
+				  char *s;
 #if DEBUG
 				  printf("STRING FOUND\n");
 #endif	
-				  yylval.string = strdup(yytext);
+				  yylval.string.strlen = yyleng - 2;
+				
+				  yylval.string.str = strndup(yytext,
+				      yyleng);
+				  s = yylval.string.str;
+				  *(s+(yyleng-1)) = 0;
 				  return(STRING_CONST);
 				}
 
@@ -155,7 +172,8 @@ comment.");
 "function"			{ return(FUNCTION); }
 "of"				{ return(OF); }
 "record"			{ return(RECORD); }
-"while"				{ return(WHILE); }
+"while"				{ whileLoopDepth++;
+				  return(WHILE); }
 "const"				{ return(CONST); }
 "else"				{ return(ELSE); }
 "if"				{ return(IF); }
@@ -180,12 +198,12 @@ comment.");
 "["				{ return(LS_BRACKET); }
 "]"				{ return(RS_BRACKET); }
 ","				{ return(COMMA); }
-"integer"			{ return(INT); }
-"char"				{ return(CHAR); }
-"boolean"			{ return(BOOL); }
-"real"				{ return(REAL); }
 [a-zA-Z][a-zA-Z0-9]*		{ yylval.id = strdup(yytext);
-				  return(ID); 
+				  if (inDecl == 0) {
+				  	return(ID);
+				  } else {
+					return(DECL_ID);
+				  }
 				}
 \n 				{ 
 				  colno = 1;

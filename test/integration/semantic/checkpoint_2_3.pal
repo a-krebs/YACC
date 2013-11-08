@@ -1,0 +1,31 @@
+{18,25,30}
+{
+	Team YACC Checkpoint 2 Test 3
+
+	Test that procedures and functions cannot be passed as arguments.
+	error on line 18, since i is already defined in scope
+		 line 25, since stringy is no longer in scope
+		 line 30, since functions annot be passed as arguments.
+}
+program test3(input, output);
+var
+	t : integer;
+procedure foo(i : integer);
+type
+	stringy = array [2..1000] of char;
+var
+	a : stringy;
+	i : real;	// error
+begin
+	i := 1 + 1;
+end;
+function bar() : integer;
+begin
+end;
+function baz(w : integer) : stringy;	// error
+begin
+end;
+begin
+	foo(bar());
+	foo(bar);	// error
+end.

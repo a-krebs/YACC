@@ -23,7 +23,8 @@ int nErrors = 0;
  * the error to the linked list of error kept during compilation.
  * Returns a pointer to the newly created Error for easier debugging.
  */
-struct Error *recordError(const char *s, int lineno, int colno) 
+struct Error *recordError(const char *s, int lineno,
+    int colno, enum ErrorType type)
 {
 	struct Error * newError = NULL;
 	size_t len = strlen(s);
@@ -37,10 +38,6 @@ struct Error *recordError(const char *s, int lineno, int colno)
 	/* Construct new error given function args */
 	newError = calloc(1, sizeof(struct Error));
 	if (newError == NULL) {
-		/* 
-		 * we've run out of memory ... 
-		 * do we stop compiling?
-		 */
 		err(1, "Failed to allocate memory to record new error.");
 		return NULL;
 	}
@@ -52,6 +49,7 @@ struct Error *recordError(const char *s, int lineno, int colno)
 	}
 	newError->lineno = lineno;
 	newError->colno = colno;
+	newError->type = type;
 	strncpy(newError->msg, s, len);
 
 	/* Append to linked list of errors appearing during compilation */
@@ -65,7 +63,7 @@ struct Error *recordError(const char *s, int lineno, int colno)
 /*
  * Creates a version of the error string suitable for printing
  * to the program listing and writes it to buf.
- * NOTE: it is incumbent upon the caller to free 
+ * NOTE: it is incumbent upon the caller to free memory allocated. 
  */
 void createErrorString(char **buf, struct Error *e)
 {
@@ -84,13 +82,59 @@ void createErrorString(char **buf, struct Error *e)
 		 e->msg, e->lineno, e->colno);
 }
 
+/*
+ * Creates an error string from a variable number of parameters.
+ * e.g.,
+ * customErrorString("Semantic error on line %d column %d, variable %s is
+ *		      not of the correct type.", 10, 12, "whatever");
+ * Will return a pointer to the string:
+ * "Semantic error on line 10 column 12, variable whatever is not of the
+ *  correct type" 
+ * 
+ * WARNING: do NOT pass this function string literals read in from the
+ *	    .pal program being parsed! (could contain null bytes and ruin
+ * 	    the outputted string)
+ *
+ * TODO: remove explanatory comments once everyone understands how var args
+ * works.
+ */
+char *
+customErrorString(char * errMsg, ...)
+{	
+	static char msg[CUSTOM_ERRMSG_SZ];/* static => declared/initialized once
+				           * and persists between function 
+					   * calls */
+	va_list args;
+
+	va_start(args, errMsg);	/* initializes args for subsequent use by
+				 * args = the last variable before the start of
+				 * of the variable length argument list */
+	
+	vsnprintf(msg, CUSTOM_ERRMSG_SZ-1, errMsg, args);
+	va_end(args);		/* required by the api for whatever reason */
+
+	msg[CUSTOM_ERRMSG_SZ - 1] = '\0';/* null terminate in case string passed
+					 * was too long to fit into buffer */
+	return msg;
+}
+
+/*
+ * Prints the given error to stdout.
+ */
 void printError(struct Error *e)
 {
 	if (!e) return;
-	fprintf(stdout, "%d Error: %s (%d, %d)\n", 
-		e->lineno, e->msg, e->lineno, e->colno);
+	fprintf(stdout, "%d %s Error: %s (%d, %d)\n",
+	    e->lineno,
+	    getErrorTypeString(e->type),
+	    e->msg,
+	    e->lineno,
+	    e->colno);
 }
 
+/*
+ * Frees memory associated with the given error.
+ */
 void freeError(struct Error *e)
 {
 	if (!e) return;
@@ -98,3 +142,13 @@ void freeError(struct Error *e)
 	free(e);
 }
 
+char *getErrorTypeString(enum ErrorType type)
+{
+	if (type == SYNTAX) {
+		return "Syntax";
+	} else if (type == SEMANTIC) {
+		return "Semantic";
+	} else {
+		return NULL;
+	}
+}

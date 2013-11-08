@@ -1,6 +1,7 @@
 #include "minunit.h"
-#include "Error.h"
-#include "ErrorLL.h"
+#include "../../src/Error.h"
+#include "../../src/ErrorLL.h"
+#include "../../src/ProgList.h"
 
 char *test_printProgramListing();
 char *test_getNextErrorLineno();

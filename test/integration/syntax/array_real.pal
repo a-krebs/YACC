@@ -1,0 +1,12 @@
+{9,10}
+// test array declaration
+
+program arrayTests(input, output);
+type
+	string = array[0..127] of char;
+	Dog = (poodle,germanShep,littleYappyOne);
+	dog = array[Dog] of integer;
+	brokenInterval = array[1..1E10] of integer;		// error
+	brokenInterval2 = array[1..funcInvok()] of integer;	// error
+begin
+end.

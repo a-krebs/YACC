@@ -6,14 +6,19 @@ import unittest
 import os
 import re
 import types
+import sys
+import getopt
 from subprocess import check_output
 
 PAL_EXE = "../../../bin/pal"
 PAL_OPTIONS = "-n"
 LEXTEST_EXE = "../../../bin/lextest"
 LEXTEST_OPTIONS = PAL_OPTIONS
-TEST_DIR = "./integration/syntax/"
-
+TEST_TYPE = {
+    'syntax' : 0,
+    'semantic': 1,
+    'full': 2,
+}
 
 def addFailureSansTraceback(self, test, err):
     err_sans_tb = (err[0], err[1], None)
@@ -42,7 +47,33 @@ class SyntaxUnitTests(NoTraceTestCase):
     """
 
 
-def get_error_lines_from_output(output):
+def filter_line_by_test_type(line, test_type):
+    """
+    Return True if the line should be evaluated for the given test_type.
+    """
+    # skip empty lines
+    if line == '':
+        return False
+
+    if test_type == TEST_TYPE['syntax']:
+        prog = re.compile(r'^\d+ Syntax.*$', re.IGNORECASE)
+        if prog.search(line) is None:
+            return False
+    elif test_type == TEST_TYPE['semantic']:
+        prog = re.compile(r'^\d+ Semantic.*$', re.IGNORECASE)
+        if prog.search(line) is None:
+            return False
+    elif test_type == TEST_TYPE['full']:
+        prog = re.compile(r'^\d+ .*', re.IGNORECASE)
+        if prog.search(line) is None:
+            return False
+    else:
+        return False
+
+    return True
+
+
+def get_error_lines_from_output(output, test_type):
     """
     Extract error line numbers from parser output.
 
@@ -52,7 +83,7 @@ def get_error_lines_from_output(output):
 
     for line in output.split("\n"):
         # ignore empty lines
-        if line == "":
+        if filter_line_by_test_type(line, test_type) == False:
             continue
 
         num = re.findall(r"^\d+", line)
@@ -98,7 +129,7 @@ def make_lexer_test_function(filename, expected_tokens):
     return new_test
 
 
-def make_parser_test_function(filename, expected_errors):
+def make_parser_test_function(filename, expected_errors, test_type):
     """
     Make a new test function.
 
@@ -109,7 +140,7 @@ def make_parser_test_function(filename, expected_errors):
     """
     def new_test(self):
         output = check_output([PAL_EXE, PAL_OPTIONS, filename])
-        actual_errors = get_error_lines_from_output(output)
+        actual_errors = get_error_lines_from_output(output, test_type)
         
         for error in actual_errors:
             self.assertIn(error, expected_errors,
@@ -125,13 +156,13 @@ def make_parser_test_function(filename, expected_errors):
     return new_test
 
 
-def construct_tests():
+def construct_tests(test_type, test_dir, ignore_expected_errors):
     """
     For each discovered file, add a test to SyntaxUnitTests.
     """
     files = dict()
 
-    os.chdir(TEST_DIR)
+    os.chdir(test_dir)
 
     # get all test files
     for f in os.listdir("."):
@@ -180,7 +211,10 @@ def construct_tests():
         expected_errors = values['errors']
         name = "test_parser_{}".format(filename[:-4])
 
-        new_test = make_parser_test_function(filename, expected_errors)
+        if ignore_expected_errors:
+            expected_errors = []
+
+        new_test = make_parser_test_function(filename, expected_errors, test_type)
 
         if getattr(SyntaxUnitTests, name, None) is not None:
             raise RuntimeError("Duplicate test name: {}".format(name))
@@ -190,6 +224,7 @@ def construct_tests():
     # if a file with expected tokens is given, make tokenizer test case
     for filename, values in files.items():
         expected_tokens = values['tokens']
+
         name = "test_lexer_{}".format(filename[:-4])
         if expected_tokens is not None:
             new_test = make_lexer_test_function(filename, expected_tokens)
@@ -201,5 +236,50 @@ def construct_tests():
             
 
 if __name__ == "__main__":
-    construct_tests()
+    """
+    Parse arguments and run appropriate tests.
+    """
+    test_dir = '/'
+    test_type = TEST_TYPE['full'];
+    test_type_set = False
+    ignore_expected_errors = False
+
+    # copy argv and then clear it so that unittest.main() doesn't get our args
+    argv = sys.argv[1:]
+    sys.argv = sys.argv[0:1]
+    usage = "Run with -x option for syntax tests or -c option for semantic "\
+            "tests.\n"\
+            "By default both types of tests are run.\n"\
+            "Use -i option to ignore expected error list."\
+            "Use -d option to specify test directory."
+    
+    try:
+        opts, args = getopt.getopt(argv, "h?xcitd:")
+    except getopt.GetoptError:
+        print usage
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h' or opt == '-?':
+            print usage
+            sys.exit()
+        elif opt == '-x':
+            if not test_type_set:
+                test_type = TEST_TYPE['syntax']
+                test_type_set = True
+            else:
+                print usage
+                sys.exit()
+        elif opt == '-c':
+            if not test_type_set:
+                test_type = TEST_TYPE['semantic']
+                test_type_set = True
+            else:
+                print usage
+                sys.exit()
+        elif opt == '-d':
+            test_dir = arg
+        elif opt == '-i':
+            ignore_expected_errors = True
+
+    construct_tests(test_type, test_dir, ignore_expected_errors)
     unittest.main()

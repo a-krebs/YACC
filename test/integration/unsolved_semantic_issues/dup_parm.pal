@@ -1,0 +1,9 @@
+{7}
+program test(input,output);
+procedure proc(a:integer;a:integer);
+begin
+end;
+begin
+	proc(10,21);
+end.
+

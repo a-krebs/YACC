@@ -1,0 +1,16 @@
+{15}
+program test(in, out);
+begin
+	while (1=1) do
+	begin
+		while (1=1) do
+			while (1=1) do
+				begin
+					continue;
+				end;
+		continue;
+		continue;
+	end;
+
+	continue;
+end.

@@ -1,0 +1,11 @@
+{9}
+program test(in, out);
+var
+	a : integer;
+function foo(a : integer; b : integer) : integer;
+begin
+end;
+begin
+	foo(a,10);	// error
+	a := foo(a, 10);
+end.

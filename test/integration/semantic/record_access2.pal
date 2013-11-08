@@ -1,0 +1,21 @@
+{19}
+
+program test(in, out);
+type
+	r = record
+		i : integer;
+		r : record
+			j : real;
+			i : integer
+		end
+	end;
+var
+	myr : r;
+	myI : integer;
+	myR : real;
+begin
+	myI := myr.i;
+	myR := myr.r.j;
+	myI := myI.r;	// error
+	myI := myr.r.i;
+end.

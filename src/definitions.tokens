@@ -1,14 +1,18 @@
 %error-verbose
 %union {
       char character;
-      char *string;
+      struct String string;
       char *id;
       double real;
       int integer;
+	struct ElementArray *elemarray;
+      Symbol *symbol;
+      ProxySymbol *proxy;
+	void * voidtype;
 }
 
 /* id */
-%token ID
+%token ID DECL_ID
 
 /* types names: */
 %token ARRAY BOOL CHAR INT REAL RECORD

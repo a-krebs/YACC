@@ -1,0 +1,26 @@
+{18,19,20,22,25}
+{
+    Test that operations work
+}
+program test(input, output);
+const
+	foo = 'Party time aafter 415!!';
+	bar = 'Shorter string';
+type
+	colour = (red,green,blue);
+var
+	i : integer;
+	b : boolean;
+	r : real;
+	c : colour;
+begin
+	// equality
+	b := bar < i;	// error
+	b := bar < b;	// error
+	b := bar < r;	// error
+	b := bar < c;
+	b := bar < foo;	// error
+	b := bar < bar;
+
+	i := i < i;	// error
+end.

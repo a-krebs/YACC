@@ -1,0 +1,10 @@
+{}
+program arrayAccess(input, output);
+type
+	matrix = array[1..10] of array[1..10] of integer;
+var
+	a : matrix;
+	b : integer;
+begin
+	b := a[8,9];
+end.

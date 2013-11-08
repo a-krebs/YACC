@@ -1,0 +1,6 @@
+{4}
+program constTest(input, output);
+const
+	foo = funcCall();
+begin
+end.

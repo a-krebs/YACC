@@ -64,8 +64,8 @@ void printProgramListing(FILE *in, char *fileName)
 		bufPos = 0;
 		do {
 			c = fgetc(in);
-			if (c != EOF) buf[bufPos++] = c;
-			if (bufPos >= bufSize-2) {
+			if ((c != EOF) && (c != '\0')) buf[bufPos++] = c;
+			if (bufPos >= bufSize-4) {
 				/* Line will overfill our buffer,
 				 * so let's make it bigger */
 				bufSize *= 2;

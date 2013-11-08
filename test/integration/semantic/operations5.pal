@@ -1,0 +1,24 @@
+{15,16,17}
+{
+    Test that operations work
+}
+program test(input, output);
+var
+	i : integer;
+	b : boolean;
+	r : real;
+begin
+	
+	// *
+	
+	i := i * i;
+	i := i * r;	// error
+	i := r * i;	// error
+	i := r * r;	// error
+
+	r := r * r;
+	r := r * i;
+	r := i * r;
+	r := i * i;
+	
+end.
