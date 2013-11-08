@@ -240,7 +240,7 @@ f_parm_list
 : f_parm
 	{ $<elemarray>$ = createParmList($<symbol>1); }
 | f_parm_list semicolon_or_error f_parm
-	{ $<elemarray>$ = appendParmToParmList($<elemarray>1, $<symbol>2); }
+	{ $<elemarray>$ = appendParmToParmList($<elemarray>1, $<symbol>3); }
 ;
 
 f_parm
