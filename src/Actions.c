@@ -667,8 +667,8 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
 		return list1;
 	}
 
-	list1->next = list2;
-	return list2;
+	list2->next = list1;
+	return list1;
 }
 
 /*
@@ -799,6 +799,8 @@ ProxySymbol *proxyRealLiteral(double value) {
 	Symbol *realType = getPreDefReal(preDefTypeSymbols);
 	return newConstProxySym(&value, realType);
 }
+
+
 
 /*
  * Make a new anonymous symbol with the given string.

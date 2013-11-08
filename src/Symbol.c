@@ -701,7 +701,7 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(passedParam, expectedParam)) {
+		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name, i,
@@ -741,7 +741,7 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < params->nElements; i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(passedParam, expectedParam)) {
+		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name,
@@ -778,8 +778,9 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
-		errMsg = customErrorString("Trying to access by indices %s "
-		    " which is not of type ARRAY but of type %s", var->name,
+		errMsg = customErrorString("Trying to access by "
+		    "subscription %s which is not of type ARRAY but of "
+		    "type %s", var->name,
 		    typeToString(getType(arrayTypeSym)));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
@@ -825,8 +826,10 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	}
 
 	/* Got here, it was a valid array access!  YAY! */	
-	return getArrayBaseSym(arrayTypeSym);
+	return getArrayTerminalTypeSym(arrayTypeSym);
 }
+
+
 
 /*
  * Returns a pointer to the type symbol defining the base type for the given
@@ -880,6 +883,20 @@ getArrayIndexSym(Symbol *s)
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
 	return getTypePtr(s)->Array->indexTypeSym;
+}
+
+Symbol *
+getArrayTerminalTypeSym(Symbol *s)
+{
+	Symbol *baseSym = NULL;
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	baseSym = getTypePtr(s)->Array->baseTypeSym;
+	while (getType(baseSym) == ARRAY_T) {
+		baseSym = getTypePtr(baseSym)->Array->baseTypeSym;
+	}
+	return baseSym;
+
 }
 
 Symbol *
