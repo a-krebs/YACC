@@ -522,7 +522,9 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		ea = newElementArray();
 	}
 	s = newProcSym(lvl, id, ea);
-	if (s) createHashElement(symbolTable, id, s);
+	if (createHashElement(symbolTable, id, s) != 0) {
+		// TODO error
+	}
 	incrementLexLevel(symbolTable);
 	return s;
 }
@@ -541,12 +543,28 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		// throw already defined error
+		errMsg = customErrorString("Function with name %s "
+		    "is already defined.",id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
-	if ((!ea) || (!typeSym)) return NULL;
+	if (!ea) {
+		ea = newElementArray();
+	}
+
+	if (!typeSym) {
+		errMsg = customErrorString("Function with name %s "
+		    "has no return type, assuming INTEGER.",id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		typeSym = getPreDefInt(preDefTypeSymbols);
+	}
+
 	s = newFuncSym(lvl, id, typeSym, ea);
+	if (createHashElement(symbolTable, id, s) != 0) {
+		// TODO error
+	}
+	incrementLexLevel(symbolTable);
 	return s;
 }
 
@@ -826,9 +844,11 @@ void procInvok(char *id, struct ElementArray *ea) {
 		notDefinedError(id);
 		return;
 	}
-	if (!ea) return;
+	if (!ea) {
+		ea = newElementArray();
+	}
+	// this prints errors, so call it but ignore return value
 	isValidProcInvocation(s, ea);
-	
 }
 
 /*
@@ -839,6 +859,19 @@ void procInvok(char *id, struct ElementArray *ea) {
  * Return a ProxySymbol containing the type returned.
  */
 ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
+	Symbol *s = NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return NULL;
+	}
+	if (!argv) {
+		argv = newElementArray();
+	}
+
+	if (isValidFuncInvocation(s, argv)) {
+		return getTypeSym(s);
+	}
 
 	return NULL;
 }
