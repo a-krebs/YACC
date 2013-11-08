@@ -961,6 +961,15 @@ struct ElementArray *createArgList(Symbol *arg) {
 		/* ERROR */
 		return NULL;
 	}
+
+	// check that arg is not a procedure or function
+	if (	(arg->kind == PROC_KIND) || 
+		(arg->kind == FUNC_KIND) ||
+		(arg->kind == PARAM_KIND)
+	){
+		errMsg = customErrorString("Invaid argument type.");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
 	ea = newElementArray();
 	growElementArray(ea);
 	appendElement(ea, getTypeSym(arg));	
