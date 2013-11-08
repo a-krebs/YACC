@@ -49,8 +49,10 @@ Symbol *assertOpCompat(
 
 	if ( (!type1) && (!type2)) return NULL;
 
+#if DEBUG
 	printf("\n%s %s %s\n", typeToString(getType(type1)), 
 	opToString(opToken), typeToString(getType(type2)));
+#endif
 	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
 	 * it is a unary operator) then we assume the best */ 
 	if ((!type1) && (isUnaryOperator(opToken))) {
