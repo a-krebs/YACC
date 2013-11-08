@@ -467,24 +467,12 @@ setSymbolName(Symbol *s, char *id)
  * Create a new symbol for a record type defintion to be added to the symbol
  * table.
  * 
- * Takes the name of the record type and a single ProxySymbol for the first
- * record member.
- *
- * Additional members can be appended to the record type later.
+ * Return a pointer to the new type symbol.
  */
 
-Symbol *
-newVariableSym(int lvl, char *id, struct *ElementArray)
+Symbol *newRecordTypeSym(int lvl, char *id)
 {
-	Symbol *newVar = NULL;	/* new symbol to be created */
-
-	if (typeSym->kind != TYPE_KIND) {
-		/* ERROR:
-		 * Trying to create var using symbol other than a type.
-		 * Call an error recording function.
-		 */
-		return NULL;
-	}
+	Symbol *newRecType = NULL;	/* new symbol to be created */
 
 	if (!id) {
 		/*Error: cannot have anonymous variable! */
@@ -492,16 +480,75 @@ newVariableSym(int lvl, char *id, struct *ElementArray)
 	}
 		
 
-	newVar = calloc(1, sizeof(Symbol));
-	if (!newVar) {
+	newRecType = calloc(1, sizeof(Symbol));
+	if (!newRecType) {
 		err(1, "Failed to allocate memory for new symbol!");
 		exit(1);
 	}
 	
-	setSymbolName(newVar, id);
-	newVar->kind = VAR_KIND;
-	allocateKindPtr(newVar);
-	newVar->kindPtr.VarKind->typeSym = typeSym;
-	newVar->lvl = lvl;
-	return newVar;
+	setSymbolName(newRecType, id);
+	newRecType->kind = TYPE_KIND;
+	allocateKindPtr(newRecType);
+	newRecType->kindPtr.type = RECORD_T;
+	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
+
+	newRecType->lvl = lvl;
+
+	/* this is an anonymous type */
+	newRecType->typeOriginator = 1;
+
+	return newRecType;
 }
+
+/*
+ * Add the given field to the record type.
+ *
+ * Return 0 on success and non-zero on error.
+ * 	return 	-2 if adding hash element to record fails
+ * 		-1 on argument error
+ * 		1 on recType type error
+ * 		2 on field type error
+ */
+int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
+
+	Symbol *newField = NULL;
+	int recordLvl = -1;
+	char *id = NULL;
+	int rval = 0;
+	struct hash *recordHash = NULL;
+
+	/* check arguments */
+	if (!rectype) {
+		return -1;
+	}
+	if (!newField) {
+		return -1;
+	}
+
+	/* check record symbol for correct kind */
+	if (recType->kind != TYPE_KIND) {
+		return 1;
+	}
+	if (recType->kindPtr.type != RECORD_T) {
+		return 1;
+	}
+
+	/* check field symbol for correct kind */
+	if (newField->kind != VAR_KIND) {
+		return 2;
+	}
+
+	recordHash = recType->kindPtr.TypeKind.Record->hash;
+	recordLvl = getCurrentLexLevel(recordHash);
+	id = strdup(field->id);
+
+	newField = newVariableSym(
+	    recordLvl, id, field->kindPtr.VarKind->typeSym);
+
+	if (createHashElement(recordHash, id, newField) != 0) {
+		return -2;
+	}
+
+	return 0;
+}
+
