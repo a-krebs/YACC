@@ -674,21 +674,27 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
 	return 0;
 }
 
-int
-isValidProcInvocation(Symbol *s, struct ElementArray *ea)
+/*
+ * Return 1 if valid invocation, 0 otherwise.
+ */
+int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 {
 	struct ElementArray *params = NULL;
 	Symbol *passedParam, *expectedParam = NULL;
 	int i;
 
 	params = s->kindPtr.ProcKind->params;
-	if (params->nElements != ea->nElements) {
+	if (!params) {
+		// special built-in proc that takes unlimited args
+		// TODO for now just assuming all arguments are valid
+		return 1;
+	} else if (params->nElements != ea->nElements) {
 		errMsg = customErrorString("Procedure %s expects %d "
 		    "parameters, got %d", s->name, params->nElements,
 		    ea->nElements);
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
 		printError(e);	
-		return 1;	
+		return 0;	
 	}
 
 
@@ -717,7 +723,12 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	int i;
 
 	params = s->kindPtr.FuncKind->params;
-	if (params->nElements != ea->nElements) {
+	if (!params) {
+		// special case of predefined-function
+		// TODO check what types are acceptable,
+		// for now assuming all types
+		return getTypeSym(s);
+	} else if (params->nElements != ea->nElements) {
 		errMsg = customErrorString("Procedure %s expects %d "
 		    "parameters, got %d", s->name, params->nElements,
 		    ea->nElements);

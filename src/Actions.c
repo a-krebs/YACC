@@ -440,7 +440,7 @@ Symbol *doVarDecl(char *id, Symbol *type) {
  * This is a good time to pop lexical level.
  */
 void exitProcOrFuncDecl(void) {
-	// TODO
+	popLexLevel(symbolTable);
 }
 
 /*
@@ -453,19 +453,28 @@ void exitProcOrFuncDecl(void) {
  * Return a pointer to the procedure.
  */
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
-
 	Symbol *s = NULL;
+
+	if (!id) {
+		return NULL;
+	}
+
 	int lvl = getCurrentLexLevel(symbolTable);
 	
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		/* throw already defined error */
+		errMsg = customErrorString("Procedure with name %s "
+		    "is already defined.",id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
-	if (!ea) return NULL;
+	if (!ea) {
+		ea = newElementArray();
+	}
 	s = newProcSym(lvl, id, ea);
 	if (s) createHashElement(symbolTable, id, s);
+	incrementLexLevel(symbolTable);
 	return s;
 }
 
