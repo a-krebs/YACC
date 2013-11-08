@@ -1,7 +1,28 @@
-{}
+{17}
 {
 	Team YACC Checkpoint 2 Test 3
+
+	Test that procedures and functions cannot be passed as arguments.
 }
 program test3(input, output);
+var
+	t : integer;
+procedure foo(i : integer);
+type
+	string = array [2..1000] of char;
+var
+	a : string;
+	i : real;	// error
 begin
+	i := 1 + 1;
+end;
+function bar() : integer;
+begin
+end;
+function baz(w : integer) : string;	// error
+begin
+end;
+begin
+	foo(bar());
+	foo(bar);	// error
 end.
