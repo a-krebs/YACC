@@ -9,6 +9,8 @@ char *test_newElementArray();
 char *test_growElementArray();
 char *test_appendElement();
 char *test_getElementAt();
+char *test_appendElementArray();
 char *test_freeElementArray();
 char *test_all_ElementArray();
+
 #endif

@@ -44,7 +44,7 @@ growElementArray(struct ElementArray *ea)
 	if (!ea) {
 		return;
 	}
-	ea->len *= 2;
+	ea->len = (ea->len) * 2;
 	ea->data = realloc(ea->data,sizeof(void *)*(ea->len));
 	if (!ea->data) {
 		err(1, "Failled reallocate memory to grow elements array!");
@@ -67,6 +67,42 @@ appendElement(struct ElementArray *ea, void *element)
 }
 
 /*
+ * Appends the given elements array to another elements array
+ */
+
+struct ElementArray *
+appendElementArray(struct ElementArray *ea1, struct ElementArray *ea2){	
+	
+	;
+	
+	int i ;
+	int appendIndex ; /* the starting index of second array.*/
+	
+	if(!ea1 || !ea2){
+		err(1, "One of the element arrays is a null pointer!");
+		exit(1);
+	}
+	
+	appendIndex = ea1->nElements;
+	ea1->len += ea2->len; /*new length of allocated memory space*/
+	
+	ea1->nElements += ea2->nElements; 
+	
+	ea1->data = realloc(ea1->data,sizeof(void *)*(ea1->len));
+	
+	if(!ea1->data){
+		err(1, "Failled reallocate memory to grow elements array!");
+		exit(1);
+	}
+		
+	for(i= appendIndex; i < ea1->nElements ; i++ ){
+		ea1->data[i] = ea2->data[i-appendIndex];
+	}
+	
+	free(ea2);
+	return ea1;
+}
+/*
  * Returns a pointer to the element in the given ElementArray at index i.
  */
 void *
@@ -84,10 +120,9 @@ getElementAt(struct ElementArray *ea, unsigned int i)
  */
 void freeElementArray(struct ElementArray *ea) {
 	int i;
-	
 	for (i = 0; i < (ea->nElements-1); i++) {
-		free(((Symbol **)ea->data)[i]->name);
-		free(ea->data[i]);
+			free(((Symbol **)ea->data)[i]->name);
+			free(ea->data[i]);
 	}
 	free(ea);
 	
