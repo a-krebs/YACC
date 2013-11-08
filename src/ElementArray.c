@@ -73,7 +73,6 @@ appendElement(struct ElementArray *ea, void *element)
 struct ElementArray *
 appendElementArray(struct ElementArray *ea1, struct ElementArray *ea2){	
 
-	void **tmp = NULL;		
 	int i ;
 	int appendIndex ; /* the starting index of second array.*/
 	
@@ -88,14 +87,13 @@ appendElementArray(struct ElementArray *ea1, struct ElementArray *ea2){
 	
 	ea1->nElements += ea2->nElements; 
 	
-	tmp = realloc(ea1->data,sizeof(void *)*(ea1->len));
+	ea1->data = realloc(ea1->data,sizeof(void *)*(ea1->len));
 	
-	if(!tmp){
+	if(!ea1->data){
 		err(1, "Failled reallocate memory to grow elements array!");
 		exit(1);
 	}
 	
-	tmp = ea1->data;
 
 	for(i= appendIndex; i < ea1->nElements ; i++ ){
 		ea1->data[i] = ea2->data[i-appendIndex];

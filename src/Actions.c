@@ -150,7 +150,7 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
-
+	incrementLexLevel(symbolTable);
 	// TODO: same a proc decl probably
 	// TODO push lexical level, figure this out
 }
@@ -218,7 +218,6 @@ void doTypeDecl(char *id, Symbol *type) {
  * Return a pointer to the type.
  */
 Symbol *simpleTypeLookup(char *id) {
-	
 	Symbol *s = getGlobalSymbol(symbolTable, id);
 	if (!s) {
 		errMsg = customErrorString("The identifier %s has not been "
@@ -549,6 +548,8 @@ Symbol *createNewVarParm(char *id, Symbol *type) {
  * Perform assignment of x to y.
  */
 void assignOp(ProxySymbol *x, ProxySymbol *y) {
+	if (!(x) || !(y)) return;
+	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
 }
 
 ProxySymbol *hashLookupToProxy(char *id) {
@@ -576,6 +577,7 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
  */
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	/* Record specific errors in isValidArrayAccess */
+	if ((!indices) || (!var)) return NULL;	
 	if (isValidArrayAccess((Symbol *) var, indices)) {
 		return newProxySymFromSym(getTypeSym((Symbol *) var));
 	}

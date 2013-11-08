@@ -25,13 +25,10 @@ static char *errMsg;
 void
 opError(char *xType, int op, char *yType)
 {
-	struct Error *e;
 	errMsg = customErrorString("Invalid expression. Types %s and %s"   
 	    "not compatible with operator %s", xType, yType,
 	    opToString(op));
-	e = recordError(errMsg, yylineno, colno, SEMANTIC);
-	printError(e);
-
+	recordError(errMsg, yylineno, colno, SEMANTIC);
 }
 
 char *
@@ -93,19 +90,16 @@ opToString(int op)
 
 void
 alreadyDefinedError(char *id) {
-	struct Error *e;
 	errMsg = customErrorString("The identifer %s is already defined at "
 	   "the current scope.", id);
-	e = recordError(errMsg, yylineno, colno, SEMANTIC);
-	printError(e);
+	recordError(errMsg, yylineno, colno, SEMANTIC);
 }
 
 void
 notDefinedError(char *id) {
-	struct Error *e;
+
 	errMsg = customErrorString("The identifier %s is undefined.", id);
-	e = recordError(errMsg, yylineno, colno, SEMANTIC);
-	printError(e);
+	recordError(errMsg, yylineno, colno, SEMANTIC);
 }
 
 int
