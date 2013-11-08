@@ -1,6 +1,8 @@
 
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
+
+#include "Hash.h"
 /*
  * Mirrors design ideas in Piotr's nodes (CheckingAttributes.pdf)
  */
