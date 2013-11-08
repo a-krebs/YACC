@@ -14,6 +14,7 @@ int initialize() {
 	}
 
 	initializePreDefProc();
+	errors = NULL;
 
 
 	return 0;
