@@ -21,7 +21,6 @@ struct hash {
     int lexLevel;
 };
 
-
 /* Non-C99 compliant function prototypes. */
 
 

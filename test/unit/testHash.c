@@ -1085,10 +1085,43 @@ char *test_decrementLexLevel() {
 
 
 char *test_nullHashNames() {
-	// struct hash *hash = createHash(&getHashedKeyNormal);	
+	struct hash *hash = createHash(&getHashedKeyNormal);	
+	struct Symbol *symbol = createTestSymbolTypeKind(getCurrentLexLevel(hash), NULL, ARRAY_T);
+	char *key = NULL;
+	
+	mu_assert("So having a null name breaks shit...", 
+ 		createHashElement(hash, key, symbol) == 0);
 
-	
-	
+	mu_assert("Could not assign name to anon thingy",
+		symbol->name != NULL);
+
+	symbol = createTestSymbolTypeKind(getCurrentLexLevel(hash), NULL, RECORD_T);
+	key = NULL;	
+
+	mu_assert("So having a null name breaks shit...", 
+ 		createHashElement(hash, key, symbol) == 0);
+
+	mu_assert("Could not assign name to anon thingy",
+		symbol->name != NULL);
+
+	symbol = createTestSymbolTypeKind(getCurrentLexLevel(hash), NULL, SUBRANGE_T);
+	key = NULL;	
+
+	mu_assert("So having a null name breaks shit...", 
+ 		createHashElement(hash, key, symbol) == 0);
+
+	mu_assert("Could not assign name to anon thingy",
+		symbol->name != NULL);
+
+	symbol = createTestSymbolTypeKind(getCurrentLexLevel(hash), NULL, SCALAR_T);
+	key = NULL;	
+
+	mu_assert("So having a null name breaks shit...", 
+ 		createHashElement(hash, key, symbol) == 0);
+
+	mu_assert("Could not assign name to anon thingy",
+		symbol->name != NULL);
+
 	return NULL;
 }
 
