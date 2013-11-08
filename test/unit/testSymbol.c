@@ -21,10 +21,50 @@ int colno;
 
 double REAL_VAL = 123.321;
 
-/*
- * TODO: make this function accept type_t arg so it can set up types
- * of different types.
- */
+
+Symbol *
+setUpTypeSymbolForSimple(char *name, type_t type, int lexLevel)
+{
+	struct Symbol *symbol = calloc(1, sizeof(struct Symbol));
+	if ( symbol == NULL ) {
+		err(1, "Failed to allocate memory for test type symbol!");
+		exit(EXIT_FAILURE);		
+	}
+
+	setSymbolName(symbol, name);
+	symbol->kind = TYPE_KIND;
+
+	allocateKindPtr(symbol);
+	symbol->kindPtr.TypeKind->type = type;
+
+
+	if ( type == BOOLEAN_T ) {
+		getTypePtr(symbol)->Boolean = malloc(sizeof(struct Boolean));
+	}
+	else if ( type == CHAR_T ) {
+		getTypePtr(symbol)->Char = malloc(sizeof(struct Char));
+	}
+	else if ( type == INTEGER_T ) {
+		getTypePtr(symbol)->Integer = malloc(sizeof(struct Integer));
+	}
+	else if ( type == REAL_T ) {
+		getTypePtr(symbol)->Real = malloc(sizeof(struct Real));
+	}
+	else if ( type == STRING_T ) {
+		getTypePtr(symbol)->String = malloc(sizeof(struct String));
+	}	
+	else {
+		err(2, "Could not determine type asked in setUpTypeSymbolForSimple");
+		exit(EXIT_FAILURE);
+	}
+
+	symbol->lvl = lexLevel;
+	symbol->typeOriginator = 1;
+	symbol->next = NULL;
+
+	return symbol; 	
+}
+
 Symbol *
 setUpTypeSymbol()
 {
@@ -57,6 +97,9 @@ setUpTypeSymbol()
 	typeSym->kindPtr.TypeKind->typePtr.Integer->value = INTLOW_VAL;
 	return typeSym; 	
 }
+
+
+
 
 Symbol *
 setUpIntConst()
@@ -375,7 +418,46 @@ test_isValidArrayAccess()
 	    !isValidArrayAccess(newArraySym, setUpConstSymbol()));
 
 	return NULL;
+}
 
+
+char * 
+test_isElementArraySimple() 
+{
+	struct Symbol *symbol = setUpIntConst();
+	struct Symbol *integer = setUpTypeSymbolForSimple("billy", INTEGER_T, 0);
+	struct Symbol *real = setUpTypeSymbolForSimple("bob", REAL_T, 0);
+	struct Symbol *boolean = setUpTypeSymbolForSimple("bonnie", BOOLEAN_T, 0);
+	struct Symbol *string = setUpTypeSymbolForSimple("ben", STRING_T, 0);
+	struct Symbol *chars = setUpTypeSymbolForSimple("booo", CHAR_T, 0);
+
+	struct ElementArray *elementArray = newElementArray();
+	appendElement(elementArray, integer);
+
+	mu_assert("Unexpected valued returned from isElementArraySimple, test1.",
+		isElementArraySimple(elementArray) == 1 );
+
+	appendElement(elementArray, real);
+	mu_assert("Unexpected valued returned from isElementArraySimple, test2.",
+		isElementArraySimple(elementArray) == 1 );
+
+	appendElement(elementArray, boolean);
+	mu_assert("Unexpected valued returned from isElementArraySimple, test3.",
+		isElementArraySimple(elementArray) == 1 );
+
+	appendElement(elementArray, string);
+	mu_assert("Unexpected valued returned from isElementArraySimple, test4.",
+		isElementArraySimple(elementArray) == 1 );
+
+	appendElement(elementArray, chars);
+	mu_assert("Unexpected valued returned from isElementArraySimple, test5.",
+		isElementArraySimple(elementArray) == 1 );
+
+	appendElement(elementArray, symbol);
+	mu_assert("Unexpected valued returned from isElementArraySimple, test6.",
+		isElementArraySimple(elementArray) == 0 );
+	
+	return NULL;
 }
 
 char *
@@ -391,5 +473,6 @@ test_all_Symbol()
 	mu_run_test(test_newAnonScalarSym);
 	mu_run_test(test_newVariableSym);
 	mu_run_test(test_isConstInScalar);
+	mu_run_test(test_isElementArraySimple);
 	return NULL;
 }

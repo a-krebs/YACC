@@ -38,6 +38,7 @@ void setSymbolName(Symbol *, char *);
 /* Semantic validation functions */
 int isConstInScalar(Symbol *, Symbol *);
 int isValidProcInvocation(Symbol *, struct ElementArray *);
+int isElementArraySimple(struct ElementArray *elementArray);
 
 Symbol * isValidFuncInvocation(Symbol *, struct ElementArray *);
 Symbol * isValidArrayAccess(Symbol *, ProxySymbol *);
