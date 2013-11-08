@@ -443,6 +443,16 @@ getTypeSym(Symbol *s)
 	}
 }
 
+Symbol *
+paramToVar(int lvl, Symbol * param)
+{
+	if (!param) return NULL;
+	if (param->kind != PARAM_KIND) return NULL;
+	Symbol *typeSym = getTypeSym(param);
+	return newVariableSym(lvl, param->name, typeSym);
+}
+ 
+
 ProxySymbol *
 newProxySymFromSym(Symbol *s)
 {

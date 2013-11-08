@@ -158,7 +158,6 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
 	incrementLexLevel(symbolTable);
-	// TODO: same a proc decl probably
 	// TODO push lexical level, figure this out
 }
 
@@ -509,7 +508,6 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	}
 
 	int lvl = getCurrentLexLevel(symbolTable);
-	incrementLexLevel(symbolTable);
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
 		errMsg = customErrorString("Procedure with name %s "
@@ -521,6 +519,13 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	if (!ea) {
 		ea = newElementArray();
 	}
+
+	if (hasDuplicateElement(ea)) {
+		errMsg = customErrorString("Procedure %s has duplicate "
+		   "argument names.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
 	s = newProcSym(lvl, id, ea);
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error

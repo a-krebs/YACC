@@ -6,6 +6,7 @@
 #include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "ElementArray.h"
 
@@ -113,6 +114,38 @@ getElementAt(struct ElementArray *ea, unsigned int i)
 		return NULL;
 	}
 	return ea->data[i];
+}
+
+int
+hasDuplicateElement(struct ElementArray *ea){
+	int i,j,count;
+	Symbol *sym1; 
+	Symbol *sym2; 
+	
+	if(!ea){
+		err(1, "Cannot check duplicate elements in element due "
+		    "to NULL pointer!");
+		exit(1);
+	}
+	
+	for(i=0; i<(ea->nElements); i++){
+		count = 0;
+		sym1 = ((Symbol **)ea->data)[i];
+		printf("---%s--- \n",sym1->name);
+		for(j =0; j <(ea->nElements); j++){
+		
+			sym2 = ((Symbol **)ea->data)[j];
+			printf("---%s--- \n",sym2->name);
+			if(strcmp(sym1->name,sym2->name)==0){
+				count++;
+			}
+			if(count >=2){				
+				return 1;
+			}
+			
+		}
+	}
+	return 0;
 }
 
 /*

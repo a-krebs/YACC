@@ -11,6 +11,7 @@
 #define EA_DEFAULT_SZ 10	/* default initial size of elements array */
 
 struct ElementArray *newElementArray();
+int hasDuplicateElement(struct ElementArray *);
 void appendElement(struct ElementArray *, void *);
 void *getElementAt(struct ElementArray *, unsigned int);
 void freeElementArray(struct ElementArray *); 

@@ -25,6 +25,8 @@ ProxySymbol *newConstProxySym(void *, Symbol *);
 ProxySymbol *newStringProxySym(int, char *, int);
 ProxySymbol *newProxySymFromSym(Symbol *);
 
+/* */
+Symbol * paramToVar(int, Symbol *);
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
 Symbol *getArrayIndexSym(Symbol *);
