@@ -144,6 +144,10 @@ unsigned int getHashedKeyNormal(char *string) {
         int c;
 
         for ( int i = 0; i < strlen(string); i++ ) {
+		if ( i >= TABLE_SIZE ) {
+			break;
+		}
+
                 c = string[i];
                 x = ((x << 5) + x) + c; //x * 33 + c
         }

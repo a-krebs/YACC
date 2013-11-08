@@ -47,26 +47,39 @@ Symbol *assertOpCompat(
 	s1_t = getType(type1);
 	s2_t = getType(type2);
 
+	if ( (!type1) && (!type2)) return NULL;
+
+	printf("\n%s %s %s\n", typeToString(getType(type1)), 
+	opToString(opToken), typeToString(getType(type2)));
 	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
 	 * it is a unary operator) then we assume the best */ 
 	if ((!type1) && (isUnaryOperator(opToken))) {
 		if ((s2_t == REAL_T) || (s2_t == INTEGER_T)) return type2;
-		return NULL; /* else error */
-	} else if (!type1) return NULL; /* else it was an error */
-
-
+		else {
+			opError(typeToString(s2_t), opToken, 
+			    typeToString(s2_t));
+			return NULL;
+		}
+	} else if (!type1) {
+		opError(typeToString(s2_t), opToken, typeToString(s2_t));
+		return NULL; /* else it was an error */
+	}
 	/* Only simple and string types are compatible with operators */
 	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) &&
 	    (s1_t != STRING_T)) {
-		/* TODO: record error */
+		opError(typeToString(s1_t), opToken, typeToString(s2_t));
 		return NULL;
 	}
 
 	/* If operator is a logical operator, we only accept boolean types */
 	if (isLogicalOperator(opToken)) {
-		if ((s1_t != BOOLEAN_T) || (s2_t != BOOLEAN_T)) return NULL;
+		if ((s1_t != BOOLEAN_T) || (s2_t != BOOLEAN_T)) {
+			opError(typeToString(s1_t), opToken,
+			    typeToString(s2_t));
+			return NULL;
+		}
 		/* Else return pointer to pre-defined boolean type */
-		return type1; 
+		return getPreDefBool(preDefTypeSymbols); 
 	}
 
 	/* If the operator is relational, we just need op compatible types */
@@ -91,7 +104,8 @@ Symbol *assertOpCompat(
 			case MOD:
 				if (areBothInts(type1, type2)) {
 					/* return ptr to int type */
-					return type1;
+					return getPreDefInt(
+					    preDefTypeSymbols);
 				}
 				break;
 			default:
@@ -99,9 +113,8 @@ Symbol *assertOpCompat(
 				break;	
 		}
 	}
-
-	/* Fell through to here, must have been an error */
 	
+	opError(typeToString(s1_t), opToken, typeToString(s2_t));
 	return NULL;
 }
 
@@ -156,11 +169,12 @@ void exitConstDeclPart(void) {
 void doConstDecl(char *id, ProxySymbol *proxy) {
 	Symbol *s = NULL;
 	int lvl = getCurrentLexLevel(symbolTable);
-	
+
 	/* Perform lookup for identifier in current lexical level */
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		/* throw symbol already declated at local lvl error */
+		alreadyDefinedError(id);
+		return;
 	}
 
 	/* Else we can try to make new const  and add it to symbol table */	
@@ -267,8 +281,10 @@ Symbol *createArrayType(Symbol *index, Symbol *base) {
 Symbol *assertArrIndexType(Symbol *index_type) {
 	type_t sym_t;
 
-	sym_t = getType(index_type);
+	if (!index_type) return NULL;
+	if (index_type->kind != TYPE_KIND) return NULL;
 
+	sym_t = getType(index_type);
 	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
 		errMsg = customErrorString("Invalid array index type %s. "
 		    " Must be of type SUBRANGE or of type SCALAR", 
@@ -288,6 +304,7 @@ Symbol *assertArrIndexType(Symbol *index_type) {
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
 	int lvl = getCurrentLexLevel(symbolTable);
+	if (!(lower) || !(upper)) return NULL;
 	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
 	return s;
 }
@@ -336,10 +353,9 @@ void exitVarDeclPart(void) {
 Symbol *doVarDecl(char *id, Symbol *type) {
 	Symbol *s = NULL;
 	int lvl = getCurrentLexLevel(symbolTable);
-
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		/* throw already defined error */
+		alreadyDefinedError(id);
 		return NULL;
 	}
 
@@ -470,8 +486,11 @@ void assignOp(ProxySymbol *x, ProxySymbol *y) {
 
 ProxySymbol *hashLookupToProxy(char *id) {
 	Symbol *s = NULL;
-	//s = getGlobalSymbol(hash, id);
-	if (!s) /* global lookup failed error (make function) */ return NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return NULL;
+	}
 	return newProxySymFromSym(s);	
 }
 
@@ -566,59 +585,76 @@ ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), LESS, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), GREATER_OR_EQUAL, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), GREATER, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *unaryPlusOp(ProxySymbol *y) {
-	return NULL;
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(
+	    NULL, PLUS, getTypeSym((Symbol *)y)));
+	return ps;
 }
 
 ProxySymbol *unaryMinusOp(ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(
+	   NULL, MINUS, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), PLUS, getTypeSym((Symbol *)y)));
+
+	return ps;
 }
 
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), MINUS, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), OR, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), MULTIPLY, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), DIVIDE, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), DIV, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), MOD, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), AND, getTypeSym((Symbol *)y)));
 }
 
-ProxySymbol *unaryNotOp(ProxySymbol *x) {
-	return NULL;
+ProxySymbol *unaryNotOp(ProxySymbol *y) {
+	return newProxySymFromSym(assertOpCompat(
+	    NULL, NOT, getTypeSym((Symbol *)y)));
 }
 
 /*
@@ -626,7 +662,7 @@ ProxySymbol *unaryNotOp(ProxySymbol *x) {
  * Return pointer to the proxy
  */
 ProxySymbol *proxyIntLiteral(int value) {
-	Symbol *integerType = NULL;
+	Symbol *integerType = getPreDefInt(preDefTypeSymbols); 
 	return newConstProxySym(&value, integerType); 
 }
 	
@@ -635,7 +671,7 @@ ProxySymbol *proxyIntLiteral(int value) {
  * Return a pointer to the hash symbol.
  */
 ProxySymbol *proxyRealLiteral(double value) {
-	Symbol *realType = NULL;
+	Symbol *realType = getPreDefReal(preDefTypeSymbols);
 	return newConstProxySym(&value, realType);
 }
 
@@ -647,7 +683,8 @@ ProxySymbol *proxyStringLiteral(char *value) {
 	// TODO: we require the length of the string in order
 	// to avoid the cases where the string literal may have null
 	// bytes.
-	int lvl = 0, strlen = 0;
+	int lvl = getCurrentLexLevel(symbolTable);
+	int strlen = 0;
 	return newStringProxySym(lvl, value, strlen);
 }
 
