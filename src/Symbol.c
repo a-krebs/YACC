@@ -813,3 +813,6 @@ getArrayBaseSym(Symbol *s)
 
 }
 
+void freeProxySymbol(ProxySymbol *p) {
+	free(p);
+}

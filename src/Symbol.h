@@ -48,4 +48,5 @@ struct Param *newParameter(char *, Symbol *);
 /* functios for working with records */
 Symbol *newRecordTypeSym(int, char*);
 int addFieldToRecord(Symbol*, ProxySymbol*);
+void freeProxySymbol(ProxySymbol*);
 #endif

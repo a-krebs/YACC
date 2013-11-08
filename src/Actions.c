@@ -319,17 +319,24 @@ Symbol *createRecordType(struct ElementArray *fields) {
 		fieldId = f->name;
 
 		if (!fieldId) {
-			// TODO error
+			freeProxySymbol(f);
+			continue;
 		}
 
 		newField = newVariableSym(recordLexLvl, fieldId, getTypeSym(f));
 
 		if (getLocalSymbol(recHash, fieldId) != NULL) {
-			// TODO error
+			errMsg = customErrorString(
+			    "Record field with name %s already defined.",
+			    fieldId); 
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+			freeProxySymbol(f);
+			continue;
 		}
 		
 		if (createHashElement(recHash, fieldId, newField) != 0) {
-			// TODO error
+			freeProxySymbol(f);
+			continue;
 		}
 	}
 
