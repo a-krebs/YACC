@@ -1,6 +1,6 @@
-{18,19,20,21}
+{23}
 {
-    Test for function arguments
+    Test for function arguments //18,19,20,21			19, 20, 22, 
 }
 program test(input, output);
 type
@@ -8,15 +8,17 @@ type
 var
 	myString : string20;
 	i : integer;
-	b : real;
+	r : real;
+	b : boolean;
 function doStrThing(a : string20) : integer;
 	begin
 		doStrThing := 10;
 	end;
 begin
-	i := doStrThing(myString);
-	i := doStrThing(myString, myString);	// error too many args
-	i := doStrThing();			// error too few args
-	b := doStrThing(myString);		// error type mismatch
+//	i := doStrThing(myString);
+//	i := doStrThing(myString, myString);	// error too many args
+//	i := doStrThing();			// error too few args
+//	r := doStrThing(myString);		
+//	b := doStrThing(myString);		// error type mismatch
 	i := doStrThing(b);			// error type mismatch
 end.

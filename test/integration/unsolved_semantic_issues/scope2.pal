@@ -1,4 +1,4 @@
-{34,35,50,51,52,58,59,60,61}
+{34,35,48,50,51,52,58,59,60,61}
 
 {
 	test type scope
@@ -15,7 +15,7 @@ function scope1() : integer;
 		c : int;
 		d : string;
 		e : int;
-	function scope2() : intger;
+	function scope2() : integer;
 		type
 			str = string;
 			int3 = int;
@@ -45,7 +45,7 @@ function scope1() : integer;
 		a := 2;
 		b := 2;
 		c := 2;
-		d := 2;
+		d := 2;		// error, d is a string
 		e := 2;		// should work, e is an int at this level
 		f := 2;		// error, out of scope
 		g := 2;		// error, out of scope
