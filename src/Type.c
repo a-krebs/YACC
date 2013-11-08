@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "Type.h"
+#include "Hash.h"
 
 /*
  * Returns true if the two Symbols of kind TYPE are the EXACT same type.
@@ -266,6 +267,26 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 	s->high = high;
 	s->baseTypeSym = typeSym;
 	return s;
+}
+
+/*
+ * Return a pointer to a new record struct with no fields.
+ * 
+ * Fields can be added to the record struct later.
+ */
+struct Record *newRecord() {
+	struct Record *r = NULL;
+
+	r = calloc(1, sizeof(struct Record));
+	if (!r) {
+		err(1, "Failed to allocate memory for new record!");
+		exit(1);
+	}
+
+	/* give the record its own hash table */
+	r->hash = createHash(&getHashedKeyNormal);
+
+	return r;
 }
 
 type_t

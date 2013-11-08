@@ -310,23 +310,84 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 }
 
 /*
- * Create a new record type from the given proxy. the proxy contains the name
- * of a field and the type of that field.
+ * Create a new record type from the array of fields.
  *
  * Return a pointer to the new record type symbol.
  */
-Symbol *createRecordType(ProxySymbol *first_field) {
-	return NULL;
+Symbol *createRecordType(struct ElementArray *fields) {
+	Symbol *recType = NULL;
+	Symbol *newField = NULL;
+	int lexLvl = -1;
+	int recordLexLvl = -1;
+	ProxySymbol *f = NULL;
+	struct hash *recHash = NULL;
+	char *fieldId;
+
+	lexLvl = getCurrentLexLevel(symbolTable);
+
+	recType = newRecordTypeSym(lexLvl, NULL);
+	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
+
+	recordLexLvl = getCurrentLexLevel(recHash);
+
+	for (int i = 0; i < fields->nElements; i++) {
+		f = getElementAt(fields, i);
+		if (!f) continue;
+		fieldId = f->name;
+
+		if (!fieldId) {
+			freeProxySymbol(f);
+			continue;
+		}
+
+		newField = newVariableSym(recordLexLvl, fieldId, getTypeSym(f));
+
+		if (getLocalSymbol(recHash, fieldId) != NULL) {
+			errMsg = customErrorString(
+			    "Record field with name %s already defined.",
+			    fieldId); 
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+			freeProxySymbol(f);
+			continue;
+		}
+		
+		if (createHashElement(recHash, fieldId, newField) != 0) {
+			freeProxySymbol(f);
+			continue;
+		}
+	}
+
+	return recType;
 }
 
 /*
- * Add a field to the given record type. The proxy new_field contains
- * the name and type of the new record field.
+ * Create a new element array from the given proxy symbol.
  *
- * Return a pointer to the record type.
+ * Return a pointer to the new array.
  */
-Symbol *appendFieldToRecordType(Symbol *record_type, ProxySymbol *new_field) {
-	return record_type;
+struct ElementArray *createRecordMemberList(ProxySymbol *field) {
+	struct ElementArray *ea = NULL;
+
+	ea = newElementArray();
+	growElementArray(ea);
+	if (field) {
+		appendElement(ea, field);
+	}
+	return ea;
+}
+
+/*
+ * Append the given proxySymbol to the array of fields.
+ *
+ * Return a pointer to the array.
+ */
+struct ElementArray *appendToRecordMemberList(
+    struct ElementArray *array, ProxySymbol *field) {
+	if (!array) return NULL;
+	if (field)  {
+		appendElement(array, field);
+	}
+	return array;
 }
 
 /*
@@ -335,7 +396,13 @@ Symbol *appendFieldToRecordType(Symbol *record_type, ProxySymbol *new_field) {
  * Return a pointer to the new proxy.
  */
 ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
-	return NULL;
+	ProxySymbol *newField = NULL;
+
+	if (!id) return NULL;
+	if (!type) return NULL;
+
+	newField = newVariableSym(0, id, type);
+	return newField;
 }
 
 /*
