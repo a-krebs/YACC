@@ -41,7 +41,7 @@ Symbol *createNewVarParm(char*, Symbol*);
 ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *hashLookupToProxy(char*);
 ProxySymbol *recordAccessToProxy(char*, char*);
-ProxySymbol *arrayIndexAccess(ProxySymbol*, struct ElementArray*);
+ProxySymbol *arrayIndexAccess(ProxySymbol*, ProxySymbol*);
 ProxySymbol *concatArrayIndexList(ProxySymbol*, ProxySymbol*);
 ProxySymbol *createArrayIndexList(ProxySymbol*);
 ProxySymbol *eqOp(ProxySymbol*, ProxySymbol*);
@@ -68,10 +68,10 @@ ProxySymbol *proxyRealLiteral(double);
 ProxySymbol *proxyStringLiteral(char*);
 
 /* procedure and function invokations */
-void prodInvok(char*, ProxySymbol*);
-ProxySymbol *funcInvok(char*, ProxySymbol*);
+void prodInvok(char*, struct ElementArray*);
+ProxySymbol *funcInvok(char*, struct ElementArray*);
 struct ElementArray *createArgList(Symbol*);
-struct ElementArray *concatArgLists(struct ElementArray*, Symbol*);
+struct ElementArray *concatArgLists(struct ElementArray*, struct ElementArray*);
 
 /* loop control */
 void continueLoop(void);
