@@ -24,6 +24,11 @@ Symbol *getPreDefReal(struct preDefTypeSymbols *preDefTypeSymbols) {
 }
 
 
+Symbol *getPreDefString(struct preDefTypeSymbols *preDefTypeSymbols) {
+	return preDefTypeSymbols->string;
+}
+
+
 struct Symbol *createPreDefType(char *name, type_t type) {
 	struct Symbol *symbol = malloc(sizeof(struct Symbol));
 
@@ -45,6 +50,9 @@ struct Symbol *createPreDefType(char *name, type_t type) {
 	else if ( strcmp(name, "real") == 0 ) {
 		getTypePtr(symbol)->Real = malloc(sizeof(struct Real));
 	}
+	else if ( strcmp(name, "string") == 0 ) {
+		getTypePtr(symbol)->String = malloc(sizeof(struct String));
+	}	
 	else {
 		err(2, "Could not determine type asked in pre-def.");
 		exit(EXIT_FAILURE);
@@ -64,11 +72,13 @@ struct preDefTypeSymbols *initializePreDefTypes() {
 	preDefs->chars = createPreDefType(CHAR_KEY, CHAR_T);
 	preDefs->integer = createPreDefType(INTEGER_KEY, INTEGER_T);
 	preDefs->real = createPreDefType(REAL_KEY, REAL_T);
+	preDefs->string = createPreDefType(STRING_KEY, STRING_T);
 
 	createHashElement(symbolTable, BOOLEAN_KEY, preDefs->boolean);
 	createHashElement(symbolTable, CHAR_KEY, preDefs->chars);
 	createHashElement(symbolTable, INTEGER_KEY, preDefs->integer);
 	createHashElement(symbolTable, REAL_KEY, preDefs->real);
+	createHashElement(symbolTable, STRING_KEY, preDefs->string);
 
 	return preDefs;
 }

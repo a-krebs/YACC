@@ -562,7 +562,8 @@ char *createNameForAnonType(struct Symbol *symbol) {
         if ( symbol->kindPtr.TypeKind->type != ARRAY_T
                 && symbol->kindPtr.TypeKind->type != SUBRANGE_T
                 && symbol->kindPtr.TypeKind->type != RECORD_T
-                && symbol->kindPtr.TypeKind->type != SCALAR_T ) {
+                && symbol->kindPtr.TypeKind->type != SCALAR_T 
+                && symbol->kindPtr.TypeKind->type != STRING_T ) {
                         err(1, "Symbol is not ARRAY_T, SUBRANGE_T, RECORD_T, OR SCALAR_T. Cannot generate name.");
                         exit(EXIT_FAILURE);
         }

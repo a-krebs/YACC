@@ -18,6 +18,7 @@
 #define CHAR_KEY "char"
 #define INTEGER_KEY "integer"
 #define REAL_KEY "real"
+#define STRING_KEY "string"
 
 //pre-defined procedures:
 #define WRITE "write"
@@ -52,6 +53,7 @@ struct preDefTypeSymbols {
 	Symbol *chars;
 	Symbol *integer;
 	Symbol *real;	
+	Symbol *string;	
 };
 
 
@@ -63,6 +65,7 @@ Symbol *getPreDefBool(struct preDefTypeSymbols*);
 Symbol *getPreDefChar(struct preDefTypeSymbols*);
 Symbol *getPreDefInt(struct preDefTypeSymbols*);
 Symbol *getPreDefReal(struct preDefTypeSymbols*);
+Symbol *getPreDefString(struct preDefTypeSymbols*);
 struct Symbol *createPreDefType(char *name, type_t type);
 struct preDefTypeSymbols *initializePreDefTypes();
 struct Symbol *createPreDefProc(char *name); 

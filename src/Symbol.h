@@ -58,4 +58,8 @@ struct Param *newParameter(char *, Symbol *);
 Symbol *newRecordTypeSym(int, char*);
 int addFieldToRecord(Symbol*, ProxySymbol*);
 void freeProxySymbol(ProxySymbol*);
+
+
+Symbol *
+newStringTypeSym(int lexLevel, int strlen);
 #endif
