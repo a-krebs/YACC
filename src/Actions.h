@@ -44,7 +44,7 @@ Symbol *createNewVarParm(char*, Symbol*);
 /* expressions and operators */
 ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);
 ProxySymbol *hashLookupToProxy(char*);
-ProxySymbol *recordAccessToProxy(char*, char*);
+ProxySymbol *recordAccessToProxy(ProxySymbol*, char*);
 ProxySymbol *arrayIndexAccess(ProxySymbol*, ProxySymbol*);
 ProxySymbol *concatArrayIndexList(ProxySymbol*, ProxySymbol*);
 ProxySymbol *createArrayIndexList(ProxySymbol*);
