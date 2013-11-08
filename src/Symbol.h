@@ -42,7 +42,7 @@ int isConstInScalar(Symbol *, Symbol *);
 int isValidProcInvocation(Symbol *, struct ElementArray *);
 int isElementArraySimple(struct ElementArray *elementArray);
 int isValidIOProcInvocation(Symbol *, struct ElementArray *);
-
+int isIOProc(Symbol *);
 
 
 Symbol * isValidFuncInvocation(Symbol *, struct ElementArray *);
