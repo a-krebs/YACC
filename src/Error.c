@@ -110,7 +110,7 @@ customErrorString(char * errMsg, ...)
 				 * args = the last variable before the start of
 				 * of the variable length argument list */
 	
-	vsprintf(msg, errMsg, args);
+	vsnprintf(msg, CUSTOM_ERRMSG_SZ-1, errMsg, args);
 	va_end(args);		/* required by the api for whatever reason */
 
 	msg[CUSTOM_ERRMSG_SZ - 1] = '\0';/* null terminate in case string passed

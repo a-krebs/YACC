@@ -5,7 +5,9 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include "Error.h"
 #include "Utils.h"
 #ifndef TESTBUILD
 #include "parser.tab.h"
@@ -13,6 +15,99 @@
 #ifdef TESTBUILD
 #include "tokens.h"
 #endif
+
+extern int yylineno;
+
+static char *errMsg;
+
+#define OPSTR_LEN 64
+
+void
+opError(char *xType, int op, char *yType)
+{
+	struct Error *e;
+	errMsg = customErrorString("Invalid expression. Types %s and %s"   
+	    "not compatible with operator %s", xType, yType,
+	    opToString(op));
+	e = recordError(errMsg, yylineno, colno, SEMANTIC);
+	printError(e);
+
+}
+
+char *
+opToString(int op)
+{	
+	static char opStr[OPSTR_LEN];
+	memset(opStr, '\0', OPSTR_LEN);
+	switch (op) {
+		case NOT:
+			strcpy(opStr, "NOT");
+			break;
+		case MULTIPLY:
+			strcpy(opStr, "MULTIPLY");
+			break;
+		case DIVIDE:
+			strcpy(opStr, "DIVIDE");
+			break;
+		case DIV:
+			strcpy(opStr, "DIV");
+			break;
+		case MOD:
+			strcpy(opStr, "MOD");
+			break;
+		case AND:
+			strcpy(opStr, "AND");
+			break;
+		case PLUS:
+			strcpy(opStr, "PLUS");
+			break;
+		case MINUS:
+			strcpy(opStr, "MINUS");
+			break;
+		case OR:
+			strcpy(opStr, "OR");
+			break;
+		case EQUAL:
+			strcpy(opStr, "EQUAL");
+			break;
+		case NOT_EQUAL:
+			strcpy(opStr, "NOT_EQUAL");
+			break;
+		case LESS:
+			strcpy(opStr, "LESS");
+			break;
+		case LESS_OR_EQUAL:
+			strcpy(opStr, "LESS_OR_EQUAL");
+			break;
+		case GREATER:
+			strcpy(opStr, "GREATER");
+			break;
+		case GREATER_OR_EQUAL :
+			strcpy(opStr, "GREATER_OR_EQUAL ");
+			break;
+		default:
+			break;
+	}
+	return opStr;
+}
+
+void
+alreadyDefinedError(char *id) {
+	struct Error *e;
+	errMsg = customErrorString("The identifer %s is already defined at "
+	   "the current scope.", id);
+	e = recordError(errMsg, yylineno, colno, SEMANTIC);
+	printError(e);
+}
+
+void
+notDefinedError(char *id) {
+	struct Error *e;
+	errMsg = customErrorString("The identifier %s is undefined.", id);
+	e = recordError(errMsg, yylineno, colno, SEMANTIC);
+	printError(e);
+}
+
 int
 isLogicalOperator(int op)
 {
