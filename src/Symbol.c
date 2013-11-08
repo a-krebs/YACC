@@ -5,12 +5,14 @@
 
 #include "ElementArray.h"
 #include "Error.h"
+#include "ErrorLL.h"
 #include "Type.h"
 #include "Symbol.h"
 #include "Hash.h"
 
 extern int yylineno;
 extern int colno;
+
 
 static char *errMsg;
 struct Error *e;

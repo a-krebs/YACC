@@ -43,7 +43,6 @@ test_growElementArray(){
 		
 	growElementArray(ea);
 	
-	printf("length :%d\n",ea->len);
 	mu_assert("growElementArray(): The len == 2*(EA_DEFAULT_SZ after we call\
 		  2*(DEFAULT_SIZE)", ea->len == 2 * EA_DEFAULT_SZ);
 	mu_assert("growElementArray(): should not change nElements\
@@ -138,7 +137,7 @@ test_getElementAt(){
 char *
 test_appendElementArray(){
 	int i;
-	int size = 40;
+	int size = 20;
 	char typeId[20] = "testType";
 	
 	struct ElementArray *ea1 = newElementArray();
