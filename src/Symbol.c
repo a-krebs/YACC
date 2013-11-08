@@ -798,64 +798,70 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	Symbol *arrayTypeSym = NULL;
 	Symbol *indexTypeSym = NULL;
 	Symbol *arg = indices;
-	int i, arrayDim, nArgs, typeErr = 0;
+	int typeErr = 0;
 
 	if (!var) {
 		return NULL;
 	}
-
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
-		errMsg = customErrorString("Trying to access by "
-		    "subscription %s which is not of type ARRAY but of "
-		    "type %s", var->name,
-		    typeToString(getType(arrayTypeSym)));
-		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return NULL;
+		return arrayTypeSym;
 	}
-	arrayDim = getArrayDim(arrayTypeSym);
-	nArgs = getSymbolListLength(indices);
+//	arrayDim = getArrayDim(arrayTypeSym);
+//	nArgs = getSymbolListLength(indices);
 
-	if (arrayDim != nArgs) {
-		errMsg = customErrorString("Trying to access array %s of "
-		    "dimension %d with %d index/indices.", var->name,
-		    arrayDim, nArgs);
-		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return NULL;
-	}
+//	if (arrayDim != nArgs) {
+//		errMsg = customErrorString("Trying to access array %s of "
+//		    "dimension %d with %d index/indices.", var->name,
+//		    arrayDim, nArgs);
+//		recordError(errMsg, yylineno, colno, SEMANTIC);
+//		return NULL;
+//	}
 
 	indexTypeSym = getArrayIndexSym(arrayTypeSym);
-	for (i = 0; i < nArgs; i++) {
+	while ( (arg) && (getType(arrayTypeSym) == ARRAY_T)) {
 		switch (getType(indexTypeSym)) {
-			case SCALAR_T:
-				if (!isConstInScalar(arg, indexTypeSym))
-				    typeErr = 1;
-				break;
-			case SUBRANGE_T:
-				if (!areSameType(
-				    getSubrangeBaseTypeSym(indexTypeSym),
-				    getTypeSym(arg))) typeErr = 1;
-				break;
-			default:
-				if (!areSameType(indexTypeSym,
-				     getTypeSym(arg))) typeErr = 1;
-				break;	
+		case SCALAR_T:
+			if (!isConstInScalar(arg, indexTypeSym))
+			    typeErr = 1;
+			break;
+		case SUBRANGE_T:
+			if (!areSameType(
+			    getSubrangeBaseTypeSym(indexTypeSym),
+			    getTypeSym(arg))) typeErr = 1;
+			break;
+		default:
+			if (!areSameType(indexTypeSym,
+			     getTypeSym(arg))) typeErr = 1;
+			break;	
 		}
 		if (typeErr) {
 			errMsg = customErrorString("Invalid array "
-			    "subscript.  Expected type %s at position "
+			    "subscript.  Expected type %d "
 			    "%d but got %s",
-		    	    typeToString(getType(indexTypeSym)), i,
+		    	    typeToString(getType(indexTypeSym)),
 		    	    typeToString(getType(arg)));
 			recordError(errMsg, yylineno, colno, SEMANTIC);
-			return NULL;
 		}
+		typeErr = 0;
+		arrayTypeSym = getArrayBaseSym(arrayTypeSym);
 		indexTypeSym = getArrayIndexSym(arrayTypeSym);
+		arg = arg->next;
 	}
 
-	/* Got here, it was a valid array access!  YAY! */	
-	return getArrayTerminalTypeSym(arrayTypeSym);
+	/* Else are ready to return the base type */
+
+	arrayTypeSym = getArrayBaseSym(arrayTypeSym);
+	//printf("%s\n", typeToString(getType(arrayTypeSym)));
+	if (arg) {
+		/* Didn't exhaust args, but exhausted arrays.
+		 * Return arrayTypeSym */
+		recordError("Illegal array access -- too many indices.",
+		    yylineno, colno, SEMANTIC);
+		return arrayTypeSym;
+	} 
+	return getArrayBaseSym(arrayTypeSym);
 }
 
 
