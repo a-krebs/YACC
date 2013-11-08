@@ -19,8 +19,10 @@ Symbol *createScalarListType(char*);
 Symbol *createArrayType(Symbol*, Symbol*);
 Symbol *assertArrIndexType(Symbol*);
 Symbol *createRangeType(ProxySymbol*, ProxySymbol*);
-Symbol *createRecordType(ProxySymbol*);
-Symbol *appendFieldToRecordType(ProxySymbol*, ProxySymbol*);
+Symbol *createRecordType(struct ElementArray*);
+struct ElementArray *createRecordMemberList(ProxySymbol*);
+struct ElementArray *appendToRecordMemberList(
+    struct ElementArray*, ProxySymbol*);
 ProxySymbol *newRecordFieldProxy(char*, Symbol*);
 
 /* var decl list */

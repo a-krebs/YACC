@@ -239,23 +239,31 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 }
 
 /*
- * Create a new record type from the given proxy. the proxy contains the name
- * of a field and the type of that field.
+ * Create a new record type from the array of fields.
  *
  * Return a pointer to the new record type symbol.
  */
-Symbol *createRecordType(ProxySymbol *first_field) {
+Symbol *createRecordType(struct ElementArray *fields) {
 	return NULL;
 }
 
 /*
- * Add a field to the given record type. The proxy new_field contains
- * the name and type of the new record field.
+ * Create a new element array from the given proxy symbol.
  *
- * Return a pointer to the record type.
+ * Return a pointer to the new array.
  */
-Symbol *appendFieldToRecordType(Symbol *record_type, ProxySymbol *new_field) {
-	return record_type;
+struct ElementArray *createRecordMemberList(ProxySymbol *field) {
+	return NULL;
+}
+
+/*
+ * Append the given proxySymbol to the array of fields.
+ *
+ * Return a pointer to the array.
+ */
+struct ElementArray *appendToRecordMemberList(
+    struct ElementArray *array, ProxySymbol *field) {
+	return array;
 }
 
 /*
