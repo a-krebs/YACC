@@ -707,6 +707,40 @@ isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 	return 1;
 }
 
+Symbol *
+isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
+{
+	struct ElementArray *params = NULL;
+	Symbol *passedParam, *expectedParam = NULL;
+	int i;
+
+	params = s->kindPtr.FuncKind->params;
+	if (params->nElements != ea->nElements) {
+		errMsg = customErrorString("Procedure %s expects %d "
+		    "parameters, got %d", s->name, params->nElements,
+		    ea->nElements);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		printError(e);	
+		return NULL;	
+	}
+
+
+	for (i = 0; i < params->nElements; i++) {
+		passedParam = (Symbol *) getElementAt(ea, i);
+		expectedParam = (Symbol *) getElementAt(params, i);
+		if (!areSameType(passedParam, expectedParam)) {
+			errMsg = customErrorString("Procedure %s expects "
+			    "argument of type %s at index %d, but got "
+			    "argument of type %s", s->name,
+			    typeToString(getType(expectedParam)),
+			    typeToString(getType(passedParam)));
+			e = recordError(errMsg, yylineno, colno, SEMANTIC);
+			printError(e);
+			return NULL;
+		}
+	}
+	return getTypeSym(s);
+}
 
 /*
  * Given a linked list of ProxySymbols, returns the type which results
