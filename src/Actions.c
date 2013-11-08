@@ -488,6 +488,8 @@ Symbol *doVarDecl(char *id, Symbol *type) {
  * This is a good time to pop lexical level.
  */
 void exitProcOrFuncDecl(void) {
+	printf("Popping lex level at line %d, from %d to %d\n", yylineno,
+	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
 	popLexLevel(symbolTable);
 }
 
@@ -587,7 +589,6 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error
 	}
-	incrementLexLevel(symbolTable);
 	incrementLexLevel(symbolTable);
 	/* Push params as local variables on new lexical level */
 	lvl = getCurrentLexLevel(symbolTable);
