@@ -1,0 +1,11 @@
+{10}
+{
+    Test that operations work
+}
+program test(input, output);
+var
+        i : integer;
+        r : real;
+begin
+        i := i * r;        // error
+end.
