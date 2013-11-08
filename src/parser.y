@@ -138,7 +138,7 @@ structured_type
 : ARRAY array_type_decl OF type
 	{ $<symbol>$ = createArrayType($<symbol>2, $<symbol>4); }
 | RECORD field_list END
-	{ $<symbol>$ = $<symbol>2; }
+	{ $<symbol>$ = createRecordType($<elemarray>2); }
 ;
 
 array_type_decl
@@ -164,9 +164,9 @@ array_type
 
 field_list
 : field
-	{ $<symbol>$ = createRecordType($<proxy>1); }
+	{ $<elemarray>$ = createRecordMemberList($<proxy>1); }
 | field_list SEMICOLON field
-	{ $<symbol>$ = appendFieldToRecordType($<symbol>1, $<proxy>3); }
+	{ $<elemarray>$ = appendToRecordMemberList($<elemarray>1, $<proxy>3); }
 ;
 
 field
@@ -396,14 +396,7 @@ proc_invok
 	  procInvok($<id>1, NULL); }
 ;
 
-// duplicated once for functions and once for procedures
-plist_pinvok
-: ID_or_err L_PAREN parm
-	{ procInvok($<id>1, $<elemarray>3); }
-| plist_pinvok comma_or_error parm
-	{ // parm returns the list of arguments
-	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
-;
+
 
 func_invok
 : plist_finvok R_PAREN
@@ -412,24 +405,41 @@ func_invok
 | ID_or_err L_PAREN R_PAREN
 	{ /* TODO might want to explicitly use an empty arg list here */
 	  $<proxy>$ = funcInvok($<id>1, NULL); }
-| plist_finvok error R_PAREN
+/*| plist_finvok error R_PAREN
 	{ $<proxy>$ = funcInvok($<id>1, NULL);
 	  yyerrok; }
+*/
+;
+
+// duplicated once for functions and once for procedures
+plist_pinvok
+: ID_or_err L_PAREN parm_list
+	{ procInvok($<id>1, $<elemarray>3); }
+//| plist_pinvok comma_or_error parm
+//	{ // parm returns the list of arguments
+//	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 ;
 
 // duplicated once for functions and once for procedures
 plist_finvok
-: ID_or_err L_PAREN parm
+: ID_or_err L_PAREN parm_list
 	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
-| plist_finvok comma_or_error parm
-	{ // parm returns the list of arguments
-	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+//| plist_finvok comma_or_error parm
+//	{ // parm returns the list of arguments
+//	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+;
 
+parm_list
+: parm 	{ $<elemarray>$ = $<elemarray>1;}
+| parm_list comma_or_error parm
+	{ 	  
+	    $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 ;
 
 parm
 : expr
 	{ // TODO can we use the same action as for function decl?
+	  //$<elemarray>$ = createArgList($<proxy>1); }
 	  $<elemarray>$ = createArgList($<proxy>1); }
 ;
 
@@ -518,8 +528,5 @@ yyerror(char *s) {
 #if DEBUG
         printf("New error on line %d\n", yylineno);
 #endif
-	if (givenArgs.q == 0) {
-        	printError(e);
-	}
         if (errMsg) free(errMsg);
 }

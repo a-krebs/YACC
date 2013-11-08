@@ -1,0 +1,9 @@
+{}
+program test(input, output);
+type
+	r = record
+		i : integer;
+		r : real
+	end;
+begin
+end.

@@ -38,10 +38,16 @@ void setSymbolName(Symbol *, char *);
 /* Semantic validation functions */
 int isConstInScalar(Symbol *, Symbol *);
 int isValidProcInvocation(Symbol *, struct ElementArray *);
+int isElementArraySimple(struct ElementArray *elementArray);
 
 Symbol * isValidFuncInvocation(Symbol *, struct ElementArray *);
 Symbol * isValidArrayAccess(Symbol *, ProxySymbol *);
 
 
 struct Param *newParameter(char *, Symbol *);
+
+/* functios for working with records */
+Symbol *newRecordTypeSym(int, char*);
+int addFieldToRecord(Symbol*, ProxySymbol*);
+void freeProxySymbol(ProxySymbol*);
 #endif

@@ -7,12 +7,14 @@
 #include <string.h>
 
 #include "Error.h"
+#include "ErrorLL.h"
 #include "Globals.h"
 #include "Hash.h"
 #include "PreDef.h"
 
 
 /* Macros and const string variable declarations. */
+
 
 /* Global variables. */
 extern struct preDefTypeSymbols *preDefTypeSymbols;

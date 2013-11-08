@@ -144,6 +144,10 @@ unsigned int getHashedKeyNormal(char *string) {
         int c;
 
         for ( int i = 0; i < strlen(string); i++ ) {
+		if ( i >= TABLE_SIZE ) {
+			break;
+		}
+
                 c = string[i];
                 x = ((x << 5) + x) + c; //x * 33 + c
         }
@@ -599,7 +603,7 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
                 if (key == NULL) {
                         return 5;
                 }
-                printf("Hashed value %d\n", getHashIndex(hash, key));
+                //printf("Hashed value %d\n", getHashIndex(hash, key));
         }
 
         index = getHashIndex(hash, key);      

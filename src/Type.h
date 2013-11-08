@@ -36,6 +36,8 @@ struct Array *newArray(Symbol *, Symbol *);
 
 struct Subrange *newSubrange(Symbol*, Symbol *);
 
+struct Record *newRecord();
+
 Type *getTypePtr(Symbol *);
 
 Type newAnonConstType(AnonConstVal, type_t);

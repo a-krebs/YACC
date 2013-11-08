@@ -60,10 +60,10 @@ struct Symbol *createPreDefType(char *name, type_t type) {
 
 struct preDefTypeSymbols *initializePreDefTypes() {
 	struct preDefTypeSymbols *preDefs = malloc(sizeof(struct preDefTypeSymbols));	
-	preDefs->boolean = createPreDefType(BOOLEAN_KEY, TYPE_KIND);
-	preDefs->chars = createPreDefType(CHAR_KEY, TYPE_KIND);
-	preDefs->integer = createPreDefType(INTEGER_KEY, TYPE_KIND);
-	preDefs->real = createPreDefType(REAL_KEY, TYPE_KIND);
+	preDefs->boolean = createPreDefType(BOOLEAN_KEY, BOOLEAN_T);
+	preDefs->chars = createPreDefType(CHAR_KEY, CHAR_T);
+	preDefs->integer = createPreDefType(INTEGER_KEY, INTEGER_T);
+	preDefs->real = createPreDefType(REAL_KEY, REAL_T);
 
 	createHashElement(symbolTable, BOOLEAN_KEY, preDefs->boolean);
 	createHashElement(symbolTable, CHAR_KEY, preDefs->chars);
@@ -72,7 +72,6 @@ struct preDefTypeSymbols *initializePreDefTypes() {
 
 	return preDefs;
 }
-
 
 struct Symbol *createPreDefProc(char *name) {
 	struct Symbol *symbol;

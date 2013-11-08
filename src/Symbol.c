@@ -8,12 +8,14 @@
 #include "ErrorLL.h"
 #include "Type.h"
 #include "Symbol.h"
+#include "Hash.h"
 
 extern int yylineno;
 extern int colno;
 
 
 static char *errMsg;
+struct Error *e;
 
 /*
  * Constructs a	named type symbol given a ptr to another type symbol.
@@ -550,6 +552,91 @@ setSymbolName(Symbol *s, char *id)
 	strcpy(s->name, id);
 }
 
+/*
+ * Create a new symbol for a record type defintion to be added to the symbol
+ * table.
+ * 
+ * Return a pointer to the new type symbol.
+ */
+
+Symbol *newRecordTypeSym(int lvl, char *id)
+{
+	Symbol *newRecType = NULL;	/* new symbol to be created */
+
+	newRecType = calloc(1, sizeof(Symbol));
+	if (!newRecType) {
+		err(1, "Failed to allocate memory for new symbol!");
+		exit(1);
+	}
+	
+	setSymbolName(newRecType, id);
+	newRecType->kind = TYPE_KIND;
+	allocateKindPtr(newRecType);
+	newRecType->kindPtr.TypeKind->type = RECORD_T;
+	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
+
+	newRecType->lvl = lvl;
+
+	/* this is an anonymous type */
+	newRecType->typeOriginator = 1;
+
+	return newRecType;
+}
+
+/*
+ * Add the given field to the record type.
+ *
+ * Return 0 on success and non-zero on error.
+ * 	return 	-2 if adding hash element to record fails
+ * 		-1 on argument error
+ * 		1 on recType type error
+ * 		2 on field type error
+ */
+int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
+
+	Symbol *newField = NULL;
+	int recordLvl = -1;
+	char *id = NULL;
+	struct hash *recordHash = NULL;
+	int nameLen = 0;
+
+	/* check arguments */
+	if (!recType) {
+		return -1;
+	}
+	if (!newField) {
+		return -1;
+	}
+
+	/* check record symbol for correct kind */
+	if (recType->kind != TYPE_KIND) {
+		return 1;
+	}
+	if (recType->kindPtr.TypeKind->type != RECORD_T) {
+		return 1;
+	}
+
+	/* check field symbol for correct kind */
+	if (newField->kind != VAR_KIND) {
+		return 2;
+	}
+
+	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
+	recordLvl = getCurrentLexLevel(recordHash);
+	
+	nameLen = strlen(field->name);
+	id = calloc(nameLen + 1, sizeof(char));
+	id = strncpy(id, field->name, nameLen);
+
+	newField = newVariableSym(
+	    recordLvl, id, field->kindPtr.VarKind->typeSym);
+
+	if (createHashElement(recordHash, id, newField) != 0) {
+		return -2;
+	}
+
+	return 0;
+}
 
 /*
  * Determines if the given symbol is a const which appears in the given
@@ -585,6 +672,76 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
 		}
 	}	
 	return 0;
+}
+
+int
+isValidProcInvocation(Symbol *s, struct ElementArray *ea)
+{
+	struct ElementArray *params = NULL;
+	Symbol *passedParam, *expectedParam = NULL;
+	int i;
+
+	params = s->kindPtr.ProcKind->params;
+	if (params->nElements != ea->nElements) {
+		errMsg = customErrorString("Procedure %s expects %d "
+		    "parameters, got %d", s->name, params->nElements,
+		    ea->nElements);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		printError(e);	
+		return 1;	
+	}
+
+
+	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
+		passedParam = (Symbol *) getElementAt(ea, i);
+		expectedParam = (Symbol *) getElementAt(params, i);
+		if (!areSameType(passedParam, expectedParam)) {
+			errMsg = customErrorString("Procedure %s expectes "
+			    "argument of type %s at index %d, but got "
+			    "argument of type %s", s->name,
+			    typeToString(getType(expectedParam)),
+			    typeToString(getType(passedParam)));
+			e = recordError(errMsg, yylineno, colno, SEMANTIC);
+			printError(e);
+			return 0;
+		}
+	}
+	return 1;
+}
+
+Symbol *
+isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
+{
+	struct ElementArray *params = NULL;
+	Symbol *passedParam, *expectedParam = NULL;
+	int i;
+
+	params = s->kindPtr.FuncKind->params;
+	if (params->nElements != ea->nElements) {
+		errMsg = customErrorString("Procedure %s expects %d "
+		    "parameters, got %d", s->name, params->nElements,
+		    ea->nElements);
+		e = recordError(errMsg, yylineno, colno, SEMANTIC);
+		printError(e);	
+		return NULL;	
+	}
+
+
+	for (i = 0; i < params->nElements; i++) {
+		passedParam = (Symbol *) getElementAt(ea, i);
+		expectedParam = (Symbol *) getElementAt(params, i);
+		if (!areSameType(passedParam, expectedParam)) {
+			errMsg = customErrorString("Procedure %s expects "
+			    "argument of type %s at index %d, but got "
+			    "argument of type %s", s->name,
+			    typeToString(getType(expectedParam)),
+			    typeToString(getType(passedParam)));
+			e = recordError(errMsg, yylineno, colno, SEMANTIC);
+			printError(e);
+			return NULL;
+		}
+	}
+	return getTypeSym(s);
 }
 
 /*
@@ -629,10 +786,6 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 
 	indexTypeSym = getArrayIndexSym(arrayTypeSym);
 	for (i = 0; i < nArgs; i++) {
-// TODO:
-// need to get base type of the index sym for the array and compare that to the
-// type of the index.  this happens different based on if the index
-// type is a subrange or a scalar	
 		switch (getType(indexTypeSym)) {
 			case SCALAR_T:
 				if (!isConstInScalar(arg, indexTypeSym))
@@ -725,4 +878,42 @@ getArrayBaseSym(Symbol *s)
 	if (getType(s) != ARRAY_T) return NULL;
 	return getTypePtr(s)->Array->baseTypeSym;
 
+}
+
+/* Checks each memeber of the passed ElementArray to see if each
+ * memeber is of simple type.
+ *
+ * Parameters:
+ *              elementArray: elementArray passed
+ *
+ * Return: Boolean: 1 if elemetn array is simple
+ *		    0 if not
+ */
+int isElementArraySimple(struct ElementArray *elementArray) {
+	struct Symbol *symbol;
+	type_t symbolsType;
+
+	for (int i = 0; i < elementArray->nElements; ++i) {
+		symbol = (struct Symbol *) getElementAt(elementArray, i);
+
+		if ( symbol->kind != TYPE_KIND ) {
+			return 0;
+		}
+
+		symbolsType = getType(symbol);
+
+		if ( symbolsType != BOOLEAN_T
+			&& symbolsType != CHAR_T
+			&& symbolsType != INTEGER_T
+			&& symbolsType != REAL_T
+			&& symbolsType != STRING_T ) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+void freeProxySymbol(ProxySymbol *p) {
+	free(p);
 }
