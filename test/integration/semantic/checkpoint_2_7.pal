@@ -1,7 +1,35 @@
-{}
+{19,24,29}
 {
-	Team YACC Checkpoint 2 Test 7
+		Team YACC Checkpoint 2 Test 7
+	line 19 variable c is not in ordinal type (error 1)
+	line 23 writeln cannot be called without any arguments (error 2)
+	line 29 passing a function to writeln as a parameter (error 3)
+	
 }
-program test7(input, output);
+program io(input,output);
+type 
+	int = integer;
+	haha = array[1..10]of integer;
+var	
+	a : int;
+	b : real;
+	c : haha;
+	d : boolean;
 begin
+	writeln(a,b,c,'bla bla and bla');
+	{error 1 :variable c is not in ordinal type}
+	writeln(a,a,a,a,a);
+	b:=a * 1000.0;
+	writeln(b,a,a,b);
+	writeln();
+	{error 2 :writeln cannot be called without any arguments}
+	writeln(a,a,a,a,a,a,a,a,a,a,a);
+	b:=a;
+	b:= b + b;
+	b:= b * 2;
+	writeln(writeln(a,c));
+	{error 3 :passing a function to writeln as a parameter}
+	b:= 321831.323;
+	b:= 1;
+	
 end.
