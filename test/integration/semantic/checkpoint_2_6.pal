@@ -3,8 +3,8 @@
 	Team YACC Checkpoint 2 Test 6 (check array)
 
 	line 13: low and high index are in different type.(error 1)
-	line 22: c is incompatiable arg for procedure test().(error 2)
-	line 22: d is undefined in procedure test(error 3)
+	line 21: c is incompatiable arg for procedure test().(error 2)
+	line 28: d is undefined in procedure test(error 3)
 }
 program test6(input,output);
 type
