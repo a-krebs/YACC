@@ -1,0 +1,41 @@
+{31,32,37,38,39,40}
+
+{
+	test various variable scope things.
+}
+program scopeTest1(input, output);
+var
+	a : integer;
+	b : integer;
+function scope1() : integer;
+	var
+		c : integer;
+		d : integer;
+	function scope2() : intger;
+		var
+			e : integer;
+			f : integer;
+		begin
+			a := 3;
+			b := 3;
+			c := 3;
+			d := 3;
+			e := 3;
+			f := 3;
+		end;
+	begin
+		a := 2;
+		b := 2;
+		c := 2;
+		d := 2;
+		e := 2;		// error, out of scope
+		f := 2;		// error, out of scope
+	end;
+begin
+	a := 1;
+	b := 1;
+	c := 1;		// error, out of scope
+	d := 1;		// error, out of scope
+	e := 1;		// error, out of scope
+	f := 1;		// error, out of scope
+end.
