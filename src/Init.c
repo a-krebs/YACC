@@ -1,6 +1,5 @@
 #include "Init.h"
 
-
 int initialize() { 
 	symbolTable = createHash(&getHashedKeyNormal);
 	if (symbolTable == NULL)  {
@@ -8,11 +7,14 @@ int initialize() {
 		exit(EXIT_FAILURE);
 	}
 
-	preDefTypeSymbols = initializePredDefs();
+	preDefTypeSymbols = initializePreDefTypes();
 	if (preDefTypeSymbols == NULL) {
 		err(1, "Could not create pre-defined types.");
 		exit(EXIT_FAILURE);
 	}
+
+	initializePreDefProc();
+
 
 	return 0;
 }
