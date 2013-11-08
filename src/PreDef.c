@@ -24,7 +24,7 @@ Symbol *getPreDefReal(struct preDefTypeSymbols *preDefTypeSymbols) {
 }
 
 
-struct Symbol *createPreDef(char *name, type_t type) {
+struct Symbol *createPreDefType(char *name, type_t type) {
 	struct Symbol *symbol = malloc(sizeof(struct Symbol));
 
 	setSymbolName(symbol, name);
@@ -50,7 +50,7 @@ struct Symbol *createPreDef(char *name, type_t type) {
 		exit(EXIT_FAILURE);
 	}
 
-	symbol->lvl = 0; ///fix this
+	symbol->lvl = getCurrentLexLevel(symbolTable);
 	symbol->typeOriginator = 1;
 	symbol->next = NULL;
 
@@ -58,12 +58,12 @@ struct Symbol *createPreDef(char *name, type_t type) {
 }
 
 
-struct preDefTypeSymbols *initializePredDefs() {
+struct preDefTypeSymbols *initializePreDefTypes() {
 	struct preDefTypeSymbols *preDefs = malloc(sizeof(struct preDefTypeSymbols));	
-	preDefs->boolean = createPreDef(BOOLEAN_KEY, TYPE_KIND);
-	preDefs->chars = createPreDef(CHAR_KEY, TYPE_KIND);
-	preDefs->integer = createPreDef(INTEGER_KEY, TYPE_KIND);
-	preDefs->real = createPreDef(REAL_KEY, TYPE_KIND);
+	preDefs->boolean = createPreDefType(BOOLEAN_KEY, TYPE_KIND);
+	preDefs->chars = createPreDefType(CHAR_KEY, TYPE_KIND);
+	preDefs->integer = createPreDefType(INTEGER_KEY, TYPE_KIND);
+	preDefs->real = createPreDefType(REAL_KEY, TYPE_KIND);
 
 	createHashElement(symbolTable, BOOLEAN_KEY, preDefs->boolean);
 	createHashElement(symbolTable, CHAR_KEY, preDefs->chars);
@@ -71,4 +71,46 @@ struct preDefTypeSymbols *initializePredDefs() {
 	createHashElement(symbolTable, REAL_KEY, preDefs->real);
 
 	return preDefs;
+}
+
+
+struct Symbol *createPreDefProc(char *name) {
+	struct Symbol *symbol;
+
+	symbol = calloc(1, sizeof(struct Symbol));
+	if (symbol == NULL) {
+		err(1, "Failed to allocate memory for symbol name!");
+		exit(EXIT_FAILURE);
+	}
+
+	setSymbolName(symbol, name);
+	symbol->kind = PROC_KIND;
+
+	allocateKindPtr(symbol);
+	symbol->kindPtr.ProcKind->params = NULL;
+
+	symbol->lvl = getCurrentLexLevel(symbolTable);
+	symbol->typeOriginator = 0;
+	symbol->next = NULL;
+
+	return symbol;
+}
+
+
+int initializePreDefProc() {
+	struct Symbol *symbol;
+
+	symbol = createPreDefProc(WRITE);
+	createHashElement(symbolTable, WRITE, symbol);
+
+	symbol = createPreDefProc(WRITELN);
+	createHashElement(symbolTable, WRITELN, symbol);
+
+	symbol = createPreDefProc(READ);
+	createHashElement(symbolTable, READ, symbol);
+
+	symbol = createPreDefProc(READLN);
+	createHashElement(symbolTable, READLN, symbol);
+
+	return 0;
 }

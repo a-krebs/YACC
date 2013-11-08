@@ -12,10 +12,19 @@
 
 
 /* Macros and const string variable declarations. */
+
+//pre-defined types:
 #define BOOLEAN_KEY "boolean"
 #define CHAR_KEY "char"
 #define INTEGER_KEY "integer"
 #define REAL_KEY "real"
+
+//pre-defined procedures:
+#define WRITE "write"
+#define WRITELN "writeln"
+#define READ "read"
+#define READLN "readln"
+
 
 /* Global variables. */
 struct preDefTypeSymbols {
@@ -34,7 +43,9 @@ Symbol *getPreDefBool(struct preDefTypeSymbols*);
 Symbol *getPreDefChar(struct preDefTypeSymbols*);
 Symbol *getPreDefInt(struct preDefTypeSymbols*);
 Symbol *getPreDefReal(struct preDefTypeSymbols*);
-struct Symbol *createPreDef(char *name, type_t type);
-struct preDefTypeSymbols *initializePredDefs();
+struct Symbol *createPreDefType(char *name, type_t type);
+struct preDefTypeSymbols *initializePreDefTypes();
+struct Symbol *createPreDefProc(char *name); 
+int initializePreDefProc();
 
 #endif
