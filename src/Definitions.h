@@ -139,6 +139,7 @@ struct Scalar {
 
 struct Record { 
 	/* each record implemented as its own symbol table */
+	struct hash *hash;
 };
 
 /*

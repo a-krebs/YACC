@@ -268,6 +268,26 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 	return s;
 }
 
+/*
+ * Return a pointer to a new record struct with no fields.
+ * 
+ * Fields can be added to the record struct later.
+ */
+struct Record *newRecord() {
+	struct Recrod *r = NULL;
+
+	r = calloc(1, sizeof(struct Record));
+	if (!r) {
+		err(1, "Failed to allocate memory for new record!");
+		exit(1);
+	}
+
+	/* give the record its own hash table */
+	r->hash = createHash(&getHashKeyNormal);
+
+	return r;
+}
+
 type_t
 getType(Symbol *s)
 {
