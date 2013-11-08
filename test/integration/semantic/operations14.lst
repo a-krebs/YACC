@@ -1,0 +1,28 @@
+1	|:	{22}
+2	|:	{
+3	|:	    Test that operations work	//18,19,20,21,22,25
+4	|:	}
+5	|:	program test(input, output);
+6	|:	const
+7	|:		foo = 'Party time aafter 415!!';
+8	|:		bar = 'Shorter string';
+9	|:	//type
+10	|:	//	colour = (red,green,blue);
+11	|:	var
+12	|:	//	i : integer;
+13	|:		b : boolean;
+14	|:	//	r : real;
+15	|:	//	c : colour;
+16	|:	begin
+17	|:		// equality
+18	|:	//	b := bar = i;	// error
+19	|:	//	b := bar = b;	// error
+20	|:	//	b := bar = r;	// error
+21	|:	//	b := bar = c;  	// error
+22	|:		b := bar = foo;	// error
+Error	|:	Error: Invalid expression. Types STRING and STRING not compatible with operator EQUAL (line 22, col 16)
+23	|:		b := bar = bar;
+24	|:	
+25	|:	//	i := i = i;	// error
+26	|:	end.
+27	|:	
