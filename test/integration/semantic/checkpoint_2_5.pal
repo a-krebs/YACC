@@ -1,7 +1,19 @@
 {}
 {
-	Team YACC Checkpoint 2 Test 5
+	Team YACC Checkpoint 2 Test 4
+	test some invalid type stuff
+
+	line ? - ll is not a type
+
 }
-program test5(input, output);
+program test4(input, output);
+type
+	colours = (green,an,yellow,purple,hills);
+	int = integer;
+var
+	ll : array [10..100] of array [colours] of array ['a'..'z'] of int;
+procedure variablethingWOOT(a : integer; b : boolean; d : ll);		//error
+begin
+end;
 begin
 end.
