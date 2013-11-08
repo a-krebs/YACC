@@ -53,7 +53,7 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
-CFLAGS+=	-Wall -std=c99 -g
+CFLAGS+=	-Wall -std=c99
 # exclude these flags from compiles involving Bison/Flex
 FLEXBISONFLAGEXCLUDES= -Wall -std=c99
 
