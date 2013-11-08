@@ -901,6 +901,10 @@ void procInvok(char *id, struct ElementArray *ea) {
 	if (!ea) {
 		ea = newElementArray();
 	}
+
+	if (isIOProc(s)) {
+		isValidIOProcInvocation(s, ea);
+	}
 	// this prints errors, so call it but ignore return value
 	isValidProcInvocation(s, ea);
 }
@@ -919,6 +923,7 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 		notDefinedError(id);
 		return NULL;
 	}
+
 	if (!argv) {
 		argv = newElementArray();
 	}
