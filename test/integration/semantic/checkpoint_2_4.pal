@@ -3,5 +3,10 @@
 	Team YACC Checkpoint 2 Test 4
 }
 program test4(input, output);
+type
+	colours = (green,and,yellow,purple,hills);
+	int = integer;
+var
+	ll : array [10..100] of array [colours] of ['a'..'z'] of int;
 begin
 end.
