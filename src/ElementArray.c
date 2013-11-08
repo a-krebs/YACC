@@ -121,8 +121,10 @@ getElementAt(struct ElementArray *ea, unsigned int i)
 void freeElementArray(struct ElementArray *ea) {
 	int i;
 	for (i = 0; i < (ea->nElements-1); i++) {
+		if(!ea->data[i]){
 			free(((Symbol **)ea->data)[i]->name);
 			free(ea->data[i]);
+		}
 	}
 	free(ea);
 	

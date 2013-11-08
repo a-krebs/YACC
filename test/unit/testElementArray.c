@@ -138,7 +138,7 @@ test_getElementAt(){
 char *
 test_appendElementArray(){
 	int i;
-	int size = 20;
+	int size = 40;
 	char typeId[20] = "testType";
 	
 	struct ElementArray *ea1 = newElementArray();
@@ -150,22 +150,17 @@ test_appendElementArray(){
 		appendElement(ea1,setUpTypeSymbol());
 		appendElement(ea2,setUpTypeSymbol());
 	}
-	printf("len1: %d len2: %d \n",ea1->len,ea2->len);
 	ea3 = appendElementArray(ea1,ea2);
-	printf("len3: %d \n",ea3->len);
-	printf("nElements %d\n",ea3->nElements);
-	//mu_assert("appendElementArray() new nElements should equal to size ",ea3->nElements ==(size*2));
+	mu_assert("appendElementArray() new nElements should equal to size ",ea3->nElements ==(size*2));
 	
 	for(i = 0; i < ea3->nElements; i++){
-	
-		printf("i %d\n",i);
 		sym = (Symbol *)getElementAt(ea3,i);
-		//mu_assert("appendElementArray() the name of symbol\
+		mu_assert("appendElementArray() the name of symbol\
 		 should be 'testType'",strcmp(sym->name,typeId)==0);
 	}
 	
 	
-	//freeElementArray(ea3);
+	freeElementArray(ea3);
 
 	return NULL;
 }
