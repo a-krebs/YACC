@@ -800,19 +800,18 @@ ProxySymbol *proxyRealLiteral(double value) {
 	return newConstProxySym(&value, realType);
 }
 
-
+ProxySymbol *proxyCharLiteral(struct String s) {
+	Symbol *charType = getPreDefChar(preDefTypeSymbols);
+	return newConstProxySym((s.str+1), charType);
+}
 
 /*
  * Make a new anonymous symbol with the given string.
  * Return a pointer to the hash symbol.
  */
-ProxySymbol *proxyStringLiteral(char *value) {
-	// TODO: we require the length of the string in order
-	// to avoid the cases where the string literal may have null
-	// bytes.
+ProxySymbol *proxyStringLiteral(struct String s) {
 	int lvl = getCurrentLexLevel(symbolTable);
-	int strlen = 0;
-	return newStringProxySym(lvl, value, strlen);
+	return newStringProxySym(lvl, (s.str+1), s.strlen);
 }
 
 /*
