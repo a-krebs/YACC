@@ -213,7 +213,7 @@ $(SRC)/generated_tokenTestParser.y: $(SRC)/tokenTestParser.y $(SRC)/definitions.
 	$(SED_INCLUDE)
 
 clean:
-	-rm -f $(BIN)/*.o $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
+	-rm -f $(BIN)/*.o core $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
 	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h
 	-rm -f $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
 	-rm -f $(SRC)/tokenTestParser.tab.c
