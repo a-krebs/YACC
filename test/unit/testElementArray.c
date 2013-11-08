@@ -187,7 +187,7 @@ test_hasDuplicateElement(){
 	appendElement(ea2,sym);
 	
 	sym1 = (Symbol *)setUpTypeSymbol();
-	sym1->name ="name2";
+	sym1->name ="name4";
 	appendElement(ea2,sym1);
 	
 	sym2 = (Symbol *)setUpTypeSymbol();
