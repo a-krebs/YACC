@@ -278,7 +278,6 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 	/*
 	 * Insure that values are bounded correctly (dependent on type ).
 	 */
-
 	switch(getType(constSymLow)) {
 	case INTEGER_T:
 		if (getConstVal(constSymLow)->Integer.value >
@@ -473,6 +472,7 @@ newConstProxySym(void * result, Symbol *typeSym)
 	Symbol *constSym = NULL;
 	double *doubleResult;
 	int *intResult;
+	char *charResult;
 	
 	constSym = calloc(1, sizeof(ProxySymbol));
 	if (!constSym) {
@@ -491,6 +491,9 @@ newConstProxySym(void * result, Symbol *typeSym)
 		intResult = (int *) result;
 		getConstVal(constSym)->Boolean.value = *intResult;
 		break;
+	case CHAR_T:
+		charResult = (char *) result;
+		getConstVal(constSym)->Char.value = *charResult;
 	case INTEGER_T:
 		intResult = (int *) result;
 		getConstVal(constSym)->Integer.value = *intResult;

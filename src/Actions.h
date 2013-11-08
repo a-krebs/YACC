@@ -69,7 +69,8 @@ ProxySymbol *unaryNotOp(ProxySymbol*);
 /* constants */
 ProxySymbol *proxyIntLiteral(int);
 ProxySymbol *proxyRealLiteral(double);
-ProxySymbol *proxyStringLiteral(char*);
+ProxySymbol *proxyStringLiteral(struct String);
+ProxySymbol *proxyCharLiteral(struct String);
 
 /* procedure and function invokations */
 void prodInvok(char*, struct ElementArray*);
@@ -81,3 +82,6 @@ struct ElementArray *concatArgLists(struct ElementArray*, struct ElementArray*);
 void continueLoop(void);
 void exitLoop(void);
 void endWhileLoop(void);
+
+/* utils */
+int getStrlen(struct String);
