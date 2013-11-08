@@ -48,7 +48,6 @@ void appendToHashBucket(struct hashElement *bucketHead, struct hashElement *newE
 int createHashElement(struct hash *hash, char *key, struct Symbol *symbolPtr);
 struct hash *createHash(unsigned int (*hashFunction)(char *));
 void dumpHash(struct hash *hash);
-int getLexLevel(struct hash *hash);
 void setLexLevel(struct hash *hash, int lexLevel);
 int getSymbolLexLevel(struct Symbol *symbol);
 int getCurrentLexLevel(struct hash *hash);

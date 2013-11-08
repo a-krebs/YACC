@@ -1,6 +1,8 @@
 
 #ifndef DEFINITIONS_H
 #define DEFINITIONS_H
+
+#include "Hash.h"
 /*
  * Mirrors design ideas in Piotr's nodes (CheckingAttributes.pdf)
  */
@@ -138,6 +140,7 @@ struct Scalar {
 
 struct Record { 
 	/* each record implemented as its own symbol table */
+	struct hash *hash;
 };
 
 /*

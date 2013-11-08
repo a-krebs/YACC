@@ -138,7 +138,7 @@ structured_type
 : ARRAY array_type_decl OF type
 	{ $<symbol>$ = createArrayType($<symbol>2, $<symbol>4); }
 | RECORD field_list END
-	{ $<symbol>$ = $<symbol>2; }
+	{ $<symbol>$ = createRecordType($<elemarray>2); }
 ;
 
 array_type_decl
@@ -164,9 +164,9 @@ array_type
 
 field_list
 : field
-	{ $<symbol>$ = createRecordType($<proxy>1); }
+	{ $<elemarray>$ = createRecordMemberList($<proxy>1); }
 | field_list SEMICOLON field
-	{ $<symbol>$ = appendFieldToRecordType($<symbol>1, $<proxy>3); }
+	{ $<elemarray>$ = appendToRecordMemberList($<elemarray>1, $<proxy>3); }
 ;
 
 field
@@ -430,7 +430,8 @@ plist_finvok
 parm
 : expr
 	{ // TODO can we use the same action as for function decl?
-	  $<elemarray>$ = createArgList($<proxy>1); }
+	  //$<elemarray>$ = createArgList($<proxy>1); }
+	  $<proxy>$ = createArgList($<proxy>1); }
 ;
 
 struct_stat
@@ -518,8 +519,5 @@ yyerror(char *s) {
 #if DEBUG
         printf("New error on line %d\n", yylineno);
 #endif
-	if (givenArgs.q == 0) {
-        	printError(e);
-	}
         if (errMsg) free(errMsg);
 }

@@ -7,6 +7,7 @@
 #include "Error.h"
 #include "Type.h"
 #include "Symbol.h"
+#include "Hash.h"
 
 extern int yylineno;
 extern int colno;
@@ -549,6 +550,91 @@ setSymbolName(Symbol *s, char *id)
 	strcpy(s->name, id);
 }
 
+/*
+ * Create a new symbol for a record type defintion to be added to the symbol
+ * table.
+ * 
+ * Return a pointer to the new type symbol.
+ */
+
+Symbol *newRecordTypeSym(int lvl, char *id)
+{
+	Symbol *newRecType = NULL;	/* new symbol to be created */
+
+	newRecType = calloc(1, sizeof(Symbol));
+	if (!newRecType) {
+		err(1, "Failed to allocate memory for new symbol!");
+		exit(1);
+	}
+	
+	setSymbolName(newRecType, id);
+	newRecType->kind = TYPE_KIND;
+	allocateKindPtr(newRecType);
+	newRecType->kindPtr.TypeKind->type = RECORD_T;
+	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
+
+	newRecType->lvl = lvl;
+
+	/* this is an anonymous type */
+	newRecType->typeOriginator = 1;
+
+	return newRecType;
+}
+
+/*
+ * Add the given field to the record type.
+ *
+ * Return 0 on success and non-zero on error.
+ * 	return 	-2 if adding hash element to record fails
+ * 		-1 on argument error
+ * 		1 on recType type error
+ * 		2 on field type error
+ */
+int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
+
+	Symbol *newField = NULL;
+	int recordLvl = -1;
+	char *id = NULL;
+	struct hash *recordHash = NULL;
+	int nameLen = 0;
+
+	/* check arguments */
+	if (!recType) {
+		return -1;
+	}
+	if (!newField) {
+		return -1;
+	}
+
+	/* check record symbol for correct kind */
+	if (recType->kind != TYPE_KIND) {
+		return 1;
+	}
+	if (recType->kindPtr.TypeKind->type != RECORD_T) {
+		return 1;
+	}
+
+	/* check field symbol for correct kind */
+	if (newField->kind != VAR_KIND) {
+		return 2;
+	}
+
+	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
+	recordLvl = getCurrentLexLevel(recordHash);
+	
+	nameLen = strlen(field->name);
+	id = calloc(nameLen + 1, sizeof(char));
+	id = strncpy(id, field->name, nameLen);
+
+	newField = newVariableSym(
+	    recordLvl, id, field->kindPtr.VarKind->typeSym);
+
+	if (createHashElement(recordHash, id, newField) != 0) {
+		return -2;
+	}
+
+	return 0;
+}
 
 /*
  * Determines if the given symbol is a const which appears in the given
@@ -756,4 +842,42 @@ getArrayBaseSym(Symbol *s)
 	if (getType(s) != ARRAY_T) return NULL;
 	return getTypePtr(s)->Array->baseTypeSym;
 
+}
+
+/* Checks each memeber of the passed ElementArray to see if each
+ * memeber is of simple type.
+ *
+ * Parameters:
+ *              elementArray: elementArray passed
+ *
+ * Return: Boolean: 1 if elemetn array is simple
+ *		    0 if not
+ */
+int isElementArraySimple(struct ElementArray *elementArray) {
+	struct Symbol *symbol;
+	type_t symbolsType;
+
+	for (int i = 0; i < elementArray->nElements; ++i) {
+		symbol = (struct Symbol *) getElementAt(elementArray, i);
+
+		if ( symbol->kind != TYPE_KIND ) {
+			return 0;
+		}
+
+		symbolsType = getType(symbol);
+
+		if ( symbolsType != BOOLEAN_T
+			&& symbolsType != CHAR_T
+			&& symbolsType != INTEGER_T
+			&& symbolsType != REAL_T
+			&& symbolsType != STRING_T ) {
+			return 0;
+		}
+	}
+
+	return 1;
+}
+
+void freeProxySymbol(ProxySymbol *p) {
+	free(p);
 }
