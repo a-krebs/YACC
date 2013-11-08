@@ -1,7 +1,30 @@
-{}
+{26, 29}
 {
-	Team YACC Checkpoint 2 Test 0
+	Team YACC checkpoint 2 test 8
+	lots of tests to do with records.
 }
-program test0(input, output);
+
+program test(in, out);
+type
+	r = record
+		i : integer;
+		r : record
+			j : real;
+			i : integer
+		end
+	end;
+var
+	myr : r;
+	myI : integer;
+	myR : real;
+procedure foo(a : integer; b : integer);
 begin
+end;
+begin
+	myI := myr.i;
+	myR := myr.r.j;
+	myI := myI.r;	// error
+	myI := myr.r.i;
+
+	foo(a, 10);	// error
 end.

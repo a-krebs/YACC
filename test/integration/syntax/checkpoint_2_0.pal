@@ -13,8 +13,7 @@ program (input,output);	{expect error: no program name}
 	type
 		abc = record
 			b : array[1.01..2.22] of integer	//error 
-		end
+		end;
 			
-	var
 	begin
 	end.
