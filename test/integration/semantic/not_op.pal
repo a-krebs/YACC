@@ -1,6 +1,6 @@
 {19,23,24}
 {
-    Test that operations work
+    Test that operations work   ///
 }
 program test(input, output);
 const

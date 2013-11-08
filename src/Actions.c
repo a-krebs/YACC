@@ -54,7 +54,11 @@ Symbol *assertOpCompat(
 	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
 	 * it is a unary operator) then we assume the best */ 
 	if ((!type1) && (isUnaryOperator(opToken))) {
-		if ((s2_t == REAL_T) || (s2_t == INTEGER_T)) return type2;
+		if ((s2_t == REAL_T) 
+			|| (s2_t == INTEGER_T)
+			|| (s2_t == BOOLEAN_T)) {
+			return type2;
+		}	
 		else {
 			opError(typeToString(s2_t), opToken, 
 			    typeToString(s2_t));
