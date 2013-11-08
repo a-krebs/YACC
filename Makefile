@@ -11,6 +11,7 @@ OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
+OBJS+=		$(BIN)/Init.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -81,9 +82,17 @@ SED_INCLUDE= 	sed -e "/<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->/r\
 all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
-debug: CFLAGS+= -g -DDEBUG -DYYDEBUG=1
+debug: CFLAGS+= -g
 debug: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug: $(EXE)
+
+debug_verbose: CFLAGS+= -g -DDEBUG -DYYDEBUG=1
+debug_verbose: YACCFLAGS += --report-file=$(BISONREPORT) -v
+debug_verbose: $(EXE)
+
+debug_hash: CFLAGS+= -g -DHASHDEBUG
+debug_hash: YACCFLAGS += --report-file=$(BISONREPORT) -v
+debug_hash: $(EXE)
 
 # Build main using tokenTestParser.y to analyze lexical tokens
 lextest: CFLAGS+= -g -DLEXTEST_DEBUG
@@ -143,6 +152,9 @@ $(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
 
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	
+
+$(BIN)/Init.o: $(SRC)/Init.c $(SRC)/Init.h 
+	$(COMPILE)		
 
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
@@ -209,7 +221,7 @@ $(SRC)/generated_tokenTestParser.y: $(SRC)/tokenTestParser.y $(SRC)/definitions.
 	$(SED_INCLUDE)
 
 clean:
-	-rm -f $(BIN)/*.o $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
+	-rm -f $(BIN)/*.o core $(LEXTEST_EXE) $(TESTEXE) $(EXE) 
 	-rm -f $(SRC)/lex.yy.c $(SRC)/parser.tab.h
 	-rm -f $(SRC)/parser.tab.c $(SRC)/tokenTestParser.tab.h
 	-rm -f $(SRC)/tokenTestParser.tab.c
@@ -218,7 +230,8 @@ clean:
 	-rm -f $(SRC)/generated_tokenTestParser.y
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
-	-rm -f ./*.pal
+	-rm -f 0.pal 1.pal 2.pal 3.pal 4.pal
+	-rm -f 5.pal 6.pal 7.pal 8.pal 9.pal
 
 # shortcuts for common actions
 build:

@@ -133,8 +133,7 @@ struct Subrange {
 };
 
 struct Scalar {
-	struct Symbol *consts;	/* linked list of const syms in scalar 
-				 * enumeration */
+	struct ElementArray *consts;
 };
 
 
@@ -174,11 +173,11 @@ struct ConstantKind {
 
 struct FunctionKind {
 	struct Symbol *typeSym;
-	struct ParamArray *params;
+	struct ElementArray *params;
 };
 
 struct ProcedureKind {
-	struct ParamArray *params;
+	struct ElementArray *params;
 };
 
 struct TypeKind {

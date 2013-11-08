@@ -265,7 +265,7 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 
 	s->low = low;
 	s->high = high;
-	s->baseTypeSym = lowSym;
+	s->baseTypeSym = typeSym;
 	return s;
 }
 
@@ -313,8 +313,7 @@ getType(Symbol *s)
 }
 
 
-Type
-newAnonConstType(AnonConstVal value, type_t type)
+Type newAnonConstType(AnonConstVal value, type_t type)
 {
 	Type anonConstType;
 	switch(type) {
@@ -357,9 +356,12 @@ newAnonConstType(AnonConstVal value, type_t type)
 		if (!constValPtr) typeMemoryFailure();
 				
 		constValPtr->strlen = constVal.strlen;
-		constValPtr->str = calloc(1, sizeof(char)*constVal.strlen);
-		if(!constValPtr->str) typeMemoryFailure();
-		strncpy(constValPtr->str, constVal.str, constVal.strlen);
+		if (constVal.strlen > 0) {
+			constValPtr->str = calloc(1, sizeof(char)*constVal.strlen);
+			if(!constValPtr->str) typeMemoryFailure();
+			strncpy(constValPtr->str, constVal.str, constVal.strlen);
+		}
+		anonConstType.String = constValPtr;
 		break;
 	}
 	default:
@@ -429,7 +431,7 @@ getTypePtr(Symbol *s)
 {
 	if (!s) return NULL;
 	if (s->kind != TYPE_KIND) return NULL;
-	printf("\n\n\n--------------------------------------\n\n\n");
+	// printf("\n\n\n--------------------------------------\n\n\n");
 	return &(s->kindPtr.TypeKind->typePtr);
 
 }

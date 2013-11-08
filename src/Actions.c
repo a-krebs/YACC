@@ -7,7 +7,9 @@
 
 #include "ElementArray.h"
 #include "Error.h"
+#include "Globals.h"
 #include "Hash.h"
+#include "PreDef.h"
 #include "Type.h"
 #include "Symbol.h"
 #include "Utils.h"
@@ -17,9 +19,11 @@
 #ifdef TESTBUILD
 #include "tokens.h"
 #endif
-extern struct hashElement *symbolTable[TABLE_SIZE];
 extern int yylineno;
 extern int colno;
+
+static char *errMsg;
+
 /*
  * Utility functions. Can maybe be refactored into own module.
  */
@@ -40,7 +44,6 @@ Symbol *assertOpCompat(
     Symbol *type1, int opToken, Symbol *type2) {
 	
 	type_t s1_t, s2_t;
-	char *errMsg;	
 	s1_t = getType(type1);
 	s2_t = getType(type2);
 
@@ -68,7 +71,7 @@ Symbol *assertOpCompat(
 
 	/* If the operator is relational, we just need op compatible types */
 	if ((isRelationalOperator(opToken)) && areOpCompatible(type1, type2)) {
-		return type1;
+		return getPreDefBool(preDefTypeSymbols);
 	}
 
 	if (areArithmeticCompatible(type1, type2)) {
@@ -77,14 +80,13 @@ Symbol *assertOpCompat(
 			case MINUS:
 			case MULTIPLY:
 				if (areBothInts(type1, type2)) {
-					/* Return pointer to int type */
 					return type1;
 				}
-				else return type1; /* ret ptr to real type */
+				else return getPreDefReal(
+				    preDefTypeSymbols);
 				break;
 			case DIVIDE:
-				/* return pointer to real type */
-				return type1;
+				return getPreDefReal(preDefTypeSymbols);
 			case DIV:
 			case MOD:
 				if (areBothInts(type1, type2)) {
@@ -107,9 +109,22 @@ Symbol *assertOpCompat(
  * Return 0 if the given types are assignment compatible, otherwise return
  * non-zero
  */
-int isAssignmentCompat(Symbol type1, Symbol type2) {
-	// TODO implement
-	return -1;
+int isAssignmentCompat(Symbol * type1, Symbol * type2) {
+	
+	if (areSameType(type1, type2)) {
+		return 1;
+	} else if (areCompatibleStrings(type1, type2)) {
+		return 1;
+	} else if ((getType(type1) == REAL_T) && 
+	    (getType(type2) == INTEGER_T)) {
+		return 1;
+	}
+
+	errMsg = customErrorString("The type %s cannot be assigned a value "
+	    "of type %s", typeToString(getType(type1)), 
+	    typeToString(getType(type2)));
+	recordError(errMsg, yylineno, colno, SEMANTIC);
+	return 0;
 }
 
 /*
@@ -122,7 +137,9 @@ int isAssignmentCompat(Symbol type1, Symbol type2) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
-	// TODO
+
+	// TODO: same a proc decl probably
+	// TODO push lexical level, figure this out
 }
 
 /*
@@ -137,8 +154,20 @@ void exitConstDeclPart(void) {
  * Extract the value and type information from the proxy.
  */
 void doConstDecl(char *id, ProxySymbol *proxy) {
-	// TODO implementation.
+	Symbol *s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
 	
+	/* Perform lookup for identifier in current lexical level */
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		/* throw symbol already declated at local lvl error */
+	}
+
+	/* Else we can try to make new const  and add it to symbol table */	
+	s = newConstSymFromProxy(lvl, id, proxy);		
+	if (s) {
+		createHashElement(symbolTable, id, s);
+	}
 }
 
 /*
@@ -152,14 +181,18 @@ void exitTypeDeclPart(void) {
  * Create a new type identifier symbol in the symbol table.
  */
 void doTypeDecl(char *id, Symbol *type) {
-	Symbol * newTypeSym = NULL;
-	int lvl = 0;	/* TODO: make this get actual lex lvl */
-	
-	newTypeSym = newTypeSymFromSym(lvl, id, type);
-	if (newTypeSym) {
-		/* add to symbol table */
-	}
+	Symbol * s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
 
+	s = getLocalSymbol(symbolTable, id);
+	if (s) {
+		/* throw already defined error */
+	}
+	
+	s = newTypeSymFromSym(lvl, id, type);
+	if (s) {
+		createHashElement(symbolTable, id, s);	
+	}
 	/* Else, error.  newTypeSymFromSym performs error checking */
 }
 
@@ -171,7 +204,22 @@ void doTypeDecl(char *id, Symbol *type) {
  * Return a pointer to the type.
  */
 Symbol *simpleTypeLookup(char *id) {
-	return NULL;
+	
+	Symbol *s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		errMsg = customErrorString("The identifier %s has not been "
+		  "defined.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	if (s->kind != TYPE_KIND) {
+		errMsg = customErrorString("The identifier %s is not a type. ",
+		    s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+	/* Else, we return the given type */
+	return s;
 }
 
 /*
@@ -197,11 +245,11 @@ Symbol *createScalarListType(char *id) {
  */
 Symbol *createArrayType(Symbol *index, Symbol *base) {
 	Symbol * newArraySym = NULL;
-	int lvl = 0;	/* TODO: get actual lexical level */
-
+	int lvl = getCurrentLexLevel(symbolTable);
+	
 	newArraySym = newAnonArraySym(lvl, base, index);
 	if (newArraySym) {
-		/* TODO: Add to symbol table */
+		createHashElement(symbolTable, NULL, newArraySym);
 		return newArraySym;
 	}
 
@@ -222,7 +270,10 @@ Symbol *assertArrIndexType(Symbol *index_type) {
 	sym_t = getType(index_type);
 
 	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
-		/* Set error */
+		errMsg = customErrorString("Invalid array index type %s. "
+		    " Must be of type SUBRANGE or of type SCALAR", 
+		    typeToString(sym_t));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 	return index_type;
@@ -235,7 +286,10 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  * Return a pointer to the new subrange type.
  */
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
-	return NULL;
+	Symbol *s = NULL;
+	int lvl = getCurrentLexLevel(symbolTable);
+	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
+	return s;
 }
 
 /*
@@ -288,6 +342,18 @@ void exitVarDeclPart(void) {
  * Return a pointer to type.
  */
 Symbol *doVarDecl(char *id, Symbol *type) {
+	Symbol *s = NULL;
+	int lvl = 0;
+	/* TODO: do local look up for symbol */
+
+	if ((!id) || !(type)) return NULL;
+
+	s = newVariableSym(lvl, id, type);
+
+	if (s) {
+		/* TODO: add s to the symbol table */
+	}
+
 	return type;
 }
 
@@ -309,8 +375,16 @@ void exitProcOrFuncDecl(void) {
  *
  * Return a pointer to the procedure.
  */
-Symbol *enterProcDecl(char *id, ProxySymbol *argv) {
-	return NULL;
+Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
+
+	Symbol *procSym = NULL;
+	int lvl = 0;
+	/* TODO: local lookup of id in symbol table */
+	
+	/* if the above lookup returned nothing... */
+
+	procSym = newProcSym(lvl, id, ea);
+	return procSym;
 }
 
 /*
@@ -321,8 +395,14 @@ Symbol *enterProcDecl(char *id, ProxySymbol *argv) {
  * 
  * Return a pointer to the procedure.
  */
-Symbol *enterFuncDecl(char *id, ProxySymbol *argv) {
-	return NULL;
+Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
+	Symbol *funcSym = NULL;
+	int lvl = 0;
+
+	/* TODO: local lookup of id in symbol table */
+
+	funcSym = newFuncSym(lvl, id, typeSym, ea);
+	return funcSym;
 }
 
 /*
@@ -330,8 +410,15 @@ Symbol *enterFuncDecl(char *id, ProxySymbol *argv) {
  *
  * Return a pointer to the parameter list.
  */
-ProxySymbol *createParmList(ProxySymbol *parm) {
-	return NULL;
+struct ElementArray *createParmList(Symbol *parm) {
+	struct ElementArray *ea = NULL;
+
+	if (!parm) return NULL;
+
+	ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, parm);
+	return ea;	
 }
 
 /*
@@ -339,9 +426,12 @@ ProxySymbol *createParmList(ProxySymbol *parm) {
  *
  * Return a poinnter to the parameter list.
  */
-ProxySymbol *appendParmToParmList(
-    ProxySymbol *parm_list, ProxySymbol *new_parm) {
-	return parm_list;
+struct ElementArray *appendParmToParmList(
+    struct ElementArray *ea, Symbol *parm) {
+
+	if ( !(ea) || !(parm) ) return NULL;
+	appendElement(ea, parm);	
+	return ea;
 }
 
 /*
@@ -349,8 +439,14 @@ ProxySymbol *appendParmToParmList(
  *
  * Return a pointer to the new parameter.
  */
-ProxySymbol *createNewParm(char *id, Symbol *type) {
-	return NULL;
+Symbol *createNewParm(char *id, Symbol *type) {
+	
+	/* TODO: NO LOOKUP IN SYMBOL TABLE NECESSARY */
+
+	int lvl = 0;
+
+	if ((!id) || (!type)) return NULL;
+	return newParamSym(lvl, id, type);
 }
 
 /*
@@ -358,8 +454,10 @@ ProxySymbol *createNewParm(char *id, Symbol *type) {
  *
  * Return a pointer to the new parameter.
  */
-ProxySymbol *createNewVarParm(char *id, Symbol *type) {
-	return NULL;
+Symbol *createNewVarParm(char *id, Symbol *type) {
+	Symbol *s = createNewParm(id, type);
+	if (s) s->kindPtr.ParamKind->byRef = 1;
+	return s;
 }
 
 /*
@@ -369,9 +467,16 @@ void assignOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 ProxySymbol *hashLookupToProxy(char *id) {
-	return NULL;
+	Symbol *s = NULL;
+	//s = getGlobalSymbol(hash, id);
+	if (!s) /* global lookup failed error (make function) */ return NULL;
+	return newProxySymFromSym(s);	
 }
 
+
+/*
+ * id1 == name of record, id3 == name of field we are trying to access
+ */
 ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
 	return NULL;
 }
@@ -381,17 +486,43 @@ ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
  *
  * Return a ProxySymbol of the expected type.
  */
-ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol *indexes) {
+ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
+	/* Record specific errors in isValidArrayAccess */
+	if (isValidArrayAccess((Symbol *) var, indices)) {
+		return newProxySymFromSym(getTypeSym((Symbol *) var));
+	}
 	return NULL;
 }
-
+/*
+ * TODO: cannot use element array to construct list of proxy syms
+ * as we are never explicitly constructing a list, just creating a bunch
+ * of expressions which have to be proxy symbols.  How to do this this then?
+ * Da Hack: link proxy symbols resulting from expressions through the
+ * symbol's *next ptr!  
+ */
 /*
  * Concatenate two arrays of array indexes, maintaining order.
  *
  * Return a pointer to a concatenated list.
  */
 ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
-	return list1;
+	/*
+	 * b/c we are parsing right to left, make list2 the head of the
+	 * linked list of proxy symbols
+ 	 * TODO: confirm this with Aaron
+	 */
+	if ((!list1) && (!list2)) {
+		return NULL;
+	}
+	if (!list1) {
+		return list2;
+	}
+	if (!list2) {
+		return list1;
+	}
+
+	list1->next = list2;
+	return list2;
 }
 
 /*
@@ -400,7 +531,11 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
  * Return a pointer to the new list.
  */
 ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
-	return NULL;
+	if (!exp) {
+		return NULL;
+	}
+	exp->next = NULL;
+	return exp;
 }
 
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
@@ -412,10 +547,8 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	 * with regard to insuring the propogation of a compile time
 	 * known funciton.
 	 */
-	if ((x->kind != CONST_KIND) || (y->kind != CONST_KIND)) {
-		return assertOpCompat(getTypeSym((Symbol *) x), EQUAL, 
-		    getTypeSym((Symbol *)y));
-	}	
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), EQUAL, getTypeSym((Symbol *)y)));
 
 	/* Else, we have two CONST_KIND symbols.  We must evaluate */
 
@@ -423,11 +556,13 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return NULL;
+	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
 }
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
@@ -521,8 +656,11 @@ ProxySymbol *proxyStringLiteral(char *value) {
  *
  * The argument argv contains a list of arguments.
  */
-void procInvok(char *id, ProxySymbol *argv) {
-	// TODO
+void procInvok(char *id, struct ElementArray *ea) {
+
+	/* TODO: global lookup for id */
+	/* if lookup successful, make sure it is a process */
+	/* if lookup successful, call isValidProcInvoke(symbol, ea) */
 }
 
 /*
@@ -532,7 +670,7 @@ void procInvok(char *id, ProxySymbol *argv) {
  *
  * Return a ProxySymbol containing the type returned.
  */
-ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
+ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 
 	return NULL;
 }
@@ -542,14 +680,13 @@ ProxySymbol *funcInvok(char *id, ProxySymbol *argv) {
  *
  * Return a pointer to a ProxySymbol containing the list.
  */
-struct ElementArray *createArgList(ProxySymbol *arg) {
+struct ElementArray *createArgList(Symbol *arg) {
 	struct ElementArray * ea = NULL;
 
 	if (!arg) {
 		/* ERROR */
 		return NULL;
 	}
-
 	ea = newElementArray();
 	growElementArray(ea);
 	appendElement(ea, getTypeSym(arg));	
@@ -563,8 +700,16 @@ struct ElementArray *createArgList(ProxySymbol *arg) {
  * Whether to add the arguments to one of the lists or two make a third
  * list and add all arguments is up to implementation.
  */
-ProxySymbol *concatArgLists(ProxySymbol *list1, ProxySymbol *list2) {
-	return list1;
+struct ElementArray *concatArgLists(
+    struct ElementArray *arr1, struct ElementArray *arr2) {
+	
+	if ((!arr1) && (!arr2)) return NULL;
+	if (!arr1) return arr2;
+	if (!arr2) return arr1;
+
+	// TODO concatenate the lists
+
+	return NULL;
 }
 
 /*

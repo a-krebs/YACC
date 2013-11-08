@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ElementArray.h"
 #include "Error.h"
 #include "Type.h"
 #include "Symbol.h"
@@ -68,7 +69,7 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	}
 
 	if ((baseTypeSym->kind != TYPE_KIND) || 
-	    (baseTypeSym->kind != TYPE_KIND)) {
+	    (baseTypeSym->kind != TYPE_KIND)) {	
 		errMsg = customErrorString("Cannot create array with given"
 		    "base type");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
@@ -94,9 +95,29 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	allocateKindPtr(newArraySym);
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
+	newArraySym->kindPtr.TypeKind->type = ARRAY_T;
 	newArraySym->lvl = lvl;
 	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
+}
+
+Symbol *
+newAnonScalarSym(int lvl, struct ElementArray *ea)
+{
+	Symbol *newAnonScalar = NULL;
+	newAnonScalar = calloc(1, sizeof(Symbol));
+
+	newAnonScalar->name = NULL;
+	newAnonScalar->kind = TYPE_KIND;
+	allocateKindPtr(newAnonScalar);
+
+	newAnonScalar->kindPtr.TypeKind->type = SCALAR_T;
+	getTypePtr(newAnonScalar)->Scalar = calloc(1, sizeof(struct Scalar));	
+
+	getTypePtr(newAnonScalar)->Scalar->consts = ea;
+	newAnonScalar->typeOriginator = 1;
+	newAnonScalar->lvl = lvl;
+	return newAnonScalar;
 }
 
 
@@ -152,7 +173,7 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 }
 
 Symbol *
-newParameterSym(int lvl, char *id, Symbol *typeSym)
+newParamSym(int lvl, char *id, Symbol *typeSym)
 {
 	Symbol *newParamSym = NULL;
 	if (!typeSym) {
@@ -176,6 +197,43 @@ newParameterSym(int lvl, char *id, Symbol *typeSym)
 	newParamSym->lvl = lvl;
 	return newParamSym;	
 }
+
+/*
+ * Constructs a new procedure symbol.
+ */
+Symbol *
+newProcSym(int lvl, char *id, struct ElementArray *ea)
+{
+	Symbol *s = NULL;
+	/* Error checking */
+	
+	s = calloc(1, sizeof(Symbol));
+	setSymbolName(s, id);
+	s->kind = PROC_KIND;
+	allocateKindPtr(s);
+	s->kindPtr.ProcKind->params = ea;
+	s->lvl = lvl;
+	s->typeOriginator = 0;
+	return s;	
+}
+
+/*
+ * Constructs a new function symbol.
+ */
+Symbol *
+newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
+{
+	Symbol *s = NULL;
+
+	s = calloc(1, sizeof(Symbol));
+	setSymbolName(s, id);
+	s->kind = FUNC_KIND;
+	allocateKindPtr(s);
+	s->kindPtr.FuncKind->params = ea;
+	s->kindPtr.FuncKind->typeSym = typeSym;
+	return s;
+}
+
 /*
  * Constructs an anonymous subrange symbol.
  */
@@ -369,7 +427,7 @@ getTypeSym(Symbol *s)
 	case PARAM_KIND:
 		return s->kindPtr.ParamKind->typeSym;
 	case PROC_KIND: 
-		/* Procedures do not have associate type symbols */
+		/* Procedures do not have associated type symbols */
 		return NULL;
 	case FUNC_KIND:
 		return s->kindPtr.FuncKind->typeSym;
@@ -382,6 +440,25 @@ getTypeSym(Symbol *s)
 		return NULL;
 	}
 }
+
+ProxySymbol *
+newProxySymFromSym(Symbol *s)
+{
+	ProxySymbol *ps = NULL;
+	if (!s) return NULL;
+
+	ps = calloc(1, sizeof(ProxySymbol));
+	if (s->name) {
+		setSymbolName((Symbol *)ps, s->name);
+	}
+
+	ps->kind = s->kind;
+	ps->kindPtr = s->kindPtr;
+	ps->typeOriginator = 0;
+	ps->lvl = s->lvl;
+	return ps;
+}
+
 
 /*
  * Creates a new CONST_KIND ProxySymbol using the result of a arithmetic,
@@ -430,10 +507,20 @@ ProxySymbol *
 newStringProxySym(int lvl, char *str, int strlen)
 {
 	ProxySymbol *newStringSym = NULL;
+	AnonConstVal anonStr;
+
 	newStringSym = calloc(1, sizeof (ProxySymbol));
+	anonStr.String.str = str;
+	anonStr.String.strlen = strlen;
+
 	newStringSym->name = NULL;
 	newStringSym->kind = TYPE_KIND;
 	allocateKindPtr(newStringSym);
+
+	newStringSym->kindPtr.TypeKind->type = STRING_T;
+	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
+	    anonStr, STRING_T);
+
 	getTypePtr(newStringSym)->String->strlen = strlen;
 	
 	if (strlen) {
@@ -516,6 +603,7 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	int recordLvl = -1;
 	char *id = NULL;
 	struct hash *recordHash = NULL;
+	int nameLen = 0;
 
 	/* check arguments */
 	if (!recType) {
@@ -540,7 +628,10 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 
 	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 	recordLvl = getCurrentLexLevel(recordHash);
-	id = strdup(field->name);
+	
+	nameLen = strlen(field->name);
+	id = calloc(nameLen + 1, sizeof(char));
+	id = strncpy(id, field->name, nameLen);
 
 	newField = newVariableSym(
 	    recordLvl, id, field->kindPtr.VarKind->typeSym);
@@ -552,3 +643,178 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	return 0;
 }
 
+/*
+ * Determines if the given symbol is a const which appears in the given
+ * symbol of kind TYPE_KIND and type SCALAR_T
+ * Why checking by name and lexical level is enough: each identifier
+ * only appears once per scope.  If def hidden later, lvl is enough
+ * to tell us that the id no longer refers to a const inside the
+ * scalar list.
+ */
+int
+isConstInScalar(Symbol *constSym, Symbol *scalarSym)
+{
+	struct ElementArray *consts = NULL;
+	Symbol *c = NULL;
+	int i;
+	if (!(constSym) || !(scalarSym)) return 0;
+	if ((getType(constSym) != INTEGER_T) ||
+	    (getType(scalarSym) != SCALAR_T) ||
+	    (constSym->kind != CONST_KIND) ||
+	    (scalarSym->kind != TYPE_KIND)) {
+		return 0;
+	} 
+
+	if (!constSym->name) return 0;
+
+	consts = getTypePtr(scalarSym)->Scalar->consts;
+
+	for(i = 0; i < consts->nElements; i++) {
+		c = (Symbol *) getElementAt(consts, i);
+		if ((strcmp(c->name, constSym->name) == 0) &&
+		    (c->lvl == constSym->lvl)) {
+			return 1;	
+		}
+	}	
+	return 0;
+}
+
+/*
+ * Given a linked list of ProxySymbols, returns the type which results
+ * from using the linked list of ProxySymbols to access the array given
+ * by var.
+ * TODO: if index is const not part of scalar, see if its value falls in the
+ * allowable range.
+ *
+ */
+Symbol *
+isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
+{
+	Symbol *arrayTypeSym = NULL;
+	Symbol *indexTypeSym = NULL;
+	Symbol *arg = indices;
+	int i, arrayDim, nArgs, typeErr = 0;
+
+	if (!var) {
+		return NULL;
+	}
+
+	arrayTypeSym = getTypeSym(var);
+
+	if (getType(arrayTypeSym) != ARRAY_T) {
+		errMsg = customErrorString("Trying to access by indices %s "
+		    " which is not of type ARRAY but of type %s", var->name,
+		    typeToString(getType(arrayTypeSym)));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	arrayDim = getArrayDim(arrayTypeSym);
+	nArgs = getSymbolListLength(indices);
+
+	if (arrayDim != nArgs) {
+		errMsg = customErrorString("Trying to access array %s of "
+		    "dimension %d with %d index/indices.", var->name,
+		    arrayDim, nArgs);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	indexTypeSym = getArrayIndexSym(arrayTypeSym);
+	for (i = 0; i < nArgs; i++) {
+// TODO:
+// need to get base type of the index sym for the array and compare that to the
+// type of the index.  this happens different based on if the index
+// type is a subrange or a scalar	
+		switch (getType(indexTypeSym)) {
+			case SCALAR_T:
+				if (!isConstInScalar(arg, indexTypeSym))
+				    typeErr = 1;
+				break;
+			case SUBRANGE_T:
+				if (!areSameType(
+				    getSubrangeBaseTypeSym(indexTypeSym),
+				    getTypeSym(arg))) typeErr = 1;
+				break;
+			default:
+				if (!areSameType(indexTypeSym,
+				     getTypeSym(arg))) typeErr = 1;
+				break;	
+		}
+		if (typeErr) {
+			errMsg = customErrorString("Invalid array "
+			    "subscript.  Expected type %s at position "
+			    "%d but got %s",
+		    	    typeToString(getType(indexTypeSym)), i,
+		    	    typeToString(getType(arg)));
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+			return NULL;
+		}
+		indexTypeSym = getArrayIndexSym(arrayTypeSym);
+	}
+
+	/* Got here, it was a valid array access!  YAY! */	
+	return getArrayBaseSym(arrayTypeSym);
+}
+
+/*
+ * Returns a pointer to the type symbol defining the base type for the given
+ * subrange symbol.
+ */
+Symbol *
+getSubrangeBaseTypeSym(Symbol *sr) {
+	if (!sr) return NULL;
+	if (getType(sr) != SUBRANGE_T) return NULL;
+	return getTypePtr(sr)->Subrange->baseTypeSym;
+
+}
+/*
+ * Follows the chains of next pointer to get the size of the Symbol linked
+ * list.
+ */
+int
+getSymbolListLength(Symbol *s)
+{	
+	int len = 0;
+	while (s) {
+		len++;
+		s = s->next;
+	}
+	return len;
+}
+
+/*
+ * Returns the dimension of the given array (assumes that the given
+ * Symbol describing the array is the "first dimensional array")
+ */
+int
+getArrayDim(Symbol *s)
+{
+	Symbol *nextIndexSym = NULL;
+	int dim = 0;	
+	nextIndexSym = getArrayIndexSym(s);
+	while (nextIndexSym != NULL) {
+		dim++;
+		nextIndexSym = getArrayIndexSym(nextIndexSym);
+	}
+	return dim;
+}
+
+/*
+ * Returns the symbol which indexes the array.
+ */
+Symbol *
+getArrayIndexSym(Symbol *s)
+{
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	return getTypePtr(s)->Array->indexTypeSym;
+}
+
+Symbol *
+getArrayBaseSym(Symbol *s)
+{
+	if (!s) return NULL;
+	if (getType(s) != ARRAY_T) return NULL;
+	return getTypePtr(s)->Array->baseTypeSym;
+
+}

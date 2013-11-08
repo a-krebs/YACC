@@ -32,12 +32,12 @@ Symbol *doVarDecl(char*, Symbol*);
 /* proc and function decls */
 Symbol *doVarDecl(char*, Symbol*);
 void exitProcOrFuncDecl(void);
-Symbol *enterProcDecl(char*, ProxySymbol*);
-Symbol *enterFuncDecl(char*, ProxySymbol*);
-ProxySymbol *createParmList(ProxySymbol*);
-ProxySymbol *appendParmToParmList(ProxySymbol*, ProxySymbol*);
-ProxySymbol *createNewParm(char*, Symbol*);
-ProxySymbol *createNewVarParm(char*, Symbol*);
+Symbol *enterProcDecl(char*, struct ElementArray *);
+Symbol *enterFuncDecl(char*, struct ElementArray *, Symbol *);
+struct ElementArray *createParmList(Symbol*);
+struct ElementArray *appendParmToParmList(struct ElementArray*, Symbol*);
+Symbol *createNewParm(char*, Symbol*);
+Symbol *createNewVarParm(char*, Symbol*);
 
 /* expressions and operators */
 ProxySymbol *assignOp(ProxySymbol*, ProxySymbol*);
@@ -70,10 +70,10 @@ ProxySymbol *proxyRealLiteral(double);
 ProxySymbol *proxyStringLiteral(char*);
 
 /* procedure and function invokations */
-void prodInvok(char*, ProxySymbol*);
-ProxySymbol *funcInvok(char*, ProxySymbol*);
-ProxySymbol *createArgList(ProxySymbol*);
-ProxySymbol *concatArgLists(ProxySymbol*, ProxySymbol*);
+void prodInvok(char*, struct ElementArray*);
+ProxySymbol *funcInvok(char*, struct ElementArray*);
+struct ElementArray *createArgList(Symbol*);
+struct ElementArray *concatArgLists(struct ElementArray*, struct ElementArray*);
 
 /* loop control */
 void continueLoop(void);

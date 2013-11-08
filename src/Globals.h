@@ -5,11 +5,11 @@
 
 
 /* Macros and const string variable declarations. */
-struct hash *symbolTable;
-struct preDefTypesSymbols *preDefTypesSymbols;
 
 
 /* Global variables. */
+struct hash *symbolTable;
+struct preDefTypeSymbols *preDefTypeSymbols;
 
 
 /* Non-C99 compliant function prototypes. */

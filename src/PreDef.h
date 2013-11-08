@@ -12,15 +12,18 @@
 
 
 /* Macros and const string variable declarations. */
+#define BOOLEAN_KEY "boolean"
+#define CHAR_KEY "char"
+#define INTEGER_KEY "integer"
+#define REAL_KEY "real"
+
+/* Global variables. */
 struct preDefTypeSymbols {
 	Symbol *boolean;
 	Symbol *chars;
 	Symbol *integer;
 	Symbol *real;	
 };
-
-
-/* Global variables. */
 
 
 /* Non-C99 compliant function prototypes. */
@@ -31,5 +34,7 @@ Symbol *getPreDefBool(struct preDefTypeSymbols*);
 Symbol *getPreDefChar(struct preDefTypeSymbols*);
 Symbol *getPreDefInt(struct preDefTypeSymbols*);
 Symbol *getPreDefReal(struct preDefTypeSymbols*);
+struct Symbol *createPreDef(char *name, type_t type);
+struct preDefTypeSymbols *initializePredDefs();
 
 #endif

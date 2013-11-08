@@ -211,14 +211,14 @@ proc_decl
 
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<proxy>3); }
+	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
 | FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<proxy>3); }
+	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
 | PROCEDURE ID semicolon_or_error
 	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
 	  yyerrok; }
 | FUNCTION ID semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, NULL);
+	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
 	  yyerrok; }
 | PROCEDURE semicolon_or_error
 	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
@@ -228,7 +228,7 @@ proc_heading
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
-	{ $<proxy>$ = $<proxy>2; }
+	{ $<elemarray>$ = $<elemarray>2; }
 | L_PAREN R_PAREN
 	{ $<proxy>$ = NULL; }
 | VAR ID error COLON simple_type
@@ -238,21 +238,21 @@ f_parm_decl
 
 f_parm_list
 : f_parm
-	{ $<proxy>$ = createParmList($<proxy>1); }
+	{ $<elemarray>$ = createParmList($<symbol>1); }
 | f_parm_list semicolon_or_error f_parm
-	{ $<proxy>$ = appendParmToParmList($<proxy>1, $<proxy>2); }
+	{ $<elemarray>$ = appendParmToParmList($<elemarray>1, $<symbol>2); }
 ;
 
 f_parm
 : ID COLON simple_type
-	{ $<proxy>$ = createNewParm($<id>1, $<symbol>3); }
+	{ $<symbol>$ = createNewParm($<id>1, $<symbol>3); }
 | VAR ID COLON simple_type
-	{ $<proxy>$ = createNewVarParm($<id>2, $<symbol>4); }
+	{ $<symbol>$ = createNewVarParm($<id>2, $<symbol>4); }
 | ID error COLON simple_type
-	{ $<proxy>$ = createNewParm($<id>1, $<symbol>3);
+	{ $<symbol>$ = NULL;//$<proxy>$ = createNewParm($<id>1, $<symbol>3);
 	  yyerrok; }
 | VAR ID error COLON simple_type
-	{ $<proxy>$ = createNewVarParm($<id>2, $<symbol>4);
+	{ $<symbol>$ = NULL;//$<proxy>$ = createNewVarParm($<id>2, $<symbol>4);
 	  yyerrok; }
 ;
 
@@ -289,10 +289,16 @@ var
 	{ $<proxy>$ = $<proxy>1; }
 ;
 
+
 subscripted_var
-: var LS_BRACKET subscripted_var_index
+: var LS_BRACKET subscripted_var_index_list
 	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
-| subscripted_var comma_or_error subscripted_var_index
+;
+
+subscripted_var_index_list
+: subscripted_var_index
+	{ $<proxy>$ = $<proxy>1;  }
+| subscripted_var_index_list comma_or_error subscripted_var_index
 	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
 ;
 
@@ -393,10 +399,10 @@ proc_invok
 // duplicated once for functions and once for procedures
 plist_pinvok
 : ID_or_err L_PAREN parm
-	{ procInvok($<id>1, $<proxy>3); }
+	{ procInvok($<id>1, $<elemarray>3); }
 | plist_pinvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 ;
 
 func_invok
@@ -414,10 +420,11 @@ func_invok
 // duplicated once for functions and once for procedures
 plist_finvok
 : ID_or_err L_PAREN parm
-	{ $<proxy>$ = funcInvok($<id>1, $<proxy>3); }
+	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
 | plist_finvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<proxy>$ = concatArgLists($<proxy>1, $<proxy>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+
 ;
 
 parm

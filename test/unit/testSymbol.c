@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ElementArray.h"
 #include "testSymbol.h"
 #include "Type.h"
 #include "Symbol.h"
@@ -127,19 +128,19 @@ test_newAnonArraySym()
 char *
 test_newParamSym()
 {
-	Symbol *newParamSym = NULL;
+	Symbol *s = NULL;
 	Symbol *typeSym = setUpTypeSymbol();
 	char id[] = "testParam";
 	int lvl = 12;
 	
-	newParamSym = newParameterSym(lvl, id, typeSym);
-	mu_assert("newParamSYm should not be null", newParamSym);
+	s = newParamSym(lvl, id, typeSym);
+	mu_assert("newParamSYm should not be null", s);
 	mu_assert("newParamSym should have type as expected",
-	    getTypeSym(newParamSym) == typeSym);
+	    getTypeSym(s) == typeSym);
 	mu_assert("newParamSym should be at expected lexical level",
-	   newParamSym->lvl == lvl);
+	   s->lvl == lvl);
 	mu_assert("newParamSym should have the name as expected",
-	    strcmp(id, newParamSym->name) == 0);
+	    strcmp(id, s->name) == 0);
 	return NULL;
 
 }
@@ -307,14 +308,88 @@ test_newSubrangeSym()
 }
 
 char *
+test_newAnonScalarSym()
+{
+	Symbol *ss = NULL;
+	Symbol *c = setUpIntConst();
+	struct ElementArray *ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, c);
+	int lvl = 0;
+
+	ss = newAnonScalarSym(lvl, ea);
+	mu_assert("newAnonScalar is not NULL when given valid inputs", ss);
+	mu_assert("newAnonScalar should have lvl as epxected", ss->lvl == lvl);
+	mu_assert("newAnonScalar should have expected symbol in its element "
+	    "array", getElementAt(getTypePtr(ss)->Scalar->consts, 0) == c); 
+	
+	return NULL;
+}
+
+char *
+test_isConstInScalar()
+{
+	Symbol *ss = NULL;
+	Symbol *c1 = setUpIntConst();
+	Symbol *c2 = setUpIntConst();
+	Symbol *c3 = setUpIntConst();
+	struct ElementArray *ea = newElementArray();
+	growElementArray(ea);
+	appendElement(ea, c1);
+	appendElement(ea, c2);
+	int lvl = 0;
+	char id[] = "hello";
+
+	ss = newAnonScalarSym(lvl, ea);
+	mu_assert("isConstInScalar() should recognize c1 appears in scalar",
+	    isConstInScalar(c1, ss));
+	c3->lvl = 102;
+	mu_assert("isConstInScalar() should recognize c3 does not appear in "
+	    "scalar", !isConstInScalar(c3, ss));
+	c1->name = id;
+	mu_assert("isConstInScalar() should recognize c1 is not in scalar "
+	    "even though it appears in element array", 
+	    !isConstInScalar(ss, c1));
+
+	
+	return NULL;
+}
+
+char *
+test_isValidArrayAccess()
+{
+	Symbol *newArraySym = NULL;
+	Symbol *lowConst = setUpIntConst();
+	Symbol *highConst = setUpIntConst();
+	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
+	Symbol *baseTypeSym = setUpTypeSymbol();
+	Symbol *var = NULL;
+	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+	var = newVariableSym(10, "hello", newArraySym);	
+	ProxySymbol *index1 = (ProxySymbol *) lowConst;
+	index1->kindPtr.ConstKind->typeSym =
+	    lowConst->kindPtr.ConstKind->typeSym;
+	mu_assert("isValidArrayAccess() should recognize valid array access",
+	    isValidArrayAccess(newArraySym, lowConst)); 
+	mu_assert("isValidArrayAccess() should recognize invalid array access",
+	    !isValidArrayAccess(newArraySym, setUpConstSymbol()));
+
+	return NULL;
+
+}
+
+char *
 test_all_Symbol()
 {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
 	mu_run_test(test_newConstProxySym);
 	mu_run_test(test_newConstSymFromProxy);
+	mu_run_test(test_isValidArrayAccess);
 	mu_run_test(test_newTypeSymFromSym);
 	mu_run_test(test_newSubrangeSym);
+	mu_run_test(test_newAnonScalarSym);
 	mu_run_test(test_newVariableSym);
+	mu_run_test(test_isConstInScalar);
 	return NULL;
 }
