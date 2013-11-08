@@ -389,17 +389,15 @@ unsigned_num
 ;
 
 proc_invok
-: plist_pinvok R_PAREN
-	{ /* Action is performed one level lower */ }
+: plist_pinvok
+	{ /* Action is performed one level lower and nothing returned */ }
 | ID_or_err L_PAREN R_PAREN
 	{ /* TODO might want to explicitly use an empty arg list here */ 
 	  procInvok($<id>1, NULL); }
 ;
 
-
-
 func_invok
-: plist_finvok R_PAREN
+: plist_finvok
 	{ /* Action is performed one level lower */
 	  $<proxy>$ = $<proxy>1; }
 | ID_or_err L_PAREN R_PAREN
@@ -413,33 +411,27 @@ func_invok
 
 // duplicated once for functions and once for procedures
 plist_pinvok
-: ID_or_err L_PAREN parm_list
+: ID_or_err L_PAREN parm_list R_PAREN
 	{ procInvok($<id>1, $<elemarray>3); }
-//| plist_pinvok comma_or_error parm
-//	{ // parm returns the list of arguments
-//	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+| ID_or_err error R_PAREN
 ;
 
 // duplicated once for functions and once for procedures
 plist_finvok
-: ID_or_err L_PAREN parm_list
+: ID_or_err L_PAREN parm_list R_PAREN
 	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
-//| plist_finvok comma_or_error parm
-//	{ // parm returns the list of arguments
-//	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
+/*| ID_or_err error R_PAREN */
 ;
 
 parm_list
-: parm 	{ $<elemarray>$ = $<elemarray>1;}
+: parm
+	{ $<elemarray>$ = $<elemarray>1; }
 | parm_list comma_or_error parm
-	{ 	  
-	    $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
-;
+	{ $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 
 parm
 : expr
 	{ // TODO can we use the same action as for function decl?
-	  //$<elemarray>$ = createArgList($<proxy>1); }
 	  $<elemarray>$ = createArgList($<proxy>1); }
 ;
 
