@@ -68,5 +68,6 @@ struct preDefTypeSymbols *initializePreDefTypes();
 struct Symbol *createPreDefProc(char *name); 
 struct Symbol *createPreDefFunc(char *name); 
 int initializePreDefProc();
+int initializePreDefFunc();
 
 #endif

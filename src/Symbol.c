@@ -9,6 +9,7 @@
 #include "Type.h"
 #include "Symbol.h"
 #include "Hash.h"
+#include "PreDef.h"
 
 extern int yylineno;
 extern int colno;
@@ -986,6 +987,35 @@ isIOProc(Symbol *s) {
 
 }
 
+int isPreDefFunc(Symbol *s) {
+	char *name = NULL;
+
+	if (!s) return 0;
+	if (s->kind != FUNC_KIND) return 0;
+
+	name = s->name;
+
+	if ( (	(strcmp(name, "abs") == 0) ||
+		(strcmp(name, "sqr") == 0) ||
+		(strcmp(name, "sin") == 0) ||
+		(strcmp(name, "cos") == 0) ||
+		(strcmp(name, "exp") == 0) ||
+		(strcmp(name, "ln") == 0) ||
+		(strcmp(name, "sqrt") == 0) ||
+		(strcmp(name, "arctan") == 0) ||
+		(strcmp(name, "trunc") == 0) ||
+		(strcmp(name, "round") == 0) ||
+		(strcmp(name, "chr") == 0) ||
+		(strcmp(name, "odd") == 0) ||
+		(strcmp(name, "ord") == 0) ||
+		(strcmp(name, "succ") == 0) ||
+		(strcmp(name, "pred") == 0) ) &&
+			s->lvl == 0) {
+	   	return 1;
+	}
+	return 0;
+}
+
 int
 isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 {
@@ -1016,6 +1046,117 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	}
 	if (!valid) return 0;
 	return 1;
+}
+
+ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
+{
+	Symbol *param = NULL;
+	type_t type;
+	int i = 0;
+	int nArgs = 0;
+
+	nArgs = ea->nElements;
+
+	// check argument count
+	if (nArgs != 1) {
+		errMsg = customErrorString("Function %s expected "
+		    "1 argument but %d given.", s->name, nArgs);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+	
+	param = getElementAt(ea, i);
+	type = getType(param);
+	
+	if (typeIsInValidArgs(s, type)) {
+		return getPreDefFuncReturnType(s, type);
+			
+	} else {
+		errMsg = customErrorString("Function %s cannot be "
+		    "called with argument of type %s.", s->name,
+		    typeToString(type));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+}
+
+int typeIsInValidArgs(Symbol *s, type_t type) {
+	char *name = NULL;
+	if (!s) return 0;
+	name = s->name;
+
+	if (
+	    (strcmp(name, "abs") == 0) ||
+	    (strcmp(name, "sqr") == 0) ||
+	    (strcmp(name, "sin") == 0) ||
+	    (strcmp(name, "cos") == 0) ||
+	    (strcmp(name, "exp") == 0) ||
+	    (strcmp(name, "ln") == 0) ||
+	    (strcmp(name, "sqrt") == 0) ||
+	    (strcmp(name, "arctan") == 0)
+	) {
+		if ((type == INTEGER_T) || (type == REAL_T)) {
+			return 1;
+		}
+	} else if (
+	    (strcmp(name, "trunc") == 0) ||
+	    (strcmp(name, "round") == 0)
+	){
+		if (type == REAL_T) return 1;
+	} else if (
+	    (strcmp(name, "chr") == 0) ||
+	    (strcmp(name, "odd") == 0)
+	){
+		if (type == INTEGER_T) return 1;
+	} else if (
+	    (strcmp(name, "ord") == 0) ||
+	    (strcmp(name, "succ") == 0) ||
+	    (strcmp(name, "pred") == 0)
+	){
+		if (isOrdinal(type)) return 1;
+	}
+	return 0;
+}
+
+Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
+	char *name = NULL;
+	
+	if (!s) return NULL;
+
+	name = s->name;
+
+	if (
+	    (strcmp(name, "abs") == 0) ||
+	    (strcmp(name, "sqr") == 0) ||
+	    (strcmp(name, "succ") == 0) ||
+	    (strcmp(name, "pred") == 0)
+	) {
+		return getTypeSym(s);
+	} else if (
+	    (strcmp(name, "sin") == 0) ||
+	    (strcmp(name, "cos") == 0) ||
+	    (strcmp(name, "exp") == 0) ||
+	    (strcmp(name, "ln") == 0) ||
+	    (strcmp(name, "sqrt") == 0) ||
+	    (strcmp(name, "arctan") == 0)
+	) {
+		return getPreDefReal(preDefTypeSymbols);
+	} else if (
+	    (strcmp(name, "trunc") == 0) ||
+	    (strcmp(name, "round") == 0) ||
+	    (strcmp(name, "chr") == 0)
+	){
+		return getPreDefInt(preDefTypeSymbols);
+	} else if (
+	    (strcmp(name, "ord") == 0)
+	){
+		return getPreDefChar(preDefTypeSymbols);
+	} else if (
+	    (strcmp(name, "odd") == 0)
+	){
+		return getPreDefBool(preDefTypeSymbols);
+	}
+	return NULL;
 }
 
 void freeProxySymbol(ProxySymbol *p) {

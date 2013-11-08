@@ -905,9 +905,10 @@ void procInvok(char *id, struct ElementArray *ea) {
 
 	if (isIOProc(s)) {
 		isValidIOProcInvocation(s, ea);
+	} else {
+		// this prints errors, so call it but ignore return value
+		isValidProcInvocation(s, ea);
 	}
-	// this prints errors, so call it but ignore return value
-	isValidProcInvocation(s, ea);
 }
 
 /*
@@ -927,6 +928,10 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 
 	if (!argv) {
 		argv = newElementArray();
+	}
+
+	if (isPreDefFunc(s)) {
+		return isValidPreDefFuncInvocation(s, argv);
 	}
 
 	if (isValidFuncInvocation(s, argv)) {

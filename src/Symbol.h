@@ -44,10 +44,13 @@ int isElementArraySimple(struct ElementArray *elementArray);
 int isValidIOProcInvocation(Symbol *, struct ElementArray *);
 int isIOProc(Symbol *);
 
+int typeIsInValidArgs(Symbol *, type_t);
+Symbol *getPreDefFuncReturnType(Symbol*, type_t);
+ProxySymbol *isValidPreDefFuncInvocation(Symbol *, struct ElementArray*);
+int isPreDefFunc(Symbol*);
 
 Symbol * isValidFuncInvocation(Symbol *, struct ElementArray *);
 Symbol * isValidArrayAccess(Symbol *, ProxySymbol *);
-
 
 struct Param *newParameter(char *, Symbol *);
 

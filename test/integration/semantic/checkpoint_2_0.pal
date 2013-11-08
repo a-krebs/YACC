@@ -1,7 +1,15 @@
 {}
 {
 	Team YACC Checkpoint 2 Test 0
+
+	Test the built-in functions.
 }
 program test0(input, output);
+var
+	r : real;
+	i : integer;
+	b : boolean;
 begin
+	r := abs(r);
+	i := abs(i);
 end.
