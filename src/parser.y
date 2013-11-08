@@ -284,7 +284,7 @@ var
 | ID_or_err
 	{ $<proxy>$ = hashLookupToProxy($<id>1); }
 | var PERIOD ID_or_err
-	{ $<proxy>$ = recordAccessToProxy($<id>1, $<id>3 ); }
+	{ $<proxy>$ = recordAccessToProxy($<proxy>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
 	{ $<proxy>$ = $<proxy>1; }
 ;

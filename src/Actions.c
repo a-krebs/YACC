@@ -642,8 +642,30 @@ ProxySymbol *hashLookupToProxy(char *id) {
 /*
  * id1 == name of record, id3 == name of field we are trying to access
  */
-ProxySymbol *recordAccessToProxy(char *id1, char *id3) {
-	return NULL;
+ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
+	Symbol *s = NULL;
+	struct Record *r = NULL;
+
+	if ((!p) || (!id)) return NULL;
+
+	s = getTypeSym(p);
+	if (getType(s) != RECORD_T) {
+		errMsg = customErrorString("Cannot get field %s from %s. "
+		    "Identifier %s is not a record.", id, p->name, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	
+	r = s->kindPtr.TypeKind->typePtr.Record;
+
+	s = getGlobalSymbol(r->hash, id);
+	if (!s) {
+		errMsg = customErrorString("Field %s does not exist in %s.",
+		    id, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	return newProxySymFromSym(s);
 }
 
 /*
