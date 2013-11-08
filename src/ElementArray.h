@@ -16,4 +16,5 @@ void *getElementAt(struct ElementArray *, unsigned int);
 void freeElementArray(struct ElementArray *); 
 void growElementArray(struct ElementArray *); 
 struct ElementArray *appendElementArray(struct ElementArray *, struct ElementArray *);
+int hasDuplicateElement(struct ElementArray *);
 #endif
