@@ -18,7 +18,7 @@ begin
 	b := bar >= i;	// error
 	b := bar >= b;	// error
 	b := bar >= r;	// error
-	b := bar >= c;
+	b := bar >= c;  // error
 	b := bar >= foo;	// error
 	b := bar >= bar;
 

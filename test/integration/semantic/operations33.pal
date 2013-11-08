@@ -1,4 +1,4 @@
-{19,23,24}
+{20,22,23,24,27}
 {
     Test that operations work
 }
@@ -14,12 +14,15 @@ var
 	r : real;
 	c : colour;
 begin
-	// logical
+	// equality
+	
+	b := i <= i;
+	b := i <= b;	// error
+	b := i <= r;	
+	b := i <= c;	// error
+	b := i <= foo;	// error
+	b := i <= bar;	// error
 
-	b := c and c;	// error
-	b := b and b;
-	b := b or b;
-	b := not b;
-	b := i or r;	// error
-	b := i and r;	// error
+
+	i := i <= i;	// error
 end.
