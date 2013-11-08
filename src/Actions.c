@@ -523,9 +523,7 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
  * Return a pointer to the new list.
  */
 ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
-	if (!exp) {
-		return NULL;
-	}
+	if (!exp) return NULL;
 	exp->next = NULL;
 	return exp;
 }
@@ -692,9 +690,10 @@ struct ElementArray *createArgList(Symbol *arg) {
  * Whether to add the arguments to one of the lists or two make a third
  * list and add all arguments is up to implementation.
  */
-struct ElementArray *concatArgLists(struct ElementArray *ea, Symbol *arg) {
+struct ElementArray *concatArgLists(struct ElementArray *ea,
+	    struct ElementArray *arg) {
 	if ((!ea) || (!arg)) return NULL;
-	appendElement(ea, arg);	
+	printf("%p\n", ea->data);
 	return ea;
 }
 

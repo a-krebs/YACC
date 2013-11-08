@@ -8,6 +8,7 @@
 	struct ElementArray *elemarray;
       Symbol *symbol;
       ProxySymbol *proxy;
+	void * voidtype;
 }
 
 /* id */

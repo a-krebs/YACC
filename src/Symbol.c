@@ -509,6 +509,8 @@ newStringProxySym(int lvl, char *str, int strlen)
 	newStringSym->name = NULL;
 	newStringSym->kind = TYPE_KIND;
 	allocateKindPtr(newStringSym);
+	newStringSym->kindPtr.TypeKind->typePtr.String = 
+	    calloc(1, sizeof(struct String));
 	getTypePtr(newStringSym)->String->strlen = strlen;
 	
 	if (strlen) {

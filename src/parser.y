@@ -393,10 +393,10 @@ proc_invok
 // duplicated once for functions and once for procedures
 plist_pinvok
 : ID_or_err L_PAREN parm
-	{ procInvok($<id>1, $<proxy>3); }
+	{ procInvok($<id>1, $<elemarray>3); }
 | plist_pinvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<elemarray>$ = concatArgLists($<elemarray>1, $<symbol>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 ;
 
 func_invok
@@ -414,10 +414,10 @@ func_invok
 // duplicated once for functions and once for procedures
 plist_finvok
 : ID_or_err L_PAREN parm
-	{ $<proxy>$ = funcInvok($<id>1, $<proxy>3); }
+	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
 | plist_finvok comma_or_error parm
 	{ // parm returns the list of arguments
-	  $<elemarray>$ = concatArgLists($<elemarray>1, $<symbol>3); }
+	  $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 
 ;
 
