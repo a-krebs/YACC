@@ -1144,11 +1144,11 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 	} else if (
 	    (strcmp(name, "trunc") == 0) ||
 	    (strcmp(name, "round") == 0) ||
-	    (strcmp(name, "chr") == 0)
+	    (strcmp(name, "ord") == 0)
 	){
 		return getPreDefInt(preDefTypeSymbols);
 	} else if (
-	    (strcmp(name, "ord") == 0)
+	    (strcmp(name, "chr") == 0)
 	){
 		return getPreDefChar(preDefTypeSymbols);
 	} else if (
