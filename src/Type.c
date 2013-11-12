@@ -63,7 +63,31 @@ areCompatibleStrings(Symbol *s1, Symbol *s2)
 {
 	/* TODO: record errors */
 	if ((!s1) || (!s2)) return 0;
-	if (!(s1->kind == TYPE_KIND) || (s2->kind == TYPE_KIND)) return 0;
+
+	// if ( s1->kind == CONST_KIND && s2->kind == CONST_KIND ) {
+	// 	if (  s1->kindPtr.ConstKind->value.String.strlen  == s2->kindPtr.ConstKind->value.String.strlen ) {
+
+	// 	}
+	// 	else {
+	// 		return 0;
+	// 	}
+	// }
+
+
+	// int x = s1->kindPtr.ConstKind->value.String.strlen;
+	// int y = s2->kindPtr.ConstKind->value.String.strlen;
+
+	// printf("x: %d, y: %d\n", x, y);
+
+	// if ( x == y ) {
+	// 	return 1;
+	// }
+	// else {
+	// 	return 0;
+	// }
+
+	
+	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
 	if (!(s1->kindPtr.TypeKind->type == STRING_T) ||
 	    !(s2->kindPtr.TypeKind->type == STRING_T)) return 0;
 	
@@ -88,7 +112,7 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 	s2_t = s2->kindPtr.TypeKind->type;
 
 	/* If one is a string, then both need to be strings to be compatible */
-	if (s1_t == STRING_T)
+	if (s1_t == STRING_T) 
 	    return areCompatibleStrings(s1, s2);
 
 	/* 
@@ -289,7 +313,6 @@ struct Record *newRecord() {
 		err(1, "Failed to allocate memory for new record!");
 		exit(1);
 	}
-
 	/* give the record its own hash table */
 	r->hash = createHash(&getHashedKeyNormal);
 
@@ -382,7 +405,7 @@ Type newAnonConstType(AnonConstVal value, type_t type)
 void
 typeMemoryFailure()
 {
-	err(1, "Failed to allocate memory for new anonymous constant type!");
+	err(1, "Failed to allocate memory for new anonymous constant " 		"type!");
 	exit(1);
 }
 

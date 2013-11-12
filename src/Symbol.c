@@ -9,6 +9,7 @@
 #include "Type.h"
 #include "Symbol.h"
 #include "Hash.h"
+#include "PreDef.h"
 
 extern int yylineno;
 extern int colno;
@@ -51,6 +52,7 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
 	 * Type is being constructed from anonymous type, it is NOT a type
 	 * originator
 	 */
+	newTypeSym->lvl = lvl;
 	newTypeSym->typeOriginator = 0;
 	return newTypeSym;
 }
@@ -519,36 +521,74 @@ newConstProxySym(void * result, Symbol *typeSym)
 	return (ProxySymbol *) constSym;
 }
 
+// ProxySymbol *
+// newStringProxySym(int lvl, char *str, int strlen)
+// {
+// 	ProxySymbol *newStringSym = NULL;
+// 	AnonConstVal anonStr;
+
+// 	newStringSym = calloc(1, sizeof (ProxySymbol));
+// 	anonStr.String.str = str;
+// 	anonStr.String.strlen = strlen;
+
+// 	newStringSym->name = NULL;
+// 	newStringSym->kind = TYPE_KIND;
+// 	allocateKindPtr(newStringSym);
+// 	newStringSym->kindPtr.TypeKind->type = STRING_T;
+// 	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
+// 	    anonStr, STRING_T);
+// 	getTypePtr(newStringSym)->String->strlen = strlen;
+	
+// 	if (strlen) {
+// 		getTypePtr(newStringSym)->String->str = 
+// 		    calloc(1, sizeof(char)*strlen);
+// 		if (!getTypePtr(newStringSym)->String->str) {
+// 			err(1, "Failed to allocate memory for new string");
+// 			exit(1);
+// 		}
+// 	}
+// 	newStringSym->lvl = lvl;
+// 	newStringSym->typeOriginator = 1;
+// 	return newStringSym;	
+// }
+
+Symbol *
+newStringTypeSym(int lexLevel, int strlen) {
+	Symbol *newStringSym = newStringSym = calloc(1, sizeof (Symbol));
+
+	newStringSym = calloc(1, sizeof (ProxySymbol));
+	newStringSym->kind = TYPE_KIND;
+	allocateKindPtr(newStringSym);
+	newStringSym->name = NULL;
+	newStringSym->lvl = lexLevel;
+	newStringSym->kindPtr.TypeKind->type = STRING_T;
+	newStringSym->kindPtr.TypeKind->typePtr.String = calloc(1, sizeof(struct String));
+	getTypePtr(newStringSym)->String->strlen = strlen;
+	return newStringSym;
+
+}
+
 ProxySymbol *
 newStringProxySym(int lvl, char *str, int strlen)
 {
 	ProxySymbol *newStringSym = NULL;
-	AnonConstVal anonStr;
 
 	newStringSym = calloc(1, sizeof (ProxySymbol));
-	anonStr.String.str = str;
-	anonStr.String.strlen = strlen;
 
 	newStringSym->name = NULL;
-	newStringSym->kind = TYPE_KIND;
+	newStringSym->kind = CONST_KIND;
 	allocateKindPtr(newStringSym);
-	newStringSym->kindPtr.TypeKind->type = STRING_T;
-	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
-	    anonStr, STRING_T);
-	getTypePtr(newStringSym)->String->strlen = strlen;
-	
-	if (strlen) {
-		getTypePtr(newStringSym)->String->str = 
-		    calloc(1, sizeof(char)*strlen);
-		if (!getTypePtr(newStringSym)->String->str) {
-			err(1, "Failed to allocate memory for new string");
-			exit(1);
-		}
-	}
-	newStringSym->lvl = lvl;
-	newStringSym->typeOriginator = 1;
+
+	newStringSym->kindPtr.ConstKind->value.String.str = calloc(1, (sizeof(char)* strlen));
+	strncpy(newStringSym->kindPtr.ConstKind->value.String.str, str, strlen);
+	newStringSym->kindPtr.ConstKind->value.String.strlen = strlen;
+
+	newStringSym->kindPtr.ConstKind->typeSym = calloc(1, sizeof (struct ConstantKind));
+	newStringSym->kindPtr.ConstKind->typeSym = getPreDefString(preDefTypeSymbols);
+
 	return newStringSym;	
 }
+
 
 void
 setSymbolName(Symbol *s, char *id)
@@ -727,7 +767,8 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 			    "argument of type %s", s->name, i,
 			    typeToString(getType(expectedParam)),
 			    typeToString(getType(passedParam)));
-			e = recordError(errMsg, yylineno, colno, SEMANTIC);
+			e = recordError(errMsg, yylineno, colno,
+			     SEMANTIC);
 			printError(e);
 			return 0;
 		}
@@ -744,8 +785,7 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 
 	// make sure we're given a func and not a proc
 	if (s->kind != FUNC_KIND) {
-		errMsg = customErrorString("Identifier %s cannot be called "
-		    "as a function.", s->name);
+		errMsg = customErrorString("Identifier %s cannot be " 			"called as a function.", s->name);
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
 		return 0;
 	}
@@ -797,64 +837,68 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 	Symbol *arrayTypeSym = NULL;
 	Symbol *indexTypeSym = NULL;
 	Symbol *arg = indices;
-	int i, arrayDim, nArgs, typeErr = 0;
+	int typeErr = 0;
 
 	if (!var) {
 		return NULL;
 	}
-
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
-		errMsg = customErrorString("Trying to access by "
-		    "subscription %s which is not of type ARRAY but of "
-		    "type %s", var->name,
-		    typeToString(getType(arrayTypeSym)));
-		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return NULL;
+		return arrayTypeSym;
 	}
-	arrayDim = getArrayDim(arrayTypeSym);
-	nArgs = getSymbolListLength(indices);
+//	arrayDim = getArrayDim(arrayTypeSym);
+//	nArgs = getSymbolListLength(indices);
 
-	if (arrayDim != nArgs) {
-		errMsg = customErrorString("Trying to access array %s of "
-		    "dimension %d with %d index/indices.", var->name,
-		    arrayDim, nArgs);
-		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return NULL;
-	}
+//	if (arrayDim != nArgs) {
+//		errMsg = customErrorString("Trying to access array %s of "
+//		    "dimension %d with %d index/indices.", var->name,
+//		    arrayDim, nArgs);
+//		recordError(errMsg, yylineno, colno, SEMANTIC);
+//		return NULL;
+//	}
 
 	indexTypeSym = getArrayIndexSym(arrayTypeSym);
-	for (i = 0; i < nArgs; i++) {
+	while ( (arg) && (getType(arrayTypeSym) == ARRAY_T)) {
 		switch (getType(indexTypeSym)) {
-			case SCALAR_T:
-				if (!isConstInScalar(arg, indexTypeSym))
-				    typeErr = 1;
-				break;
-			case SUBRANGE_T:
-				if (!areSameType(
-				    getSubrangeBaseTypeSym(indexTypeSym),
-				    getTypeSym(arg))) typeErr = 1;
-				break;
-			default:
-				if (!areSameType(indexTypeSym,
-				     getTypeSym(arg))) typeErr = 1;
-				break;	
+		case SCALAR_T:
+			if (!isConstInScalar(arg, indexTypeSym))
+			    typeErr = 1;
+			break;
+		case SUBRANGE_T:
+			if (!areSameType(
+			    getSubrangeBaseTypeSym(indexTypeSym),
+			    getTypeSym(arg))) typeErr = 1;
+			break;
+		default:
+			if (!areSameType(indexTypeSym,
+			     getTypeSym(arg))) typeErr = 1;
+			break;	
 		}
 		if (typeErr) {
 			errMsg = customErrorString("Invalid array "
-			    "subscript.  Expected type %s at position "
+			    "subscript.  Expected type %d "
 			    "%d but got %s",
-		    	    typeToString(getType(indexTypeSym)), i,
+		    	    typeToString(getType(indexTypeSym)),
 		    	    typeToString(getType(arg)));
 			recordError(errMsg, yylineno, colno, SEMANTIC);
-			return NULL;
 		}
+		typeErr = 0;
+		arrayTypeSym = getArrayBaseSym(arrayTypeSym);
 		indexTypeSym = getArrayIndexSym(arrayTypeSym);
+		arg = arg->next;
 	}
 
-	/* Got here, it was a valid array access!  YAY! */	
-	return getArrayTerminalTypeSym(arrayTypeSym);
+	/* Else are ready to return the base type */
+
+	if (arg) {
+		/* Didn't exhaust args, but exhausted arrays.
+		 * Return arrayTypeSym */
+		recordError("Illegal array access -- too many indices.",
+		    yylineno, colno, SEMANTIC);
+		return arrayTypeSym;
+	} 
+	return arrayTypeSym;
 }
 
 
@@ -986,6 +1030,35 @@ isIOProc(Symbol *s) {
 
 }
 
+int isPreDefFunc(Symbol *s) {
+	char *name = NULL;
+
+	if (!s) return 0;
+	if (s->kind != FUNC_KIND) return 0;
+
+	name = s->name;
+
+	if ( (	(strcmp(name, "abs") == 0) ||
+		(strcmp(name, "sqr") == 0) ||
+		(strcmp(name, "sin") == 0) ||
+		(strcmp(name, "cos") == 0) ||
+		(strcmp(name, "exp") == 0) ||
+		(strcmp(name, "ln") == 0) ||
+		(strcmp(name, "sqrt") == 0) ||
+		(strcmp(name, "arctan") == 0) ||
+		(strcmp(name, "trunc") == 0) ||
+		(strcmp(name, "round") == 0) ||
+		(strcmp(name, "chr") == 0) ||
+		(strcmp(name, "odd") == 0) ||
+		(strcmp(name, "ord") == 0) ||
+		(strcmp(name, "succ") == 0) ||
+		(strcmp(name, "pred") == 0) ) &&
+			s->lvl == 0) {
+	   	return 1;
+	}
+	return 0;
+}
+
 int
 isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 {
@@ -1016,6 +1089,117 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	}
 	if (!valid) return 0;
 	return 1;
+}
+
+ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
+{
+	Symbol *param = NULL;
+	type_t type;
+	int i = 0;
+	int nArgs = 0;
+
+	nArgs = ea->nElements;
+
+	// check argument count
+	if (nArgs != 1) {
+		errMsg = customErrorString("Function %s expected "
+		    "1 argument but %d given.", s->name, nArgs);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+	
+	param = getElementAt(ea, i);
+	type = getType(param);
+	
+	if (typeIsInValidArgs(s, type)) {
+		return getPreDefFuncReturnType(s, type);
+			
+	} else {
+		errMsg = customErrorString("Function %s cannot be "
+		    "called with argument of type %s.", s->name,
+		    typeToString(type));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return 0;
+	}
+}
+
+int typeIsInValidArgs(Symbol *s, type_t type) {
+	char *name = NULL;
+	if (!s) return 0;
+	name = s->name;
+
+	if (
+	    (strcmp(name, "abs") == 0) ||
+	    (strcmp(name, "sqr") == 0) ||
+	    (strcmp(name, "sin") == 0) ||
+	    (strcmp(name, "cos") == 0) ||
+	    (strcmp(name, "exp") == 0) ||
+	    (strcmp(name, "ln") == 0) ||
+	    (strcmp(name, "sqrt") == 0) ||
+	    (strcmp(name, "arctan") == 0)
+	) {
+		if ((type == INTEGER_T) || (type == REAL_T)) {
+			return 1;
+		}
+	} else if (
+	    (strcmp(name, "trunc") == 0) ||
+	    (strcmp(name, "round") == 0)
+	){
+		if (type == REAL_T) return 1;
+	} else if (
+	    (strcmp(name, "chr") == 0) ||
+	    (strcmp(name, "odd") == 0)
+	){
+		if (type == INTEGER_T) return 1;
+	} else if (
+	    (strcmp(name, "ord") == 0) ||
+	    (strcmp(name, "succ") == 0) ||
+	    (strcmp(name, "pred") == 0)
+	){
+		if (isOrdinal(type)) return 1;
+	}
+	return 0;
+}
+
+Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
+	char *name = NULL;
+	
+	if (!s) return NULL;
+
+	name = s->name;
+
+	if (
+	    (strcmp(name, "abs") == 0) ||
+	    (strcmp(name, "sqr") == 0) ||
+	    (strcmp(name, "succ") == 0) ||
+	    (strcmp(name, "pred") == 0)
+	) {
+		return getTypeSym(s);
+	} else if (
+	    (strcmp(name, "sin") == 0) ||
+	    (strcmp(name, "cos") == 0) ||
+	    (strcmp(name, "exp") == 0) ||
+	    (strcmp(name, "ln") == 0) ||
+	    (strcmp(name, "sqrt") == 0) ||
+	    (strcmp(name, "arctan") == 0)
+	) {
+		return getPreDefReal(preDefTypeSymbols);
+	} else if (
+	    (strcmp(name, "trunc") == 0) ||
+	    (strcmp(name, "round") == 0) ||
+	    (strcmp(name, "ord") == 0)
+	){
+		return getPreDefInt(preDefTypeSymbols);
+	} else if (
+	    (strcmp(name, "chr") == 0)
+	){
+		return getPreDefChar(preDefTypeSymbols);
+	} else if (
+	    (strcmp(name, "odd") == 0)
+	){
+		return getPreDefBool(preDefTypeSymbols);
+	}
+	return NULL;
 }
 
 void freeProxySymbol(ProxySymbol *p) {

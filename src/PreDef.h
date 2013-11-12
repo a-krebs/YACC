@@ -18,12 +18,33 @@
 #define CHAR_KEY "char"
 #define INTEGER_KEY "integer"
 #define REAL_KEY "real"
+#define STRING_KEY "string"
 
 //pre-defined procedures:
 #define WRITE "write"
 #define WRITELN "writeln"
 #define READ "read"
 #define READLN "readln"
+
+//pre-defined functions:
+#define ODD "odd"
+#define ABS "abs"
+#define SQR "sqr"
+#define SQRT "sqrt"
+#define SIN "sin"
+#define COS "cos"
+#define EXP "exp"
+#define LN "ln"
+#define ARCTAN "arctan"
+//type coercion
+#define TRUNC "trunc"
+#define ROUND "round"
+#define ORD "ord"
+#define CHR "chr"
+// ordinal operations
+#define SUCC "succ"
+#define PRED "pred"
+
 
 
 /* Global variables. */
@@ -32,6 +53,7 @@ struct preDefTypeSymbols {
 	Symbol *chars;
 	Symbol *integer;
 	Symbol *real;	
+	Symbol *string;	
 };
 
 
@@ -43,9 +65,14 @@ Symbol *getPreDefBool(struct preDefTypeSymbols*);
 Symbol *getPreDefChar(struct preDefTypeSymbols*);
 Symbol *getPreDefInt(struct preDefTypeSymbols*);
 Symbol *getPreDefReal(struct preDefTypeSymbols*);
+Symbol *getPreDefString(struct preDefTypeSymbols*);
 struct Symbol *createPreDefType(char *name, type_t type);
 struct preDefTypeSymbols *initializePreDefTypes();
 struct Symbol *createPreDefProc(char *name); 
+struct Symbol *createPreDefFunc(char *name); 
 int initializePreDefProc();
-
+int initializePreDefFunc();
+int initializePreDefConstants();
+Symbol *createNewBoolConst(char*, int);
+Symbol *createNewIntConst(char*, int);
 #endif

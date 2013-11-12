@@ -1,7 +1,31 @@
-{}
+{19,27}
 {
-	Team YACC Checkpoint 2 Test 0
+	Team YACC Checkpoint 2 Test 9
+
+	Test the built-in functions combined with scope
+	This file contains no errors
 }
-program test0(input, output);
+program test10(input,output);
+type
+	eeeh = record
+		a: integer;
+		b: real;
+		c: array[1..100]of array[10..12] of array[50..100] of integer
+		end;
+var 
+	tryMe: eeeh;
+function caller(try:eeeh):integer; 
 begin
+	tryMe.a:=callee(try);
+end;
+function callee(try2:eeeh):integer;
+begin
+	tryMe.b:=caller(try2);
+end;
+	
+begin
+	caller(tryMe);
+	tryMe.c[1][2][3]:=callee(tryMe);
+	tryMe.a := tryMe.a;
+	tryMe.b := tryMe.a;
 end.
