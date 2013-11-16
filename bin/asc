@@ -1,0 +1,20 @@
+#!/bin/bash
+
+case `uname -s` in
+SunOS )
+  ~c415/ASC/bin/asc-Solaris $*
+  ;;
+
+OpenBSD )
+  ~c415/ASC/bin/asc-OpenBSD $*
+  ;;
+
+Linux )
+ ~c415/ASC/bin/asc-Linux $*
+  ;;
+* )
+  echo Sorry - no prebuilt binary for this architecture.
+  echo Please email your TA/professor with the machine name.
+;;
+
+esac
