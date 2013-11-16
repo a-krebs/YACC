@@ -12,6 +12,9 @@
 #include "testUtils.h"
 #include "testPreDef.h"
 
+/* Include ASC tests */
+#include "testPreDefAsc.h"
+
 /* Include globals */
 #include "Globals.h"
 #include "Init.h"
@@ -24,6 +27,9 @@ extern struct preDefTypeSymbols *preDefTypeSymbols;
 int main(int argc, char *argv[]) {
 
 	initialize();
+
+	/* Test the ASC code for the predefined functions */
+//	testAsc();
 
 	char *result = test_all();
 	if (result != NULL) {
@@ -53,4 +59,11 @@ char *test_all() {
 	mu_run_suite(test_all_Utils);
 	mu_run_suite(test_all_PreDef);
 	return NULL;
+}
+
+int
+testAsc()
+{
+//	testAbs();
+	return 0;
 }

@@ -43,7 +43,7 @@ TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(BIN)/testingUtils.o
-TESTOBJS1+=	$(BIN)/testPreDef.o
+TESTOBJS1+=	$(BIN)/testPreDef.o #$(BIN)/testPreDefAsc.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -193,6 +193,9 @@ $(BIN)/testingUtils.o: $(TEST)/testingUtils.c $(TEST)/testingUtils.h $(SRC)/Defi
 	$(COMPILE)
 
 $(BIN)/testPreDef.o: $(TEST)/testPreDef.c $(TEST)/testPreDef.h
+	$(COMPILE)
+
+$(BIN)/testPreDefAsc.o: $(TEST)/testPreDefAsc.c $(TEST)/testPreDefAsc.h
 	$(COMPILE)
 
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
