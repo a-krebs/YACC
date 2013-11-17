@@ -66,6 +66,7 @@ testAsc()
 {
 	setUpAscTests();
 	testAbs();
+	testSqrt();
 	tearDownAscTests();
 	return 0;
 }

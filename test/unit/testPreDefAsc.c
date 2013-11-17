@@ -19,18 +19,13 @@ static char newPath[1024];
 
 static char execAsc[] = "bin/asc";
 
-static char absTestFile[] = "./test/unit/asctests/testAbs.asc";
-static char absAscFile[] = "./src/asc/__abs.asc";
-static char absTests[] = "./test/unit/asctests/__absTests.asc";
-
-
 static char *getText(char *);
 
 static void execErr(char *, int *);
 static void forkAndRun(char *);
 static void fnfErr(char *);
 static void printHeader(char *);
-
+static void runTest(char *, char *, char *, char *);
 
 /*
  * Append the current working directory to the environment Path variable
@@ -66,21 +61,46 @@ void tearDownAscTests()
 int
 testAbs()
 {
-	char *buf = NULL;
-	FILE *fp = fopen(absTestFile, "w");
-	
-	if (!fp) fnfErr(absTestFile);
-	buf = getText(absAscFile);
+	runTest("__abs", 
+		"src/asc/__abs.asc", 
+	    	"test/unit/asctests/__absTests.asc",
+		"test/unit/asctests/testAbs.asc"
+	);
+	    
+	return 0;	
+}
 
-	printf("# TESTING __abs.asc # ################################ \n");
+int
+testSqrt()
+{
+	runTest("__sqrt",
+		"src/asc/__sqrt.asc",
+		"test/unit/asctests/__sqrtTests.asc",
+		"test/unit/asctests/testAbs.asc"
+	);
+	return 0;
+}
+
+static void
+runTest(char *funcName, char *codeFile, char *testsFile, char *outputFile)
+{
+	char *buf = NULL;
+	FILE *fp = fopen(outputFile, "w");
+	
+	if (!fp) fnfErr(outputFile);
+	buf = getText(codeFile);
+
+	printf("# TESTING %s ####################################\n", funcName);
+	fflush(stdout);	
+	
 	fprintf(fp, "\t\tGOTO test_start\n");
 
-	/* Append ASC code for abs() to file */	
+	/* Append ASC code for given function */	
 	fprintf(fp, "%s\n", buf);
 	free(buf);
 
-	/* Append ASC code for abs tests to file */
-	buf = getText(absTests);	
+	/* Append ASC code for tests for given function */
+	buf = getText(testsFile);	
 	fprintf(fp, "%s\n", buf);
 	
 	/* Print header to stdout to inform tester about expected output */
@@ -88,13 +108,15 @@ testAbs()
 	free(buf);
 
 	fclose(fp);
+	
+	forkAndRun(outputFile);
 
-	forkAndRun(absTestFile);
-
-	printf("\n# __abs TEST COMPLETE #################################\n\n");
+	printf("\n# %s TEST COMPLETE #############################\n\n", 
+	    funcName);
 	fflush(stdout);	
-	return 0;	
+
 }
+
 
 /*
  * Prints to stdout the comment header for the test file which was read into
