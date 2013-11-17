@@ -43,7 +43,7 @@ TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(BIN)/testingUtils.o
-TESTOBJS1+=	$(BIN)/testPreDef.o #$(BIN)/testPreDefAsc.o
+TESTOBJS1+=	$(BIN)/testPreDef.o $(BIN)/testPreDefAsc.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -99,7 +99,7 @@ lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
 
 # Build test executable
-test: CFLAGS+= -g -Isrc/ -DTESTBUILD
+test: CFLAGS+= -g -Isrc/ -DTESTBUILD -D_POSIX_C_SOURCE=200809L
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)

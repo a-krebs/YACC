@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 	initialize();
 
 	/* Test the ASC code for the predefined functions */
-//	testAsc();
+	testAsc();
 
 	char *result = test_all();
 	if (result != NULL) {
@@ -64,6 +64,8 @@ char *test_all() {
 int
 testAsc()
 {
-//	testAbs();
+	setUpAscTests();
+	testAbs();
+	tearDownAscTests();
 	return 0;
 }

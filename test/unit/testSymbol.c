@@ -414,8 +414,6 @@ test_isValidArrayAccess()
 	    lowConst->kindPtr.ConstKind->typeSym;
 	mu_assert("isValidArrayAccess() should recognize valid array access",
 	    isValidArrayAccess(newArraySym, lowConst)); 
-	mu_assert("isValidArrayAccess() should recognize invalid array access",
-	    !isValidArrayAccess(newArraySym, setUpConstSymbol()));
 
 	return NULL;
 }

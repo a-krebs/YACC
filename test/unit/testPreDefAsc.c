@@ -7,55 +7,100 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <wait.h>
 
 #include "testPreDefAsc.h"
 
-static char execAsc[] = "./bin/asc";
+/* env variables */
+static char *oldPath;
+static char newPath[1024];
+
+
+static char execAsc[] = "bin/asc";
 
 static char absTestFile[] = "./test/unit/asctests/testAbs.asc";
-static char absFile[] = "./src/asc/__abs.asc";
+static char absAscFile[] = "./src/asc/__abs.asc";
+static char absTests[] = "./test/unit/asctests/__absTests.asc";
 
-static void execErr(char *);
+static void execErr(char *, int *);
 static void fnfErr(char *);
-static char *getFuncCode(char *);
+static char *getText(char *);
+
+
+/*
+ * Append the current working directory to the environment Path variable
+ * such that exec() call will find the asc executable.
+ */
+void setUpAscTests() 
+{
+	char cwd[1024];
+
+	/* get the current working directory */
+	getcwd(cwd, sizeof(cwd) - 1);
+
+	/* get the current environment path variable */
+	oldPath = getenv("PATH");
+	strcpy(newPath, oldPath);
+
+	/* append cwd to path variable so asc executable can be found by exec */
+	strcat(newPath, cwd);
+
+	/* set path var */
+	setenv("PATH", newPath, 1);
+}
+
+/*
+ * Resets the path variable to its original value.
+ */
+void tearDownAscTests()
+{
+	unsetenv("PATH");
+	setenv("PATH", oldPath, 1);
+}
 
 int
 testAbs()
 {
-	//TODO: get this working
-	/*
-	char *absCode = NULL;
-	pid_t pid;
-	int status;
-	
+	char *buf = NULL;
+	int status;	
 	FILE *fp = fopen(absTestFile, "w");
+	pid_t pid;
+	
 	if (!fp) fnfErr(absTestFile);
-	absCode = getFuncCode(absFile);
+	buf = getText(absAscFile);
 
-	printf("TESTING __abs----------------------------------------------\n");
-	fprintf(fp, "\t\tGOTO testStart\n");
-	fprintf(fp, "%s\n", absCode);
+	printf("# TESTING __abs.asc #\n");
+	fprintf(fp, "\t\tGOTO test_start\n");
+
+	/* Append ASC code for abs() to file */	
+	fprintf(fp, "%s\n", buf);
+	free(buf);
+
+	/* Append ASC code for abs tests to file */
+	buf = getText(absTests);	
+	fprintf(fp, "%s\n", buf);
+	free(buf);
+
 	fclose(fp);
 
 	pid = fork();
 	if (!pid) {
-		if (execlp(execAsc, absTestFile) == -1) {
-			warn("Failed to execute %s in asc", absFile);
-			status = -1;
-		}  
+		if (execlp(execAsc, execAsc, absTestFile) == -1) {
+			execErr(absTestFile, &status);
+		}
 	} else waitpid(pid, &status, 0);
 
-	printf(" - __abs test complete ------------------------------------\n");	
-	return status;	*/
-	return 0;
+	printf(" # __abs TEST COMPLETE # \n\n");
+	fflush(stdout);	
+	return status;	
 }
 
 static void
-execErr(char *fname)
+execErr(char *fname, int *status)
 {
-	err(1, "Failed to execute %s in asc", fname);
-	exit(1);
+	warn("Failed to execute asc with %s", fname);
+	*status = -1;
 }
 
 static void
@@ -66,10 +111,10 @@ fnfErr(char * fname)
 }
 
 static char *
-getFuncCode(char *fname)
+getText(char *fname)
 {
 	long flen = 0;
-	char *funcCode = NULL;
+	char *buf = NULL;
 	FILE *fp = fopen(fname, "r");
 	size_t bytesRead;
 	if (!fp) fnfErr(fname);
@@ -79,7 +124,7 @@ getFuncCode(char *fname)
 	flen = ftell(fp);
 	fseek(fp, 0L, SEEK_SET);
 
-	funcCode = calloc(flen, sizeof(char));
-	while ((bytesRead = fread(funcCode, sizeof(char), flen, fp)) > 0) ;
-	return funcCode;	
+	buf = calloc(flen, sizeof(char));
+	while ((bytesRead = fread(buf, sizeof(char), flen, fp)) > 0) ;
+	return buf;	
 }
