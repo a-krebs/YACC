@@ -10,7 +10,7 @@ OpenBSD )
   ;;
 
 Linux )
- ~c415/ASC/bin/asc-Linux $*
+ ~/c415/compiler/YACC/bin/asc-Linux $*
   ;;
 * )
   echo Sorry - no prebuilt binary for this architecture.
