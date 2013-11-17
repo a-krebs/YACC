@@ -61,7 +61,8 @@ void tearDownAscTests()
 int
 testAbs()
 {
-	runTest("__abs", 
+	runTest(
+		"__abs", 
 		"src/asc/__abs.asc", 
 	    	"test/unit/asctests/__absTests.asc",
 		"test/unit/asctests/testAbs.asc"
@@ -73,13 +74,29 @@ testAbs()
 int
 testSqrt()
 {
-	runTest("__sqrt",
+	runTest(
+		"__sqrt",
 		"src/asc/__sqrt.asc",
 		"test/unit/asctests/__sqrtTests.asc",
 		"test/unit/asctests/testAbs.asc"
 	);
 	return 0;
 }
+
+int
+testChr()
+{
+	runTest(
+		"__chr",
+		"src/asc/__chr.asc",
+		"test/unit/asctests/__chrTests.asc",
+		"test/unit/asctests/testChr.asc"
+	);
+	return 0;
+}
+
+
+
 
 static void
 runTest(char *funcName, char *codeFile, char *testsFile, char *outputFile)
