@@ -8,5 +8,7 @@ int testPred();
 int testSin();
 int testSqrt();
 int testSucc();
+int testWrite();
+int testWriteln();
 void setUpAscTests();
 void tearDownAscTests();

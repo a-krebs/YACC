@@ -159,6 +159,22 @@ testSqrt()
 	return 0;
 }
 
+int
+testWrite()
+{
+	setUpTest("__writeTests.asc", "testWrite.asc");
+	runTest("__write");
+	return 0;
+}
+
+int
+testWriteln()
+{
+	setUpTest("__writelnTests.asc", "testWriteln.asc");
+	runTest("__writeln");
+	return 0;
+}
+
 
 static void
 setUpTest(char *testsFile, char *outFile)
@@ -166,6 +182,7 @@ setUpTest(char *testsFile, char *outFile)
 	memset(tests, '\0', LEN);
 	memset(out, '\0', LEN);
 	strcpy(tests, testDir); 
+	strcpy(out, testDir);
 	strcat(tests, testsFile);
 	strcat(out, outFile);
 
@@ -187,7 +204,7 @@ runTest(char *funcName)
 	/* Append ASC code for tests for given function */
 	buf = getText(tests);	
 	fprintf(fp, "%s\n", buf);
-	
+
 	/* Print header to stdout to inform tester about expected output */
 	printHeader(buf);
 	free(buf);
@@ -224,7 +241,9 @@ makeMasterFile()
 		strcat(code, ascFiles[i]); 
 		buf = getText(code);
 		fprintf(fp, "%s\n", buf);
+		free(buf);
 	}
+	fclose(fp);
 }
 
 /*

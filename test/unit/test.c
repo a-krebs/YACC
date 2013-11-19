@@ -74,6 +74,8 @@ testAsc()
 	testSin();
 	testSucc();
 	testSqrt();
+	testWrite();
+	testWriteln();
 	tearDownAscTests();
 	return 0;
 }
