@@ -12,6 +12,31 @@
 
 #include "testPreDefAsc.h"
 
+#define N_PREDEF_FUNCS 20
+
+char *ascFiles[N_PREDEF_FUNCS] = {
+	"__abs.asc",
+	"__arctan.asc",
+	"__chr.asc",
+	"__cos.asc",
+	"__factorial.asc",
+	"__is_bad_real.asc",
+	"__odd.asc",
+	"__ord.asc",
+	"__pow.asc",
+	"__pred.asc",
+	"__read.asc",
+	"__readln.asc",
+	"__trunc.asc",
+	"__sin.asc",
+	"__sqr.asc",
+	"__sqrt.asc",
+	"__succ.asc",
+	"__round.asc",
+	"__write.asc",
+	"__writeln.asc"
+};
+
 /* env variables */
 static char *oldPath;
 static char newPath[1024];
@@ -28,16 +53,17 @@ static char testDir[] = "test/unit/asctests/";
 static char code[LEN];
 static char tests[LEN];
 static char out[LEN];
-
+static char masterFile[] = "__preDefAsc.asc";
 
 static char *getText(char *);
 
 static void execErr(char *, int *);
 static void forkAndRun(char *);
 static void fnfErr(char *);
+static void makeMasterFile();
 static void printHeader(char *);
 static void runTest(char *);
-static void setUpTest(char *, char *, char *);
+static void setUpTest(char *, char *);
 
 /*
  * Append the current working directory to the environment Path variable
@@ -59,6 +85,8 @@ void setUpAscTests()
 
 	/* set path var */
 	setenv("PATH", newPath, 1);
+
+	makeMasterFile();
 }
 
 /*
@@ -73,7 +101,7 @@ void tearDownAscTests()
 int
 testAbs()
 {
-	setUpTest("__abs.asc", "__absTests.asc", "testAbs.asc");
+	setUpTest("__absTests.asc", "testAbs.asc");
 	runTest("__abs");
 	    
 	return 0;	
@@ -82,24 +110,42 @@ testAbs()
 int
 testChr()
 {
-	setUpTest("__chr.asc", "__chrTests.asc", "testChr.asc"); 
+	setUpTest("__chrTests.asc", "testChr.asc"); 
 	runTest("__chr");
 	return 0;
 }
 
 int
+testCos()
+{
+	setUpTest("__cosTests.asc", "testCos.asc");
+	runTest("__cos");
+	return 0;
+
+}
+
+int
 testPred()
 {
-	setUpTest("__pred.asc", "__predTests.asc", "testPred.asc");
+	setUpTest("__predTests.asc", "testPred.asc");
 	runTest("__pred");
 	return 0;
 
 }
 
 int
+testSin()
+{
+	setUpTest("__sinTests.asc", "testSin.asc");
+	runTest("__sin");
+	return 0;
+}
+
+
+int
 testSucc()
 {
-	setUpTest("__succ.asc", "__succTests.asc", "testSucc.asc");
+	setUpTest("__succTests.asc", "testSucc.asc");
 	runTest("__succ");
 	return 0;
 
@@ -108,21 +154,18 @@ testSucc()
 int
 testSqrt()
 {
-	setUpTest("__sqrt.asc", "__sqrtTests.asc", "testSqrt.asc"); 
+	setUpTest("__sqrtTests.asc", "testSqrt.asc"); 
 	runTest("__sqrt");
 	return 0;
 }
 
 
 static void
-setUpTest(char *codeFile, char *testsFile, char *outFile)
+setUpTest(char *testsFile, char *outFile)
 {
-	memset(code, '\0', LEN);
 	memset(tests, '\0', LEN);
 	memset(out, '\0', LEN);
-	strcpy(code, funcCodeDir);
 	strcpy(tests, testDir); 
-	strcat(code, codeFile);
 	strcat(tests, testsFile);
 	strcat(out, outFile);
 
@@ -140,11 +183,6 @@ runTest(char *funcName)
 	printf("# TESTING %s ####################################\n", funcName);
 	fflush(stdout);	
 	
-	fprintf(fp, "\t\tGOTO test_start\n");
-
-	/* Append ASC code for given function */	
-	fprintf(fp, "%s\n", buf);
-	free(buf);
 
 	/* Append ASC code for tests for given function */
 	buf = getText(tests);	
@@ -153,6 +191,9 @@ runTest(char *funcName)
 	/* Print header to stdout to inform tester about expected output */
 	printHeader(buf);
 	free(buf);
+
+	buf = getText(masterFile);
+	fprintf(fp, "%s\n", buf);
 
 	fclose(fp);
 	
@@ -164,6 +205,27 @@ runTest(char *funcName)
 
 }
 
+static void
+makeMasterFile()
+{
+	char *buf = NULL;
+	FILE *fp = NULL;
+	int i;
+
+	fp = fopen(masterFile, "w");
+
+	
+
+	if (!fp) fnfErr(masterFile);
+
+	for (i = 0; i < N_PREDEF_FUNCS; i++) {
+		memset(code, '\0', LEN);
+		strcpy(code, funcCodeDir);
+		strcat(code, ascFiles[i]); 
+		buf = getText(code);
+		fprintf(fp, "%s\n", buf);
+	}
+}
 
 /*
  * Prints to stdout the comment header for the test file which was read into

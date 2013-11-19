@@ -69,7 +69,9 @@ testAsc()
 	setUpAscTests();
 	testAbs();
 	testChr();
+	testCos();
 	testPred();
+	testSin();
 	testSucc();
 	testSqrt();
 	tearDownAscTests();
