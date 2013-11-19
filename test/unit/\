@@ -70,7 +70,6 @@ testAsc()
 	testAbs();
 	testChr();
 	testPred();
-	testSucc();
 	testSqrt();
 	tearDownAscTests();
 	return 0;

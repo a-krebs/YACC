@@ -16,8 +16,19 @@
 static char *oldPath;
 static char newPath[1024];
 
-
+/* file locations */
 static char execAsc[] = "bin/asc";
+static char funcCodeDir[] = "src/asc/";
+static char testDir[] = "test/unit/asctests/";
+
+/* 
+ * Global strings used when running test -- globals used to make
+ * setting up a test run more convenient
+ */
+static char code[LEN];
+static char tests[LEN];
+static char out[LEN];
+
 
 static char *getText(char *);
 
@@ -25,7 +36,8 @@ static void execErr(char *, int *);
 static void forkAndRun(char *);
 static void fnfErr(char *);
 static void printHeader(char *);
-static void runTest(char *, char *, char *, char *);
+static void runTest(char *);
+static void setUpTest(char *, char *, char *);
 
 /*
  * Append the current working directory to the environment Path variable
@@ -61,51 +73,69 @@ void tearDownAscTests()
 int
 testAbs()
 {
-	runTest(
-		"__abs", 
-		"src/asc/__abs.asc", 
-	    	"test/unit/asctests/__absTests.asc",
-		"test/unit/asctests/testAbs.asc"
-	);
+	setUpTest("__abs.asc", "__absTests.asc", "testAbs.asc");
+	runTest("__abs");
 	    
 	return 0;	
 }
 
 int
-testSqrt()
+testChr()
 {
-	runTest(
-		"__sqrt",
-		"src/asc/__sqrt.asc",
-		"test/unit/asctests/__sqrtTests.asc",
-		"test/unit/asctests/testAbs.asc"
-	);
+	setUpTest("__chr.asc", "__chrTests.asc", "testChr.asc"); 
+	runTest("__chr");
 	return 0;
 }
 
 int
-testChr()
+testPred()
 {
-	runTest(
-		"__chr",
-		"src/asc/__chr.asc",
-		"test/unit/asctests/__chrTests.asc",
-		"test/unit/asctests/testChr.asc"
-	);
+	setUpTest("__pred.asc", "__predTests.asc", "testPred.asc");
+	runTest("__pred");
+	return 0;
+
+}
+
+int
+testSucc()
+{
+	setUpTest("__succ.asc", "__succTests.asc", "testSucc.asc");
+	runTest("__succ");
+	return 0;
+
+}
+
+int
+testSqrt()
+{
+	setUpTest("__sqrt.asc", "__sqrtTests.asc", "testSqrt.asc"); 
+	runTest("__sqrt");
 	return 0;
 }
 
 
+static void
+setUpTest(char *codeFile, char *testsFile, char *outFile)
+{
+	memset(code, '\0', LEN);
+	memset(tests, '\0', LEN);
+	memset(out, '\0', LEN);
+	strcpy(code, funcCodeDir);
+	strcpy(tests, testDir); 
+	strcat(code, codeFile);
+	strcat(tests, testsFile);
+	strcat(out, outFile);
 
+}
 
 static void
-runTest(char *funcName, char *codeFile, char *testsFile, char *outputFile)
+runTest(char *funcName)
 {
 	char *buf = NULL;
-	FILE *fp = fopen(outputFile, "w");
+	FILE *fp = fopen(out, "w");
 	
-	if (!fp) fnfErr(outputFile);
-	buf = getText(codeFile);
+	if (!fp) fnfErr(out);
+	buf = getText(code);
 
 	printf("# TESTING %s ####################################\n", funcName);
 	fflush(stdout);	
@@ -117,7 +147,7 @@ runTest(char *funcName, char *codeFile, char *testsFile, char *outputFile)
 	free(buf);
 
 	/* Append ASC code for tests for given function */
-	buf = getText(testsFile);	
+	buf = getText(tests);	
 	fprintf(fp, "%s\n", buf);
 	
 	/* Print header to stdout to inform tester about expected output */
@@ -126,7 +156,7 @@ runTest(char *funcName, char *codeFile, char *testsFile, char *outputFile)
 
 	fclose(fp);
 	
-	forkAndRun(outputFile);
+	forkAndRun(out);
 
 	printf("\n# %s TEST COMPLETE #############################\n\n", 
 	    funcName);
