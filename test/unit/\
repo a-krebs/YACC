@@ -30,13 +30,8 @@ int main(int argc, char *argv[]) {
 
 	initialize();
 
-	/* 
-	 * If any argument is passed to the cmd line, we run tests on the
-	 * ASC code for the predefined functions 
-	 * TODO: change this functionality before the repo goes public
-	 * and you bring shame to everyone you love.
-	 */
-	if (argc > 1) testAsc();
+	/* Test the ASC code for the predefined functions */
+	testAsc();
 
 	char *result = test_all();
 	if (result != NULL) {
@@ -74,17 +69,8 @@ testAsc()
 	setUpAscTests();
 	testAbs();
 	testChr();
-	testCos();
-	testExp();
-	testLn();
 	testPred();
-	testRound();
-	testSin();
-	testSucc();
 	testSqrt();
-	testTrunc();
-	testWrite();
-	testWriteln();
 	tearDownAscTests();
 	return 0;
 }

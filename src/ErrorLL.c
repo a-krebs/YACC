@@ -48,9 +48,11 @@ appendError(struct ErrorLL **eLL, struct Error *e)
 		t1->next = t2;
 	}
 
+#ifndef TESTBUILD
 	if (givenArgs.q == 0) {
 		printError(e);
 	}
+#endif
 }
 
 

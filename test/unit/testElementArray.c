@@ -170,8 +170,8 @@ test_hasDuplicateElement(){
 	int i,size,returnVal;
 	size = 100;
 	Symbol *sym, *sym1, *sym2, *sym3;
-	struct ElememtArray *ea = newElementArray();
-	struct ElememtArray *ea2 = newElementArray();
+	struct ElementArray *ea = newElementArray();
+	struct ElementArray *ea2 = newElementArray();
 	
 	for(i = 0; i < size ; i++){
 		sym = (Symbol *)setUpTypeSymbol();	
