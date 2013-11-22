@@ -4,6 +4,7 @@ int testAbs();
 int testChr();
 int testCos();
 int testExp();
+int testLn();
 int testPred();
 int testRound();
 int testSin();

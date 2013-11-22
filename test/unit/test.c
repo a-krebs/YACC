@@ -76,6 +76,7 @@ testAsc()
 	testChr();
 	testCos();
 	testExp();
+	testLn();
 	testPred();
 	testRound();
 	testSin();
