@@ -12,7 +12,7 @@
 
 #include "testPreDefAsc.h"
 
-#define N_PREDEF_FUNCS 20
+#define N_PREDEF_FUNCS 21
 
 char *ascFiles[N_PREDEF_FUNCS] = {
 	"__abs.asc",
@@ -23,6 +23,7 @@ char *ascFiles[N_PREDEF_FUNCS] = {
 	"__is_bad_real.asc",
 	"__odd.asc",
 	"__ord.asc",
+	"__exp.asc",
 	"__pow.asc",
 	"__pred.asc",
 	"__read.asc",
@@ -125,12 +126,28 @@ testCos()
 }
 
 int
+testExp()
+{
+	setUpTest("__expTests.asc", "testExp.asc");
+	runTest("__exp");
+	return 0;
+}
+
+int
 testPred()
 {
 	setUpTest("__predTests.asc", "testPred.asc");
 	runTest("__pred");
 	return 0;
 
+}
+
+int
+testRound()
+{
+	setUpTest("__roundTests.asc", "testRound.asc");
+	runTest("__round");
+	return 0;
 }
 
 int
@@ -156,6 +173,14 @@ testSqrt()
 {
 	setUpTest("__sqrtTests.asc", "testSqrt.asc"); 
 	runTest("__sqrt");
+	return 0;
+}
+
+int
+testTrunc()
+{
+	setUpTest("__truncTests.asc", "testTrunc.asc");
+	runTest("__trunc");
 	return 0;
 }
 
@@ -209,6 +234,7 @@ runTest(char *funcName)
 	printHeader(buf);
 	free(buf);
 
+	/* */
 	buf = getText(masterFile);
 	fprintf(fp, "%s\n", buf);
 
@@ -230,8 +256,6 @@ makeMasterFile()
 	int i;
 
 	fp = fopen(masterFile, "w");
-
-	
 
 	if (!fp) fnfErr(masterFile);
 
