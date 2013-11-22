@@ -72,6 +72,7 @@ int
 testAsc()
 {
 	setUpAscTests();
+	testArctan();
 	testAbs();
 	testChr();
 	testCos();

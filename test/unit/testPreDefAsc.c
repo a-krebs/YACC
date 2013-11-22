@@ -105,9 +105,17 @@ testAbs()
 {
 	setUpTest("__absTests.asc", "testAbs.asc");
 	runTest("__abs");
-	    
 	return 0;	
 }
+
+int
+testArctan()
+{
+	setUpTest("__arctanTests.asc", "testArctan.asc");
+	runTest("__arctan");
+	return 0;
+}
+
 
 int
 testChr()
