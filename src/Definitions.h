@@ -8,6 +8,7 @@
  */
 
 typedef enum {
+	VOID_T,		/* special type for return type of procedures */
 	ARRAY_T,
 	BOOLEAN_T,
 	CHAR_T,
@@ -18,7 +19,6 @@ typedef enum {
 	SCALARINT_T,
 	STRING_T,
 	SUBRANGE_T,
-	VOID_T,		/* special type for return type of procedures */
 } type_t;
 
 typedef union type_union {

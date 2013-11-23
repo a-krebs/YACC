@@ -22,7 +22,6 @@ areSameType(Symbol *s1, Symbol *s2)
 		exit(EXIT_FAILURE);
 	} 
 
-
 	if ( !(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
 
 	if(s1->kindPtr.TypeKind == s2->kindPtr.TypeKind) {
@@ -326,7 +325,11 @@ struct Record *newRecord() {
 type_t
 getType(Symbol *s)
 {
-	if (!s) /* should probably exit program */ return VOID_T;
+	if (!s) {
+		err(1, "Symbol is null");
+		exit(1);
+	}
+
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
@@ -342,7 +345,9 @@ getType(Symbol *s)
 		return s->kindPtr.VarKind->typeSym->kindPtr.TypeKind->type;
 	default:
 		/* NOT REACHED */
-		return VOID_T;
+		// return VOID_T;
+		err(1, "Symbol 'kind' not set.");
+		exit(1);		
 	}	
 }
 
