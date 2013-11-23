@@ -87,13 +87,11 @@ appendElement(struct ElementArray *ea, void *element)
  * 
  * Parameters: 
  *		ElementArray: a pointer to the elementArray
+ *		void *element: a void pointer to an element
  * Return:
  *		1 has duplicates
  *		0 no duplicates
  */		
-
-
-
 int
 hasDuplicateElement(struct ElementArray *ea){
 	int i,j,count;
@@ -185,9 +183,6 @@ getElementAt(struct ElementArray *ea, unsigned int i)
 	}
 	return ea->data[i];
 }
-
-
-
 /*
  * Free all memory associated with the given elements array.
  * 
