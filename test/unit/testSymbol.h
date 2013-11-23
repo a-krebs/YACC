@@ -24,5 +24,6 @@ char *test_createFuncSymbol();
 char *test_createParamSymbol();
 char *test_createProcSymbol();
 char *test_createTypeSymbol();
+char *test_createVarSymbol();
 char *test_all_Symbol();
 #endif

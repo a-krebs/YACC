@@ -566,6 +566,25 @@ char *test_createTypeSymbol() {
 }
 
 
+char *test_createVarSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5, sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, VAR_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == VAR_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+}
+
+
 char *test_all_Symbol() {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
@@ -584,5 +603,6 @@ char *test_all_Symbol() {
 	mu_run_test(test_createParamSymbol);
 	mu_run_test(test_createProcSymbol);
 	mu_run_test(test_createTypeSymbol);
+	mu_run_test(test_createVarSymbol);
 	return NULL;
 }
