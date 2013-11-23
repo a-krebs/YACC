@@ -1210,14 +1210,19 @@ void freeProxySymbol(ProxySymbol *p) {
 /* Creates a new symbol. Auto-determines all substructures
  * based on the parameter kind.
  *
+ * Does not insert into the symbol table, use createAndInsertSymbol for that.
+ *
  * Parameters:
+ * 		table: the symbol table from which to get lexical level
  *              id: name of symbol
  *		kind: kind of symbol. Comes from kind_t enum
  *		typeOriginator: flag for if type originator 
  *
  * Return: Newly created symbol.
  */
-Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
+Symbol *createSymbol(
+    struct hash *table, char *id, kind_t kind, int typeOriginator)
+{
 	Symbol *symbol = allocateSymbol();
 
 	if (symbol == NULL) {
@@ -1225,20 +1230,15 @@ Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
 		exit(EXIT_FAILURE);			
 	}
 
-	//set symbol independent values
+	// set symbol independent values
 	setSymbolName(symbol, id);
 
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
 	
-	symbol->lvl = getCurrentLexLevel(symbolTable);
+	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
 	symbol->next = NULL;
-
-	if (symbol == NULL) {
-		err(1, "Could not create new symbol. Setting values distributed symbol.");
-		exit(EXIT_FAILURE);			
-	}
 
 	return symbol;
 }
@@ -1266,28 +1266,30 @@ Symbol *allocateSymbol() {
 /* Creates and inserts a symbol into the symbol table
  *
  * Parameters:
+ * 		table: the symbol table into which to insert
  *              id: name of symbol
  *		kind: kind of symbol. Comes from kind_t enum
  *		typeOriginator: flag for if type originator 
  *
  * Return: a pointer to the created symbol
  */
-Symbol *insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
-	Symbol *symbol = createSymbol(key, kind, typeOriginator);
+Symbol *createAndInsertSymbol(
+    struct hash *table, char *key, kind_t kind, int typeOriginator)
+{
+	Symbol *symbol = createSymbol(table, key, kind, typeOriginator);
+
 	if (symbol == NULL) {
-		err(1, "Could not insert into create symbol.");
+		err(1, "Could not create symbol.");
 		exit(EXIT_FAILURE);
 	}
 
-	if (createHashElement(symbolTable, key, symbol) != 0) {
+	if (createHashElement(table, key, symbol) != 0) {
 		err(1, "Could not insert into symbol table.");
 		exit(EXIT_FAILURE);
 	}
+
 	return symbol;
 }
-
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1297,7 +1299,7 @@ Symbol *insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 /////////////////////////////////////////////////////////////////////////////
 
 
-/* Creates const kind symbol
+/* Creates const kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1305,12 +1307,11 @@ Symbol *insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
  * Return: Newly created symbol
  */
 Symbol *createConstSymbol(char *id) {
-	kind_t kind = CONST_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, CONST_KIND, 0);
 }
 
 
-/* Creates func kind symbol
+/* Creates func kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1318,12 +1319,11 @@ Symbol *createConstSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createFuncSymbol(char *id) {
-	kind_t kind = FUNC_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, FUNC_KIND, 0);
 }
 
 
-/* Creates param kind symbol
+/* Creates Param kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1331,12 +1331,11 @@ Symbol *createFuncSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createParamSymbol(char *id) {
-	kind_t kind = PARAM_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, PARAM_KIND, 0);
 }
 
 
-/* Creates proc kind symbol
+/* Creates proc kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1344,12 +1343,11 @@ Symbol *createParamSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createProcSymbol(char *id) {
-	kind_t kind = PROC_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, PROC_KIND, 0);
 }
 
 
-/* Creates var kind symbol
+/* Creates var kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1357,12 +1355,11 @@ Symbol *createProcSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createVarSymbol(char *id) {
-	kind_t kind = VAR_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, VAR_KIND, 0);
 }
 
 
-/* Creates type kind symbol
+/* Creates type kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1371,8 +1368,7 @@ Symbol *createVarSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createTypeSymbol(char *id, int typeOriginator) {
-	kind_t kind = TYPE_KIND;
-	return createSymbol(id, kind, typeOriginator);
+	return createSymbol(symbolTable, id, TYPE_KIND, typeOriginator);
 }
 
 

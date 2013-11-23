@@ -60,9 +60,10 @@ int addFieldToRecord(Symbol*, ProxySymbol*);
 void freeProxySymbol(ProxySymbol*);
 
 /*api functions*/
-Symbol *createSymbol(char *id, kind_t kind, int typeOriginator);
+Symbol *createSymbol(struct hash*, char *id, kind_t kind, int typeOriginator);
 Symbol *allocateSymbol();
-Symbol *insertInSymbolTable(char *key, kind_t kind, int typeOriginator);
+Symbol *createAndInsertSymbol(
+    struct hash*, char *key, kind_t kind, int typeOriginator);
 Symbol *createConstSymbol(char *id);
 Symbol *createFuncSymbol(char *id);
 Symbol *createParamSymbol(char *id);
