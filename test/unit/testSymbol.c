@@ -458,9 +458,18 @@ test_isElementArraySimple()
 	return NULL;
 }
 
-char *
-test_all_Symbol()
-{
+char *test_allocSymbol() {
+	Symbol *sym = NULL;
+
+	sym = allocSymbol();
+
+	mu_assert("Symbol is NULL",
+	    symbol != NULL);
+	
+	return NULL;
+}
+
+char *test_all_Symbol() {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
 	mu_run_test(test_newConstProxySym);
@@ -472,5 +481,6 @@ test_all_Symbol()
 	mu_run_test(test_newVariableSym);
 	mu_run_test(test_isConstInScalar);
 	mu_run_test(test_isElementArraySimple);
+	mu_run_test(test_allocSymbol);
 	return NULL;
 }

@@ -15,8 +15,9 @@ char *test_newTypeSymFromSym();
 char *test_newVariableSym();
 char *test_newSubrangeSym();
 char *test_newParameter;
-char *test_all_Symbol();
 char *test_isValidArrayAccess();
 char *test_newAnonScalarSym();
 char *test_isConstInScalar();
+char *test_allocSymbol();
+char *test_all_Symbol();
 #endif
