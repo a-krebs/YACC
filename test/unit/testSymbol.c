@@ -157,7 +157,7 @@ test_newAnonArraySym()
 	Symbol *highConst = setUpIntConst();
 	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
-	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
 
 	mu_assert("newArraySym should not be NULL", newArraySym); 
 	mu_assert("newArraySym should have subrange as expected",
@@ -165,7 +165,7 @@ test_newAnonArraySym()
 	mu_assert("newArraySym should have base type as expecte",
 	    getTypePtr(newArraySym)->Array->baseTypeSym == baseTypeSym);
 	mu_assert("newArraySym should be at the expected lexical level",
-	    newArraySym->lvl == 10);
+	    newArraySym->lvl == 0);
 
 	return NULL;
 }
@@ -415,7 +415,7 @@ test_isValidArrayAccess()
 	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	Symbol *var = NULL;
-	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
 	var = newVariableSym(10, "hello", newArraySym);	
 	ProxySymbol *index1 = (ProxySymbol *) lowConst;
 	index1->kindPtr.ConstKind->typeSym =
