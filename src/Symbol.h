@@ -59,7 +59,13 @@ Symbol *newRecordTypeSym(int, char*);
 int addFieldToRecord(Symbol*, ProxySymbol*);
 void freeProxySymbol(ProxySymbol*);
 
+/*api functions*/
+Symbol *createSymbol(char *id, kind_t kind, int typeOriginator);
+Symbol *allocateSymbol();
+void insertInSymbolTable(char *key, kind_t kind, int typeOriginator);
+
 
 Symbol *
 newStringTypeSym(int lexLevel, int strlen);
+
 #endif

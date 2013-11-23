@@ -1218,7 +1218,7 @@ void freeProxySymbol(ProxySymbol *p) {
  * Return: Newly created symbol.
  */
 Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
-	Symbol *symbol = allocSymbol();
+	Symbol *symbol = allocateSymbol();
 
 	if (symbol == NULL) {
 		err(1, "Could not create new symbol.");
@@ -1268,7 +1268,7 @@ Symbol *allocateSymbol() {
  * Return: void - should error out if cannot create.
  */
 void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
-	Symbol *symbol = createNewSymbol(key, kind, typeOriginator);
+	Symbol *symbol = createSymbol(key, kind, typeOriginator);
 	if (symbol == NULL) {
 		err(1, "Could not insert into create symbol.");
 		exit(EXIT_FAILURE);
@@ -1280,3 +1280,17 @@ void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 	}
 }
 
+
+// Symbol *createConstSymbol(char *id) {
+// 	kind_t kind = CONST_KIND;
+// 	Symbol *symbol = createSymbol(id, kind, 0);
+	
+// 	if (symbol == NULL) {
+// 		err(1, "Could not create const symbol.");
+// 		exit(EXIT_FAILURE);			
+// 	}
+
+// 	return symbol;
+// }
+
+//type originator only needed for type symbols
