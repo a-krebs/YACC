@@ -71,8 +71,7 @@ Symbol *newTypeSymFromSym(char *id, Symbol *typeSym)
  * defining the base type and a pointer to a symbol defining the index type.
  */
 Symbol *
-newAnonArraySym(int lvl, Symbol *baseTypeSym, 
-	    Symbol *indexTypeSym)
+newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym)
 {
 	Symbol *newArraySym = NULL;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
@@ -110,7 +109,7 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
 	newArraySym->kindPtr.TypeKind->type = ARRAY_T;
-	newArraySym->lvl = lvl;
+	//TODO newArraySym->lvl = lvl;
 	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
 }

@@ -328,19 +328,29 @@ Symbol *createScalarListType(struct ElementArray *ea) {
 
 /*
  * Create a new array type given the index type and base type.
+ *
+ * Parameters:
+ * 	index: symbol for index type of kind TYPE_KIND
+ * 	base: symbol for base type of kind TYPE_KIND
+ *
+ * Return:
+ * 	new symbol of kind TYPE_KIND
+ * 	
  */
 Symbol *createArrayType(Symbol *index, Symbol *base) {
 	Symbol * newArraySym = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 	
-	newArraySym = newAnonArraySym(lvl, base, index);
-	if (newArraySym) {
-		createHashElement(symbolTable, NULL, newArraySym);
-		return newArraySym;
+	newArraySym = newAnonArraySym(base, index);
+
+	if (newArraySym == NULL) {
+		/* newAnonArraySym has already done error reporting. */
+		return NULL;
+	}
+	if (createHashElement(symbolTable, NULL, newArraySym) != 0) {
+		symbolTableInsertFailure();
 	}
 
-	/* Else, error.  Error reporting done in newAnonArraySym() */	
-	return NULL;
+	return newArraySym;
 }
 
 /*
