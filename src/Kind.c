@@ -122,11 +122,11 @@ allocateTypeKind()
 }
 
 /*
- * Allocate space for TypeKind
+ * Allocate space for VariableKind
  * 
  * Parameter: none
  * 
- * Return: pointer to struct TypeKind
+ * Return: pointer to struct VariableKind
  */
 struct VariableKind *
 allocateVariableKind() 
