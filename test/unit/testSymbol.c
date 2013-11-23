@@ -506,6 +506,25 @@ char *test_createFuncSymbol() {
 }
 
 
+
+char *test_createParamSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5, sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	// id, kind_t, tpyor
+	symbol = createSymbol(id, PARAM_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind = PARAM_KIND);
+}
+
+
 char *test_all_Symbol() {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
@@ -521,5 +540,6 @@ char *test_all_Symbol() {
 	mu_run_test(test_allocSymbol);
 	mu_run_test(test_createConstSymbol);
 	mu_run_test(test_createFuncSymbol);
+	mu_run_test(test_createParamSymbol);
 	return NULL;
 }
