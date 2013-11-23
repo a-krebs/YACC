@@ -4,7 +4,7 @@
 #include "Definitions.h"
 #include "Kind.h"
 /* Symbol creation function */
-Symbol *newTypeSymFromSym(int, char *, Symbol *);
+Symbol *newTypeSymFromSym(char *, Symbol *);
 Symbol *newAnonArraySym(int, Symbol *, Symbol *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);

@@ -21,39 +21,48 @@ struct Error *e;
 /*
  * Constructs a	named type symbol given a ptr to another type symbol.
  * (so the new symbol will either be constructed from an anonymous type symbol
- * or be a copy of another named symbol) 
+ * or be a copy of another named symbol)
+ *
+ * Lexical level is NOT set, and symbol is NOT inserted into symbol table.
+ *
+ * Parameters:
+ * 	id: name of created symbol
+ * 	typeSym: symbol from which type is to be taken. Must be TYPE_KIND
+ *
+ * Returns: pointer to created symbol, or NULL on error
+ *
  */
-Symbol *
-newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
+Symbol *newTypeSymFromSym(char *id, Symbol *typeSym)
 {
 	Symbol *newTypeSym = NULL;
 	if (!typeSym) {
+		/* action that gets type has already added an error message */
 		return NULL;
 	}
 
 	if (typeSym->kind != TYPE_KIND) {
 		/* Trying to construct type symbol from non-type symbol */
+		errMsg = customErrorString("Identifier %s is not a type.",
+		    typeSym->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
 	if (!id) {
 		/* Error: trying to create named symbol from NULL id */
-		return NULL;
+		err(EXIT_FAILURE, "Trying to create named type symbol "
+		    "but name is NULL.");
 	}
 
-	newTypeSym = calloc(1, sizeof(Symbol));
-	if (!newTypeSym) {exit(1); /* blah blah */ }
-
-	setSymbolName(newTypeSym, id);
-	newTypeSym->kind = TYPE_KIND;
-	newTypeSym->kindPtr = typeSym->kindPtr;
-	
 	/* 
 	 * Type is being constructed from anonymous type, it is NOT a type
 	 * originator
 	 */
-	newTypeSym->lvl = lvl;
-	newTypeSym->typeOriginator = 0;
+	newTypeSym = createTypeSymbol(id, 0);
+
+	/* set type pointer to same as typeSym */
+	newTypeSym->kindPtr = typeSym->kindPtr;
+	
 	return newTypeSym;
 }
 

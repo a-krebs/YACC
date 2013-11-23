@@ -26,6 +26,6 @@ extern unsigned long long whileLoopDepth;
 
 /* Function declarations. */
 int initialize();
-
+int deInitialize();
 
 #endif

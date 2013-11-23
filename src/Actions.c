@@ -206,21 +206,39 @@ void exitTypeDeclPart(void) {
 
 /*
  * Create a new type identifier symbol in the symbol table.
+ *
+ * Parameters:
+ * 	id: name of symbol
+ * 	type: Symbol with TYPE_KIND from which to copy the type
+ *
+ * Does not return
  */
 void doTypeDecl(char *id, Symbol *type) {
 	Symbol * s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 
+	/* check that type with id is not already defined in scope */
 	s = getLocalSymbol(symbolTable, id);
-	if (s) {
-		/* throw already defined error */
+	if (s != NULL) {
+		errMsg = customErrorString("The type %s is already "
+		  "defined at this scope.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		/* Assume first type decl is the one to use.
+		 * See documentation PDF for details. */
+		return;
 	}
 	
-	s = newTypeSymFromSym(lvl, id, type);
-	if (s) {
-		createHashElement(symbolTable, id, s);	
+	// TODO this is a create and an insert. Maybe push the insert into
+	// newTypeSymFromSym
+	s = newTypeSymFromSym(id, type);
+	if (s == NULL) {
+		/* newTypeSymFromSym has already reported errors or
+		 * exited when appropriate */
+		return;
 	}
-	/* Else, error.  newTypeSymFromSym performs error checking */
+		
+	if (createHashElement(symbolTable, id, s) != 0) {
+		err(EXIT_FAILURE, "Could not insert symbol into symbol table");
+	}
 }
 
 /*

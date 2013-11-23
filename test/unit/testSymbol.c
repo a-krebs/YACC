@@ -13,6 +13,7 @@
 #include "Type.h"
 #include "Symbol.h"
 #include "Hash.h"
+#include "Globals.h"
 
 #define INTLOW_VAL 12
 #define INTHIGH_VAL 23423
@@ -267,8 +268,10 @@ test_newTypeSymFromSym()
 	int lvl = 10; 
 	char id[] = "testArray";	
 
+	symbolTable = createHash(&getHashedKeyNormal);
+	setLexLevel(symbolTable, 10);
 
-	newTypeSym = newTypeSymFromSym(lvl, id, typeSym);
+	newTypeSym = newTypeSymFromSym(id, typeSym);
 	mu_assert("newTypeSym should not be null", newTypeSym);
 	mu_assert("newTypeSym should have kindPtr equivalent to kindPtr of test"
 	    "type", newTypeSym->kindPtr.TypeKind = typeSym->kindPtr.TypeKind);
@@ -278,6 +281,10 @@ test_newTypeSymFromSym()
 	    newTypeSym->lvl = lvl);
 	mu_assert("newTypeSym should NOT be a type originator",
 	    newTypeSym->typeOriginator == 0);
+
+	destroyHash(symbolTable);
+	free(symbolTable);
+	symbolTable = NULL;
 
 	return NULL;
 }
