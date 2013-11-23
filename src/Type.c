@@ -37,7 +37,7 @@
 type_t
 getType(Symbol *s)
 {
-	if (!s) return NULL;
+	if (!s) return VOID_T;		///SHOUDL THIS CHANGE TO EXIT?
 
 	switch (s->kind) {
 	case CONST_KIND:
@@ -514,3 +514,30 @@ typeMemoryFailure()
 	err(1, "Failed to allocate memory for new anonymous constant " 		"type!");
 	exit(1);
 }
+
+
+
+// struct TypeKind *getTypeKind(Symbol *symbol) {
+// 	if ( symbol->kind != TYPE_KIND ) {
+// 		return NULL;
+// 	}
+
+// 	return symbol->kindPtr.TypeKind;
+// }
+
+
+// struct Array *allocateArrayType() {
+// 	struct Array *arrayType = NULL;
+
+// 	arrayType = calloc(1, sizeof(struct Array));
+// 	if ( arrayType == NULL ) {
+// 		err(1, "Could not alloc memory for array type.");
+// 		exit(EXIT_FAILURE);		
+// 	}
+
+// 	return arrayType;
+// }
+
+// getArrayTypeStruct() {
+
+// }

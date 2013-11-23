@@ -414,6 +414,7 @@ Symbol *createRecordType(struct ElementArray *fields) {
 	return recType;
 }
 
+
 /*
  * Create a new element array from the given proxy symbol.
  *

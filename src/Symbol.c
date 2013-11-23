@@ -1286,6 +1286,16 @@ void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 }
 
 
+
+
+
+/////////////////////////////////////////////////////////////////////////////
+/*
+ *			SYMBOL CREATION - BASED ON KIND
+ */
+/////////////////////////////////////////////////////////////////////////////
+
+
 /* Creates const kind symbol
  *
  * Parameters:
@@ -1365,4 +1375,20 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 }
 
 
-//type originator only needed for type symbols
+/////////////////////////////////////////////////////////////////////////////
+/*
+ *			SYMBOL CREATION - BASED ON TYPE
+ */
+/////////////////////////////////////////////////////////////////////////////
+
+
+// Symbol *createArrayTypeSymbol(char *id, int typeOriginator) {
+// 	Symbol *symbol = createTypeSymbol(id, typeOriginator);
+
+// 	struct TypeKind *typeKind = getTypeKind(symbol);
+
+// 	typeKind->type = ARRAY_T;
+// 	typeKind->typePtr = allocateArrayType();
+// }
+
+
