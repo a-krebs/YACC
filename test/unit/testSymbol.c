@@ -458,9 +458,140 @@ test_isElementArraySimple()
 	return NULL;
 }
 
-char *
-test_all_Symbol()
-{
+char *test_allocateSymbol() {
+	Symbol *sym = NULL;
+
+	sym = allocateSymbol();
+
+	mu_assert("Symbol is NULL",
+	    sym != NULL);
+	
+	return NULL;
+}
+
+
+char *test_createConstSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5*sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, CONST_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == CONST_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+	return NULL;
+}
+
+
+char *test_createFuncSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5*sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, FUNC_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == FUNC_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+	return NULL;
+}
+
+
+
+char *test_createParamSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5*sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, PARAM_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == PARAM_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+	return NULL;
+}
+
+
+char *test_createProcSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5*sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, PROC_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == PROC_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+	return NULL;
+}
+
+
+char *test_createTypeSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5*sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, TYPE_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == TYPE_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+	return NULL;
+}
+
+
+char *test_createVarSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5*sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	symbol = createSymbol(id, VAR_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind == VAR_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
+	return NULL;
+}
+
+
+char *test_all_Symbol() {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
 	mu_run_test(test_newConstProxySym);
@@ -472,5 +603,12 @@ test_all_Symbol()
 	mu_run_test(test_newVariableSym);
 	mu_run_test(test_isConstInScalar);
 	mu_run_test(test_isElementArraySimple);
+	mu_run_test(test_allocateSymbol);
+	mu_run_test(test_createConstSymbol);
+	mu_run_test(test_createFuncSymbol);
+	mu_run_test(test_createParamSymbol);
+	mu_run_test(test_createProcSymbol);
+	mu_run_test(test_createTypeSymbol);
+	mu_run_test(test_createVarSymbol);
 	return NULL;
 }
