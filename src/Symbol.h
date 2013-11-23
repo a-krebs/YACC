@@ -62,7 +62,7 @@ void freeProxySymbol(ProxySymbol*);
 /*api functions*/
 Symbol *createSymbol(char *id, kind_t kind, int typeOriginator);
 Symbol *allocateSymbol();
-void insertInSymbolTable(char *key, kind_t kind, int typeOriginator);
+Symbol *insertInSymbolTable(char *key, kind_t kind, int typeOriginator);
 Symbol *createConstSymbol(char *id);
 Symbol *createFuncSymbol(char *id);
 Symbol *createParamSymbol(char *id);

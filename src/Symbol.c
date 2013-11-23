@@ -1270,9 +1270,9 @@ Symbol *allocateSymbol() {
  *		kind: kind of symbol. Comes from kind_t enum
  *		typeOriginator: flag for if type originator 
  *
- * Return: void - should error out if cannot create.
+ * Return: a pointer to the created symbol
  */
-void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
+Symbol *insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 	Symbol *symbol = createSymbol(key, kind, typeOriginator);
 	if (symbol == NULL) {
 		err(1, "Could not insert into create symbol.");
@@ -1283,6 +1283,7 @@ void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 		err(1, "Could not insert into symbol table.");
 		exit(EXIT_FAILURE);
 	}
+	return symbol;
 }
 
 
@@ -1390,5 +1391,4 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 // 	typeKind->type = ARRAY_T;
 // 	typeKind->typePtr = allocateArrayType();
 // }
-
 
