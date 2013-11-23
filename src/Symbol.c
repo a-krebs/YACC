@@ -294,7 +294,7 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 		    getConstVal(constSymHigh)->Char.value) return NULL;
 		break;
 	default:
-		return NULL;
+		break;
 	}
 
 
