@@ -600,7 +600,7 @@ setSymbolName(Symbol *s, char *id)
 	s->name = calloc(1, sizeof(char)*len);
 	if (!s->name) {
 		err(1, "Failed to allocate memory for symbol name!");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	strcpy(s->name, id);
 }
@@ -1205,3 +1205,78 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 void freeProxySymbol(ProxySymbol *p) {
 	free(p);
 }
+
+
+/* Creates a new symbol. Auto-determines all substructures
+ * based on the parameter kind.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		kind: kind of symbol. Comes from kind_t enum
+ *		typeOriginator: flag for if type originator 
+ *
+ * Return: Newly created symbol.
+ */
+Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
+	Symbol *symbol = allocSymbol();
+
+	if (symbol == NULL) {
+		err(1, "Could not create new symbol.");
+		exit(EXIT_FAILURE);			
+	}
+
+	//set symbol independent values
+	setSymbolName(symbol, id);
+
+	symbol->kind = kind;
+	allocateKindPtr(symbol);
+	
+	symbol->lvl = getCurrentLexLevel(symbolTable);
+	symbol->typeOriginator = typeOriginator;
+	symbol->next = NULL;
+
+	return symbol;
+}
+
+
+/* Allocates memeory for a struct symbol and only a struct symbol.
+ *
+ * Parameters:
+ *
+ * Return: Pointer to newly allocated memory chunk
+ */
+Symbol *allocateSymbol() {
+	Symbol *symbol = NULL;
+
+	symbol = calloc(1, sizeof(Symbol));
+	if ( symbol == NULL ) {
+		err(1, "Could not alloc memory for symbol.");
+		exit(EXIT_FAILURE);		
+	}
+
+	return symbol;
+}
+
+
+/* Creates and inserts a symbol into the symbol table
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		kind: kind of symbol. Comes from kind_t enum
+ *		typeOriginator: flag for if type originator 
+ *
+ * Return: void - should error out if cannot create.
+ */
+void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
+	Symbol *symbol = createNewSymbol(key, kind, typeOriginator);
+	if (symbol == NULL) {
+		err(1, "Could not insert into create symbol.");
+		exit(EXIT_FAILURE);
+	}
+
+	if (createHashElement(symbolTable, key, symbol) != 0) {
+		err(1, "Could not insert into symbol table.");
+		exit(EXIT_FAILURE);
+	}
+}
+
