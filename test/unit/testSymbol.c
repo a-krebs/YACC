@@ -484,6 +484,8 @@ char *test_createConstSymbol() {
 	    strncmp(symbol->name, "test", 4) == 0);
 	mu_assert("Symbol kind not set to CONST_KIND",
 	    symbol->kind = CONST_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
 }
 
 
@@ -501,6 +503,8 @@ char *test_createFuncSymbol() {
 	    strncmp(symbol->name, "test", 4) == 0);
 	mu_assert("Symbol kind not set to CONST_KIND",
 	    symbol->kind = FUNC_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
 }
 
 
@@ -519,6 +523,8 @@ char *test_createParamSymbol() {
 	    strncmp(symbol->name, "test", 4) == 0);
 	mu_assert("Symbol kind not set to CONST_KIND",
 	    symbol->kind = PARAM_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
 }
 
 
@@ -536,6 +542,8 @@ char *test_createProcSymbol() {
 	    strncmp(symbol->name, "test", 4) == 0);
 	mu_assert("Symbol kind not set to CONST_KIND",
 	    symbol->kind = PROC_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
 }
 
 
@@ -553,6 +561,8 @@ char *test_createTypeSymbol() {
 	    strncmp(symbol->name, "test", 4) == 0);
 	mu_assert("Symbol kind not set to CONST_KIND",
 	    symbol->kind = TYPE_KIND);
+	mu_assert("Symbol typeOriginator not set properly",
+	    symbol->typeOriginator == 0);
 }
 
 
