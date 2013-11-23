@@ -475,7 +475,6 @@ char *test_createConstSymbol() {
 	char *id = malloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	// id, kind_t, tpyor
 	symbol = createSymbol(id, CONST_KIND, 0);
 
 	// free name, to make sure it's copied
@@ -493,7 +492,6 @@ char *test_createFuncSymbol() {
 	char *id = malloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	// id, kind_t, tpyor
 	symbol = createSymbol(id, FUNC_KIND, 0);
 
 	// free name, to make sure it's copied
@@ -512,7 +510,6 @@ char *test_createParamSymbol() {
 	char *id = malloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	// id, kind_t, tpyor
 	symbol = createSymbol(id, PARAM_KIND, 0);
 
 	// free name, to make sure it's copied
@@ -530,7 +527,6 @@ char *test_createProcSymbol() {
 	char *id = malloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	// id, kind_t, tpyor
 	symbol = createSymbol(id, PROC_KIND, 0);
 
 	// free name, to make sure it's copied
@@ -548,7 +544,6 @@ char *test_createTypeSymbol() {
 	char *id = malloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	// id, kind_t, tpyor
 	symbol = createSymbol(id, TYPE_KIND, 0);
 
 	// free name, to make sure it's copied
