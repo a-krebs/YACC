@@ -469,6 +469,7 @@ char *test_allocSymbol() {
 	return NULL;
 }
 
+
 char *test_createConstSymbol() {
 	Symbol * symbol = NULL;
 	char *id = malloc(5, sizeof(char));
@@ -487,6 +488,22 @@ char *test_createConstSymbol() {
 }
 
 
+char *test_createFuncSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5, sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	// id, kind_t, tpyor
+	symbol = createSymbol(id, FUNC_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind = FUNC_KIND);
+}
 
 
 char *test_all_Symbol() {
@@ -503,5 +520,6 @@ char *test_all_Symbol() {
 	mu_run_test(test_isElementArraySimple);
 	mu_run_test(test_allocSymbol);
 	mu_run_test(test_createConstSymbol);
+	mu_run_test(test_createFuncSymbol);
 	return NULL;
 }
