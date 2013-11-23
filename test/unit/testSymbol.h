@@ -22,5 +22,6 @@ char *test_allocSymbol();
 char *test_createConstSymbol();
 char *test_createFuncSymbol();
 char *test_createParamSymbol();
+char *test_createProcSymbol();
 char *test_all_Symbol();
 #endif

@@ -525,6 +525,24 @@ char *test_createParamSymbol() {
 }
 
 
+char *test_createProcSymbol() {
+	Symbol * symbol = NULL;
+	char *id = malloc(5, sizeof(char));
+	strncpy(id, "test\0", 5);
+
+	// id, kind_t, tpyor
+	symbol = createSymbol(id, PROC_KIND, 0);
+
+	// free name, to make sure it's copied
+	free(id);
+
+	mu_assert("Symol name not copied",
+	    strncmp(symbol->name, "test", 4) == 0);
+	mu_assert("Symbol kind not set to CONST_KIND",
+	    symbol->kind = PROC_KIND);
+}
+
+
 char *test_all_Symbol() {
 	mu_run_test(test_newParamSym);
 	mu_run_test(test_newAnonArraySym);
@@ -541,5 +559,6 @@ char *test_all_Symbol() {
 	mu_run_test(test_createConstSymbol);
 	mu_run_test(test_createFuncSymbol);
 	mu_run_test(test_createParamSymbol);
+	mu_run_test(test_createProcSymbol);
 	return NULL;
 }
