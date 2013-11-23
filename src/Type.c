@@ -11,6 +11,109 @@
 #include "Type.h"
 #include "Hash.h"
 
+
+/*
+	TODO:
+		- fix areCompatibleStrings
+		- fix areOpCompatible
+
+*/
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			TYPE API FUNCTIONS:
+ */
+//////////////////////////////////////////////////////////////////////////
+
+/*
+ * Determines the type of symbol we have (from type_t enum). Throughts error is
+ * type is not a valid type.
+ */
+type_t
+getType(Symbol *s)
+{
+	if (!s) return NULL;
+
+	switch (s->kind) {
+	case CONST_KIND:
+		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
+	case PARAM_KIND:
+		return s->kindPtr.ParamKind->typeSym->kindPtr.TypeKind->type;
+	case PROC_KIND:
+		return VOID_T;
+	case FUNC_KIND:
+		return s->kindPtr.FuncKind->typeSym->kindPtr.TypeKind->type;
+	case TYPE_KIND:
+		return s->kindPtr.TypeKind->type;
+	case VAR_KIND:
+		return s->kindPtr.VarKind->typeSym->kindPtr.TypeKind->type;
+	default:
+		/* NOT REACHED */
+		// return VOID_T;
+		err(1, "Symbol 'kind' not set.");
+		exit(1);		
+	}	
+}
+
+
+/*
+ * Return a pointer to the typePtr for the given Symbol of kind TYPE_KIND.
+ * Returns null if the given Symbol is not of kind TYPE_KIND.
+ */
+Type *
+getTypePtr(Symbol *s)
+{
+	if (!s) return NULL;
+	if (s->kind != TYPE_KIND) return NULL;
+	return &(s->kindPtr.TypeKind->typePtr);
+}
+
+
+/*
+ * Gets the string value of the passed type.
+ */
+char *
+typeToString(type_t type)
+{
+	switch (type) {
+	case ARRAY_T:
+		return "ARRAY";
+	case BOOLEAN_T:
+		return "BOOLEAN";
+	case CHAR_T:
+		return "CHARACTER";
+	case INTEGER_T:
+		return "INTEGER";
+	case REAL_T:
+		return "REAL";
+	case RECORD_T:
+		return "RECORD";
+	case SCALAR_T:
+		return "SCALAR";
+	case STRING_T:
+		return "STRING";
+	case SUBRANGE_T:
+		return "SUBRANGE";
+	case VOID_T:
+		return "VOID";
+	default:
+		/* NOT REACHED */
+		return "UNKNOWN";
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			TYPE CHECKING FUNCTIONS:
+ */
+//////////////////////////////////////////////////////////////////////////
+
 /*
  * Returns true if the two Symbols of kind TYPE are the EXACT same type.
  */
@@ -32,6 +135,7 @@ areSameType(Symbol *s1, Symbol *s2)
 	}
 }
 
+
 /*
  * Returns true if the two Symbols are arithmetic compatible.
  */
@@ -47,6 +151,7 @@ areArithmeticCompatible(Symbol *s1, Symbol *s2)
 	    ((s2_t == INTEGER_T) || (s2_t == REAL_T)));	
 }
 
+
 /*
  * Returns true if both symbols are of integer type.
  */
@@ -58,6 +163,38 @@ areBothInts(Symbol *s1, Symbol *s2)
 
 
 /*
+ * Determines if the given type_t is an ordinal type.
+ */
+int
+isOrdinal(type_t type)
+{
+	if ((type == BOOLEAN_T) || (type == CHAR_T) || (type == INTEGER_T)) {
+		return 1;
+	}
+	return 0;
+}
+
+
+/*
+ * Determines if the given type is a simple type (i.e., a bool, char, int,
+ * or real)
+ */
+int
+isSimpleType(type_t type)
+{
+	switch (type) {
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+
+/* TODO: Fix this function!!!
  * Returns true if the two symbols are compatible string types (i.e.,
  * both strings of the same length)
  */
@@ -99,7 +236,7 @@ areCompatibleStrings(Symbol *s1, Symbol *s2)
 }
 
 
-/*
+/* TODO: Fix this function!!!
  * Returns true if the two type symbols are of operator compatible types.
  */
 int
@@ -141,36 +278,12 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 	return 0;
 }
 
-/*
- * Determines if the given type_t is an ordinal type.
- */
-int
-isOrdinal(type_t type)
-{
-	if ((type == BOOLEAN_T) || (type == CHAR_T) || (type == INTEGER_T)) {
-		return 1;
-	}
-	return 0;
-}
 
-
+//////////////////////////////////////////////////////////////////////////
 /*
- * Determines if the given type is a simple type (i.e., a bool, char, int,
- * or real)
+ * 			TYPE SETTING FUNCTIONS:
  */
-int
-isSimpleType(type_t type)
-{
-	switch (type) {
-	case BOOLEAN_T:
-	case CHAR_T:
-	case INTEGER_T:
-	case REAL_T:
-		return 1;
-	default:
-		return 0;
-	}
-}
+//////////////////////////////////////////////////////////////////////////
 
 /*
  * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
@@ -240,6 +353,13 @@ setTypePtr(Type *new, Type old, type_t type)
 		break;
 	}
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			TYPE CREATION FUNCTIONS:
+ */
+//////////////////////////////////////////////////////////////////////////
 
 struct Array *
 newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
@@ -322,36 +442,6 @@ struct Record *newRecord() {
 	return r;
 }
 
-type_t
-getType(Symbol *s)
-{
-	if (!s) {
-		err(1, "Symbol is null");
-		exit(1);
-	}
-
-	switch (s->kind) {
-	case CONST_KIND:
-		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
-	case PARAM_KIND:
-		return s->kindPtr.ParamKind->typeSym->kindPtr.TypeKind->type;
-	case PROC_KIND:
-		return VOID_T;
-	case FUNC_KIND:
-		return s->kindPtr.FuncKind->typeSym->kindPtr.TypeKind->type;
-	case TYPE_KIND:
-		return s->kindPtr.TypeKind->type;
-	case VAR_KIND:
-		return s->kindPtr.VarKind->typeSym->kindPtr.TypeKind->type;
-	default:
-		/* NOT REACHED */
-		// return VOID_T;
-		err(1, "Symbol 'kind' not set.");
-		exit(1);		
-	}	
-}
-
-
 Type newAnonConstType(AnonConstVal value, type_t type)
 {
 	Type anonConstType;
@@ -411,53 +501,16 @@ Type newAnonConstType(AnonConstVal value, type_t type)
 	return anonConstType;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			OTHER STUFF:
+ */
+//////////////////////////////////////////////////////////////////////////
+
 void
 typeMemoryFailure()
 {
 	err(1, "Failed to allocate memory for new anonymous constant " 		"type!");
 	exit(1);
-}
-
-char *
-typeToString(type_t type)
-{
-	switch (type) {
-	case ARRAY_T:
-		return "ARRAY";
-	case BOOLEAN_T:
-		return "BOOLEAN";
-	case CHAR_T:
-		return "CHARACTER";
-	case INTEGER_T:
-		return "INTEGER";
-	case REAL_T:
-		return "REAL";
-	case RECORD_T:
-		return "RECORD";
-	case SCALAR_T:
-		return "SCALAR";
-	case STRING_T:
-		return "STRING";
-	case SUBRANGE_T:
-		return "SUBRANGE";
-	case VOID_T:
-		return "VOID";
-	default:
-		/* NOT REACHED */
-		return "UNKNOWN";
-	}
-}
-
-/*
- * Return a pointer to the typePtr for the given Symbol of kind TYPE_KIND.
- * Returns null if the given Symbol is not of kind TYPE_KIND.
- */
-Type *
-getTypePtr(Symbol *s)
-{
-	if (!s) return NULL;
-	if (s->kind != TYPE_KIND) return NULL;
-	// printf("\n\n\n--------------------------------------\n\n\n");
-	return &(s->kindPtr.TypeKind->typePtr);
-
 }
