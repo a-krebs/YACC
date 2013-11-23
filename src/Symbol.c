@@ -1235,6 +1235,11 @@ Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
 	symbol->typeOriginator = typeOriginator;
 	symbol->next = NULL;
 
+	if (symbol == NULL) {
+		err(1, "Could not create new symbol. Setting values distributed symbol.");
+		exit(EXIT_FAILURE);			
+	}
+
 	return symbol;
 }
 
@@ -1281,16 +1286,83 @@ void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 }
 
 
-// Symbol *createConstSymbol(char *id) {
-// 	kind_t kind = CONST_KIND;
-// 	Symbol *symbol = createSymbol(id, kind, 0);
-	
-// 	if (symbol == NULL) {
-// 		err(1, "Could not create const symbol.");
-// 		exit(EXIT_FAILURE);			
-// 	}
+/* Creates const kind symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createConstSymbol(char *id) {
+	kind_t kind = CONST_KIND;
+	return createSymbol(id, kind, 0);
+}
 
-// 	return symbol;
-// }
+
+/* Creates func kind symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createFuncSymbol(char *id) {
+	kind_t kind = FUNC_KIND;
+	return createSymbol(id, kind, 0);
+}
+
+
+/* Creates param kind symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createParamSymbol(char *id) {
+	kind_t kind = PARAM_KIND;
+	return createSymbol(id, kind, 0);
+}
+
+
+/* Creates proc kind symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createProcSymbol(char *id) {
+	kind_t kind = PROC_KIND;
+	return createSymbol(id, kind, 0);
+}
+
+
+/* Creates var kind symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createVarSymbol(char *id) {
+	kind_t kind = VAR_KIND;
+	return createSymbol(id, kind, 0);
+}
+
+
+/* Creates type kind symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeOriginator: flag for if type originator 
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createTypeSymbol(char *id, int typeOriginator) {
+	kind_t kind = TYPE_KIND;
+	return createSymbol(id, kind, typeOriginator);
+}
+
 
 //type originator only needed for type symbols

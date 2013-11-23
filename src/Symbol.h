@@ -63,8 +63,15 @@ void freeProxySymbol(ProxySymbol*);
 Symbol *createSymbol(char *id, kind_t kind, int typeOriginator);
 Symbol *allocateSymbol();
 void insertInSymbolTable(char *key, kind_t kind, int typeOriginator);
+Symbol *createConstSymbol(char *id);
+Symbol *createFuncSymbol(char *id);
+Symbol *createParamSymbol(char *id);
+Symbol *createProcSymbol(char *id);
+Symbol *createVarSymbol(char *id);
+Symbol *createTypeSymbol(char *id, int typeOriginator);
 
 
+/*no idea...*/
 Symbol *
 newStringTypeSym(int lexLevel, int strlen);
 
