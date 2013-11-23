@@ -4,8 +4,8 @@
 #include "Definitions.h"
 #include "Kind.h"
 /* Symbol creation function */
-Symbol *newTypeSymFromSym(int, char *, Symbol *);
-Symbol *newAnonArraySym(int, Symbol *, Symbol *);
+Symbol *newTypeSymFromSym(char *, Symbol *);
+Symbol *newAnonArraySym(Symbol *, Symbol *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
 Symbol *newSubrangeSym(int, Symbol *, Symbol *);
@@ -60,9 +60,10 @@ int addFieldToRecord(Symbol*, ProxySymbol*);
 void freeProxySymbol(ProxySymbol*);
 
 /*api functions*/
-Symbol *createSymbol(char *id, kind_t kind, int typeOriginator);
+Symbol *createSymbol(struct hash*, char *id, kind_t kind, int typeOriginator);
 Symbol *allocateSymbol();
-void insertInSymbolTable(char *key, kind_t kind, int typeOriginator);
+Symbol *createAndInsertSymbol(
+    struct hash*, char *key, kind_t kind, int typeOriginator);
 Symbol *createConstSymbol(char *id);
 Symbol *createFuncSymbol(char *id);
 Symbol *createParamSymbol(char *id);

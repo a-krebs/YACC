@@ -12,6 +12,8 @@
 #include "testSymbol.h"
 #include "Type.h"
 #include "Symbol.h"
+#include "Hash.h"
+#include "Globals.h"
 
 #define INTLOW_VAL 12
 #define INTHIGH_VAL 23423
@@ -155,7 +157,7 @@ test_newAnonArraySym()
 	Symbol *highConst = setUpIntConst();
 	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
-	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
 
 	mu_assert("newArraySym should not be NULL", newArraySym); 
 	mu_assert("newArraySym should have subrange as expected",
@@ -163,7 +165,7 @@ test_newAnonArraySym()
 	mu_assert("newArraySym should have base type as expecte",
 	    getTypePtr(newArraySym)->Array->baseTypeSym == baseTypeSym);
 	mu_assert("newArraySym should be at the expected lexical level",
-	    newArraySym->lvl == 10);
+	    newArraySym->lvl == 0);
 
 	return NULL;
 }
@@ -266,8 +268,10 @@ test_newTypeSymFromSym()
 	int lvl = 10; 
 	char id[] = "testArray";	
 
+	symbolTable = createHash(&getHashedKeyNormal);
+	setLexLevel(symbolTable, 10);
 
-	newTypeSym = newTypeSymFromSym(lvl, id, typeSym);
+	newTypeSym = newTypeSymFromSym(id, typeSym);
 	mu_assert("newTypeSym should not be null", newTypeSym);
 	mu_assert("newTypeSym should have kindPtr equivalent to kindPtr of test"
 	    "type", newTypeSym->kindPtr.TypeKind = typeSym->kindPtr.TypeKind);
@@ -277,6 +281,10 @@ test_newTypeSymFromSym()
 	    newTypeSym->lvl = lvl);
 	mu_assert("newTypeSym should NOT be a type originator",
 	    newTypeSym->typeOriginator == 0);
+
+	destroyHash(symbolTable);
+	free(symbolTable);
+	symbolTable = NULL;
 
 	return NULL;
 }
@@ -407,7 +415,7 @@ test_isValidArrayAccess()
 	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	Symbol *var = NULL;
-	newArraySym = newAnonArraySym(10, baseTypeSym, subrangeSym);
+	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
 	var = newVariableSym(10, "hello", newArraySym);	
 	ProxySymbol *index1 = (ProxySymbol *) lowConst;
 	index1->kindPtr.ConstKind->typeSym =
@@ -471,11 +479,12 @@ char *test_allocateSymbol() {
 
 
 char *test_createConstSymbol() {
+	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
 	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	symbol = createSymbol(id, CONST_KIND, 0);
+	symbol = createSymbol(table, id, CONST_KIND, 0);
 
 	// free name, to make sure it's copied
 	free(id);
@@ -491,11 +500,12 @@ char *test_createConstSymbol() {
 
 
 char *test_createFuncSymbol() {
+	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
 	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	symbol = createSymbol(id, FUNC_KIND, 0);
+	symbol = createSymbol(table, id, FUNC_KIND, 0);
 
 	// free name, to make sure it's copied
 	free(id);
@@ -512,11 +522,12 @@ char *test_createFuncSymbol() {
 
 
 char *test_createParamSymbol() {
+	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
 	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	symbol = createSymbol(id, PARAM_KIND, 0);
+	symbol = createSymbol(table, id, PARAM_KIND, 0);
 
 	// free name, to make sure it's copied
 	free(id);
@@ -532,11 +543,12 @@ char *test_createParamSymbol() {
 
 
 char *test_createProcSymbol() {
+	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
 	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	symbol = createSymbol(id, PROC_KIND, 0);
+	symbol = createSymbol(table, id, PROC_KIND, 0);
 
 	// free name, to make sure it's copied
 	free(id);
@@ -552,11 +564,12 @@ char *test_createProcSymbol() {
 
 
 char *test_createTypeSymbol() {
+	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
 	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	symbol = createSymbol(id, TYPE_KIND, 0);
+	symbol = createSymbol(table, id, TYPE_KIND, 0);
 
 	// free name, to make sure it's copied
 	free(id);
@@ -572,11 +585,12 @@ char *test_createTypeSymbol() {
 
 
 char *test_createVarSymbol() {
+	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
 	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
-	symbol = createSymbol(id, VAR_KIND, 0);
+	symbol = createSymbol(table, id, VAR_KIND, 0);
 
 	// free name, to make sure it's copied
 	free(id);

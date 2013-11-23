@@ -117,14 +117,8 @@ typeToString(type_t type)
 /*
  * Returns true if the two Symbols of kind TYPE are the EXACT same type.
  */
-int
-areSameType(Symbol *s1, Symbol *s2)
-{
-	if ((s1 == NULL) || (s2 == NULL)){
-		err(1, "One or more symbols are null.");
-		exit(EXIT_FAILURE);
-	} 
-
+int areSameType(Symbol *s1, Symbol *s2) {
+	if ((!s1) || (!s2)) return 0;
 	if ( !(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
 
 	if(s1->kindPtr.TypeKind == s2->kindPtr.TypeKind) {

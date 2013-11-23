@@ -21,39 +21,48 @@ struct Error *e;
 /*
  * Constructs a	named type symbol given a ptr to another type symbol.
  * (so the new symbol will either be constructed from an anonymous type symbol
- * or be a copy of another named symbol) 
+ * or be a copy of another named symbol)
+ *
+ * Lexical level is NOT set, and symbol is NOT inserted into symbol table.
+ *
+ * Parameters:
+ * 	id: name of created symbol
+ * 	typeSym: symbol from which type is to be taken. Must be TYPE_KIND
+ *
+ * Returns: pointer to created symbol, or NULL on error
+ *
  */
-Symbol *
-newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
+Symbol *newTypeSymFromSym(char *id, Symbol *typeSym)
 {
 	Symbol *newTypeSym = NULL;
 	if (!typeSym) {
+		/* action that gets type has already added an error message */
 		return NULL;
 	}
 
 	if (typeSym->kind != TYPE_KIND) {
 		/* Trying to construct type symbol from non-type symbol */
+		errMsg = customErrorString("Identifier %s is not a type.",
+		    typeSym->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
 	if (!id) {
 		/* Error: trying to create named symbol from NULL id */
-		return NULL;
+		err(EXIT_FAILURE, "Trying to create named type symbol "
+		    "but name is NULL.");
 	}
 
-	newTypeSym = calloc(1, sizeof(Symbol));
-	if (!newTypeSym) {exit(1); /* blah blah */ }
-
-	setSymbolName(newTypeSym, id);
-	newTypeSym->kind = TYPE_KIND;
-	newTypeSym->kindPtr = typeSym->kindPtr;
-	
 	/* 
 	 * Type is being constructed from anonymous type, it is NOT a type
 	 * originator
 	 */
-	newTypeSym->lvl = lvl;
-	newTypeSym->typeOriginator = 0;
+	newTypeSym = createTypeSymbol(id, 0);
+
+	/* set type pointer to same as typeSym */
+	newTypeSym->kindPtr = typeSym->kindPtr;
+	
 	return newTypeSym;
 }
 
@@ -62,8 +71,7 @@ newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
  * defining the base type and a pointer to a symbol defining the index type.
  */
 Symbol *
-newAnonArraySym(int lvl, Symbol *baseTypeSym, 
-	    Symbol *indexTypeSym)
+newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym)
 {
 	Symbol *newArraySym = NULL;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
@@ -101,7 +109,7 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
 								indexTypeSym);
 	newArraySym->kindPtr.TypeKind->type = ARRAY_T;
-	newArraySym->lvl = lvl;
+	//TODO newArraySym->lvl = lvl;
 	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
 }
@@ -1210,14 +1218,19 @@ void freeProxySymbol(ProxySymbol *p) {
 /* Creates a new symbol. Auto-determines all substructures
  * based on the parameter kind.
  *
+ * Does not insert into the symbol table, use createAndInsertSymbol for that.
+ *
  * Parameters:
+ * 		table: the symbol table from which to get lexical level
  *              id: name of symbol
  *		kind: kind of symbol. Comes from kind_t enum
  *		typeOriginator: flag for if type originator 
  *
  * Return: Newly created symbol.
  */
-Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
+Symbol *createSymbol(
+    struct hash *table, char *id, kind_t kind, int typeOriginator)
+{
 	Symbol *symbol = allocateSymbol();
 
 	if (symbol == NULL) {
@@ -1225,20 +1238,15 @@ Symbol *createSymbol(char *id, kind_t kind, int typeOriginator) {
 		exit(EXIT_FAILURE);			
 	}
 
-	//set symbol independent values
+	// set symbol independent values
 	setSymbolName(symbol, id);
 
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
 	
-	symbol->lvl = getCurrentLexLevel(symbolTable);
+	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
 	symbol->next = NULL;
-
-	if (symbol == NULL) {
-		err(1, "Could not create new symbol. Setting values distributed symbol.");
-		exit(EXIT_FAILURE);			
-	}
 
 	return symbol;
 }
@@ -1266,27 +1274,30 @@ Symbol *allocateSymbol() {
 /* Creates and inserts a symbol into the symbol table
  *
  * Parameters:
+ * 		table: the symbol table into which to insert
  *              id: name of symbol
  *		kind: kind of symbol. Comes from kind_t enum
  *		typeOriginator: flag for if type originator 
  *
- * Return: void - should error out if cannot create.
+ * Return: a pointer to the created symbol
  */
-void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
-	Symbol *symbol = createSymbol(key, kind, typeOriginator);
+Symbol *createAndInsertSymbol(
+    struct hash *table, char *key, kind_t kind, int typeOriginator)
+{
+	Symbol *symbol = createSymbol(table, key, kind, typeOriginator);
+
 	if (symbol == NULL) {
-		err(1, "Could not insert into create symbol.");
+		err(1, "Could not create symbol.");
 		exit(EXIT_FAILURE);
 	}
 
-	if (createHashElement(symbolTable, key, symbol) != 0) {
+	if (createHashElement(table, key, symbol) != 0) {
 		err(1, "Could not insert into symbol table.");
 		exit(EXIT_FAILURE);
 	}
+
+	return symbol;
 }
-
-
-
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1296,7 +1307,7 @@ void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
 /////////////////////////////////////////////////////////////////////////////
 
 
-/* Creates const kind symbol
+/* Creates const kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1304,12 +1315,11 @@ void insertInSymbolTable(char *key, kind_t kind, int typeOriginator) {
  * Return: Newly created symbol
  */
 Symbol *createConstSymbol(char *id) {
-	kind_t kind = CONST_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, CONST_KIND, 0);
 }
 
 
-/* Creates func kind symbol
+/* Creates func kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1317,12 +1327,11 @@ Symbol *createConstSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createFuncSymbol(char *id) {
-	kind_t kind = FUNC_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, FUNC_KIND, 0);
 }
 
 
-/* Creates param kind symbol
+/* Creates Param kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1330,12 +1339,11 @@ Symbol *createFuncSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createParamSymbol(char *id) {
-	kind_t kind = PARAM_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, PARAM_KIND, 0);
 }
 
 
-/* Creates proc kind symbol
+/* Creates proc kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1343,12 +1351,11 @@ Symbol *createParamSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createProcSymbol(char *id) {
-	kind_t kind = PROC_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, PROC_KIND, 0);
 }
 
 
-/* Creates var kind symbol
+/* Creates var kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1356,12 +1363,11 @@ Symbol *createProcSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createVarSymbol(char *id) {
-	kind_t kind = VAR_KIND;
-	return createSymbol(id, kind, 0);
+	return createSymbol(symbolTable, id, VAR_KIND, 0);
 }
 
 
-/* Creates type kind symbol
+/* Creates type kind symbol using scope of global symbol table.
  *
  * Parameters:
  *              id: name of symbol
@@ -1370,8 +1376,7 @@ Symbol *createVarSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createTypeSymbol(char *id, int typeOriginator) {
-	kind_t kind = TYPE_KIND;
-	return createSymbol(id, kind, typeOriginator);
+	return createSymbol(symbolTable, id, TYPE_KIND, typeOriginator);
 }
 
 
@@ -1390,5 +1395,4 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 // 	typeKind->type = ARRAY_T;
 // 	typeKind->typePtr = allocateArrayType();
 // }
-
 
