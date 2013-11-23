@@ -10,8 +10,11 @@
 
 #include "ElementArray.h"
 
-/*
- * Returns a pointer to an initialized, malloced, empty ElementArray.
+/* Create a pointer to an initialized, malloced, empty ElementArray.
+ * Parameters:  
+ *
+ * Returns:	struct ElementArray *ea success
+ *		NULL failure	   
  */
 struct ElementArray *
 newElementArray()
@@ -37,7 +40,13 @@ newElementArray()
 }
 
 /*
- * Doubles the size of the array if is full.
+ * Takes a ElementArray pointer and double its 
+ * the size of the array if is full.
+ * 
+ * Parameters: 
+ * 		ElementArray: a pointer to a elementArray
+ * Return:
+ *		void
  */
 void
 growElementArray(struct ElementArray *ea)
@@ -54,7 +63,14 @@ growElementArray(struct ElementArray *ea)
 }
 
 /*
- * Appends the given element to the given elements array.
+ * appends the given element to the given elements array.
+ * If the given ElementArray is already full, call growElementArray()
+ * to double its size and then append the element.
+ *
+ * Parameters:
+ * 		ElementArray: a pointer to the elementArray.
+ * Return:
+ *		void
  */
 void
 appendElement(struct ElementArray *ea, void *element)
@@ -66,6 +82,17 @@ appendElement(struct ElementArray *ea, void *element)
 	ea->data[ea->nElements] = element;
 	ea->nElements++;
 }
+
+/* Checks if there is any duplicates in the given elementArray
+ * 
+ * Parameters: 
+ *		ElementArray: a pointer to the elementArray
+ * Return:
+ *		1 has duplicates
+ *		0 no duplicates
+ */		
+
+
 
 int
 hasDuplicateElement(struct ElementArray *ea){
@@ -97,6 +124,13 @@ hasDuplicateElement(struct ElementArray *ea){
 }
 /*
  * Appends the given elements array to another elements array
+ *
+ * Parameters:
+ *		ElementArray: 1st elementArray pointer
+ *		ElementArray: 2nd elmenetArray pointer
+ * Return: 	
+ *		ElementArray: a new elementArray with new length
+ *		
  */
 
 struct ElementArray *
@@ -133,6 +167,14 @@ appendElementArray(struct ElementArray *ea1, struct ElementArray *ea2){
 }
 /*
  * Returns a pointer to the element in the given ElementArray at index i.
+ *
+ * Parameters:  
+ *		ElementArray: a ElementArray Pointer
+ *		unsigned int : index 
+ *
+ * Return:	NULL if out of bounds
+ * 		void **data : the data at i
+ *		
  */
 void *
 getElementAt(struct ElementArray *ea, unsigned int i)
@@ -148,6 +190,11 @@ getElementAt(struct ElementArray *ea, unsigned int i)
 
 /*
  * Free all memory associated with the given elements array.
+ * 
+ * Parameters: 
+ * 		ElementArray: a ElementArray
+ * Return:
+ *		void
  */
 void freeElementArray(struct ElementArray *ea) {
 	int i;
