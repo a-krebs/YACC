@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "Error.h"
 #include "Utils.h"
@@ -100,6 +101,10 @@ notDefinedError(char *id) {
 
 	errMsg = customErrorString("The identifier %s is undefined.", id);
 	recordError(errMsg, yylineno, colno, SEMANTIC);
+}
+
+void symbolTableInsertFailure() {
+	err(EXIT_FAILURE, "Failed to insert into symbol table.");
 }
 
 int
