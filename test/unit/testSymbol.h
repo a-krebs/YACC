@@ -18,7 +18,7 @@ char *test_newParameter;
 char *test_isValidArrayAccess();
 char *test_newAnonScalarSym();
 char *test_isConstInScalar();
-char *test_allocSymbol();
+char *test_allocateSymbol();
 char *test_createConstSymbol();
 char *test_createFuncSymbol();
 char *test_createParamSymbol();

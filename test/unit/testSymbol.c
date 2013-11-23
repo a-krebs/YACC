@@ -458,13 +458,13 @@ test_isElementArraySimple()
 	return NULL;
 }
 
-char *test_allocSymbol() {
+char *test_allocateSymbol() {
 	Symbol *sym = NULL;
 
-	sym = allocSymbol();
+	sym = allocateSymbol();
 
 	mu_assert("Symbol is NULL",
-	    symbol != NULL);
+	    sym != NULL);
 	
 	return NULL;
 }
@@ -472,7 +472,7 @@ char *test_allocSymbol() {
 
 char *test_createConstSymbol() {
 	Symbol * symbol = NULL;
-	char *id = malloc(5, sizeof(char));
+	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(id, CONST_KIND, 0);
@@ -486,12 +486,13 @@ char *test_createConstSymbol() {
 	    symbol->kind == CONST_KIND);
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
+	return NULL;
 }
 
 
 char *test_createFuncSymbol() {
 	Symbol * symbol = NULL;
-	char *id = malloc(5, sizeof(char));
+	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(id, FUNC_KIND, 0);
@@ -505,13 +506,14 @@ char *test_createFuncSymbol() {
 	    symbol->kind == FUNC_KIND);
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
+	return NULL;
 }
 
 
 
 char *test_createParamSymbol() {
 	Symbol * symbol = NULL;
-	char *id = malloc(5, sizeof(char));
+	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(id, PARAM_KIND, 0);
@@ -525,12 +527,13 @@ char *test_createParamSymbol() {
 	    symbol->kind == PARAM_KIND);
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
+	return NULL;
 }
 
 
 char *test_createProcSymbol() {
 	Symbol * symbol = NULL;
-	char *id = malloc(5, sizeof(char));
+	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(id, PROC_KIND, 0);
@@ -544,12 +547,13 @@ char *test_createProcSymbol() {
 	    symbol->kind == PROC_KIND);
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
+	return NULL;
 }
 
 
 char *test_createTypeSymbol() {
 	Symbol * symbol = NULL;
-	char *id = malloc(5, sizeof(char));
+	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(id, TYPE_KIND, 0);
@@ -563,12 +567,13 @@ char *test_createTypeSymbol() {
 	    symbol->kind == TYPE_KIND);
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
+	return NULL;
 }
 
 
 char *test_createVarSymbol() {
 	Symbol * symbol = NULL;
-	char *id = malloc(5, sizeof(char));
+	char *id = malloc(5*sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(id, VAR_KIND, 0);
@@ -582,6 +587,7 @@ char *test_createVarSymbol() {
 	    symbol->kind == VAR_KIND);
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
+	return NULL;
 }
 
 
@@ -597,7 +603,7 @@ char *test_all_Symbol() {
 	mu_run_test(test_newVariableSym);
 	mu_run_test(test_isConstInScalar);
 	mu_run_test(test_isElementArraySimple);
-	mu_run_test(test_allocSymbol);
+	mu_run_test(test_allocateSymbol);
 	mu_run_test(test_createConstSymbol);
 	mu_run_test(test_createFuncSymbol);
 	mu_run_test(test_createParamSymbol);
