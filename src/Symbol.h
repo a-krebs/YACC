@@ -8,7 +8,7 @@ Symbol *newTypeSymFromSym(char *, Symbol *);
 Symbol *newAnonArraySym(Symbol *, Symbol *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
-Symbol *newSubrangeSym(int, Symbol *, Symbol *);
+Symbol *newSubrangeSym(Symbol *, Symbol *);
 Symbol *newVariableSym(int, char *, Symbol *);
 Symbol *newProcedureSym(int, char *, struct ElementArray *);
 Symbol *newParamSym(int, char *, Symbol *);

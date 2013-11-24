@@ -155,7 +155,7 @@ test_newAnonArraySym()
 	Symbol *newArraySym = NULL;
 	Symbol *lowConst = setUpIntConst();
 	Symbol *highConst = setUpIntConst();
-	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
+	Symbol *subrangeSym = newSubrangeSym(lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
 
@@ -340,22 +340,22 @@ test_newSubrangeSym()
 	getConstVal(testSymLow)->Integer.value = INTLOW_VAL;
 	getConstVal(testSymHigh)->Integer.value = INTHIGH_VAL;
 	
-	subrangeSym = newSubrangeSym(lvl, testSymLow, NULL);
+	subrangeSym = newSubrangeSym(testSymLow, NULL);
 	mu_assert("newSubrangeSym() should return NULL if a symbol arg is NULL",
 		  !subrangeSym);
 
 
-	subrangeSym = newSubrangeSym(lvl, testSymHigh, testSymLow);
+	subrangeSym = newSubrangeSym(testSymHigh, testSymLow);
 	mu_assert("newSubRangeSym() should return NULL if low >= high",
 		  !subrangeSym);
 
 
-	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
+	subrangeSym = newSubrangeSym(testSymLow, testSymHigh);
 	mu_assert("newSubRangeSym() should return expected subrange",
 	    (getTypePtr(subrangeSym)->Subrange->low == INTLOW_VAL));
 
 	getTypeSym(testSymLow)->kindPtr.TypeKind->type = SCALAR_T;
-	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
+	subrangeSym = newSubrangeSym(testSymLow, testSymHigh);
 	mu_assert("newSubrangeSym() should return null when symbol types \
 		   mistmatch.", !subrangeSym);
 
@@ -420,7 +420,7 @@ test_isValidArrayAccess()
 	Symbol *newArraySym = NULL;
 	Symbol *lowConst = setUpIntConst();
 	Symbol *highConst = setUpIntConst();
-	Symbol *subrangeSym = newSubrangeSym(10, lowConst, highConst);
+	Symbol *subrangeSym = newSubrangeSym(lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	Symbol *var = NULL;
 	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);

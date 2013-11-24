@@ -249,7 +249,7 @@ newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
  * Constructs an anonymous subrange symbol.
  */
 Symbol *
-newSubrangeSym(int lvl, ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
+newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
 {
 	Symbol *newSubrangeSym = NULL;
 	

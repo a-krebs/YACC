@@ -385,9 +385,8 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  */
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 	if (!(lower) || !(upper)) return NULL;
-	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
+	s = newSubrangeSym((Symbol *) lower, (Symbol *) upper);
 	return s;
 }
 
