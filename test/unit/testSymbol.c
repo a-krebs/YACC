@@ -397,17 +397,17 @@ char *
 test_newAnonScalarSym()
 {
 	symbolTable = createHash(&getHashedKeyNormal);
+	setLexLevel(symbolTable, 10);
 
 	Symbol *ss = NULL;
 	Symbol *c = setUpIntConst();
 	struct ElementArray *ea = newElementArray();
 	growElementArray(ea);
 	appendElement(ea, c);
-	int lvl = 0;
 
-	ss = newAnonScalarSym(lvl, ea);
+	ss = newAnonScalarSym(ea);
 	mu_assert("newAnonScalar is not NULL when given valid inputs", ss);
-	mu_assert("newAnonScalar should have lvl as epxected", ss->lvl == lvl);
+	mu_assert("newAnonScalar should have lvl as epxected", ss->lvl == 10);
 	mu_assert("newAnonScalar should have expected symbol in its element "
 	    "array", getElementAt(getTypePtr(ss)->Scalar->consts, 0) == c); 
 
@@ -422,6 +422,7 @@ char *
 test_isConstInScalar()
 {
 	symbolTable = createHash(&getHashedKeyNormal);
+
 	Symbol *ss = NULL;
 	Symbol *c1 = setUpIntConst();
 	Symbol *c2 = setUpIntConst();
@@ -430,10 +431,12 @@ test_isConstInScalar()
 	growElementArray(ea);
 	appendElement(ea, c1);
 	appendElement(ea, c2);
-	int lvl = 0;
+	int lvl = 10;
 	char id[] = "hello";
 
-	ss = newAnonScalarSym(lvl, ea);
+	setLexLevel(symbolTable, lvl);
+
+	ss = newAnonScalarSym(ea);
 	mu_assert("isConstInScalar() should recognize c1 appears in scalar",
 	    isConstInScalar(c1, ss));
 	c3->lvl = 102;
