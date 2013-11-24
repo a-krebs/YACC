@@ -5,6 +5,7 @@
 #include "ProgList.h"
 #include "args.h"
 #include "Hash.h"
+#include "Emit.h"
 /* must include for symbol typedef to work with parser. */
 #include "Symbol.h"
 #include "Init.h"
@@ -37,6 +38,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	int n = 0;
 	int a = 0;
 	int q = 0;
+	char *ascFile = NULL;
 	char *file = NULL;
 	char *listing = NULL;
 
@@ -98,6 +100,9 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 		return -1;
 	}
 
+	ascFile = getAscFileName(file);
+	if (!ascFile) return -1;
+
 	/* set values in arg struct */
 	argStruct->S = S;
 	argStruct->n = n;
@@ -105,6 +110,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	argStruct->q = q;
 	argStruct->inFile = file;
 	argStruct->listingFile = listing;
+	argStruct->ascFile = ascFile;
 
 #if DEBUG
 	printf("S: %d\n", S);
@@ -168,6 +174,7 @@ int main( int argc, char *argv[] )
 	}
 
 	/* Create .asc file */
+	fopen(givenArgs.ascFile, "w");
 
 	/* close file, clean up, and exit */
 	if (fclose(fp) != 0) {
@@ -175,6 +182,7 @@ int main( int argc, char *argv[] )
 	}
 	
 	free(givenArgs.listingFile);
+	free(givenArgs.ascFile);
 	deInitialize();
 
 	return EXIT_SUCCESS;

@@ -7,7 +7,7 @@
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
 OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o $(BIN)/Symbol.o 
-OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
+OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o $(BIN)/Emit.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
@@ -130,6 +130,9 @@ $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
 $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
+	$(COMPILE)
+
+$(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
 	$(COMPILE)
 
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
