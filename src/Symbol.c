@@ -421,58 +421,6 @@ Symbol *newRecordTypeSym(char *id) {
 
 
 /*
- * Add the given field to the record type.
- *
- * Return 0 on success and non-zero on error.
- * 	return 	-2 if adding hash element to record fails
- * 		-1 on argument error
- * 		1 on recType type error
- * 		2 on field type error
- */
-int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
-
-	Symbol *newField = NULL;
-	char *id = NULL;
-	struct hash *recordHash = NULL;
-	int nameLen = 0;
-
-	/* check arguments */
-	if (!recType) {
-		return -1;
-	}
-	if (!newField) {
-		return -1;
-	}
-
-	/* check record symbol for correct kind */
-	if (recType->kind != TYPE_KIND) {
-		return 1;
-	}
-	if (recType->kindPtr.TypeKind->type != RECORD_T) {
-		return 1;
-	}
-
-	/* check field symbol for correct kind */
-	if (newField->kind != VAR_KIND) {
-		return 2;
-	}
-
-	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
-	
-	nameLen = strlen(field->name);
-	id = calloc(nameLen + 1, sizeof(char));
-	id = strncpy(id, field->name, nameLen);
-
-	newField = newVariableSym(id, getInnerTypeSymbol(field));
-
-	if (createHashElement(recordHash, id, newField) != 0) {
-		return -2;
-	}
-
-	return 0;
-}
-
-/*
  * Determines if the given symbol is a const which appears in the given
  * symbol of kind TYPE_KIND and type SCALAR_T
  * Why checking by name and lexical level is enough: each identifier
