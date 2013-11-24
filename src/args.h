@@ -18,6 +18,8 @@ struct args {
 	char *inFile;
 	/* Listing file name */
 	char *listingFile;
+	/* Generated asc file name */
+	char *ascFile;
 };
 
 struct args givenArgs;
