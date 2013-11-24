@@ -6,12 +6,15 @@
 # this list.
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
-OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o $(BIN)/Symbol.o 
+OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o
 OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
 OBJS+=		$(BIN)/Init.o
+OBJS+=		$(BIN)/Symbol.o $(BIN)/SymbolAPI.o $(BIN)/SymbolArray.o 
+OBJS+=		$(BIN)/SymbolInvoc.o  $(BIN)/SymbolPrivateAPI.o 
+OBJS+=		$(BIN)/SymbolProxy.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -135,8 +138,7 @@ $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
-$(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Definitions.h
-	$(COMPILE)
+include SymbolModules.mk
 
 $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)

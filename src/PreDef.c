@@ -1,7 +1,7 @@
 #include "PreDef.h"
 #include "Type.h"
 #include "Kind.h"
-#include "Symbol.h"
+#include "SymbolAll.h"
 #include "Hash.h"
 
 Symbol *getPreDefBool(struct preDefTypeSymbols *preDefTypeSymbols) {

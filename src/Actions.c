@@ -11,7 +11,7 @@
 #include "Hash.h"
 #include "PreDef.h"
 #include "Type.h"
-#include "Symbol.h"
+#include "SymbolAll.h"
 #include "Utils.h"
 #ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
