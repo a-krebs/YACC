@@ -6,6 +6,7 @@
 /* Symbol creation function */
 Symbol *newTypeSymFromSym(char *, Symbol *);
 Symbol *newAnonArraySym(Symbol *, Symbol *);
+Symbol *newAnonScalarSym(struct ElementArray *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
 Symbol *newSubrangeSym(int, Symbol *, Symbol *);
@@ -14,7 +15,6 @@ Symbol *newProcedureSym(int, char *, struct ElementArray *);
 Symbol *newParamSym(int, char *, Symbol *);
 Symbol *newFuncSym(int, char *, Symbol *, struct ElementArray *);
 Symbol *newProcSym(int, char *, struct ElementArray *);
-Symbol *newAnonScalarSym(int, struct ElementArray *);
 
 
 /* Symbol creation from ProxySymbol functions */
@@ -75,6 +75,8 @@ Symbol *createTypeSymbol(char *id, int typeOriginator);
 Symbol *createArrayTypeSymbol(
     char *id, int typeOriginator, Symbol *base, Symbol*index);
 
+Symbol *createScalarTypeSymbol(
+    char *id, int typeOriginator, struct ElementArray *scalars);
 
 /*no idea...*/
 Symbol *

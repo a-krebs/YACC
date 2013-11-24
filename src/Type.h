@@ -40,6 +40,7 @@ struct Subrange *newSubrange(Symbol*, Symbol *);
 
 struct Record *newRecord();
 
+struct Scalar *newScalar(struct ElementArray *scalars);
 Type *getTypePtr(Symbol *);
 
 Type newAnonConstType(AnonConstVal, type_t);

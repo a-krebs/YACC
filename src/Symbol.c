@@ -112,22 +112,26 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 	return newArraySym;
 }
 
-Symbol *
-newAnonScalarSym(int lvl, struct ElementArray *ea)
+/*
+ * Create a new symbol for an anonymous scalar list type.
+ *
+ * Parameters:
+ * 	ea: the list of scalars that are part of this list
+ *
+ * Return:
+ * 	a symbol to the new type.
+ */
+Symbol *newAnonScalarSym(struct ElementArray *ea)
 {
 	Symbol *newAnonScalar = NULL;
-	newAnonScalar = calloc(1, sizeof(Symbol));
 
-	newAnonScalar->name = NULL;
-	newAnonScalar->kind = TYPE_KIND;
-	allocateKindPtr(newAnonScalar);
+	if (ea == NULL) {
+		err(EXIT_FAILURE, "Trying to create anon scalar list with "
+		    "NULL list of scalars.");
+	}
 
-	newAnonScalar->kindPtr.TypeKind->type = SCALAR_T;
-	getTypePtr(newAnonScalar)->Scalar = calloc(1, sizeof(struct Scalar));	
+	newAnonScalar = createScalarTypeSymbol(NULL, TYPEORIGINATOR_YES, ea);
 
-	getTypePtr(newAnonScalar)->Scalar->consts = ea;
-	newAnonScalar->typeOriginator = 1;
-	newAnonScalar->lvl = lvl;
 	return newAnonScalar;
 }
 
@@ -1385,6 +1389,18 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 /////////////////////////////////////////////////////////////////////////////
 
 
+/*
+ * Create a new type symbol for an array type.
+ *
+ * Parameters:
+ * 	id: the type's name
+ * 	typeOriginator: typeOriginator flag
+ * 	base: the array base type
+ * 	index: the array index type
+ *
+ * Return:
+ * 	Return a pointer to the new symbol.
+ */
 Symbol *createArrayTypeSymbol(
    char *id, int typeOriginator, Symbol *base, Symbol *index)
 {
@@ -1405,6 +1421,38 @@ Symbol *createArrayTypeSymbol(
 	kindPtr->type = ARRAY_T;
 	kindPtr->typePtr.Array = newArray(base, index);
  	
+	return symbol;
+}
+
+/*
+ * Create a new type symbol for a scalar list type.
+ *
+ * Parameters:
+ * 	id: the type's name
+ * 	typeOriginator: typeOriginator flag
+ * 	scalars: the list of constants that are part of this type
+ *
+ * Return:
+ * 	A pointer to the new symbol
+ */
+Symbol *createScalarTypeSymbol(
+    char *id, int typeOriginator, struct ElementArray *scalars)
+{
+	Symbol *symbol = NULL;
+	struct TypeKind *kindPtr = NULL;
+	if (scalars == NULL) {
+		err(EXIT_FAILURE, "Trying to make a new scalar list type "
+		    "with empty list. This should be caught further up in "
+		    "Symbols.c");
+	}
+
+	symbol = createTypeSymbol(id, typeOriginator);
+	kindPtr = getKindPtrForTypeKind(symbol);
+
+	/* set scalar list's Scalar struct */
+	kindPtr->type = SCALAR_T;
+	kindPtr->typePtr.Scalar = newScalar(scalars);
+
 	return symbol;
 }
 

@@ -321,7 +321,7 @@ Symbol *createScalarListType(struct ElementArray *ea) {
 	Symbol *s = NULL;
 	int lvl = getCurrentLexLevel(symbolTable);
 	if (!ea) return NULL;
-	s = newAnonScalarSym(lvl, ea);
+	s = newAnonScalarSym(ea);
 	createHashElement(symbolTable, NULL, s);
 	return s;
 }
