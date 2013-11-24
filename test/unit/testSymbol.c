@@ -293,6 +293,7 @@ test_newTypeSymFromSym()
 char *
 test_newVariableSym()
 {
+	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *typeSym = setUpTypeSymbol();
 	Symbol *newVar = NULL;
 	Symbol *varTypeSym = NULL;
@@ -323,6 +324,11 @@ test_newVariableSym()
 	mu_assert("newVariable() should be a variable with type defined by"
 		  "the symbol expected",
 		(varTypeSym == typeSym));
+
+	destroyHash(symbolTable);
+	free(symbolTable);
+	symbolTable = NULL;
+
 	return NULL;
 }
 

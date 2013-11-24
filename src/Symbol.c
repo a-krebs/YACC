@@ -132,56 +132,7 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 }
 
 
-/*
- * Creates a new variable struct to be added to the symbol table
- * given an identifier and an entry in the symbol table which is a type.
- */
 
-Symbol *
-newVariableSym(int lvl, char *id, Symbol* typeSym)
-{
-	Symbol *newVar = NULL;	/* new symbol to be created */
-	/*
-	 * Before making any allocations, we assure that the given
-	 * symbol typeSym is in fact a type and that we can use it
-	 * to create a new variable.
-	 */
-	if (!typeSym) {
-		/*
-		 * ERROR: trying to create var for NULL symbol!
-		 * --> probably using undefined type
-		 * Call an error recording function.
-		 */
-		return NULL;
-	}
-
-	if (typeSym->kind != TYPE_KIND) {
-		/* ERROR:
-		 * Trying to create var using symbol other than a type.
-		 * Call an error recording function.
-		 */
-		return NULL;
-	}
-
-	if (!id) {
-		/*Error: cannot have anonymous variable! */
-		return NULL;
-	}
-		
-
-	newVar = calloc(1, sizeof(Symbol));
-	if (!newVar) {
-		err(1, "Failed to allocate memory for new symbol!");
-		exit(1);
-	}
-	
-	setSymbolName(newVar, id);
-	newVar->kind = VAR_KIND;
-	allocateKindPtr(newVar);
-	setInnerTypeSymbol(newVar, typeSym);
-	newVar->lvl = lvl;
-	return newVar;
-}
 
 Symbol *
 newParamSym(int lvl, char *id, Symbol *typeSym)
@@ -1400,3 +1351,49 @@ Symbol *createArrayTypeSymbol(
 	return symbol;
 }
 
+
+/* Creates a varable symbol ands the inner type symbol. 
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeSym: type symbol to be put in new var symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newVariableSym(int lvl, char *id, Symbol* typeSym)
+{
+	Symbol *newVar = NULL;	/* new symbol to be created */
+	
+	/*
+	 * Before making any allocations, we assure that the given
+	 * symbol typeSym is in fact a type and that we can use it
+	 * to create a new variable.
+	 */
+	if (typeSym == NULL) {
+		/*
+		 * ERROR: trying to create var for NULL symbol!
+		 * --> probably using undefined type
+		 * Call an error recording function.
+		 */
+		return NULL;
+	}
+
+	if (typeSym->kind != TYPE_KIND) {
+		/* ERROR:
+		 * Trying to create var using symbol other than a type.
+		 * Call an error recording function.
+		 */
+		return NULL;
+	}
+
+	if (id == NULL) {
+		/*Error: cannot have anonymous variable! */
+		return NULL;
+	}
+	
+	newVar = createVarSymbol(id);
+	setInnerTypeSymbol(newVar, typeSym);
+	
+	return newVar;
+}
