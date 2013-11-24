@@ -7,7 +7,7 @@
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
 OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o
-OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
+OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o $(BIN)/Emit.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
 OBJS+=		$(BIN)/Init.o
@@ -17,6 +17,7 @@ OBJS+=		$(BIN)/SymbolProxy.o
 OBJS+=		$(BIN)/ActionsConsts.o $(BIN)/ActionsDecls.o 
 OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o 
 OBJS+=		$(BIN)/ActionsLoops.o $(BIN)/ActionsTypes.o 
+OBJS+=		$(BIN)/StmtLL.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -137,6 +138,9 @@ $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 	$(COMPILE)
 
+$(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
+	$(COMPILE)
+
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
@@ -146,6 +150,9 @@ $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
 
 $(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
+	$(COMPILE)
+
+$(BIN)/StmtLL.o: $(SRC)/StmtLL.c $(SRC)/StmtLL.h
 	$(COMPILE)
 
 $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
@@ -283,6 +290,14 @@ semantic_tests_:
 	@-cd test && python testRunner.py -x -i -d ./integration/semantic
 	@echo "\nSEMANTIC TESTS:"
 	@-cd test && python testRunner.py -c -d ./integration/semantic
+
+asc_tests:
+	@make -s integration_tests_base
+	@make -s asc_tests_
+
+asc_tests_:
+	@echo "ASC TESTS:"
+	@-cd test && python testRunner.py -a -d ./integration/asc
 
 full_tests:
 	@make -s integration_tests_base

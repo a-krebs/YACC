@@ -5,6 +5,7 @@
 #include "ProgList.h"
 #include "args.h"
 #include "Hash.h"
+#include "Emit.h"
 /* must include for symbol typedef to work with parser. */
 #include "SymbolAll.h"
 #include "Init.h"
@@ -23,8 +24,6 @@ extern struct args givenArgs;
 // extern struct preDefTypeSymbols *preDefTypeSymbols;
 // extern struct hash *symbolTable;
 
-
-
 /*
  * Use getopt to parse and validate the given program arguments.
  *
@@ -37,6 +36,8 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	int n = 0;
 	int a = 0;
 	int q = 0;
+	int c = 0;	/* flag, set if we want to compile without running asc*/
+	char *ascFile = NULL;
 	char *file = NULL;
 	char *listing = NULL;
 
@@ -48,7 +49,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	opterr = 0;
 
 	/* check options */
-	while ((option = getopt(argc, argv, "Snaq")) != -1) {
+	while ((option = getopt(argc, argv, "Snaqc")) != -1) {
 		switch (option) {
 		case 'S':
 			S = 1;
@@ -61,6 +62,9 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 			break;
 		case 'q':
 			q = 1;
+			break;
+		case 'c':
+			c = 1;
 			break;
 		case '?':
 			if (isprint(optopt)) {
@@ -98,13 +102,18 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 		return -1;
 	}
 
+	ascFile = getAscFileName(file);
+	if (!ascFile) return -1;
+
 	/* set values in arg struct */
 	argStruct->S = S;
 	argStruct->n = n;
 	argStruct->a = a;
 	argStruct->q = q;
+	argStruct->c = c;
 	argStruct->inFile = file;
 	argStruct->listingFile = listing;
+	argStruct->ascFile = ascFile;
 
 #if DEBUG
 	printf("S: %d\n", S);
@@ -125,7 +134,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 int main( int argc, char *argv[] )
 {
 	int argsParsedSuccess = 0;
-	FILE *fp = NULL;
+	FILE *fp = NULL, *ascfp = NULL;
 
 	/* initialize global args struct */
 	memset(&givenArgs, 0, sizeof(struct args));
@@ -167,12 +176,21 @@ int main( int argc, char *argv[] )
 		printProgramListing(fp, givenArgs.listingFile);
 	}
 
+	/* Create .asc file */
+	ascfp = fopen(givenArgs.ascFile, "w");
+
 	/* close file, clean up, and exit */
 	if (fclose(fp) != 0) {
 		return EXIT_FAILURE;
 	}
+
+	fclose(ascfp);
+	if (givenArgs.S == 0) {
+		remove(givenArgs.ascFile);
+	}
 	
 	free(givenArgs.listingFile);
+	free(givenArgs.ascFile);
 	deInitialize();
 
 	return EXIT_SUCCESS;
