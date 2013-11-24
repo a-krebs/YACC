@@ -18,10 +18,11 @@ GEN_ASC_DIR = "./generated_asc"
 TEST_ASC_DIR = "./test_asc"
 
 PAL_EXE = "../../../bin/pal"
-PAL_OPTIONS = "-n"
+PAL_OPTION1 = "-n"
+PAL_OPTION2 = "-c"
+PAL_OPTION3 = "-S"
 
 LEXTEST_EXE = "../../../bin/lextest"
-LEXTEST_OPTIONS = PAL_OPTIONS
 
 TEST_TYPE = {
     'syntax' : 0,
@@ -145,7 +146,8 @@ def make_lexer_test_function(filename, expected_tokens):
     Return a function object.
     """
     def new_test(self):
-        output = check_output([LEXTEST_EXE, LEXTEST_OPTIONS, filename])
+        output = check_output([LEXTEST_EXE, PAL_OPTION1, PAL_OPTION2,\
+            filename])
         actual_tokens = [
             re.sub(r"\(.*\)", "", line).strip()
                 for line in output.split("\n") if line != ''
@@ -179,7 +181,8 @@ def make_parser_test_function(filename, expected_errors, test_type):
     """
 
     def new_test(self):
-        output = check_output([PAL_EXE, PAL_OPTIONS, filename])
+        output = check_output([PAL_EXE, PAL_OPTION1, PAL_OPTION2,\
+            PAL_OPTION3, filename])
         actual_errors = get_error_lines_from_output(output, test_type)
 
         for error in actual_errors:
@@ -210,7 +213,8 @@ def make_asc_test_function(filename, expected_output, asc_filename):
         # in order to determine if the generated asc file is as expected.
 
         try:
-            check_call([PAL_EXE, "-n", "-S", "-c", filename])
+            check_call([PAL_EXE, PAL_OPTION1, PAL_OPTION2, PAL_OPTION3,\
+                filename])
 
         except OSError:
             print "Failed to open pal executable with filename = ", filename
