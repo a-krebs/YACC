@@ -6,7 +6,7 @@
 # this list.
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
-OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o $(BIN)/Symbol.o 
+OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o 
 OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o $(BIN)/Emit.o
 OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
