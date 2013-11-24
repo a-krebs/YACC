@@ -279,29 +279,6 @@ areOpCompatible(Symbol *s1, Symbol *s2)
  */
 //////////////////////////////////////////////////////////////////////////
 
-/*
- * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
- * a pointer to the typeSym defining the type for the given Symbol s.
- * WARNING: assumes the kindPtr for the given symbol s has been allocated.
- */
-void
-setTypeSym(Symbol *s, Symbol *typeSym)
-{
-	switch (s->kind) {
-	case CONST_KIND:
-		s->kindPtr.ConstKind->typeSym = typeSym;
-		break;
-	case FUNC_KIND:
-		s->kindPtr.FuncKind->typeSym = typeSym;
-		break;
-	case VAR_KIND:
-		s->kindPtr.VarKind->typeSym = typeSym;
-		break;
-	default:
-		/* Should not be reached */
-		break;
-	}
-}
 
 /*
  * Set type pointer new to point to type old of type passed as arg.
@@ -485,15 +462,6 @@ struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
 }
 
 
-// struct TypeKind *getTypeKind(Symbol *symbol) {
-// 	if ( symbol->kind != TYPE_KIND ) {
-// 		return NULL;
-// 	}
-
-// 	return symbol->kindPtr.TypeKind;
-// }
-
-
 // struct Array *allocateArrayType() {
 // 	struct Array *arrayType = NULL;
 
@@ -506,9 +474,6 @@ struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
 // 	return arrayType;
 // }
 
-// getArrayTypeStruct() {
-
-// }
 
 
 /* Allocates memory for the Subrange struct
@@ -530,8 +495,15 @@ struct Subrange *allocateSubRangeType() {
 }
 
 
-
-//TODO simplify and comment
+/* TODO simplify look up calls with api functions
+ * Creates a subrange symbol.
+ *
+ * Parameters:
+ *		lowSym: symbol forming lower bound on range
+ *		highSym: symbol forming upper bound on range
+ *
+ * Returns: New Subrange struct
+ */
 struct Subrange *
 newSubrange(Symbol * lowSym, Symbol *highSym)
 {
@@ -566,7 +538,13 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 }
 
 
-//theres set function but should use same naming convention
+/* Returns the pointer to the inner type symbol inside other symbols
+ *
+ * Parameters:
+ *		symbol:
+ *
+ * Returns: see above
+ */
 Symbol *getInnerTypeSymbol(Symbol *symbol) {
 	switch (symbol->kind) {
 		case CONST_KIND:
@@ -582,4 +560,35 @@ Symbol *getInnerTypeSymbol(Symbol *symbol) {
 	}
 }
 
+
+/* Formally setTypeSym(Symbol *s, Symbol *typeSym) changed for consistently 
+ * getter.
+ *
+ * Sets the inner type symbol of the passed symbol
+ * WARNING: assumes the kindPtr for the given symbol s has been allocated.
+ *
+ * Parameters:
+ *		symbol: symbol where type symbol with be attached
+ *		typeSym: type symbol
+ *
+ * Returns: void
+ */
+void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
+	switch (s->kind) {
+		case CONST_KIND:
+			s->kindPtr.ConstKind->typeSym = typeSym;
+			break;
+		case PARAM_KIND:
+			s->kindPtr.ParamKind->typeSym = typeSym;
+			break;		
+		case FUNC_KIND:		
+			s->kindPtr.FuncKind->typeSym = typeSym;
+			break;
+		case VAR_KIND:
+			s->kindPtr.VarKind->typeSym = typeSym;
+			break;
+		default:
+			err(1, "Could not determine inner type of symbol");
+	}
+}
 

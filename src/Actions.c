@@ -936,7 +936,7 @@ Symbol *proxyStringLiteral(struct String s) {
 	proxy= newStringProxySym(lvl, (s.str+1), s.strlen);
 	typeSym = newStringTypeSym(getCurrentLexLevel(symbolTable), s.strlen);
 	createHashElement(symbolTable, NULL, typeSym);
-	proxy->kindPtr.ConstKind->typeSym = typeSym;
+	setInnerTypeSymbol(proxy, typeSym);
 	return proxy;
 }
 

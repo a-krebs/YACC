@@ -178,7 +178,7 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 	setSymbolName(newVar, id);
 	newVar->kind = VAR_KIND;
 	allocateKindPtr(newVar);
-	newVar->kindPtr.VarKind->typeSym = typeSym;
+	setInnerTypeSymbol(newVar, typeSym);
 	newVar->lvl = lvl;
 	return newVar;
 }
@@ -204,7 +204,8 @@ newParamSym(int lvl, char *id, Symbol *typeSym)
 	setSymbolName(newParamSym, id);
 	newParamSym->kind = PARAM_KIND;
 	allocateKindPtr(newParamSym);
-	newParamSym->kindPtr.ParamKind->typeSym = typeSym;
+	setInnerTypeSymbol(newParamSym, typeSym);
+
 	newParamSym->lvl = lvl;
 	return newParamSym;	
 }
@@ -241,7 +242,7 @@ newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
 	s->kind = FUNC_KIND;
 	allocateKindPtr(s);
 	s->kindPtr.FuncKind->params = ea;
-	s->kindPtr.FuncKind->typeSym = typeSym;
+	setInnerTypeSymbol(s, typeSym);
 	return s;
 }
 
@@ -399,7 +400,7 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 	
 	newConstSym->kind = CONST_KIND;
 	allocateKindPtr(newConstSym);
-	newConstSym->kindPtr.ConstKind->typeSym = getTypeSym(proxySym);
+	setInnerTypeSymbol(newConstSym, getTypeSym(proxySym));
 	copyConstVal(&(newConstSym->kindPtr.ConstKind->value), 
 	    getConstVal(proxySym), getType(proxySym));
 	newConstSym->lvl = lvl;
@@ -489,7 +490,8 @@ newConstProxySym(void * result, Symbol *typeSym)
 	constSym->name = NULL;
 	constSym->kind = CONST_KIND;
 	allocateKindPtr(constSym);
-	setTypeSym(constSym, typeSym);
+	setInnerTypeSymbol(constSym, typeSym);
+
 	
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:
@@ -576,8 +578,8 @@ newStringProxySym(int lvl, char *str, int strlen)
 	strncpy(newStringSym->kindPtr.ConstKind->value.String.str, str, strlen);
 	newStringSym->kindPtr.ConstKind->value.String.strlen = strlen;
 
-	newStringSym->kindPtr.ConstKind->typeSym = calloc(1, sizeof (struct ConstantKind));
-	newStringSym->kindPtr.ConstKind->typeSym = getPreDefString(preDefTypeSymbols);
+	setInnerTypeSymbol(newStringSym, calloc(1, sizeof (struct ConstantKind)));
+	setInnerTypeSymbol(newStringSym, getPreDefString(preDefTypeSymbols));
 
 	return newStringSym;	
 }
@@ -678,7 +680,7 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	id = strncpy(id, field->name, nameLen);
 
 	newField = newVariableSym(
-	    recordLvl, id, field->kindPtr.VarKind->typeSym);
+	    recordLvl, id, getInnerTypeSymbol(field));
 
 	if (createHashElement(recordHash, id, newField) != 0) {
 		return -2;
