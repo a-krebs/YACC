@@ -355,8 +355,17 @@ setTypePtr(Type *new, Type old, type_t type)
  */
 //////////////////////////////////////////////////////////////////////////
 
-struct Array *
-newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
+/*
+ * Create a new array struct
+ *
+ * Parameters:
+ * 	baseTypeSym: the base type for the array.
+ * 	indexTypeSym: the index type for the array.
+ *
+ * Returns:
+ * 	a pointer to the new array struct
+ */
+struct Array *newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 {
 	struct Array *a;
 	/* Error checking */
@@ -510,28 +519,11 @@ typeMemoryFailure()
 }
 
 
+struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
+	if ((symbol == NULL) || ( symbol->kind != TYPE_KIND)) {
+		err(EXIT_FAILURE, "Called getTypeKind on symbol that is not "
+		    "TYPE_KIND.");
+	}
 
-// struct TypeKind *getTypeKind(Symbol *symbol) {
-// 	if ( symbol->kind != TYPE_KIND ) {
-// 		return NULL;
-// 	}
-
-// 	return symbol->kindPtr.TypeKind;
-// }
-
-
-// struct Array *allocateArrayType() {
-// 	struct Array *arrayType = NULL;
-
-// 	arrayType = calloc(1, sizeof(struct Array));
-// 	if ( arrayType == NULL ) {
-// 		err(1, "Could not alloc memory for array type.");
-// 		exit(EXIT_FAILURE);		
-// 	}
-
-// 	return arrayType;
-// }
-
-// getArrayTypeStruct() {
-
-// }
+	return symbol->kindPtr.TypeKind;
+}

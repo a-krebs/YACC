@@ -9,6 +9,8 @@
 
 #include "Definitions.h"
 
+#define TYPEORIGINATOR_YES 1
+#define TYPEORIGINATOR_NO 0
 
 /*
  * The types of a values which can be associated with various kinds.
@@ -49,4 +51,6 @@ void setTypeSym(Symbol *, Symbol *);
 void setTypePtr(Type *, Type, type_t);
 
 void typeMemoryFailure();
+
+struct TypeKind *getKindPtrForTypeKind(Symbol *);
 #endif
