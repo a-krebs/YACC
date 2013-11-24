@@ -178,7 +178,7 @@ newVariableSym(int lvl, char *id, Symbol* typeSym)
 	setSymbolName(newVar, id);
 	newVar->kind = VAR_KIND;
 	allocateKindPtr(newVar);
-	newVar->kindPtr.VarKind->typeSym = typeSym;
+	setInnerTypeSymbol(newVar, typeSym);
 	newVar->lvl = lvl;
 	return newVar;
 }
@@ -680,7 +680,7 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	id = strncpy(id, field->name, nameLen);
 
 	newField = newVariableSym(
-	    recordLvl, id, field->kindPtr.VarKind->typeSym);
+	    recordLvl, id, getInnerTypeSymbol(field));
 
 	if (createHashElement(recordHash, id, newField) != 0) {
 		return -2;
