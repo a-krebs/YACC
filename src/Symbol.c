@@ -112,98 +112,36 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 	return newArraySym;
 }
 
-Symbol *
-newAnonScalarSym(int lvl, struct ElementArray *ea)
-{
-	Symbol *newAnonScalar = NULL;
-	newAnonScalar = calloc(1, sizeof(Symbol));
-
-	newAnonScalar->name = NULL;
-	newAnonScalar->kind = TYPE_KIND;
-	allocateKindPtr(newAnonScalar);
-
-	newAnonScalar->kindPtr.TypeKind->type = SCALAR_T;
-	getTypePtr(newAnonScalar)->Scalar = calloc(1, sizeof(struct Scalar));	
-
-	getTypePtr(newAnonScalar)->Scalar->consts = ea;
-	newAnonScalar->typeOriginator = 1;
-	newAnonScalar->lvl = lvl;
-	return newAnonScalar;
-}
-
-
-
-
-
 /*
- * Constructs an anonymous subrange symbol.
+ * Create a new symbol for an anonymous scalar list type.
+ *
+ * Parameters:
+ * 	ea: the list of scalars that are part of this list
+ *
+ * Return:
+ * 	a symbol to the new type.
  */
-Symbol *
-newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
+Symbol *newAnonScalarListTypeSym(struct ElementArray *ea)
 {
-	Symbol *newSubrangeSym = NULL;
-	
-	/*
-	 * We must assure that we are constructing a subrange
-	 * from two ordinal types of the same type of kind const such that
-	 * the value of constSymLow is less than the value of constSymHigh.
-	 */
-	if ((!constSymLow) || (!constSymHigh)) {
-		/* Error */
-		return NULL;
+	Symbol *newAnonScalarList = NULL;
+
+	if (ea == NULL) {
+		err(EXIT_FAILURE, "Trying to create anon scalar list with "
+		    "NULL list of scalars.");
 	}
 
-	if ((constSymLow->kind != CONST_KIND) ||
-	    (constSymHigh->kind != CONST_KIND)) {
-	/*Error: subranges indices not constants */
-		return NULL;
-	}
+	/* anonymous, so name is NULL */
+	newAnonScalarList = createScalarListTypeSymbol(
+	    NULL, TYPEORIGINATOR_YES, ea);
 
-	if (getType(constSymLow) != getType(constSymHigh)) {
-		/* Error:  Mismatched types for subrange indices */
-		return NULL;
-	}
-
-	if (!isOrdinal(getType(constSymLow))) {
-		/*
-		 * Error: trying to construct subrange from non ordinal
-		 * types
-		 */
-		return NULL;
-	}
-
-	/*
-	 * Insure that values are bounded correctly (dependent on type ).
-	 */
-	switch(getType(constSymLow)) {
-	case INTEGER_T:
-		if (getConstVal(constSymLow)->Integer.value >
-		    getConstVal(constSymHigh)->Integer.value) return NULL;
-		break;
-	case BOOLEAN_T:
-		if (getConstVal(constSymLow)->Boolean.value >
-		    getConstVal(constSymHigh)->Boolean.value) return NULL;
-		break;
-	case CHAR_T:
-		if (getConstVal(constSymLow)->Char.value >
-		    getConstVal(constSymHigh)->Char.value) return NULL;
-		break;
-	default:
-		break;
-	}
-
-	newSubrangeSym = createTypeSymbol(NULL, 1);
-	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
-	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
-								  constSymLow,
-								  constSymHigh);
-	return newSubrangeSym;
+	return newAnonScalarList;
 }
 
 
 /*
  * TODO: proxy symbol will have kindPtr to pre-defined kind?
  */
+// TODO this looks like a dup of newConstProxySym?
 Symbol *
 newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 {
@@ -299,30 +237,40 @@ newProxySymFromSym(Symbol *s)
 
 
 /*
- * Creates a new CONST_KIND ProxySymbol using the result of a arithmetic,
- * logical or arithmetic operation on two constants. 
+ * Creates a new CONST_KIND ProxySymbol.
+ *
+ * Parameters:
+ * 	id: the 
+ * 	result: a pointer to the value for the new constant
+ * 		this will be case to the appropriate C type depending on typeSym
+ * 	tpyeSym: a symbol with kind TYPE_KIND for the new symbol
+ *
+ * Return:
+ * 	A pointer to the new ProxySymbol
  */
-ProxySymbol *
-newConstProxySym(void * result, Symbol *typeSym)
+ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 {
 	Symbol *constSym = NULL;
 	double *doubleResult;
 	int *intResult;
 	char *charResult;
-	
-	constSym = calloc(1, sizeof(ProxySymbol));
+
+	/* id can be NULL, this makes the constant anonymous */
+	if ((result == NULL) || (typeSym == NULL)) {
+		err(EXIT_FAILURE, "Passed NULL arguments to newConstProxySym");
+	}
+
+	constSym = createConstSymbol(id);
 	if (!constSym) {
 		err(1, "Failed to allocate memory for new constant proxy "
 		    "symbol!");
-		exit(1);
 	}
-
-	constSym->name = NULL;
-	constSym->kind = CONST_KIND;
-	allocateKindPtr(constSym);
+	
+	/* set the new symbol's type */
+	// TODO, this should point back to a pre-defined type, and we should
+	// enforce that the given typeSym is a pre-defined type
 	setInnerTypeSymbol(constSym, typeSym);
 
-	
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:
 		intResult = (int *) result;
@@ -341,8 +289,10 @@ newConstProxySym(void * result, Symbol *typeSym)
 		break;
 	default:
 		/* Shouldn't be reached */
-		return NULL;
+		err(EXIT_FAILURE, "Called newConstProxySym with invalid "
+		    "typeSym (can't get inner type)");
 	}
+
 	return (ProxySymbol *) constSym;
 }
 
@@ -401,22 +351,6 @@ setSymbolName(Symbol *s, char *id)
 		exit(EXIT_FAILURE);
 	}
 	strcpy(s->name, id);
-}
-
-/*
- * Create a new symbol for a record type defintion to be added to the symbol
- * table.
- * 
- * Return a pointer to the new type symbol.
- */
-Symbol *newRecordTypeSym(char *id) {
-	/* this is an anonymous type */
-	Symbol *newRecType = createTypeSymbol(id, TYPEORIGINATOR_YES);
-
-	newRecType->kindPtr.TypeKind->type = RECORD_T;
-	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
-
-	return newRecType;
 }
 
 
@@ -1108,6 +1042,18 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 /////////////////////////////////////////////////////////////////////////////
 
 
+/*
+ * Create a new type symbol for an array type.
+ *
+ * Parameters:
+ * 	id: the type's name
+ * 	typeOriginator: typeOriginator flag
+ * 	base: the array base type
+ * 	index: the array index type
+ *
+ * Return:
+ * 	Return a pointer to the new symbol.
+ */
 Symbol *createArrayTypeSymbol(
    char *id, int typeOriginator, Symbol *base, Symbol *index)
 {
@@ -1128,6 +1074,38 @@ Symbol *createArrayTypeSymbol(
 	kindPtr->type = ARRAY_T;
 	kindPtr->typePtr.Array = newArray(base, index);
  	
+	return symbol;
+}
+
+/*
+ * Create a new type symbol for a scalar list type.
+ *
+ * Parameters:
+ * 	id: the type's name
+ * 	typeOriginator: typeOriginator flag
+ * 	scalars: the list of constants that are part of this type
+ *
+ * Return:
+ * 	A pointer to the new symbol
+ */
+Symbol *createScalarListTypeSymbol(
+    char *id, int typeOriginator, struct ElementArray *scalars)
+{
+	Symbol *symbol = NULL;
+	struct TypeKind *kindPtr = NULL;
+	if (scalars == NULL) {
+		err(EXIT_FAILURE, "Trying to make a new scalar list type "
+		    "with empty list. This should be caught further up in "
+		    "Symbols.c");
+	}
+
+	symbol = createTypeSymbol(id, typeOriginator);
+	kindPtr = getKindPtrForTypeKind(symbol);
+
+	/* set scalar list's Scalar struct */
+	kindPtr->type = SCALAR_T;
+	kindPtr->typePtr.Scalar = newScalar(scalars);
+
 	return symbol;
 }
 
@@ -1242,3 +1220,96 @@ newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
 
 	return s;
 }
+
+
+/*
+ * Create a new symbol for a record type defintion to be added to the symbol
+ * table.
+ * 
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return a pointer to the new type symbol.
+ */
+Symbol *newRecordTypeSym(char *id) {
+	/* this is an anonymous type */
+	Symbol *newRecType = createTypeSymbol(id, TYPEORIGINATOR_YES);
+
+	newRecType->kindPtr.TypeKind->type = RECORD_T;
+	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
+
+	return newRecType;
+}
+
+
+ /*
+ * Constructs an anonymous subrange symbol.
+ * 
+ * Parameters:
+ *              constSymLow: pointer to symbol holding lower bound info
+ *              constSymHigh: pointer to symbol holding uppper bound info
+ *
+ * Return a pointer to the new subrange symbol.
+ */
+Symbol *
+newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
+{
+	Symbol *newSubrangeSym = NULL;
+	
+	/*
+	 * We must assure that we are constructing a subrange
+	 * from two ordinal types of the same type of kind const such that
+	 * the value of constSymLow is less than the value of constSymHigh.
+	 */
+	if ((!constSymLow) || (!constSymHigh)) {
+		/* Error */
+		return NULL;
+	}
+
+	if ((constSymLow->kind != CONST_KIND) ||
+	    (constSymHigh->kind != CONST_KIND)) {
+	/*Error: subranges indices not constants */
+		return NULL;
+	}
+
+	if (getType(constSymLow) != getType(constSymHigh)) {
+		/* Error:  Mismatched types for subrange indices */
+		return NULL;
+	}
+
+	if (!isOrdinal(getType(constSymLow))) {
+		/*
+		 * Error: trying to construct subrange from non ordinal
+		 * types
+		 */
+		return NULL;
+	}
+
+	/*
+	 * Insure that values are bounded correctly (dependent on type ).
+	 */
+	switch(getType(constSymLow)) {
+	case INTEGER_T:
+		if (getConstVal(constSymLow)->Integer.value >
+		    getConstVal(constSymHigh)->Integer.value) return NULL;
+		break;
+	case BOOLEAN_T:
+		if (getConstVal(constSymLow)->Boolean.value >
+		    getConstVal(constSymHigh)->Boolean.value) return NULL;
+		break;
+	case CHAR_T:
+		if (getConstVal(constSymLow)->Char.value >
+		    getConstVal(constSymHigh)->Char.value) return NULL;
+		break;
+	default:
+		break;
+	}
+
+	newSubrangeSym = createTypeSymbol(NULL, TYPEORIGINATOR_YES);
+	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
+	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
+								  constSymLow,
+								  constSymHigh);
+	return newSubrangeSym;
+}
+

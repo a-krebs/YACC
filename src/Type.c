@@ -378,6 +378,31 @@ struct Record *newRecord() {
 	return r;
 }
 
+
+/*
+ * Create a new struct Scalar
+ * 
+ * Parameters:
+ * 	scalars: the list of scalars that are part of the scalar list
+ *
+ * Return:
+ * 	a pointer to the new Scalar struct
+ */
+struct Scalar *newScalar(struct ElementArray *scalars) {
+	struct Scalar *s = NULL;
+
+	s = calloc(1, sizeof(struct Record));
+	if (s == NULL) {
+		err(EXIT_FAILURE, "Failed to allocate memory for new scalar!");
+	}
+
+	/* set scalar type constants */
+	s->consts = scalars;
+
+	return s;
+}
+
+
 Type newAnonConstType(AnonConstVal value, type_t type)
 {
 	Type anonConstType;
@@ -591,4 +616,5 @@ void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
 			err(1, "Could not determine inner type of symbol");
 	}
 }
+
 
