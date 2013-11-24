@@ -54,7 +54,7 @@ Symbol * isValidArrayAccess(Symbol *, ProxySymbol *);
 struct Param *newParameter(char *, Symbol *);
 
 /* functios for working with records */
-Symbol *newRecordTypeSym(int, char*);
+Symbol *newRecordTypeSym(char*);
 int addFieldToRecord(Symbol*, ProxySymbol*);
 void freeProxySymbol(ProxySymbol*);
 
