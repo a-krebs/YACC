@@ -399,7 +399,7 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 	
 	newConstSym->kind = CONST_KIND;
 	allocateKindPtr(newConstSym);
-	newConstSym->kindPtr.ConstKind->typeSym = getTypeSym(proxySym);
+	setInnerTypeSymbol(newConstSym, getTypeSym(proxySym));
 	copyConstVal(&(newConstSym->kindPtr.ConstKind->value), 
 	    getConstVal(proxySym), getType(proxySym));
 	newConstSym->lvl = lvl;
@@ -577,8 +577,8 @@ newStringProxySym(int lvl, char *str, int strlen)
 	strncpy(newStringSym->kindPtr.ConstKind->value.String.str, str, strlen);
 	newStringSym->kindPtr.ConstKind->value.String.strlen = strlen;
 
-	newStringSym->kindPtr.ConstKind->typeSym = calloc(1, sizeof (struct ConstantKind));
-	newStringSym->kindPtr.ConstKind->typeSym = getPreDefString(preDefTypeSymbols);
+	setInnerTypeSymbol(newStringSym, calloc(1, sizeof (struct ConstantKind)));
+	setInnerTypeSymbol(newStringSym, getPreDefString(preDefTypeSymbols));
 
 	return newStringSym;	
 }

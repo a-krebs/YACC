@@ -231,7 +231,8 @@ Symbol *createNewBoolConst(char *name, int val) {
 	symbol->kind = CONST_KIND;
 	allocateKindPtr(symbol);
 
-	symbol->kindPtr.ConstKind->typeSym = getPreDefBool(preDefTypeSymbols);
+	setInnerTypeSymbol(symbol, getPreDefBool(preDefTypeSymbols));
+
 	symbol->kindPtr.ConstKind->value.Boolean.value = val;
 	symbol->lvl = getCurrentLexLevel(symbolTable);
 
@@ -250,7 +251,8 @@ Symbol *createNewIntConst(char *name, int val) {
 	symbol->kind = CONST_KIND;
 	allocateKindPtr(symbol);
 
-	symbol->kindPtr.ConstKind->typeSym = getPreDefInt(preDefTypeSymbols);
+	setInnerTypeSymbol(symbol, getPreDefInt(preDefTypeSymbols));
+
 	symbol->kindPtr.ConstKind->value.Integer.value = val;
 	symbol->lvl = getCurrentLexLevel(symbolTable);
 
