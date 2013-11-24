@@ -399,15 +399,12 @@ Symbol *createRecordType(struct ElementArray *fields) {
 	printf("Here I am\n");
 	Symbol *recType = NULL;
 	Symbol *newField = NULL;
-	int lexLvl = -1;
 	int recordLexLvl = -1;
 	ProxySymbol *f = NULL;
 	struct hash *recHash = NULL;
 	char *fieldId;
 
-	lexLvl = getCurrentLexLevel(symbolTable);
-
-	recType = newRecordTypeSym(lexLvl, NULL);
+	recType = newRecordTypeSym(NULL);
 	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 
 	recordLexLvl = getCurrentLexLevel(recHash);
