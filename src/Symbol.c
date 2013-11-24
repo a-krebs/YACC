@@ -133,22 +133,7 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 
 
 
-/*
- * Constructs a new function symbol.
- */
-Symbol *
-newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
-{
-	Symbol *s = NULL;
 
-	s = calloc(1, sizeof(Symbol));
-	setSymbolName(s, id);
-	s->kind = FUNC_KIND;
-	allocateKindPtr(s);
-	s->kindPtr.FuncKind->params = ea;
-	setInnerTypeSymbol(s, typeSym);
-	return s;
-}
 
 /*
  * Constructs an anonymous subrange symbol.
@@ -1376,10 +1361,22 @@ newParamSym(char *id, Symbol *typeSym)
 Symbol *
 newProcSym(char *id, struct ElementArray *ea)
 {
-	Symbol *s = NULL;
-
-	createProcSymbol(id);
+	Symbol *s =  createProcSymbol(id);
 	s->kindPtr.ProcKind->params = ea;
-	
+
 	return s;	
+}
+
+/*
+ * Constructs a new function symbol.
+ */
+Symbol *
+newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
+{
+	Symbol *s = createFuncSymbol(id); 
+
+	s->kindPtr.FuncKind->params = ea;
+	setInnerTypeSymbol(s, typeSym);
+
+	return s;
 }
