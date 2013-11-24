@@ -391,12 +391,12 @@ getTypeSym(Symbol *s)
 }
 
 Symbol *
-paramToVar(int lvl, Symbol * param)
+paramToVar(Symbol * param)
 {
 	if (!param) return NULL;
 	if (param->kind != PARAM_KIND) return NULL;
 	Symbol *typeSym = getTypeSym(param);
-	return newVariableSym(lvl, param->name, typeSym);
+	return newVariableSym(param->name, typeSym);
 }
  
 
@@ -597,7 +597,6 @@ Symbol *newRecordTypeSym(int lvl, char *id)
 int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 
 	Symbol *newField = NULL;
-	int recordLvl = -1;
 	char *id = NULL;
 	struct hash *recordHash = NULL;
 	int nameLen = 0;
@@ -624,14 +623,12 @@ int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
 	}
 
 	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
-	recordLvl = getCurrentLexLevel(recordHash);
 	
 	nameLen = strlen(field->name);
 	id = calloc(nameLen + 1, sizeof(char));
 	id = strncpy(id, field->name, nameLen);
 
-	newField = newVariableSym(
-	    recordLvl, id, getInnerTypeSymbol(field));
+	newField = newVariableSym(id, getInnerTypeSymbol(field));
 
 	if (createHashElement(recordHash, id, newField) != 0) {
 		return -2;
@@ -1361,10 +1358,10 @@ Symbol *createArrayTypeSymbol(
  * Return: Newly created symbol
  */
 Symbol *
-newVariableSym(int lvl, char *id, Symbol* typeSym)
+newVariableSym(char *id, Symbol* typeSym)
 {
 	Symbol *newVar = NULL;	/* new symbol to be created */
-	
+
 	/*
 	 * Before making any allocations, we assure that the given
 	 * symbol typeSym is in fact a type and that we can use it
