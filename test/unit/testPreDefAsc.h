@@ -1,9 +1,11 @@
 #define LEN 1024
 
 int testAbs();
+int testArctan();
 int testChr();
 int testCos();
 int testExp();
+int testLn();
 int testPred();
 int testRound();
 int testSin();

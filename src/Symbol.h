@@ -4,16 +4,15 @@
 #include "Definitions.h"
 #include "Kind.h"
 /* Symbol creation function */
-Symbol *newTypeSymFromSym(int, char *, Symbol *);
-Symbol *newAnonArraySym(int, Symbol *, Symbol *);
+Symbol *newTypeSymFromSym(char *, Symbol *);
+Symbol *newAnonArraySym(Symbol *, Symbol *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
-Symbol *newSubrangeSym(int, Symbol *, Symbol *);
-Symbol *newVariableSym(int, char *, Symbol *);
-Symbol *newProcedureSym(int, char *, struct ElementArray *);
-Symbol *newParamSym(int, char *, Symbol *);
+Symbol *newSubrangeSym(Symbol *, Symbol *);
+Symbol *newVariableSym(char *, Symbol *);
+Symbol *newParamSym(char *, Symbol *);
 Symbol *newFuncSym(int, char *, Symbol *, struct ElementArray *);
-Symbol *newProcSym(int, char *, struct ElementArray *);
+Symbol *newProcSym(char *, struct ElementArray *);
 Symbol *newAnonScalarSym(int, struct ElementArray *);
 
 
@@ -26,7 +25,7 @@ ProxySymbol *newStringProxySym(int, char *, int);
 ProxySymbol *newProxySymFromSym(Symbol *);
 
 /* */
-Symbol * paramToVar(int, Symbol *);
+Symbol * paramToVar(Symbol *);
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
 Symbol *getArrayIndexSym(Symbol *);
@@ -55,11 +54,28 @@ Symbol * isValidArrayAccess(Symbol *, ProxySymbol *);
 struct Param *newParameter(char *, Symbol *);
 
 /* functios for working with records */
-Symbol *newRecordTypeSym(int, char*);
+Symbol *newRecordTypeSym(char*);
 int addFieldToRecord(Symbol*, ProxySymbol*);
 void freeProxySymbol(ProxySymbol*);
 
+/*api functions*/
+Symbol *createSymbol(struct hash*, char *id, kind_t kind, int typeOriginator);
+Symbol *allocateSymbol();
+Symbol *createAndInsertSymbol(
+    struct hash*, char *key, kind_t kind, int typeOriginator);
+Symbol *createConstSymbol(char *id);
+Symbol *createFuncSymbol(char *id);
+Symbol *createParamSymbol(char *id);
+Symbol *createProcSymbol(char *id);
+Symbol *createVarSymbol(char *id);
+Symbol *createTypeSymbol(char *id, int typeOriginator);
 
+/* symbol creation for type-specific stuff */
+Symbol *createArrayTypeSymbol(
+    char *id, int typeOriginator, Symbol *base, Symbol*index);
+
+
+/*no idea...*/
 Symbol *
 newStringTypeSym(int lexLevel, int strlen);
 #endif

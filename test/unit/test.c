@@ -72,10 +72,12 @@ int
 testAsc()
 {
 	setUpAscTests();
+	testArctan();
 	testAbs();
 	testChr();
 	testCos();
 	testExp();
+	testLn();
 	testPred();
 	testRound();
 	testSin();

@@ -10,4 +10,5 @@ int isUnaryOperator(int);
 void opError(char *, int, char *);
 void alreadyDefinedError(char *id);
 void notDefinedError(char *id);
+void symbolTableInsertFailure();
 #endif

@@ -11,12 +11,113 @@
 #include "Type.h"
 #include "Hash.h"
 
+
+/*
+	TODO:
+		- fix areCompatibleStrings
+		- fix areOpCompatible
+
+*/
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			TYPE API FUNCTIONS:
+ */
+//////////////////////////////////////////////////////////////////////////
+
+/*
+ * Determines the type of symbol we have (from type_t enum). Throughts error is
+ * type is not a valid type.
+ */
+type_t
+getType(Symbol *s)
+{
+	if (!s) return VOID_T;		///SHOUDL THIS CHANGE TO EXIT?
+
+	switch (s->kind) {
+	case CONST_KIND:
+		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
+	case PARAM_KIND:
+		return s->kindPtr.ParamKind->typeSym->kindPtr.TypeKind->type;
+	case PROC_KIND:
+		return VOID_T;
+	case FUNC_KIND:
+		return s->kindPtr.FuncKind->typeSym->kindPtr.TypeKind->type;
+	case TYPE_KIND:
+		return s->kindPtr.TypeKind->type;
+	case VAR_KIND:
+		return s->kindPtr.VarKind->typeSym->kindPtr.TypeKind->type;
+	default:
+		/* NOT REACHED */
+		// return VOID_T;
+		err(1, "Symbol 'kind' not set.");
+		exit(1);		
+	}	
+}
+
+
+/*
+ * Return a pointer to the typePtr for the given Symbol of kind TYPE_KIND.
+ * Returns null if the given Symbol is not of kind TYPE_KIND.
+ */
+Type *
+getTypePtr(Symbol *s)
+{
+	if (!s) return NULL;
+	if (s->kind != TYPE_KIND) return NULL;
+	return &(s->kindPtr.TypeKind->typePtr);
+}
+
+
+/*
+ * Gets the string value of the passed type.
+ */
+char *
+typeToString(type_t type)
+{
+	switch (type) {
+	case ARRAY_T:
+		return "ARRAY";
+	case BOOLEAN_T:
+		return "BOOLEAN";
+	case CHAR_T:
+		return "CHARACTER";
+	case INTEGER_T:
+		return "INTEGER";
+	case REAL_T:
+		return "REAL";
+	case RECORD_T:
+		return "RECORD";
+	case SCALAR_T:
+		return "SCALAR";
+	case STRING_T:
+		return "STRING";
+	case SUBRANGE_T:
+		return "SUBRANGE";
+	case VOID_T:
+		return "VOID";
+	default:
+		/* NOT REACHED */
+		return "UNKNOWN";
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			TYPE CHECKING FUNCTIONS:
+ */
+//////////////////////////////////////////////////////////////////////////
+
 /*
  * Returns true if the two Symbols of kind TYPE are the EXACT same type.
  */
-int
-areSameType(Symbol *s1, Symbol *s2)
-{
+int areSameType(Symbol *s1, Symbol *s2) {
 	if ((!s1) || (!s2)) return 0;
 	if ( !(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
 
@@ -26,8 +127,8 @@ areSameType(Symbol *s1, Symbol *s2)
 	else {
 		return 0;
 	}
-	// return (s1->kindPtr.TypeKind == s2->kindPtr.TypeKind);
 }
+
 
 /*
  * Returns true if the two Symbols are arithmetic compatible.
@@ -44,6 +145,7 @@ areArithmeticCompatible(Symbol *s1, Symbol *s2)
 	    ((s2_t == INTEGER_T) || (s2_t == REAL_T)));	
 }
 
+
 /*
  * Returns true if both symbols are of integer type.
  */
@@ -55,6 +157,38 @@ areBothInts(Symbol *s1, Symbol *s2)
 
 
 /*
+ * Determines if the given type_t is an ordinal type.
+ */
+int
+isOrdinal(type_t type)
+{
+	if ((type == BOOLEAN_T) || (type == CHAR_T) || (type == INTEGER_T)) {
+		return 1;
+	}
+	return 0;
+}
+
+
+/*
+ * Determines if the given type is a simple type (i.e., a bool, char, int,
+ * or real)
+ */
+int
+isSimpleType(type_t type)
+{
+	switch (type) {
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:
+		return 1;
+	default:
+		return 0;
+	}
+}
+
+
+/* TODO: Fix this function!!!
  * Returns true if the two symbols are compatible string types (i.e.,
  * both strings of the same length)
  */
@@ -96,7 +230,7 @@ areCompatibleStrings(Symbol *s1, Symbol *s2)
 }
 
 
-/*
+/* TODO: Fix this function!!!
  * Returns true if the two type symbols are of operator compatible types.
  */
 int
@@ -138,60 +272,13 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 	return 0;
 }
 
-/*
- * Determines if the given type_t is an ordinal type.
- */
-int
-isOrdinal(type_t type)
-{
-	if ((type == BOOLEAN_T) || (type == CHAR_T) || (type == INTEGER_T)) {
-		return 1;
-	}
-	return 0;
-}
 
-
+//////////////////////////////////////////////////////////////////////////
 /*
- * Determines if the given type is a simple type (i.e., a bool, char, int,
- * or real)
+ * 			TYPE SETTING FUNCTIONS:
  */
-int
-isSimpleType(type_t type)
-{
-	switch (type) {
-	case BOOLEAN_T:
-	case CHAR_T:
-	case INTEGER_T:
-	case REAL_T:
-		return 1;
-	default:
-		return 0;
-	}
-}
+//////////////////////////////////////////////////////////////////////////
 
-/*
- * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
- * a pointer to the typeSym defining the type for the given Symbol s.
- * WARNING: assumes the kindPtr for the given symbol s has been allocated.
- */
-void
-setTypeSym(Symbol *s, Symbol *typeSym)
-{
-	switch (s->kind) {
-	case CONST_KIND:
-		s->kindPtr.ConstKind->typeSym = typeSym;
-		break;
-	case FUNC_KIND:
-		s->kindPtr.FuncKind->typeSym = typeSym;
-		break;
-	case VAR_KIND:
-		s->kindPtr.VarKind->typeSym = typeSym;
-		break;
-	default:
-		/* Should not be reached */
-		break;
-	}
-}
 
 /*
  * Set type pointer new to point to type old of type passed as arg.
@@ -238,8 +325,24 @@ setTypePtr(Type *new, Type old, type_t type)
 	}
 }
 
-struct Array *
-newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			TYPE CREATION FUNCTIONS:
+ */
+//////////////////////////////////////////////////////////////////////////
+
+/*
+ * Create a new array struct
+ *
+ * Parameters:
+ * 	baseTypeSym: the base type for the array.
+ * 	indexTypeSym: the index type for the array.
+ *
+ * Returns:
+ * 	a pointer to the new array struct
+ */
+struct Array *newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 {
 	struct Array *a;
 	/* Error checking */
@@ -254,51 +357,7 @@ newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 	return a;
 }
 
-/* 
- * Constructs new subrange from the given symbols, assumes symbols have
- * been vetted and are valid.
- * TODO: maybe move error checking to this function
- */
-struct Subrange * 
-newSubrange(Symbol * lowSym, Symbol *highSym)
-{
-	struct Subrange *s = NULL;
-	Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
-	AnonConstVal *lowVal = &(lowSym->kindPtr.ConstKind->value),
-		* highVal = &(highSym->kindPtr.ConstKind->value);
-	int low = 0, high = 0;
 
-	s = calloc(1, sizeof(struct Subrange));
-	if (!s) {
-		err(1, "Failed to allocate memory for new subrange!");
-		exit(1);
-	}
-	
-	/* Do a switch based on type to set low, high vals ... */
-	switch(typeSym->kindPtr.TypeKind->type) {
-	case BOOLEAN_T:
-		low = lowVal->Boolean.value;
-		high = highVal->Boolean.value;
-		break;
-	case CHAR_T:
-		low = lowVal->Char.value;
-		high = highVal->Char.value;
-		break;
-	case INTEGER_T:
-		low = lowVal->Integer.value;
-		high = highVal->Integer.value;
-		break;
-	default:
-		/* NOT REACHED */
-		return NULL;
-	    
-	}
-
-	s->low = low;
-	s->high = high;
-	s->baseTypeSym = typeSym;
-	return s;
-}
 
 /*
  * Return a pointer to a new record struct with no fields.
@@ -318,30 +377,6 @@ struct Record *newRecord() {
 
 	return r;
 }
-
-type_t
-getType(Symbol *s)
-{
-	if (!s) /* should probably exit program */ return VOID_T;
-	switch (s->kind) {
-	case CONST_KIND:
-		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
-	case PARAM_KIND:
-		return s->kindPtr.ParamKind->typeSym->kindPtr.TypeKind->type;
-	case PROC_KIND:
-		return VOID_T;
-	case FUNC_KIND:
-		return s->kindPtr.FuncKind->typeSym->kindPtr.TypeKind->type;
-	case TYPE_KIND:
-		return s->kindPtr.TypeKind->type;
-	case VAR_KIND:
-		return s->kindPtr.VarKind->typeSym->kindPtr.TypeKind->type;
-	default:
-		/* NOT REACHED */
-		return VOID_T;
-	}	
-}
-
 
 Type newAnonConstType(AnonConstVal value, type_t type)
 {
@@ -402,6 +437,13 @@ Type newAnonConstType(AnonConstVal value, type_t type)
 	return anonConstType;
 }
 
+
+//////////////////////////////////////////////////////////////////////////
+/*
+ * 			OTHER STUFF:
+ */
+//////////////////////////////////////////////////////////////////////////
+
 void
 typeMemoryFailure()
 {
@@ -409,46 +451,144 @@ typeMemoryFailure()
 	exit(1);
 }
 
-char *
-typeToString(type_t type)
+
+struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
+	if ((symbol == NULL) || ( symbol->kind != TYPE_KIND)) {
+		err(EXIT_FAILURE, "Called getTypeKind on symbol that is not "
+		    "TYPE_KIND.");
+	}
+
+	return symbol->kindPtr.TypeKind;
+}
+
+
+// struct Array *allocateArrayType() {
+// 	struct Array *arrayType = NULL;
+
+// 	arrayType = calloc(1, sizeof(struct Array));
+// 	if ( arrayType == NULL ) {
+// 		err(1, "Could not alloc memory for array type.");
+// 		exit(EXIT_FAILURE);		
+// 	}
+
+// 	return arrayType;
+// }
+
+
+
+/* Allocates memory for the Subrange struct
+ *
+ * Parameters:
+ *
+ * Returns: pointer to memery allocated for a struct Subrange
+ */
+struct Subrange *allocateSubRangeType() {
+	struct Subrange *subRangeType = NULL;
+
+	subRangeType = calloc(1, sizeof(struct Subrange));
+	if ( subRangeType == NULL ) {
+		err(1, "Failed to allocate memory for subrange type.");
+		exit(EXIT_FAILURE);		
+	}
+
+	return subRangeType;
+}
+
+
+/* TODO simplify look up calls with api functions
+ * Creates a subrange symbol.
+ *
+ * Parameters:
+ *		lowSym: symbol forming lower bound on range
+ *		highSym: symbol forming upper bound on range
+ *
+ * Returns: New Subrange struct
+ */
+struct Subrange *
+newSubrange(Symbol * lowSym, Symbol *highSym)
 {
-	switch (type) {
-	case ARRAY_T:
-		return "ARRAY";
-	case BOOLEAN_T:
-		return "BOOLEAN";
-	case CHAR_T:
-		return "CHARACTER";
-	case INTEGER_T:
-		return "INTEGER";
-	case REAL_T:
-		return "REAL";
-	case RECORD_T:
-		return "RECORD";
-	case SCALAR_T:
-		return "SCALAR";
-	case STRING_T:
-		return "STRING";
-	case SUBRANGE_T:
-		return "SUBRANGE";
-	case VOID_T:
-		return "VOID";
-	default:
-		/* NOT REACHED */
-		return "UNKNOWN";
+	struct Subrange *subRange = allocateSubRangeType();
+	int low = 0, high = 0;
+
+	type_t rangeType = getInnerTypeSymbol(lowSym)->kindPtr.TypeKind->type;
+
+	switch(rangeType) {
+		case BOOLEAN_T:
+			low = lowSym->kindPtr.ConstKind->value.Boolean.value;
+			high = highSym->kindPtr.ConstKind->value.Boolean.value;
+			break;
+		case CHAR_T:
+			low = lowSym->kindPtr.ConstKind->value.Char.value;
+			high = highSym->kindPtr.ConstKind->value.Char.value;
+			break;
+		case INTEGER_T:
+			low = lowSym->kindPtr.ConstKind->value.Integer.value;
+			high = highSym->kindPtr.ConstKind->value.Integer.value;
+			break;
+		default:
+			/* NOT REACHED */
+			return NULL;
+	}
+
+	subRange->low = low;
+	subRange->high = high;
+	subRange->baseTypeSym = getInnerTypeSymbol(lowSym);
+
+	return subRange;
+}
+
+
+/* Returns the pointer to the inner type symbol inside other symbols
+ *
+ * Parameters:
+ *		symbol:
+ *
+ * Returns: see above
+ */
+Symbol *getInnerTypeSymbol(Symbol *symbol) {
+	switch (symbol->kind) {
+		case CONST_KIND:
+			return symbol->kindPtr.ConstKind->typeSym;
+		case PARAM_KIND:
+			return symbol->kindPtr.ParamKind->typeSym;
+		case FUNC_KIND:
+			return symbol->kindPtr.FuncKind->typeSym;
+		case VAR_KIND:
+			return symbol->kindPtr.VarKind->typeSym;
+		default:
+			err(1, "Could not determine inner type of symbol");
 	}
 }
 
-/*
- * Return a pointer to the typePtr for the given Symbol of kind TYPE_KIND.
- * Returns null if the given Symbol is not of kind TYPE_KIND.
- */
-Type *
-getTypePtr(Symbol *s)
-{
-	if (!s) return NULL;
-	if (s->kind != TYPE_KIND) return NULL;
-	// printf("\n\n\n--------------------------------------\n\n\n");
-	return &(s->kindPtr.TypeKind->typePtr);
 
+/* Formally setTypeSym(Symbol *s, Symbol *typeSym) changed for consistently 
+ * getter.
+ *
+ * Sets the inner type symbol of the passed symbol
+ * WARNING: assumes the kindPtr for the given symbol s has been allocated.
+ *
+ * Parameters:
+ *		symbol: symbol where type symbol with be attached
+ *		typeSym: type symbol
+ *
+ * Returns: void
+ */
+void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
+	switch (s->kind) {
+		case CONST_KIND:
+			s->kindPtr.ConstKind->typeSym = typeSym;
+			break;
+		case PARAM_KIND:
+			s->kindPtr.ParamKind->typeSym = typeSym;
+			break;		
+		case FUNC_KIND:		
+			s->kindPtr.FuncKind->typeSym = typeSym;
+			break;
+		case VAR_KIND:
+			s->kindPtr.VarKind->typeSym = typeSym;
+			break;
+		default:
+			err(1, "Could not determine inner type of symbol");
+	}
 }
+

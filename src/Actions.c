@@ -206,21 +206,39 @@ void exitTypeDeclPart(void) {
 
 /*
  * Create a new type identifier symbol in the symbol table.
+ *
+ * Parameters:
+ * 	id: name of symbol
+ * 	type: Symbol with TYPE_KIND from which to copy the type
+ *
+ * Does not return
  */
 void doTypeDecl(char *id, Symbol *type) {
 	Symbol * s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 
+	/* check that type with id is not already defined in scope */
 	s = getLocalSymbol(symbolTable, id);
-	if (s) {
-		/* throw already defined error */
+	if (s != NULL) {
+		errMsg = customErrorString("The type %s is already "
+		  "defined at this scope.", id);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		/* Assume first type decl is the one to use.
+		 * See documentation PDF for details. */
+		return;
 	}
 	
-	s = newTypeSymFromSym(lvl, id, type);
-	if (s) {
-		createHashElement(symbolTable, id, s);	
+	// TODO this is a create and an insert. Maybe push the insert into
+	// newTypeSymFromSym
+	s = newTypeSymFromSym(id, type);
+	if (s == NULL) {
+		/* newTypeSymFromSym has already reported errors or
+		 * exited when appropriate */
+		return;
 	}
-	/* Else, error.  newTypeSymFromSym performs error checking */
+		
+	if (createHashElement(symbolTable, id, s) != 0) {
+		err(EXIT_FAILURE, "Could not insert symbol into symbol table");
+	}
 }
 
 /*
@@ -310,19 +328,29 @@ Symbol *createScalarListType(struct ElementArray *ea) {
 
 /*
  * Create a new array type given the index type and base type.
+ *
+ * Parameters:
+ * 	index: symbol for index type of kind TYPE_KIND
+ * 	base: symbol for base type of kind TYPE_KIND
+ *
+ * Return:
+ * 	new symbol of kind TYPE_KIND
+ * 	
  */
 Symbol *createArrayType(Symbol *index, Symbol *base) {
 	Symbol * newArraySym = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 	
-	newArraySym = newAnonArraySym(lvl, base, index);
-	if (newArraySym) {
-		createHashElement(symbolTable, NULL, newArraySym);
-		return newArraySym;
+	newArraySym = newAnonArraySym(base, index);
+
+	if (newArraySym == NULL) {
+		/* newAnonArraySym has already done error reporting. */
+		return NULL;
+	}
+	if (createHashElement(symbolTable, NULL, newArraySym) != 0) {
+		symbolTableInsertFailure();
 	}
 
-	/* Else, error.  Error reporting done in newAnonArraySym() */	
-	return NULL;
+	return newArraySym;
 }
 
 /*
@@ -357,9 +385,8 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  */
 Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 	if (!(lower) || !(upper)) return NULL;
-	s = newSubrangeSym(lvl, (Symbol *) lower, (Symbol *) upper);
+	s = newSubrangeSym((Symbol *) lower, (Symbol *) upper);
 	return s;
 }
 
@@ -369,23 +396,22 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
  * Return a pointer to the new record type symbol.
  */
 Symbol *createRecordType(struct ElementArray *fields) {
+	printf("Here I am\n");
 	Symbol *recType = NULL;
 	Symbol *newField = NULL;
-	int lexLvl = -1;
 	int recordLexLvl = -1;
 	ProxySymbol *f = NULL;
 	struct hash *recHash = NULL;
 	char *fieldId;
 
-	lexLvl = getCurrentLexLevel(symbolTable);
-
-	recType = newRecordTypeSym(lexLvl, NULL);
+	recType = newRecordTypeSym(NULL);
 	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 
 	recordLexLvl = getCurrentLexLevel(recHash);
 
 	for (int i = 0; i < fields->nElements; i++) {
 		f = getElementAt(fields, i);
+		printf("%p\n", f);
 		if (!f) continue;
 		fieldId = f->name;
 
@@ -394,7 +420,8 @@ Symbol *createRecordType(struct ElementArray *fields) {
 			continue;
 		}
 
-		newField = newVariableSym(recordLexLvl, fieldId, getTypeSym(f));
+		newField = newVariableSym(fieldId, getTypeSym(f));
+		newField->lvl = recordLexLvl;
 
 		if (getLocalSymbol(recHash, fieldId) != NULL) {
 			errMsg = customErrorString(
@@ -413,6 +440,7 @@ Symbol *createRecordType(struct ElementArray *fields) {
 
 	return recType;
 }
+
 
 /*
  * Create a new element array from the given proxy symbol.
@@ -455,7 +483,9 @@ ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
 	if (!id) return NULL;
 	if (!type) return NULL;
 
-	newField = newVariableSym(0, id, type);
+	newField = newVariableSym(id, type);
+	// newField = newVariableSym(0, id, type);
+
 	return newField;
 }
 
@@ -473,7 +503,6 @@ void exitVarDeclPart(void) {
  */
 Symbol *doVarDecl(char *id, Symbol *type) {
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
 		alreadyDefinedError(id);
@@ -482,7 +511,7 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 
 	if ((!id) || !(type)) return NULL;
 
-	s = newVariableSym(lvl, id, type);
+	s = newVariableSym(id, type);
 	if (s) {
 		createHashElement(symbolTable, id, s);
 	}
@@ -514,7 +543,7 @@ void exitProcOrFuncDecl(void) {
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	Symbol *var = NULL;
-	int lvl = getCurrentLexLevel(symbolTable), i;
+	int i;
 	if (!id) {
 		//TODO: push lvl?
 		incrementLexLevel(symbolTable);
@@ -540,15 +569,15 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
 
-	s = newProcSym(lvl, id, ea);
+	s = newProcSym(id, ea);
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error
 	}
 	incrementLexLevel(symbolTable);
 	/* Push params as local variables on new lexical level */
-	lvl = getCurrentLexLevel(symbolTable);
+	
 	for (i = 0; i < ea->nElements; i++) {
-		var = paramToVar(lvl, getElementAt(ea, i));
+		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
 		}		
@@ -600,9 +629,9 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	}
 	incrementLexLevel(symbolTable);
 	/* Push params as local variables on new lexical level */
-	lvl = getCurrentLexLevel(symbolTable);
+
 	for (i = 0; i < ea->nElements; i++) {
-		var = paramToVar(lvl, getElementAt(ea, i));
+		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
 		}		
@@ -645,10 +674,8 @@ struct ElementArray *appendParmToParmList(
  * Return a pointer to the new parameter.
  */
 Symbol *createNewParm(char *id, Symbol *type) {
-	
-	int lvl = getCurrentLexLevel(symbolTable);
 	if ((!id) || (!type)) return NULL;
-	return newParamSym(lvl, id, type);
+	return newParamSym(id, type);
 }
 
 /*
@@ -908,7 +935,7 @@ Symbol *proxyStringLiteral(struct String s) {
 	proxy= newStringProxySym(lvl, (s.str+1), s.strlen);
 	typeSym = newStringTypeSym(getCurrentLexLevel(symbolTable), s.strlen);
 	createHashElement(symbolTable, NULL, typeSym);
-	proxy->kindPtr.ConstKind->typeSym = typeSym;
+	setInnerTypeSymbol(proxy, typeSym);
 	return proxy;
 }
 

@@ -21,61 +21,75 @@ struct Error *e;
 /*
  * Constructs a	named type symbol given a ptr to another type symbol.
  * (so the new symbol will either be constructed from an anonymous type symbol
- * or be a copy of another named symbol) 
+ * or be a copy of another named symbol)
+ *
+ * Lexical level is NOT set, and symbol is NOT inserted into symbol table.
+ *
+ * Parameters:
+ * 	id: name of created symbol
+ * 	typeSym: symbol from which type is to be taken. Must be TYPE_KIND
+ *
+ * Returns: pointer to created symbol, or NULL on error
+ *
  */
-Symbol *
-newTypeSymFromSym(int lvl, char *id, Symbol *typeSym)
+Symbol *newTypeSymFromSym(char *id, Symbol *typeSym)
 {
 	Symbol *newTypeSym = NULL;
 	if (!typeSym) {
+		/* action that gets type has already added an error message */
 		return NULL;
 	}
 
 	if (typeSym->kind != TYPE_KIND) {
 		/* Trying to construct type symbol from non-type symbol */
+		errMsg = customErrorString("Identifier %s is not a type.",
+		    typeSym->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
 	if (!id) {
 		/* Error: trying to create named symbol from NULL id */
-		return NULL;
+		err(EXIT_FAILURE, "Trying to create named type symbol "
+		    "but name is NULL.");
 	}
 
-	newTypeSym = calloc(1, sizeof(Symbol));
-	if (!newTypeSym) {exit(1); /* blah blah */ }
-
-	setSymbolName(newTypeSym, id);
-	newTypeSym->kind = TYPE_KIND;
-	newTypeSym->kindPtr = typeSym->kindPtr;
-	
 	/* 
 	 * Type is being constructed from anonymous type, it is NOT a type
 	 * originator
 	 */
-	newTypeSym->lvl = lvl;
-	newTypeSym->typeOriginator = 0;
+	newTypeSym = createTypeSymbol(id, 0);
+
+	/* set type pointer to same as typeSym */
+	newTypeSym->kindPtr = typeSym->kindPtr;
+	
 	return newTypeSym;
 }
 
 /*
  * Creates a new anonymous array type symbol given a pointer to a symbol
  * defining the base type and a pointer to a symbol defining the index type.
+ *
+ * Parameters:
+ * 	baseTypeSym: the symbol for the base type. Should be TYPE_KIND
+ * 	indexTypeSym: the symbol for the index type. Should be TYPE_KIND
+ *
+ * Return:
+ * 	pointer to new symbol with kind TYPE_KIND and kindPtr type ARRAY_T
  */
-Symbol *
-newAnonArraySym(int lvl, Symbol *baseTypeSym, 
-	    Symbol *indexTypeSym)
-{
+Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 	Symbol *newArraySym = NULL;
+
 	if ((!baseTypeSym) || (!indexTypeSym)) {
-		errMsg = customErrorString("Semantic Error: cannot define"
-		    " array, base type or index type incorrect/undefined?");
+		errMsg = customErrorString("Cannot define array. "
+		    "Base type or index type incorrect or undefined.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
 	if ((baseTypeSym->kind != TYPE_KIND) || 
 	    (baseTypeSym->kind != TYPE_KIND)) {	
-		errMsg = customErrorString("Cannot create array with given"
+		errMsg = customErrorString("Cannot create array with given "
 		    "base type");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
@@ -88,21 +102,13 @@ newAnonArraySym(int lvl, Symbol *baseTypeSym,
 		return NULL;
 	}
 
-	newArraySym = calloc(1, sizeof(Symbol));
+	/* create with no name and set as type originator */
+	newArraySym = createArrayTypeSymbol(
+	     NULL, TYPEORIGINATOR_YES, baseTypeSym, indexTypeSym);
 	if (!newArraySym) {
-		err(1, "Failed to allocate memory for new array!");
-		exit(1);
+		err(EXIT_FAILURE, "Failed to allocate memory for new array!");
 	}
 
-	/* Set symbol entries for this symbol */
-	newArraySym->name = NULL;
-	newArraySym->kind = TYPE_KIND;
-	allocateKindPtr(newArraySym);
-	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
-								indexTypeSym);
-	newArraySym->kindPtr.TypeKind->type = ARRAY_T;
-	newArraySym->lvl = lvl;
-	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
 }
 
@@ -126,125 +132,14 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 }
 
 
-/*
- * Creates a new variable struct to be added to the symbol table
- * given an identifier and an entry in the symbol table which is a type.
- */
 
-Symbol *
-newVariableSym(int lvl, char *id, Symbol* typeSym)
-{
-	Symbol *newVar = NULL;	/* new symbol to be created */
-	/*
-	 * Before making any allocations, we assure that the given
-	 * symbol typeSym is in fact a type and that we can use it
-	 * to create a new variable.
-	 */
-	if (!typeSym) {
-		/*
-		 * ERROR: trying to create var for NULL symbol!
-		 * --> probably using undefined type
-		 * Call an error recording function.
-		 */
-		return NULL;
-	}
 
-	if (typeSym->kind != TYPE_KIND) {
-		/* ERROR:
-		 * Trying to create var using symbol other than a type.
-		 * Call an error recording function.
-		 */
-		return NULL;
-	}
-
-	if (!id) {
-		/*Error: cannot have anonymous variable! */
-		return NULL;
-	}
-		
-
-	newVar = calloc(1, sizeof(Symbol));
-	if (!newVar) {
-		err(1, "Failed to allocate memory for new symbol!");
-		exit(1);
-	}
-	
-	setSymbolName(newVar, id);
-	newVar->kind = VAR_KIND;
-	allocateKindPtr(newVar);
-	newVar->kindPtr.VarKind->typeSym = typeSym;
-	newVar->lvl = lvl;
-	return newVar;
-}
-
-Symbol *
-newParamSym(int lvl, char *id, Symbol *typeSym)
-{
-	Symbol *newParamSym = NULL;
-	if (!typeSym) {
-		return NULL;
-	}
-
-	if (!id) {
-		return NULL;
-	}
-
-	newParamSym = calloc(1, sizeof(Symbol));
-	if (!newParamSym) {
-		err(1, "Failed to allocate memory for new parameter symbol!");
-		exit(1);
-	}
-
-	setSymbolName(newParamSym, id);
-	newParamSym->kind = PARAM_KIND;
-	allocateKindPtr(newParamSym);
-	newParamSym->kindPtr.ParamKind->typeSym = typeSym;
-	newParamSym->lvl = lvl;
-	return newParamSym;	
-}
-
-/*
- * Constructs a new procedure symbol.
- */
-Symbol *
-newProcSym(int lvl, char *id, struct ElementArray *ea)
-{
-	Symbol *s = NULL;
-	/* Error checking */
-	
-	s = calloc(1, sizeof(Symbol));
-	setSymbolName(s, id);
-	s->kind = PROC_KIND;
-	allocateKindPtr(s);
-	s->kindPtr.ProcKind->params = ea;
-	s->lvl = lvl;
-	s->typeOriginator = 0;
-	return s;	
-}
-
-/*
- * Constructs a new function symbol.
- */
-Symbol *
-newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
-{
-	Symbol *s = NULL;
-
-	s = calloc(1, sizeof(Symbol));
-	setSymbolName(s, id);
-	s->kind = FUNC_KIND;
-	allocateKindPtr(s);
-	s->kindPtr.FuncKind->params = ea;
-	s->kindPtr.FuncKind->typeSym = typeSym;
-	return s;
-}
 
 /*
  * Constructs an anonymous subrange symbol.
  */
 Symbol *
-newSubrangeSym(int lvl, ProxySymbol *constSymLow,
-	        ProxySymbol *constSymHigh)
+newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
 {
 	Symbol *newSubrangeSym = NULL;
 	
@@ -294,88 +189,17 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 		    getConstVal(constSymHigh)->Char.value) return NULL;
 		break;
 	default:
-		return NULL;
+		break;
 	}
 
-
-	newSubrangeSym = calloc(1, sizeof(Symbol));
-	if (!newSubrangeSym) {
-		err(1, "Failed to allocate memory for new subrange symbol!");
-		exit(1);
-	}
-
-	newSubrangeSym->kind = TYPE_KIND;
-	allocateKindPtr(newSubrangeSym);
-
+	newSubrangeSym = createTypeSymbol(NULL, 1);
 	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
 	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
 								  constSymLow,
 								  constSymHigh);
-	newSubrangeSym->name = NULL;
-	newSubrangeSym->lvl = lvl;
-	newSubrangeSym->typeOriginator = 1;	
 	return newSubrangeSym;
 }
 
-/*
- * Creates a new procedure symbol entry to be placed in the symbol table.
- */
-Symbol *
-newProcedureSym(int lvl, char *id, struct ElementArray *pa)
-{
-	return NULL;
-	/*
-	Symbol *newProcSym = NULL;
-	size_t len;
-	if (!pa) {
-
-	if (!id) {
-		return NULL;
-	}
-
-	newProcSym = calloc(1, sizeof(Symbol));
-	if (!newProcSym) {
-		err(1, "Failed to allocate memory for new procedure symbol!");
-		exit(1);
-	}
-
-	newProcSym->kind = PROC_KIND;
-	allocateKindPtr(newProcSym);	
-
-	len = strlen(id);
-	if (!len) {
-		return NULL;
-	}
-	strcpy(newProcSym->name, id);
-	newProcSym->kindPtr.ProcKind->params = pa;
-	newProcSym->lvl = lvl;
-	return newProcSym;
-	*/
-}
-
-/* Symbol* */
-/* newConstSym(int lvl, char * id, Symbol * constTypeSym) */
-/* { */
-/* 	return NULL; */
-/* } */
-
-/* Symbol* */
-/* newConstSymFromType(int lvl, Type constType, type_t type) */
-/* { */
-/* 	Symbol *newConstSym = calloc(1, sizeof(Symbol)); */
-/* 	if (!newConstSym) { */
-/* 		err(1, "Failed to allocate memory for new const symbol!"); */
-/* 		exit(1); */
-/* 	} */
-	
-	
-/* 	setTypePtr(&(newConstSym->typePtr), constType, type); */
-/* 	newConstSym->name = NULL; */
-/* 	newConstSym->kind = CONST_KIND; */
-/* 	newConstSym->lvl = lvl; */
-
-/* 	return newConstSym; */
-/* } */
 
 /*
  * TODO: proxy symbol will have kindPtr to pre-defined kind?
@@ -406,7 +230,7 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 	
 	newConstSym->kind = CONST_KIND;
 	allocateKindPtr(newConstSym);
-	newConstSym->kindPtr.ConstKind->typeSym = getTypeSym(proxySym);
+	setInnerTypeSymbol(newConstSym, getTypeSym(proxySym));
 	copyConstVal(&(newConstSym->kindPtr.ConstKind->value), 
 	    getConstVal(proxySym), getType(proxySym));
 	newConstSym->lvl = lvl;
@@ -446,12 +270,12 @@ getTypeSym(Symbol *s)
 }
 
 Symbol *
-paramToVar(int lvl, Symbol * param)
+paramToVar(Symbol * param)
 {
 	if (!param) return NULL;
 	if (param->kind != PARAM_KIND) return NULL;
 	Symbol *typeSym = getTypeSym(param);
-	return newVariableSym(lvl, param->name, typeSym);
+	return newVariableSym(param->name, typeSym);
 }
  
 
@@ -496,7 +320,8 @@ newConstProxySym(void * result, Symbol *typeSym)
 	constSym->name = NULL;
 	constSym->kind = CONST_KIND;
 	allocateKindPtr(constSym);
-	setTypeSym(constSym, typeSym);
+	setInnerTypeSymbol(constSym, typeSym);
+
 	
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:
@@ -521,36 +346,6 @@ newConstProxySym(void * result, Symbol *typeSym)
 	return (ProxySymbol *) constSym;
 }
 
-// ProxySymbol *
-// newStringProxySym(int lvl, char *str, int strlen)
-// {
-// 	ProxySymbol *newStringSym = NULL;
-// 	AnonConstVal anonStr;
-
-// 	newStringSym = calloc(1, sizeof (ProxySymbol));
-// 	anonStr.String.str = str;
-// 	anonStr.String.strlen = strlen;
-
-// 	newStringSym->name = NULL;
-// 	newStringSym->kind = TYPE_KIND;
-// 	allocateKindPtr(newStringSym);
-// 	newStringSym->kindPtr.TypeKind->type = STRING_T;
-// 	newStringSym->kindPtr.TypeKind->typePtr = newAnonConstType(
-// 	    anonStr, STRING_T);
-// 	getTypePtr(newStringSym)->String->strlen = strlen;
-	
-// 	if (strlen) {
-// 		getTypePtr(newStringSym)->String->str = 
-// 		    calloc(1, sizeof(char)*strlen);
-// 		if (!getTypePtr(newStringSym)->String->str) {
-// 			err(1, "Failed to allocate memory for new string");
-// 			exit(1);
-// 		}
-// 	}
-// 	newStringSym->lvl = lvl;
-// 	newStringSym->typeOriginator = 1;
-// 	return newStringSym;	
-// }
 
 Symbol *
 newStringTypeSym(int lexLevel, int strlen) {
@@ -583,8 +378,8 @@ newStringProxySym(int lvl, char *str, int strlen)
 	strncpy(newStringSym->kindPtr.ConstKind->value.String.str, str, strlen);
 	newStringSym->kindPtr.ConstKind->value.String.strlen = strlen;
 
-	newStringSym->kindPtr.ConstKind->typeSym = calloc(1, sizeof (struct ConstantKind));
-	newStringSym->kindPtr.ConstKind->typeSym = getPreDefString(preDefTypeSymbols);
+	setInnerTypeSymbol(newStringSym, calloc(1, sizeof (struct ConstantKind)));
+	setInnerTypeSymbol(newStringSym, getPreDefString(preDefTypeSymbols));
 
 	return newStringSym;	
 }
@@ -594,13 +389,16 @@ void
 setSymbolName(Symbol *s, char *id)
 {
 	size_t len;
-	if (!id) return;
+	if (id == NULL) {
+		s->name = NULL;
+		return;
+	}
 	
-	len = strlen(id);
+	len = strlen(id) + 1;
 	s->name = calloc(1, sizeof(char)*len);
 	if (!s->name) {
 		err(1, "Failed to allocate memory for symbol name!");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	strcpy(s->name, id);
 }
@@ -611,85 +409,16 @@ setSymbolName(Symbol *s, char *id)
  * 
  * Return a pointer to the new type symbol.
  */
+Symbol *newRecordTypeSym(char *id) {
+	/* this is an anonymous type */
+	Symbol *newRecType = createTypeSymbol(id, TYPEORIGINATOR_YES);
 
-Symbol *newRecordTypeSym(int lvl, char *id)
-{
-	Symbol *newRecType = NULL;	/* new symbol to be created */
-
-	newRecType = calloc(1, sizeof(Symbol));
-	if (!newRecType) {
-		err(1, "Failed to allocate memory for new symbol!");
-		exit(1);
-	}
-	
-	setSymbolName(newRecType, id);
-	newRecType->kind = TYPE_KIND;
-	allocateKindPtr(newRecType);
 	newRecType->kindPtr.TypeKind->type = RECORD_T;
 	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
-
-	newRecType->lvl = lvl;
-
-	/* this is an anonymous type */
-	newRecType->typeOriginator = 1;
 
 	return newRecType;
 }
 
-/*
- * Add the given field to the record type.
- *
- * Return 0 on success and non-zero on error.
- * 	return 	-2 if adding hash element to record fails
- * 		-1 on argument error
- * 		1 on recType type error
- * 		2 on field type error
- */
-int addFieldToRecord(Symbol *recType, ProxySymbol *field) {
-
-	Symbol *newField = NULL;
-	int recordLvl = -1;
-	char *id = NULL;
-	struct hash *recordHash = NULL;
-	int nameLen = 0;
-
-	/* check arguments */
-	if (!recType) {
-		return -1;
-	}
-	if (!newField) {
-		return -1;
-	}
-
-	/* check record symbol for correct kind */
-	if (recType->kind != TYPE_KIND) {
-		return 1;
-	}
-	if (recType->kindPtr.TypeKind->type != RECORD_T) {
-		return 1;
-	}
-
-	/* check field symbol for correct kind */
-	if (newField->kind != VAR_KIND) {
-		return 2;
-	}
-
-	recordHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
-	recordLvl = getCurrentLexLevel(recordHash);
-	
-	nameLen = strlen(field->name);
-	id = calloc(nameLen + 1, sizeof(char));
-	id = strncpy(id, field->name, nameLen);
-
-	newField = newVariableSym(
-	    recordLvl, id, field->kindPtr.VarKind->typeSym);
-
-	if (createHashElement(recordHash, id, newField) != 0) {
-		return -2;
-	}
-
-	return 0;
-}
 
 /*
  * Determines if the given symbol is a const which appears in the given
@@ -1204,4 +933,312 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 
 void freeProxySymbol(ProxySymbol *p) {
 	free(p);
+}
+
+
+/* Creates a new symbol. Auto-determines all substructures
+ * based on the parameter kind.
+ *
+ * Does not insert into the symbol table, use createAndInsertSymbol for that.
+ *
+ * Parameters:
+ * 		table: the symbol table from which to get lexical level
+ *              id: name of symbol
+ *		kind: kind of symbol. Comes from kind_t enum
+ *		typeOriginator: flag for if type originator 
+ *
+ * Return: Newly created symbol.
+ */
+Symbol *createSymbol(
+    struct hash *table, char *id, kind_t kind, int typeOriginator)
+{
+	Symbol *symbol = allocateSymbol();
+
+	if (symbol == NULL) {
+		err(1, "Could not create new symbol.");
+		exit(EXIT_FAILURE);			
+	}
+
+	// set symbol independent values
+	setSymbolName(symbol, id);
+
+	symbol->kind = kind;
+	allocateKindPtr(symbol);
+	
+	symbol->lvl = getCurrentLexLevel(table);
+	symbol->typeOriginator = typeOriginator;
+	symbol->next = NULL;
+
+	return symbol;
+}
+
+
+/* Allocates memeory for a struct symbol and only a struct symbol.
+ *
+ * Parameters:
+ *
+ * Return: Pointer to newly allocated memory chunk
+ */
+Symbol *allocateSymbol() {
+	Symbol *symbol = NULL;
+
+	symbol = calloc(1, sizeof(Symbol));
+	if ( symbol == NULL ) {
+		err(1, "Could not alloc memory for symbol.");
+		exit(EXIT_FAILURE);		
+	}
+
+	return symbol;
+}
+
+
+/* Creates and inserts a symbol into the symbol table
+ *
+ * Parameters:
+ * 		table: the symbol table into which to insert
+ *              id: name of symbol
+ *		kind: kind of symbol. Comes from kind_t enum
+ *		typeOriginator: flag for if type originator 
+ *
+ * Return: a pointer to the created symbol
+ */
+Symbol *createAndInsertSymbol(
+    struct hash *table, char *key, kind_t kind, int typeOriginator)
+{
+	Symbol *symbol = createSymbol(table, key, kind, typeOriginator);
+
+	if (symbol == NULL) {
+		err(1, "Could not create symbol.");
+		exit(EXIT_FAILURE);
+	}
+
+	if (createHashElement(table, key, symbol) != 0) {
+		err(1, "Could not insert into symbol table.");
+		exit(EXIT_FAILURE);
+	}
+
+	return symbol;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+/*
+ *			SYMBOL CREATION - BASED ON KIND
+ */
+/////////////////////////////////////////////////////////////////////////////
+
+
+/* Creates const kind symbol using scope of global symbol table.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createConstSymbol(char *id) {
+	return createSymbol(symbolTable, id, CONST_KIND, TYPEORIGINATOR_NO);
+}
+
+
+/* Creates func kind symbol using scope of global symbol table.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createFuncSymbol(char *id) {
+	return createSymbol(symbolTable, id, FUNC_KIND, TYPEORIGINATOR_NO);
+}
+
+
+/* Creates Param kind symbol using scope of global symbol table.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createParamSymbol(char *id) {
+	return createSymbol(symbolTable, id, PARAM_KIND, TYPEORIGINATOR_NO);
+}
+
+
+/* Creates proc kind symbol using scope of global symbol table.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createProcSymbol(char *id) {
+	return createSymbol(symbolTable, id, PROC_KIND, TYPEORIGINATOR_NO);
+}
+
+
+/* Creates var kind symbol using scope of global symbol table.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createVarSymbol(char *id) {
+	return createSymbol(symbolTable, id, VAR_KIND, TYPEORIGINATOR_NO);
+}
+
+
+/* Creates type kind symbol using scope of global symbol table.
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeOriginator: flag for if type originator 
+ *
+ * Return: Newly created symbol
+ */
+Symbol *createTypeSymbol(char *id, int typeOriginator) {
+	return createSymbol(symbolTable, id, TYPE_KIND, typeOriginator);
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+/*
+ *			SYMBOL CREATION - BASED ON TYPE
+ */
+/////////////////////////////////////////////////////////////////////////////
+
+
+Symbol *createArrayTypeSymbol(
+   char *id, int typeOriginator, Symbol *base, Symbol *index)
+{
+	Symbol *symbol = NULL;
+	struct TypeKind *kindPtr = NULL;
+	if ((base == NULL) || (index == NULL)) {
+		err(EXIT_FAILURE, "Trying to create array type with NULL "
+		    "index or base types. This should be caught further "
+		    "up in Symbols.c");
+	}
+	
+	symbol = createTypeSymbol(id, typeOriginator);
+	
+	/* get kindPtr */
+	kindPtr = getKindPtrForTypeKind(symbol);
+
+	/* set array's Array struct */
+	kindPtr->type = ARRAY_T;
+	kindPtr->typePtr.Array = newArray(base, index);
+ 	
+	return symbol;
+}
+
+
+/* Creates a varable symbol ands the inner type symbol. 
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeSym: type symbol to be put in new var symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newVariableSym(char *id, Symbol* typeSym)
+{
+	Symbol *newVar = NULL;	/* new symbol to be created */
+
+	/*
+	 * Before making any allocations, we assure that the given
+	 * symbol typeSym is in fact a type and that we can use it
+	 * to create a new variable.
+	 */
+	if (typeSym == NULL) {
+		/*
+		 * ERROR: trying to create var for NULL symbol!
+		 * --> probably using undefined type
+		 * Call an error recording function.
+		 */
+		return NULL;
+	}
+
+	if (typeSym->kind != TYPE_KIND) {
+		/* ERROR:
+		 * Trying to create var using symbol other than a type.
+		 * Call an error recording function.
+		 */
+		return NULL;
+	}
+
+	if (id == NULL) {
+		/*Error: cannot have anonymous variable! */
+		return NULL;
+	}
+	
+	newVar = createVarSymbol(id);
+	setInnerTypeSymbol(newVar, typeSym);
+	
+	return newVar;
+}
+
+
+/* Creates a parameter symbol and sets the inner type symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeSym: type symbol to be put in new var symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newParamSym(char *id, Symbol *typeSym)
+{
+	Symbol *newParamSym = NULL;
+	if (!typeSym) {
+		return NULL;
+	}
+
+	if (!id) {
+		return NULL;
+	}
+
+	newParamSym = createParamSymbol(id);
+	setInnerTypeSymbol(newParamSym, typeSym);
+
+	return newParamSym;	
+}
+
+
+/* Creates a procedure symbol 
+ *
+ * Parameters:
+ *              id: name of symbol
+ *				ea: element of parameters to procdure
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newProcSym(char *id, struct ElementArray *ea)
+{
+	Symbol *s =  createProcSymbol(id);
+	s->kindPtr.ProcKind->params = ea;
+
+	return s;	
+}
+
+
+/* Creates a fucntion symbol and sets the inner type symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeSym: type symbol to be put in new var symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
+{
+	Symbol *s = createFuncSymbol(id); 
+
+	s->kindPtr.FuncKind->params = ea;
+	setInnerTypeSymbol(s, typeSym);
+
+	return s;
 }
