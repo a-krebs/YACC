@@ -268,7 +268,7 @@ Symbol *simpleTypeLookup(char *id) {
 }
 
 /*
- * Add new_id as a mamber to scalar_list.
+ * Add new_id as a mamber to sclalar_list.
  *
  * Return scalar_list
  */
@@ -282,47 +282,78 @@ struct ElementArray *appendToScalarListType(struct ElementArray *ea,
 		alreadyDefinedError(id);
 		return NULL;
 	}
-	s = (Symbol *) newConstProxySym(&ea->nElements, 
+	s = (Symbol *) newConstProxySym(id, &ea->nElements, 
 	    getPreDefInt(preDefTypeSymbols));
 	s->lvl = getCurrentLexLevel(symbolTable);
-	setSymbolName(s, id);
 	createHashElement(symbolTable, s->name, s);
 	appendElement(ea, s);
 	return ea;
 }
 
+/*
+ * Create a new list of scalars (later used in constructing a scalar list type).
+ * The list will contain a single constant named by the given id
+ *
+ * Parameters:
+ * 	id: the name of the scalar to add to the new list
+ *
+ * Return:
+ * 	A pointer to an ElementArray struct representing the list of scalars.
+ *		The given id will be the only member.
+ *	NULL if id is already defined in scope.
+ */
 struct ElementArray * createScalarList(char *id) {
 	Symbol *s = NULL;	
 	struct ElementArray *ea = NULL;
+	/* first constant in list always has value 0 */
 	int value = 0;
 
+	if (id == NULL) {
+		err(EXIT_FAILURE, "Passed NULL id into createScalarList");
+	}
+
 	s = getLocalSymbol(symbolTable, id);
-	if (s) {
+	if (s != NULL) {
 		alreadyDefinedError(id);
 		return NULL;
 	}
-	s = (Symbol *) newConstProxySym(&value, 
-	    getPreDefInt(preDefTypeSymbols));
-	setSymbolName(s, id);
-	s->lvl = getCurrentLexLevel(symbolTable);
-	createHashElement(symbolTable, s->name, s);
+
+	s = (Symbol *) newConstProxySym(
+	    id, &value, getPreDefInt(preDefTypeSymbols));
+
+	if (createHashElement(symbolTable, s->name, s) != 0) {
+		symbolTableInsertFailure();
+	}
+	
 	ea = newElementArray();
 	appendElement(ea, s);
+	
 	return ea;
 }
 
 
 /*
- * Create a new scalar list type with id as the only member.
+ * Create a new scalar list type with ea as the scalars in the list
  *
- * Return a pointer to the new scalar list
+ * Parameters:
+ * 	ea: an ElementArray of the scalars that should be in the list
+ * Return:
+ * 	a pointer to the new scalar list or NULL if ea is NULL
  */
 Symbol *createScalarListType(struct ElementArray *ea) {
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
+
 	if (!ea) return NULL;
-	s = newAnonScalarSym(lvl, ea);
-	createHashElement(symbolTable, NULL, s);
+
+	s = newAnonScalarListTypeSym(ea);
+	if (s == NULL) {
+		err(EXIT_FAILURE, "Failed to create scalar list symbol.");
+	}
+	
+	if (createHashElement(symbolTable, NULL, s) != 0) {
+		symbolTableInsertFailure();
+	}
+
 	return s;
 }
 
@@ -906,8 +937,9 @@ ProxySymbol *unaryNotOp(ProxySymbol *y) {
  * Return pointer to the proxy
  */
 ProxySymbol *proxyIntLiteral(int value) {
-	Symbol *integerType = getPreDefInt(preDefTypeSymbols); 
-	return newConstProxySym(&value, integerType); 
+	Symbol *integerType = getPreDefInt(preDefTypeSymbols);
+	/* anonymous, so NULL id */
+	return newConstProxySym(NULL, &value, integerType); 
 }
 	
 /*
@@ -916,12 +948,14 @@ ProxySymbol *proxyIntLiteral(int value) {
  */
 ProxySymbol *proxyRealLiteral(double value) {
 	Symbol *realType = getPreDefReal(preDefTypeSymbols);
-	return newConstProxySym(&value, realType);
+	/* anonymous, so NULL id */
+	return newConstProxySym(NULL, &value, realType);
 }
 
 ProxySymbol *proxyCharLiteral(struct String s) {
 	Symbol *charType = getPreDefChar(preDefTypeSymbols);
-	return newConstProxySym((s.str+1), charType);
+	/* anonymous, so NULL id */
+	return newConstProxySym(NULL, (s.str+1), charType);
 }
 
 /*
