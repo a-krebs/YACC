@@ -268,7 +268,7 @@ Symbol *simpleTypeLookup(char *id) {
 }
 
 /*
- * Add new_id as a mamber to scalar_list.
+ * Add new_id as a mamber to sclalar_list.
  *
  * Return scalar_list
  */
@@ -313,16 +313,27 @@ struct ElementArray * createScalarList(char *id) {
 
 
 /*
- * Create a new scalar list type with id as the only member.
+ * Create a new scalar list type with ea as the scalars in the list
  *
- * Return a pointer to the new scalar list
+ * Parameters:
+ * 	ea: an ElementArray of the scalars that should be in the list
+ * Return:
+ * 	a pointer to the new scalar list or NULL if ea is NULL
  */
 Symbol *createScalarListType(struct ElementArray *ea) {
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
+
 	if (!ea) return NULL;
+
 	s = newAnonScalarSym(ea);
-	createHashElement(symbolTable, NULL, s);
+	if (s == NULL) {
+		err(EXIT_FAILURE, "Failed to create scalar list symbol.");
+	}
+	
+	if (createHashElement(symbolTable, NULL, s) != 0) {
+		symbolTableInsertFailure();
+	}
+
 	return s;
 }
 
