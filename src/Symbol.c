@@ -131,24 +131,7 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 	return newAnonScalar;
 }
 
-/*
- * Constructs a new procedure symbol.
- */
-Symbol *
-newProcSym(char *id, struct ElementArray *ea)
-{
-	Symbol *s = NULL;
-	/* Error checking */
-	
-	s = calloc(1, sizeof(Symbol));
-	setSymbolName(s, id);
-	s->kind = PROC_KIND;
-	allocateKindPtr(s);
-	s->kindPtr.ProcKind->params = ea;
-	s->lvl = getCurrentLexLevel(symbolTable);
-	s->typeOriginator = 0;
-	return s;	
-}
+
 
 /*
  * Constructs a new function symbol.
@@ -1384,4 +1367,19 @@ newParamSym(char *id, Symbol *typeSym)
 	setInnerTypeSymbol(newParamSym, typeSym);
 
 	return newParamSym;	
+}
+
+
+/*
+ * Constructs a new procedure symbol.
+ */
+Symbol *
+newProcSym(char *id, struct ElementArray *ea)
+{
+	Symbol *s = NULL;
+
+	createProcSymbol(id);
+	s->kindPtr.ProcKind->params = ea;
+	
+	return s;	
 }
