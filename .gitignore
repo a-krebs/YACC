@@ -29,6 +29,10 @@ bin/*
 *#
 
 # generated asc test files
+test/integration/full/*.asc
+test/integration/semantic/*.asc
+test/integration/syntax/*.asc
+test/integration/unsolved_syntax_issues/*.asc
 test/unit/asctests/test*.asc
 __*.asc
 # python compiled files

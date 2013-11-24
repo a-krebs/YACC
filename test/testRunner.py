@@ -9,6 +9,7 @@ import types
 import sys
 import getopt
 import difflib
+import subprocess
 from subprocess import check_output
 from subprocess import check_call
 
@@ -128,8 +129,8 @@ def get_metadata_from_output(output):
     output_list = list()
     
     for line in output.split("\n"):
-        # ignore empty lines
-        if filter_line_by_test_type(line, test_type) == False:
+        # Ignore the default output produced by the asc runner
+	if filter_line_by_test_type(line, test_type) == False:
             continue;
         output_list.append(line)
     return output_list
@@ -257,10 +258,17 @@ def make_asc_test_function(filename, expected_output, asc_filename):
         # If ratio != 1.0, we print the diff output to help in debugging
         if sm.ratio() != 1.0:
             err_str = "{}: Generated asc file does match expected output".\
-                format(asc_file) 
+                format(asc_filename) 
             print err_str
-            for line in difflib.context_diff(asc_file_text, genasc_file_text):
-                print line
+            print genasc_filepath
+            diff_args = "-I \"#(>*)(\n)\" --ignore-case --ignore-all-space"
+
+            try:
+                check_call(["diff", diff_args, testasc_filepath, \
+                    genasc_filepath])
+            except subprocess.CalledProcessError as e:
+                print e
+
             self.assertEqual(sm.ratio(), 1.0) 
  
         # Now we run the generated asc file and compare the output we got

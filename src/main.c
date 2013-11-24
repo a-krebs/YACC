@@ -24,8 +24,6 @@ extern struct args givenArgs;
 // extern struct preDefTypeSymbols *preDefTypeSymbols;
 // extern struct hash *symbolTable;
 
-
-
 /*
  * Use getopt to parse and validate the given program arguments.
  *
