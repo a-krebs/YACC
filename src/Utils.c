@@ -155,3 +155,11 @@ isUnaryOperator(int op)
 	return 0;
 
 }
+
+
+
+
+int getStrlen(struct String s)
+{
+	return s.strlen;
+}

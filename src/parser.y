@@ -8,8 +8,8 @@
 #include "Error.h"
 #include "ErrorLL.h"
 #include "args.h"
-#include "Symbol.h"
-#include "Actions.h"
+#include "SymbolAll.h"
+#include "ActionsAll.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);

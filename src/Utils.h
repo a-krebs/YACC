@@ -11,4 +11,5 @@ void opError(char *, int, char *);
 void alreadyDefinedError(char *id);
 void notDefinedError(char *id);
 void symbolTableInsertFailure();
+int getStrlen(struct String s);
 #endif

@@ -6,7 +6,7 @@
 #include "args.h"
 #include "Hash.h"
 /* must include for symbol typedef to work with parser. */
-#include "Symbol.h"
+#include "SymbolAll.h"
 #include "Init.h"
 
 #if LEXTEST_DEBUG

@@ -8,13 +8,15 @@ OBJS=		$(BIN)/parser.tab.o
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
 OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o
 OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
-OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
 OBJS+=		$(BIN)/Init.o
 OBJS+=		$(BIN)/Symbol.o $(BIN)/SymbolAPI.o $(BIN)/SymbolArray.o 
 OBJS+=		$(BIN)/SymbolInvoc.o  $(BIN)/SymbolPrivateAPI.o 
 OBJS+=		$(BIN)/SymbolProxy.o
+OBJS+=		$(BIN)/ActionsConsts.o $(BIN)/ActionsDecls.o 
+OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o 
+OBJS+=		$(BIN)/ActionsLoops.o $(BIN)/ActionsTypes.o 
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -149,8 +151,7 @@ $(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
 $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 	$(COMPILE)	
 
-$(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
-	$(COMPILE)
+include ActionModules.mk
 
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	

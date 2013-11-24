@@ -8,7 +8,7 @@
 
 #include "Error.h"
 #include "ErrorLL.h"
-#include "Symbol.h"
+#include "SymbolAll.h"
 #include "Globals.h"
 
 #ifndef LEXTEST_DEBUG
