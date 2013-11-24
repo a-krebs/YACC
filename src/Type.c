@@ -355,8 +355,17 @@ setTypePtr(Type *new, Type old, type_t type)
  */
 //////////////////////////////////////////////////////////////////////////
 
-struct Array *
-newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
+/*
+ * Create a new array struct
+ *
+ * Parameters:
+ * 	baseTypeSym: the base type for the array.
+ * 	indexTypeSym: the index type for the array.
+ *
+ * Returns:
+ * 	a pointer to the new array struct
+ */
+struct Array *newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 {
 	struct Array *a;
 	/* Error checking */
@@ -466,6 +475,15 @@ typeMemoryFailure()
 }
 
 
+struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
+	if ((symbol == NULL) || ( symbol->kind != TYPE_KIND)) {
+		err(EXIT_FAILURE, "Called getTypeKind on symbol that is not "
+		    "TYPE_KIND.");
+	}
+
+	return symbol->kindPtr.TypeKind;
+}
+
 
 // struct TypeKind *getTypeKind(Symbol *symbol) {
 // 	if ( symbol->kind != TYPE_KIND ) {
@@ -565,4 +583,5 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 
 // 	return symbol;
 // }
+
 

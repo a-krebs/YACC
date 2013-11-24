@@ -69,21 +69,27 @@ Symbol *newTypeSymFromSym(char *id, Symbol *typeSym)
 /*
  * Creates a new anonymous array type symbol given a pointer to a symbol
  * defining the base type and a pointer to a symbol defining the index type.
+ *
+ * Parameters:
+ * 	baseTypeSym: the symbol for the base type. Should be TYPE_KIND
+ * 	indexTypeSym: the symbol for the index type. Should be TYPE_KIND
+ *
+ * Return:
+ * 	pointer to new symbol with kind TYPE_KIND and kindPtr type ARRAY_T
  */
-Symbol *
-newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym)
-{
+Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 	Symbol *newArraySym = NULL;
+
 	if ((!baseTypeSym) || (!indexTypeSym)) {
-		errMsg = customErrorString("Semantic Error: cannot define"
-		    " array, base type or index type incorrect/undefined?");
+		errMsg = customErrorString("Cannot define array. "
+		    "Base type or index type incorrect or undefined.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
 	if ((baseTypeSym->kind != TYPE_KIND) || 
 	    (baseTypeSym->kind != TYPE_KIND)) {	
-		errMsg = customErrorString("Cannot create array with given"
+		errMsg = customErrorString("Cannot create array with given "
 		    "base type");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
@@ -96,21 +102,13 @@ newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym)
 		return NULL;
 	}
 
-	newArraySym = calloc(1, sizeof(Symbol));
+	/* create with no name and set as type originator */
+	newArraySym = createArrayTypeSymbol(
+	     NULL, TYPEORIGINATOR_YES, baseTypeSym, indexTypeSym);
 	if (!newArraySym) {
-		err(1, "Failed to allocate memory for new array!");
-		exit(1);
+		err(EXIT_FAILURE, "Failed to allocate memory for new array!");
 	}
 
-	/* Set symbol entries for this symbol */
-	newArraySym->name = NULL;
-	newArraySym->kind = TYPE_KIND;
-	allocateKindPtr(newArraySym);
-	newArraySym->kindPtr.TypeKind->typePtr.Array = newArray(baseTypeSym,
-								indexTypeSym);
-	newArraySym->kindPtr.TypeKind->type = ARRAY_T;
-	//TODO newArraySym->lvl = lvl;
-	newArraySym->typeOriginator = 1; /* should already be set */
 	return newArraySym;
 }
 
@@ -1305,7 +1303,7 @@ Symbol *createAndInsertSymbol(
  * Return: Newly created symbol
  */
 Symbol *createConstSymbol(char *id) {
-	return createSymbol(symbolTable, id, CONST_KIND, 0);
+	return createSymbol(symbolTable, id, CONST_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1317,7 +1315,7 @@ Symbol *createConstSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createFuncSymbol(char *id) {
-	return createSymbol(symbolTable, id, FUNC_KIND, 0);
+	return createSymbol(symbolTable, id, FUNC_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1329,7 +1327,7 @@ Symbol *createFuncSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createParamSymbol(char *id) {
-	return createSymbol(symbolTable, id, PARAM_KIND, 0);
+	return createSymbol(symbolTable, id, PARAM_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1341,7 +1339,7 @@ Symbol *createParamSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createProcSymbol(char *id) {
-	return createSymbol(symbolTable, id, PROC_KIND, 0);
+	return createSymbol(symbolTable, id, PROC_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1353,7 +1351,7 @@ Symbol *createProcSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createVarSymbol(char *id) {
-	return createSymbol(symbolTable, id, VAR_KIND, 0);
+	return createSymbol(symbolTable, id, VAR_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1377,12 +1375,26 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 /////////////////////////////////////////////////////////////////////////////
 
 
-// Symbol *createArrayTypeSymbol(char *id, int typeOriginator) {
-// 	Symbol *symbol = createTypeSymbol(id, typeOriginator);
+Symbol *createArrayTypeSymbol(
+   char *id, int typeOriginator, Symbol *base, Symbol *index)
+{
+	Symbol *symbol = NULL;
+	struct TypeKind *kindPtr = NULL;
+	if ((base == NULL) || (index == NULL)) {
+		err(EXIT_FAILURE, "Trying to create array type with NULL "
+		    "index or base types. This should be caught further "
+		    "up in Symbols.c");
+	}
+	
+	symbol = createTypeSymbol(id, typeOriginator);
+	
+	/* get kindPtr */
+	kindPtr = getKindPtrForTypeKind(symbol);
 
-// 	struct TypeKind *typeKind = getTypeKind(symbol);
-
-// 	typeKind->type = ARRAY_T;
-// 	typeKind->typePtr = allocateArrayType();
-// }
+	/* set array's Array struct */
+	kindPtr->type = ARRAY_T;
+	kindPtr->typePtr.Array = newArray(base, index);
+ 	
+	return symbol;
+}
 

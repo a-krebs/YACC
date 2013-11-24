@@ -71,9 +71,12 @@ Symbol *createProcSymbol(char *id);
 Symbol *createVarSymbol(char *id);
 Symbol *createTypeSymbol(char *id, int typeOriginator);
 
+/* symbol creation for type-specific stuff */
+Symbol *createArrayTypeSymbol(
+    char *id, int typeOriginator, Symbol *base, Symbol*index);
+
 
 /*no idea...*/
 Symbol *
 newStringTypeSym(int lexLevel, int strlen);
-
 #endif
