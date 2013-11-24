@@ -131,41 +131,9 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 	return newAnonScalar;
 }
 
-/*
- * Constructs a new procedure symbol.
- */
-Symbol *
-newProcSym(char *id, struct ElementArray *ea)
-{
-	Symbol *s = NULL;
-	/* Error checking */
-	
-	s = calloc(1, sizeof(Symbol));
-	setSymbolName(s, id);
-	s->kind = PROC_KIND;
-	allocateKindPtr(s);
-	s->kindPtr.ProcKind->params = ea;
-	s->lvl = getCurrentLexLevel(symbolTable);
-	s->typeOriginator = 0;
-	return s;	
-}
 
-/*
- * Constructs a new function symbol.
- */
-Symbol *
-newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
-{
-	Symbol *s = NULL;
 
-	s = calloc(1, sizeof(Symbol));
-	setSymbolName(s, id);
-	s->kind = FUNC_KIND;
-	allocateKindPtr(s);
-	s->kindPtr.FuncKind->params = ea;
-	setInnerTypeSymbol(s, typeSym);
-	return s;
-}
+
 
 /*
  * Constructs an anonymous subrange symbol.
@@ -232,41 +200,6 @@ newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
 	return newSubrangeSym;
 }
 
-/*
- * Creates a new procedure symbol entry to be placed in the symbol table.
- */
-Symbol *
-newProcedureSym(int lvl, char *id, struct ElementArray *pa)
-{
-	return NULL;
-	/*
-	Symbol *newProcSym = NULL;
-	size_t len;
-	if (!pa) {
-
-	if (!id) {
-		return NULL;
-	}
-
-	newProcSym = calloc(1, sizeof(Symbol));
-	if (!newProcSym) {
-		err(1, "Failed to allocate memory for new procedure symbol!");
-		exit(1);
-	}
-
-	newProcSym->kind = PROC_KIND;
-	allocateKindPtr(newProcSym);	
-
-	len = strlen(id);
-	if (!len) {
-		return NULL;
-	}
-	strcpy(newProcSym->name, id);
-	newProcSym->kindPtr.ProcKind->params = pa;
-	newProcSym->lvl = lvl;
-	return newProcSym;
-	*/
-}
 
 /* Symbol* */
 /* newConstSym(int lvl, char * id, Symbol * constTypeSym) */
@@ -1366,8 +1299,14 @@ newVariableSym(char *id, Symbol* typeSym)
 }
 
 
-
-// Symbol *createParamSymbol(char *id)
+/* Creates a parameter symbol and sets the inner type symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeSym: type symbol to be put in new var symbol
+ *
+ * Return: Newly created symbol
+ */
 Symbol *
 newParamSym(char *id, Symbol *typeSym)
 {
@@ -1384,4 +1323,42 @@ newParamSym(char *id, Symbol *typeSym)
 	setInnerTypeSymbol(newParamSym, typeSym);
 
 	return newParamSym;	
+}
+
+
+/* Creates a procedure symbol 
+ *
+ * Parameters:
+ *              id: name of symbol
+ *				ea: element of parameters to procdure
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newProcSym(char *id, struct ElementArray *ea)
+{
+	Symbol *s =  createProcSymbol(id);
+	s->kindPtr.ProcKind->params = ea;
+
+	return s;	
+}
+
+
+/* Creates a fucntion symbol and sets the inner type symbol
+ *
+ * Parameters:
+ *              id: name of symbol
+ *		typeSym: type symbol to be put in new var symbol
+ *
+ * Return: Newly created symbol
+ */
+Symbol *
+newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
+{
+	Symbol *s = createFuncSymbol(id); 
+
+	s->kindPtr.FuncKind->params = ea;
+	setInnerTypeSymbol(s, typeSym);
+
+	return s;
 }

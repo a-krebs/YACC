@@ -396,9 +396,11 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
  * Return a pointer to the new record type symbol.
  */
 Symbol *createRecordType(struct ElementArray *fields) {
+	printf("Here I am\n");
 	Symbol *recType = NULL;
 	Symbol *newField = NULL;
 	int lexLvl = -1;
+	int recordLexLvl = -1;
 	ProxySymbol *f = NULL;
 	struct hash *recHash = NULL;
 	char *fieldId;
@@ -408,8 +410,11 @@ Symbol *createRecordType(struct ElementArray *fields) {
 	recType = newRecordTypeSym(lexLvl, NULL);
 	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 
+	recordLexLvl = getCurrentLexLevel(recHash);
+
 	for (int i = 0; i < fields->nElements; i++) {
 		f = getElementAt(fields, i);
+		printf("%p\n", f);
 		if (!f) continue;
 		fieldId = f->name;
 
@@ -419,6 +424,7 @@ Symbol *createRecordType(struct ElementArray *fields) {
 		}
 
 		newField = newVariableSym(fieldId, getTypeSym(f));
+		newField->lvl = recordLexLvl;
 
 		if (getLocalSymbol(recHash, fieldId) != NULL) {
 			errMsg = customErrorString(
