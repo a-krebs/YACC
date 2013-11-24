@@ -204,7 +204,8 @@ newParamSym(int lvl, char *id, Symbol *typeSym)
 	setSymbolName(newParamSym, id);
 	newParamSym->kind = PARAM_KIND;
 	allocateKindPtr(newParamSym);
-	newParamSym->kindPtr.ParamKind->typeSym = typeSym;
+	setInnerTypeSymbol(newParamSym, typeSym);
+
 	newParamSym->lvl = lvl;
 	return newParamSym;	
 }
