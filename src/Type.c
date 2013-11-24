@@ -592,3 +592,4 @@ void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
 	}
 }
 
+

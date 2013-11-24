@@ -132,75 +132,6 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 }
 
 
-
-
-
-/*
- * Constructs an anonymous subrange symbol.
- */
-Symbol *
-newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
-{
-	Symbol *newSubrangeSym = NULL;
-	
-	/*
-	 * We must assure that we are constructing a subrange
-	 * from two ordinal types of the same type of kind const such that
-	 * the value of constSymLow is less than the value of constSymHigh.
-	 */
-	if ((!constSymLow) || (!constSymHigh)) {
-		/* Error */
-		return NULL;
-	}
-
-	if ((constSymLow->kind != CONST_KIND) ||
-	    (constSymHigh->kind != CONST_KIND)) {
-	/*Error: subranges indices not constants */
-		return NULL;
-	}
-
-	if (getType(constSymLow) != getType(constSymHigh)) {
-		/* Error:  Mismatched types for subrange indices */
-		return NULL;
-	}
-
-	if (!isOrdinal(getType(constSymLow))) {
-		/*
-		 * Error: trying to construct subrange from non ordinal
-		 * types
-		 */
-		return NULL;
-	}
-
-	/*
-	 * Insure that values are bounded correctly (dependent on type ).
-	 */
-	switch(getType(constSymLow)) {
-	case INTEGER_T:
-		if (getConstVal(constSymLow)->Integer.value >
-		    getConstVal(constSymHigh)->Integer.value) return NULL;
-		break;
-	case BOOLEAN_T:
-		if (getConstVal(constSymLow)->Boolean.value >
-		    getConstVal(constSymHigh)->Boolean.value) return NULL;
-		break;
-	case CHAR_T:
-		if (getConstVal(constSymLow)->Char.value >
-		    getConstVal(constSymHigh)->Char.value) return NULL;
-		break;
-	default:
-		break;
-	}
-
-	newSubrangeSym = createTypeSymbol(NULL, 1);
-	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
-	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
-								  constSymLow,
-								  constSymHigh);
-	return newSubrangeSym;
-}
-
-
 /*
  * TODO: proxy symbol will have kindPtr to pre-defined kind?
  */
@@ -401,22 +332,6 @@ setSymbolName(Symbol *s, char *id)
 		exit(EXIT_FAILURE);
 	}
 	strcpy(s->name, id);
-}
-
-/*
- * Create a new symbol for a record type defintion to be added to the symbol
- * table.
- * 
- * Return a pointer to the new type symbol.
- */
-Symbol *newRecordTypeSym(char *id) {
-	/* this is an anonymous type */
-	Symbol *newRecType = createTypeSymbol(id, TYPEORIGINATOR_YES);
-
-	newRecType->kindPtr.TypeKind->type = RECORD_T;
-	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
-
-	return newRecType;
 }
 
 
@@ -1241,4 +1156,96 @@ newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
 	setInnerTypeSymbol(s, typeSym);
 
 	return s;
+}
+
+
+/*
+ * Create a new symbol for a record type defintion to be added to the symbol
+ * table.
+ * 
+ * Parameters:
+ *              id: name of symbol
+ *
+ * Return a pointer to the new type symbol.
+ */
+Symbol *newRecordTypeSym(char *id) {
+	/* this is an anonymous type */
+	Symbol *newRecType = createTypeSymbol(id, TYPEORIGINATOR_YES);
+
+	newRecType->kindPtr.TypeKind->type = RECORD_T;
+	newRecType->kindPtr.TypeKind->typePtr.Record = newRecord();
+
+	return newRecType;
+}
+
+
+ /*
+ * Constructs an anonymous subrange symbol.
+ * 
+ * Parameters:
+ *              constSymLow: pointer to symbol holding lower bound info
+ *              constSymHigh: pointer to symbol holding uppper bound info
+ *
+ * Return a pointer to the new subrange symbol.
+ */
+Symbol *
+newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
+{
+	Symbol *newSubrangeSym = NULL;
+	
+	/*
+	 * We must assure that we are constructing a subrange
+	 * from two ordinal types of the same type of kind const such that
+	 * the value of constSymLow is less than the value of constSymHigh.
+	 */
+	if ((!constSymLow) || (!constSymHigh)) {
+		/* Error */
+		return NULL;
+	}
+
+	if ((constSymLow->kind != CONST_KIND) ||
+	    (constSymHigh->kind != CONST_KIND)) {
+	/*Error: subranges indices not constants */
+		return NULL;
+	}
+
+	if (getType(constSymLow) != getType(constSymHigh)) {
+		/* Error:  Mismatched types for subrange indices */
+		return NULL;
+	}
+
+	if (!isOrdinal(getType(constSymLow))) {
+		/*
+		 * Error: trying to construct subrange from non ordinal
+		 * types
+		 */
+		return NULL;
+	}
+
+	/*
+	 * Insure that values are bounded correctly (dependent on type ).
+	 */
+	switch(getType(constSymLow)) {
+	case INTEGER_T:
+		if (getConstVal(constSymLow)->Integer.value >
+		    getConstVal(constSymHigh)->Integer.value) return NULL;
+		break;
+	case BOOLEAN_T:
+		if (getConstVal(constSymLow)->Boolean.value >
+		    getConstVal(constSymHigh)->Boolean.value) return NULL;
+		break;
+	case CHAR_T:
+		if (getConstVal(constSymLow)->Char.value >
+		    getConstVal(constSymHigh)->Char.value) return NULL;
+		break;
+	default:
+		break;
+	}
+
+	newSubrangeSym = createTypeSymbol(NULL, TYPEORIGINATOR_YES);
+	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
+	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
+								  constSymLow,
+								  constSymHigh);
+	return newSubrangeSym;
 }
