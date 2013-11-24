@@ -210,7 +210,7 @@ def make_asc_test_function(filename, expected_output, asc_filename):
         # in order to determine if the generated asc file is as expected.
 
         try:
-            check_call([PAL_EXE, PAL_OPTIONS, filename])
+            check_call([PAL_EXE, "-n", "-S", "-c", filename])
 
         except OSError:
             print "Failed to open pal executable with filename = ", filename
