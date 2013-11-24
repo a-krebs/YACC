@@ -9,6 +9,7 @@ import types
 import sys
 import getopt
 import difflib
+import subprocess
 from subprocess import check_output
 from subprocess import check_call
 
@@ -17,10 +18,11 @@ GEN_ASC_DIR = "./generated_asc"
 TEST_ASC_DIR = "./test_asc"
 
 PAL_EXE = "../../../bin/pal"
-PAL_OPTIONS = "-n"
+PAL_OPTION1 = "-n"
+PAL_OPTION2 = "-c"
+PAL_OPTION3 = "-S"
 
 LEXTEST_EXE = "../../../bin/lextest"
-LEXTEST_OPTIONS = PAL_OPTIONS
 
 TEST_TYPE = {
     'syntax' : 0,
@@ -128,8 +130,8 @@ def get_metadata_from_output(output):
     output_list = list()
     
     for line in output.split("\n"):
-        # ignore empty lines
-        if filter_line_by_test_type(line, test_type) == False:
+        # Ignore the default output produced by the asc runner
+	if filter_line_by_test_type(line, test_type) == False:
             continue;
         output_list.append(line)
     return output_list
@@ -144,7 +146,8 @@ def make_lexer_test_function(filename, expected_tokens):
     Return a function object.
     """
     def new_test(self):
-        output = check_output([LEXTEST_EXE, LEXTEST_OPTIONS, filename])
+        output = check_output([LEXTEST_EXE, PAL_OPTION1, PAL_OPTION2,\
+            filename])
         actual_tokens = [
             re.sub(r"\(.*\)", "", line).strip()
                 for line in output.split("\n") if line != ''
@@ -178,7 +181,8 @@ def make_parser_test_function(filename, expected_errors, test_type):
     """
 
     def new_test(self):
-        output = check_output([PAL_EXE, PAL_OPTIONS, filename])
+        output = check_output([PAL_EXE, PAL_OPTION1, PAL_OPTION2,\
+            PAL_OPTION3, filename])
         actual_errors = get_error_lines_from_output(output, test_type)
 
         for error in actual_errors:
@@ -209,7 +213,8 @@ def make_asc_test_function(filename, expected_output, asc_filename):
         # in order to determine if the generated asc file is as expected.
 
         try:
-            check_call([PAL_EXE, PAL_OPTIONS, filename])
+            check_call([PAL_EXE, PAL_OPTION1, PAL_OPTION2, PAL_OPTION3,\
+                filename])
 
         except OSError:
             print "Failed to open pal executable with filename = ", filename
@@ -257,10 +262,17 @@ def make_asc_test_function(filename, expected_output, asc_filename):
         # If ratio != 1.0, we print the diff output to help in debugging
         if sm.ratio() != 1.0:
             err_str = "{}: Generated asc file does match expected output".\
-                format(asc_file) 
+                format(asc_filename) 
             print err_str
-            for line in difflib.context_diff(asc_file_text, genasc_file_text):
-                print line
+            print genasc_filepath
+            diff_args = "-I \"#(>*)(\n)\" --ignore-case --ignore-all-space"
+
+            try:
+                check_call(["diff", diff_args, testasc_filepath, \
+                    genasc_filepath])
+            except subprocess.CalledProcessError as e:
+                print e
+
             self.assertEqual(sm.ratio(), 1.0) 
  
         # Now we run the generated asc file and compare the output we got
@@ -341,7 +353,6 @@ def construct_tests(test_type, test_dir, ignore_expected_errors):
 
             new_test = make_asc_test_function(filename, expected_output,
                 filename[:-4] + ".asc")
-
             if getattr(AscUnitTests, name, None) is not None:
                 raise RuntimeError("Duplicate test name: {}".formate(name))
             else:
