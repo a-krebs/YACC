@@ -131,32 +131,11 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 	return newAnonScalar;
 }
 
-
-
-// Symbol *createParamSymbol(char *id)
-Symbol *
-newParamSym(int lvl, char *id, Symbol *typeSym)
-{
-	Symbol *newParamSym = NULL;
-	if (!typeSym) {
-		return NULL;
-	}
-
-	if (!id) {
-		return NULL;
-	}
-
-	newParamSym = createParamSymbol(id);
-	setInnerTypeSymbol(newParamSym, typeSym);
-
-	return newParamSym;	
-}
-
 /*
  * Constructs a new procedure symbol.
  */
 Symbol *
-newProcSym(int lvl, char *id, struct ElementArray *ea)
+newProcSym(char *id, struct ElementArray *ea)
 {
 	Symbol *s = NULL;
 	/* Error checking */
@@ -166,7 +145,7 @@ newProcSym(int lvl, char *id, struct ElementArray *ea)
 	s->kind = PROC_KIND;
 	allocateKindPtr(s);
 	s->kindPtr.ProcKind->params = ea;
-	s->lvl = lvl;
+	s->lvl = getCurrentLexLevel(symbolTable);
 	s->typeOriginator = 0;
 	return s;	
 }
@@ -1384,4 +1363,25 @@ newVariableSym(char *id, Symbol* typeSym)
 	setInnerTypeSymbol(newVar, typeSym);
 	
 	return newVar;
+}
+
+
+
+// Symbol *createParamSymbol(char *id)
+Symbol *
+newParamSym(char *id, Symbol *typeSym)
+{
+	Symbol *newParamSym = NULL;
+	if (!typeSym) {
+		return NULL;
+	}
+
+	if (!id) {
+		return NULL;
+	}
+
+	newParamSym = createParamSymbol(id);
+	setInnerTypeSymbol(newParamSym, typeSym);
+
+	return newParamSym;	
 }

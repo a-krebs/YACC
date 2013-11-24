@@ -540,7 +540,7 @@ void exitProcOrFuncDecl(void) {
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	Symbol *var = NULL;
-	int lvl = getCurrentLexLevel(symbolTable), i;
+	int i;
 	if (!id) {
 		//TODO: push lvl?
 		incrementLexLevel(symbolTable);
@@ -566,7 +566,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
 
-	s = newProcSym(lvl, id, ea);
+	s = newProcSym(id, ea);
 	if (createHashElement(symbolTable, id, s) != 0) {
 		// TODO error
 	}
@@ -671,10 +671,8 @@ struct ElementArray *appendParmToParmList(
  * Return a pointer to the new parameter.
  */
 Symbol *createNewParm(char *id, Symbol *type) {
-	
-	int lvl = getCurrentLexLevel(symbolTable);
 	if ((!id) || (!type)) return NULL;
-	return newParamSym(lvl, id, type);
+	return newParamSym(id, type);
 }
 
 /*
