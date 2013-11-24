@@ -53,4 +53,6 @@ void setTypePtr(Type *, Type, type_t);
 void typeMemoryFailure();
 
 struct TypeKind *getKindPtrForTypeKind(Symbol *);
+
+Symbol *getInnerTypeSymbol(Symbol *symbol);
 #endif

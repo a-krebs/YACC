@@ -538,7 +538,7 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 	struct Subrange *subRange = allocateSubRangeType();
 	int low = 0, high = 0;
 
-	type_t rangeType = lowSym->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
+	type_t rangeType = getInnerTypeSymbol(lowSym)->kindPtr.TypeKind->type;
 
 	switch(rangeType) {
 		case BOOLEAN_T:
@@ -560,28 +560,26 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 
 	subRange->low = low;
 	subRange->high = high;
-	subRange->baseTypeSym = lowSym->kindPtr.ConstKind->typeSym;
+	subRange->baseTypeSym = getInnerTypeSymbol(lowSym);
 
 	return subRange;
 }
 
 
-// Symbol *getInnerTypeSymbol(Symbol *symbol) {
-// 	Symbol *symbol = NULL;
-
-// 	switch (s->kind) {
-// 		case CONST_KIND:
-// 			return s->kindPtr.ConstKind->typeSym;
-// 		case PARAM_KIND:
-// 			return s->kindPtr.ParamKind->typeSym;
-// 		case FUNC_KIND:
-// 			return s->kindPtr.FuncKind->typeSym;
-// 		case VAR_KIND:
-// 			return s->kindPtr.VarKind->typeSym;
-// 		default:
-// 			err(1, "");
-
-// 	return symbol;
-// }
+//theres set function but should use same naming convention
+Symbol *getInnerTypeSymbol(Symbol *symbol) {
+	switch (symbol->kind) {
+		case CONST_KIND:
+			return symbol->kindPtr.ConstKind->typeSym;
+		case PARAM_KIND:
+			return symbol->kindPtr.ParamKind->typeSym;
+		case FUNC_KIND:
+			return symbol->kindPtr.FuncKind->typeSym;
+		case VAR_KIND:
+			return symbol->kindPtr.VarKind->typeSym;
+		default:
+			err(1, "Could not determine inner type of symbol");
+	}
+}
 
 
