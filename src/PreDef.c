@@ -120,7 +120,7 @@ struct Symbol *createPreDefFunc(char *name) {
 
 	allocateKindPtr(symbol);
 	symbol->kindPtr.FuncKind->params = NULL;
-	symbol->kindPtr.FuncKind->typeSym = NULL;
+	setInnerTypeSymbol(symbol, NULL); 
 
 
 	symbol->lvl = getCurrentLexLevel(symbolTable);

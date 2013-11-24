@@ -242,7 +242,7 @@ newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
 	s->kind = FUNC_KIND;
 	allocateKindPtr(s);
 	s->kindPtr.FuncKind->params = ea;
-	s->kindPtr.FuncKind->typeSym = typeSym;
+	setInnerTypeSymbol(s, typeSym);
 	return s;
 }
 
