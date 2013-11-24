@@ -399,7 +399,6 @@ Symbol *createRecordType(struct ElementArray *fields) {
 	Symbol *recType = NULL;
 	Symbol *newField = NULL;
 	int lexLvl = -1;
-	int recordLexLvl = -1;
 	ProxySymbol *f = NULL;
 	struct hash *recHash = NULL;
 	char *fieldId;
@@ -408,8 +407,6 @@ Symbol *createRecordType(struct ElementArray *fields) {
 
 	recType = newRecordTypeSym(lexLvl, NULL);
 	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
-
-	recordLexLvl = getCurrentLexLevel(recHash);
 
 	for (int i = 0; i < fields->nElements; i++) {
 		f = getElementAt(fields, i);
@@ -421,7 +418,7 @@ Symbol *createRecordType(struct ElementArray *fields) {
 			continue;
 		}
 
-		newField = newVariableSym(recordLexLvl, fieldId, getTypeSym(f));
+		newField = newVariableSym(fieldId, getTypeSym(f));
 
 		if (getLocalSymbol(recHash, fieldId) != NULL) {
 			errMsg = customErrorString(
@@ -483,7 +480,9 @@ ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
 	if (!id) return NULL;
 	if (!type) return NULL;
 
-	newField = newVariableSym(0, id, type);
+	newField = newVariableSym(id, type);
+	// newField = newVariableSym(0, id, type);
+
 	return newField;
 }
 
@@ -501,7 +500,6 @@ void exitVarDeclPart(void) {
  */
 Symbol *doVarDecl(char *id, Symbol *type) {
 	Symbol *s = NULL;
-	int lvl = getCurrentLexLevel(symbolTable);
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
 		alreadyDefinedError(id);
@@ -510,7 +508,7 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 
 	if ((!id) || !(type)) return NULL;
 
-	s = newVariableSym(lvl, id, type);
+	s = newVariableSym(id, type);
 	if (s) {
 		createHashElement(symbolTable, id, s);
 	}
@@ -574,9 +572,9 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	}
 	incrementLexLevel(symbolTable);
 	/* Push params as local variables on new lexical level */
-	lvl = getCurrentLexLevel(symbolTable);
+	
 	for (i = 0; i < ea->nElements; i++) {
-		var = paramToVar(lvl, getElementAt(ea, i));
+		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
 		}		
@@ -628,9 +626,9 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	}
 	incrementLexLevel(symbolTable);
 	/* Push params as local variables on new lexical level */
-	lvl = getCurrentLexLevel(symbolTable);
+
 	for (i = 0; i < ea->nElements; i++) {
-		var = paramToVar(lvl, getElementAt(ea, i));
+		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
 		}		

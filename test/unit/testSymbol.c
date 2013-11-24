@@ -293,28 +293,28 @@ test_newTypeSymFromSym()
 char *
 test_newVariableSym()
 {
+	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *typeSym = setUpTypeSymbol();
 	Symbol *newVar = NULL;
 	Symbol *varTypeSym = NULL;
 	char id[] = "testVariable";
-	int lvl = 100;
 
-	newVar = newVariableSym(lvl, id, NULL);
+	newVar = newVariableSym(id, NULL);
 	mu_assert("newVariable() should return NULL if NULL typeSym passed",
 		!newVar);
 	
-	newVar = newVariableSym(lvl, NULL, typeSym);
+	newVar = newVariableSym(NULL, typeSym);
 	mu_assert("newVariable() should return NULL if NULL id passed",
 		!newVar);
 
 	typeSym->kind = VAR_KIND;
-	newVar = newVariableSym(lvl, id, typeSym);
+	newVar = newVariableSym(id, typeSym);
 	mu_assert("newVariable() should return NULL if passed VAR_KIND symbol",
 		!newVar);
 
 	typeSym->kind = TYPE_KIND;
 
-	newVar = newVariableSym(lvl, id, typeSym);
+	newVar = newVariableSym(id, typeSym);
 	varTypeSym = newVar->kindPtr.VarKind->typeSym;
 	mu_assert("newVariable() should return symbol of kind VAR_KIND",
 		newVar->kind == VAR_KIND);
@@ -323,6 +323,11 @@ test_newVariableSym()
 	mu_assert("newVariable() should be a variable with type defined by"
 		  "the symbol expected",
 		(varTypeSym == typeSym));
+
+	destroyHash(symbolTable);
+	free(symbolTable);
+	symbolTable = NULL;
+
 	return NULL;
 }
 
@@ -424,7 +429,7 @@ test_isValidArrayAccess()
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	Symbol *var = NULL;
 	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
-	var = newVariableSym(10, "hello", newArraySym);	
+	var = newVariableSym("hello", newArraySym);	
 	ProxySymbol *index1 = (ProxySymbol *) lowConst;
 	index1->kindPtr.ConstKind->typeSym =
 	    lowConst->kindPtr.ConstKind->typeSym;
