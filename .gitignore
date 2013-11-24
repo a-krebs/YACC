@@ -28,5 +28,8 @@ bin/*
 *~
 *#
 
+# generated asc test files
+test/unit/asctests/test*.asc
+__*.asc
 # python compiled files
 *.pyc

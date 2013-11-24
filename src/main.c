@@ -173,6 +173,7 @@ int main( int argc, char *argv[] )
 	}
 	
 	free(givenArgs.listingFile);
+	deInitialize();
 
 	return EXIT_SUCCESS;
 }
