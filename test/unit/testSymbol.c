@@ -329,6 +329,8 @@ test_newVariableSym()
 char *
 test_newSubrangeSym() 
 {
+	symbolTable = createHash(&getHashedKeyNormal);
+
 	Symbol *subrangeSym = NULL;
 	Symbol *testSymLow = setUpConstSymbol();
 	Symbol *testSymHigh = setUpConstSymbol();
@@ -347,6 +349,7 @@ test_newSubrangeSym()
 	mu_assert("newSubRangeSym() should return NULL if low >= high",
 		  !subrangeSym);
 
+
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
 	mu_assert("newSubRangeSym() should return expected subrange",
 	    (getTypePtr(subrangeSym)->Subrange->low == INTLOW_VAL));
@@ -355,6 +358,11 @@ test_newSubrangeSym()
 	subrangeSym = newSubrangeSym(lvl, testSymLow, testSymHigh);
 	mu_assert("newSubrangeSym() should return null when symbol types \
 		   mistmatch.", !subrangeSym);
+
+	destroyHash(symbolTable);
+	free(symbolTable);
+	symbolTable = NULL;
+
 	return NULL;
 }
 
@@ -626,3 +634,4 @@ char *test_all_Symbol() {
 	mu_run_test(test_createVarSymbol);
 	return NULL;
 }
+

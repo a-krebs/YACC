@@ -371,51 +371,7 @@ newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 	return a;
 }
 
-/* 
- * Constructs new subrange from the given symbols, assumes symbols have
- * been vetted and are valid.
- * TODO: maybe move error checking to this function
- */
-struct Subrange * 
-newSubrange(Symbol * lowSym, Symbol *highSym)
-{
-	struct Subrange *s = NULL;
-	Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
-	AnonConstVal *lowVal = &(lowSym->kindPtr.ConstKind->value),
-		* highVal = &(highSym->kindPtr.ConstKind->value);
-	int low = 0, high = 0;
 
-	s = calloc(1, sizeof(struct Subrange));
-	if (!s) {
-		err(1, "Failed to allocate memory for new subrange!");
-		exit(1);
-	}
-	
-	/* Do a switch based on type to set low, high vals ... */
-	switch(typeSym->kindPtr.TypeKind->type) {
-	case BOOLEAN_T:
-		low = lowVal->Boolean.value;
-		high = highVal->Boolean.value;
-		break;
-	case CHAR_T:
-		low = lowVal->Char.value;
-		high = highVal->Char.value;
-		break;
-	case INTEGER_T:
-		low = lowVal->Integer.value;
-		high = highVal->Integer.value;
-		break;
-	default:
-		/* NOT REACHED */
-		return NULL;
-	    
-	}
-
-	s->low = low;
-	s->high = high;
-	s->baseTypeSym = typeSym;
-	return s;
-}
 
 /*
  * Return a pointer to a new record struct with no fields.
@@ -535,3 +491,78 @@ typeMemoryFailure()
 // getArrayTypeStruct() {
 
 // }
+
+
+/* Allocates memory for the Subrange struct
+ *
+ * Parameters:
+ *
+ * Returns: pointer to memery allocated for a struct Subrange
+ */
+struct Subrange *allocateSubRangeType() {
+	struct Subrange *subRangeType = NULL;
+
+	subRangeType = calloc(1, sizeof(struct Subrange));
+	if ( subRangeType == NULL ) {
+		err(1, "Failed to allocate memory for subrange type.");
+		exit(EXIT_FAILURE);		
+	}
+
+	return subRangeType;
+}
+
+
+
+//TODO simplify and comment
+struct Subrange *
+newSubrange(Symbol * lowSym, Symbol *highSym)
+{
+	struct Subrange *subRange = allocateSubRangeType();
+	int low = 0, high = 0;
+
+	type_t rangeType = lowSym->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
+
+	switch(rangeType) {
+		case BOOLEAN_T:
+			low = lowSym->kindPtr.ConstKind->value.Boolean.value;
+			high = highSym->kindPtr.ConstKind->value.Boolean.value;
+			break;
+		case CHAR_T:
+			low = lowSym->kindPtr.ConstKind->value.Char.value;
+			high = highSym->kindPtr.ConstKind->value.Char.value;
+			break;
+		case INTEGER_T:
+			low = lowSym->kindPtr.ConstKind->value.Integer.value;
+			high = highSym->kindPtr.ConstKind->value.Integer.value;
+			break;
+		default:
+			/* NOT REACHED */
+			return NULL;
+	}
+
+	subRange->low = low;
+	subRange->high = high;
+	subRange->baseTypeSym = lowSym->kindPtr.ConstKind->typeSym;
+
+	return subRange;
+}
+
+
+// Symbol *getInnerTypeSymbol(Symbol *symbol) {
+// 	Symbol *symbol = NULL;
+
+// 	switch (s->kind) {
+// 		case CONST_KIND:
+// 			return s->kindPtr.ConstKind->typeSym;
+// 		case PARAM_KIND:
+// 			return s->kindPtr.ParamKind->typeSym;
+// 		case FUNC_KIND:
+// 			return s->kindPtr.FuncKind->typeSym;
+// 		case VAR_KIND:
+// 			return s->kindPtr.VarKind->typeSym;
+// 		default:
+// 			err(1, "");
+
+// 	return symbol;
+// }
+

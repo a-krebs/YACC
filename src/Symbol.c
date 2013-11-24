@@ -251,8 +251,7 @@ newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
  * Constructs an anonymous subrange symbol.
  */
 Symbol *
-newSubrangeSym(int lvl, ProxySymbol *constSymLow,
-	        ProxySymbol *constSymHigh)
+newSubrangeSym(int lvl, ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
 {
 	Symbol *newSubrangeSym = NULL;
 	
@@ -305,23 +304,11 @@ newSubrangeSym(int lvl, ProxySymbol *constSymLow,
 		break;
 	}
 
-
-	newSubrangeSym = calloc(1, sizeof(Symbol));
-	if (!newSubrangeSym) {
-		err(1, "Failed to allocate memory for new subrange symbol!");
-		exit(1);
-	}
-
-	newSubrangeSym->kind = TYPE_KIND;
-	allocateKindPtr(newSubrangeSym);
-
+	newSubrangeSym = createTypeSymbol(NULL, 1);
 	newSubrangeSym->kindPtr.TypeKind->type = SUBRANGE_T;
 	newSubrangeSym->kindPtr.TypeKind->typePtr.Subrange = newSubrange(
 								  constSymLow,
 								  constSymHigh);
-	newSubrangeSym->name = NULL;
-	newSubrangeSym->lvl = lvl;
-	newSubrangeSym->typeOriginator = 1;	
 	return newSubrangeSym;
 }
 
@@ -602,9 +589,12 @@ void
 setSymbolName(Symbol *s, char *id)
 {
 	size_t len;
-	if (!id) return;
+	if (id == NULL) {
+		s->name = NULL;
+		return;
+	}
 	
-	len = strlen(id);
+	len = strlen(id) + 1;
 	s->name = calloc(1, sizeof(char)*len);
 	if (!s->name) {
 		err(1, "Failed to allocate memory for symbol name!");
