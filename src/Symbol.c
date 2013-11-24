@@ -121,18 +121,20 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
  * Return:
  * 	a symbol to the new type.
  */
-Symbol *newAnonScalarSym(struct ElementArray *ea)
+Symbol *newAnonScalarListTypeSym(struct ElementArray *ea)
 {
-	Symbol *newAnonScalar = NULL;
+	Symbol *newAnonScalarList = NULL;
 
 	if (ea == NULL) {
 		err(EXIT_FAILURE, "Trying to create anon scalar list with "
 		    "NULL list of scalars.");
 	}
 
-	newAnonScalar = createScalarTypeSymbol(NULL, TYPEORIGINATOR_YES, ea);
+	/* anonymous, so name is NULL */
+	newAnonScalarList = createScalarListTypeSymbol(
+	    NULL, TYPEORIGINATOR_YES, ea);
 
-	return newAnonScalar;
+	return newAnonScalarList;
 }
 
 
@@ -232,6 +234,7 @@ newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
 /*
  * TODO: proxy symbol will have kindPtr to pre-defined kind?
  */
+// TODO this looks like a dup of newConstProxySym?
 Symbol *
 newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 {
@@ -327,30 +330,40 @@ newProxySymFromSym(Symbol *s)
 
 
 /*
- * Creates a new CONST_KIND ProxySymbol using the result of a arithmetic,
- * logical or arithmetic operation on two constants. 
+ * Creates a new CONST_KIND ProxySymbol.
+ *
+ * Parameters:
+ * 	id: the 
+ * 	result: a pointer to the value for the new constant
+ * 		this will be case to the appropriate C type depending on typeSym
+ * 	tpyeSym: a symbol with kind TYPE_KIND for the new symbol
+ *
+ * Return:
+ * 	A pointer to the new ProxySymbol
  */
-ProxySymbol *
-newConstProxySym(void * result, Symbol *typeSym)
+ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 {
 	Symbol *constSym = NULL;
 	double *doubleResult;
 	int *intResult;
 	char *charResult;
-	
-	constSym = calloc(1, sizeof(ProxySymbol));
+
+	/* id can be NULL, this makes the constant anonymous */
+	if ((result == NULL) || (typeSym == NULL)) {
+		err(EXIT_FAILURE, "Passed NULL arguments to newConstProxySym");
+	}
+
+	constSym = createConstSymbol(id);
 	if (!constSym) {
 		err(1, "Failed to allocate memory for new constant proxy "
 		    "symbol!");
-		exit(1);
 	}
-
-	constSym->name = NULL;
-	constSym->kind = CONST_KIND;
-	allocateKindPtr(constSym);
+	
+	/* set the new symbol's type */
+	// TODO, this should point back to a pre-defined type, and we should
+	// enforce that the given typeSym is a pre-defined type
 	setInnerTypeSymbol(constSym, typeSym);
 
-	
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:
 		intResult = (int *) result;
@@ -369,8 +382,10 @@ newConstProxySym(void * result, Symbol *typeSym)
 		break;
 	default:
 		/* Shouldn't be reached */
-		return NULL;
+		err(EXIT_FAILURE, "Called newConstProxySym with invalid "
+		    "typeSym (can't get inner type)");
 	}
+
 	return (ProxySymbol *) constSym;
 }
 
@@ -1278,7 +1293,7 @@ Symbol *createArrayTypeSymbol(
  * Return:
  * 	A pointer to the new symbol
  */
-Symbol *createScalarTypeSymbol(
+Symbol *createScalarListTypeSymbol(
     char *id, int typeOriginator, struct ElementArray *scalars)
 {
 	Symbol *symbol = NULL;

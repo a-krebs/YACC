@@ -6,7 +6,7 @@
 /* Symbol creation function */
 Symbol *newTypeSymFromSym(char *, Symbol *);
 Symbol *newAnonArraySym(Symbol *, Symbol *);
-Symbol *newAnonScalarSym(struct ElementArray *);
+Symbol *newAnonScalarListTypeSym(struct ElementArray *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
 Symbol *newSubrangeSym(Symbol *, Symbol *);
@@ -20,7 +20,7 @@ Symbol *newProcSym(char *, struct ElementArray *);
 Symbol *newConstSymFromProxy(int, char *, ProxySymbol *);
 
 /* ProxySymbol creations functions */
-ProxySymbol *newConstProxySym(void *, Symbol *); 
+ProxySymbol *newConstProxySym(char *, void *, Symbol *); 
 ProxySymbol *newStringProxySym(int, char *, int);
 ProxySymbol *newProxySymFromSym(Symbol *);
 
@@ -74,7 +74,7 @@ Symbol *createTypeSymbol(char *id, int typeOriginator);
 Symbol *createArrayTypeSymbol(
     char *id, int typeOriginator, Symbol *base, Symbol*index);
 
-Symbol *createScalarTypeSymbol(
+Symbol *createScalarListTypeSymbol(
     char *id, int typeOriginator, struct ElementArray *scalars);
 
 /*no idea...*/
