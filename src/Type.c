@@ -279,29 +279,6 @@ areOpCompatible(Symbol *s1, Symbol *s2)
  */
 //////////////////////////////////////////////////////////////////////////
 
-/*
- * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
- * a pointer to the typeSym defining the type for the given Symbol s.
- * WARNING: assumes the kindPtr for the given symbol s has been allocated.
- */
-void
-setTypeSym(Symbol *s, Symbol *typeSym)
-{
-	switch (s->kind) {
-	case CONST_KIND:
-		s->kindPtr.ConstKind->typeSym = typeSym;
-		break;
-	case FUNC_KIND:
-		s->kindPtr.FuncKind->typeSym = typeSym;
-		break;
-	case VAR_KIND:
-		s->kindPtr.VarKind->typeSym = typeSym;
-		break;
-	default:
-		/* Should not be reached */
-		break;
-	}
-}
 
 /*
  * Set type pointer new to point to type old of type passed as arg.
@@ -380,51 +357,7 @@ struct Array *newArray(Symbol *baseTypeSym, Symbol *indexTypeSym)
 	return a;
 }
 
-/* 
- * Constructs new subrange from the given symbols, assumes symbols have
- * been vetted and are valid.
- * TODO: maybe move error checking to this function
- */
-struct Subrange * 
-newSubrange(Symbol * lowSym, Symbol *highSym)
-{
-	struct Subrange *s = NULL;
-	Symbol *typeSym = lowSym->kindPtr.ConstKind->typeSym;
-	AnonConstVal *lowVal = &(lowSym->kindPtr.ConstKind->value),
-		* highVal = &(highSym->kindPtr.ConstKind->value);
-	int low = 0, high = 0;
 
-	s = calloc(1, sizeof(struct Subrange));
-	if (!s) {
-		err(1, "Failed to allocate memory for new subrange!");
-		exit(1);
-	}
-	
-	/* Do a switch based on type to set low, high vals ... */
-	switch(typeSym->kindPtr.TypeKind->type) {
-	case BOOLEAN_T:
-		low = lowVal->Boolean.value;
-		high = highVal->Boolean.value;
-		break;
-	case CHAR_T:
-		low = lowVal->Char.value;
-		high = highVal->Char.value;
-		break;
-	case INTEGER_T:
-		low = lowVal->Integer.value;
-		high = highVal->Integer.value;
-		break;
-	default:
-		/* NOT REACHED */
-		return NULL;
-	    
-	}
-
-	s->low = low;
-	s->high = high;
-	s->baseTypeSym = typeSym;
-	return s;
-}
 
 /*
  * Return a pointer to a new record struct with no fields.
@@ -552,3 +485,135 @@ struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
 
 	return symbol->kindPtr.TypeKind;
 }
+
+
+// struct Array *allocateArrayType() {
+// 	struct Array *arrayType = NULL;
+
+// 	arrayType = calloc(1, sizeof(struct Array));
+// 	if ( arrayType == NULL ) {
+// 		err(1, "Could not alloc memory for array type.");
+// 		exit(EXIT_FAILURE);		
+// 	}
+
+// 	return arrayType;
+// }
+
+
+
+/* Allocates memory for the Subrange struct
+ *
+ * Parameters:
+ *
+ * Returns: pointer to memery allocated for a struct Subrange
+ */
+struct Subrange *allocateSubRangeType() {
+	struct Subrange *subRangeType = NULL;
+
+	subRangeType = calloc(1, sizeof(struct Subrange));
+	if ( subRangeType == NULL ) {
+		err(1, "Failed to allocate memory for subrange type.");
+		exit(EXIT_FAILURE);		
+	}
+
+	return subRangeType;
+}
+
+
+/* TODO simplify look up calls with api functions
+ * Creates a subrange symbol.
+ *
+ * Parameters:
+ *		lowSym: symbol forming lower bound on range
+ *		highSym: symbol forming upper bound on range
+ *
+ * Returns: New Subrange struct
+ */
+struct Subrange *
+newSubrange(Symbol * lowSym, Symbol *highSym)
+{
+	struct Subrange *subRange = allocateSubRangeType();
+	int low = 0, high = 0;
+
+	type_t rangeType = getInnerTypeSymbol(lowSym)->kindPtr.TypeKind->type;
+
+	switch(rangeType) {
+		case BOOLEAN_T:
+			low = lowSym->kindPtr.ConstKind->value.Boolean.value;
+			high = highSym->kindPtr.ConstKind->value.Boolean.value;
+			break;
+		case CHAR_T:
+			low = lowSym->kindPtr.ConstKind->value.Char.value;
+			high = highSym->kindPtr.ConstKind->value.Char.value;
+			break;
+		case INTEGER_T:
+			low = lowSym->kindPtr.ConstKind->value.Integer.value;
+			high = highSym->kindPtr.ConstKind->value.Integer.value;
+			break;
+		default:
+			/* NOT REACHED */
+			return NULL;
+	}
+
+	subRange->low = low;
+	subRange->high = high;
+	subRange->baseTypeSym = getInnerTypeSymbol(lowSym);
+
+	return subRange;
+}
+
+
+/* Returns the pointer to the inner type symbol inside other symbols
+ *
+ * Parameters:
+ *		symbol:
+ *
+ * Returns: see above
+ */
+Symbol *getInnerTypeSymbol(Symbol *symbol) {
+	switch (symbol->kind) {
+		case CONST_KIND:
+			return symbol->kindPtr.ConstKind->typeSym;
+		case PARAM_KIND:
+			return symbol->kindPtr.ParamKind->typeSym;
+		case FUNC_KIND:
+			return symbol->kindPtr.FuncKind->typeSym;
+		case VAR_KIND:
+			return symbol->kindPtr.VarKind->typeSym;
+		default:
+			err(1, "Could not determine inner type of symbol");
+	}
+}
+
+
+/* Formally setTypeSym(Symbol *s, Symbol *typeSym) changed for consistently 
+ * getter.
+ *
+ * Sets the inner type symbol of the passed symbol
+ * WARNING: assumes the kindPtr for the given symbol s has been allocated.
+ *
+ * Parameters:
+ *		symbol: symbol where type symbol with be attached
+ *		typeSym: type symbol
+ *
+ * Returns: void
+ */
+void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
+	switch (s->kind) {
+		case CONST_KIND:
+			s->kindPtr.ConstKind->typeSym = typeSym;
+			break;
+		case PARAM_KIND:
+			s->kindPtr.ParamKind->typeSym = typeSym;
+			break;		
+		case FUNC_KIND:		
+			s->kindPtr.FuncKind->typeSym = typeSym;
+			break;
+		case VAR_KIND:
+			s->kindPtr.VarKind->typeSym = typeSym;
+			break;
+		default:
+			err(1, "Could not determine inner type of symbol");
+	}
+}
+

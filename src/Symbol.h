@@ -9,12 +9,11 @@ Symbol *newAnonArraySym(Symbol *, Symbol *);
 Symbol *newAnonScalarSym(struct ElementArray *);
 Symbol *newConstSym(int, char *, Symbol *);
 Symbol *newConstSymFromType(int, Type, type_t);
-Symbol *newSubrangeSym(int, Symbol *, Symbol *);
-Symbol *newVariableSym(int, char *, Symbol *);
-Symbol *newProcedureSym(int, char *, struct ElementArray *);
-Symbol *newParamSym(int, char *, Symbol *);
+Symbol *newSubrangeSym(Symbol *, Symbol *);
+Symbol *newVariableSym(char *, Symbol *);
+Symbol *newParamSym(char *, Symbol *);
 Symbol *newFuncSym(int, char *, Symbol *, struct ElementArray *);
-Symbol *newProcSym(int, char *, struct ElementArray *);
+Symbol *newProcSym(char *, struct ElementArray *);
 
 
 /* Symbol creation from ProxySymbol functions */
@@ -26,7 +25,7 @@ ProxySymbol *newStringProxySym(int, char *, int);
 ProxySymbol *newProxySymFromSym(Symbol *);
 
 /* */
-Symbol * paramToVar(int, Symbol *);
+Symbol * paramToVar(Symbol *);
 /* Utility functions */
 Symbol *getTypeSym(Symbol *);
 Symbol *getArrayIndexSym(Symbol *);
