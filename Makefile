@@ -12,6 +12,9 @@ OBJS+=		$(BIN)/Actions.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
 OBJS+=		$(BIN)/Init.o
+OBJS+=		$(BIN)/Symbol.o $(BIN)/SymbolAPI.o $(BIN)/SymbolArray.o 
+OBJS+=		$(BIN)/SymbolInvoc.o  $(BIN)/SymbolPrivateAPI.o 
+OBJS+=		$(BIN)/SymbolProxy.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -138,8 +141,7 @@ $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
-$(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Definitions.h
-	$(COMPILE)
+include SymbolModules.mk
 
 $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
