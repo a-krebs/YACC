@@ -281,6 +281,14 @@ semantic_tests_:
 	@echo "\nSEMANTIC TESTS:"
 	@-cd test && python testRunner.py -c -d ./integration/semantic
 
+asc_tests:
+	@make -s integration_tests_base
+	@make -s asc_tests_
+
+asc_tests_:
+	@echo "ASC TESTS:"
+	@-cd test && python testRunner.py -a -d ./integration/asc
+
 full_tests:
 	@make -s integration_tests_base
 	@make -s full_tests_

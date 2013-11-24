@@ -167,6 +167,8 @@ int main( int argc, char *argv[] )
 		printProgramListing(fp, givenArgs.listingFile);
 	}
 
+	/* Create .asc file */
+
 	/* close file, clean up, and exit */
 	if (fclose(fp) != 0) {
 		return EXIT_FAILURE;
