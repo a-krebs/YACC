@@ -133,7 +133,7 @@ newAnonScalarSym(int lvl, struct ElementArray *ea)
 
 
 
-
+// Symbol *createParamSymbol(char *id)
 Symbol *
 newParamSym(int lvl, char *id, Symbol *typeSym)
 {
@@ -146,18 +146,9 @@ newParamSym(int lvl, char *id, Symbol *typeSym)
 		return NULL;
 	}
 
-	newParamSym = calloc(1, sizeof(Symbol));
-	if (!newParamSym) {
-		err(1, "Failed to allocate memory for new parameter symbol!");
-		exit(1);
-	}
-
-	setSymbolName(newParamSym, id);
-	newParamSym->kind = PARAM_KIND;
-	allocateKindPtr(newParamSym);
+	newParamSym = createParamSymbol(id);
 	setInnerTypeSymbol(newParamSym, typeSym);
 
-	newParamSym->lvl = lvl;
 	return newParamSym;	
 }
 
