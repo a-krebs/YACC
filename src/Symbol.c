@@ -489,7 +489,8 @@ newConstProxySym(void * result, Symbol *typeSym)
 	constSym->name = NULL;
 	constSym->kind = CONST_KIND;
 	allocateKindPtr(constSym);
-	setTypeSym(constSym, typeSym);
+	setInnerTypeSymbol(constSym, typeSym);
+
 	
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:

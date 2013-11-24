@@ -279,29 +279,6 @@ areOpCompatible(Symbol *s1, Symbol *s2)
  */
 //////////////////////////////////////////////////////////////////////////
 
-/*
- * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
- * a pointer to the typeSym defining the type for the given Symbol s.
- * WARNING: assumes the kindPtr for the given symbol s has been allocated.
- */
-void
-setTypeSym(Symbol *s, Symbol *typeSym)
-{
-	switch (s->kind) {
-	case CONST_KIND:
-		s->kindPtr.ConstKind->typeSym = typeSym;
-		break;
-	case FUNC_KIND:
-		s->kindPtr.FuncKind->typeSym = typeSym;
-		break;
-	case VAR_KIND:
-		s->kindPtr.VarKind->typeSym = typeSym;
-		break;
-	default:
-		/* Should not be reached */
-		break;
-	}
-}
 
 /*
  * Set type pointer new to point to type old of type passed as arg.
@@ -582,4 +559,31 @@ Symbol *getInnerTypeSymbol(Symbol *symbol) {
 	}
 }
 
+
+
+/* Formally setTypeSym(Symbol *s, Symbol *typeSym)
+
+
+ * Appropriately sets the typeSym field for Symbols of kind != TYPE_KIND given
+ * a pointer to the typeSym defining the type for the given Symbol s.
+ * WARNING: assumes the kindPtr for the given symbol s has been allocated.
+ */
+void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
+	switch (s->kind) {
+		case CONST_KIND:
+			s->kindPtr.ConstKind->typeSym = typeSym;
+			break;
+		case PARAM_KIND:
+			s->kindPtr.ParamKind->typeSym = typeSym;
+			break;		
+		case FUNC_KIND:		
+			s->kindPtr.FuncKind->typeSym = typeSym;
+			break;
+		case VAR_KIND:
+			s->kindPtr.VarKind->typeSym = typeSym;
+			break;
+		default:
+			err(1, "Could not determine inner type of symbol");
+	}
+}
 
