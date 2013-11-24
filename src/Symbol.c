@@ -103,7 +103,8 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 	}
 
 	/* create with no name and set as type originator */
-	newArraySym = createArrayTypeSymbol(NULL, 1, baseTypeSym, indexTypeSym);
+	newArraySym = createArrayTypeSymbol(
+	     NULL, TYPEORIGINATOR_YES, baseTypeSym, indexTypeSym);
 	if (!newArraySym) {
 		err(EXIT_FAILURE, "Failed to allocate memory for new array!");
 	}
@@ -1312,7 +1313,7 @@ Symbol *createAndInsertSymbol(
  * Return: Newly created symbol
  */
 Symbol *createConstSymbol(char *id) {
-	return createSymbol(symbolTable, id, CONST_KIND, 0);
+	return createSymbol(symbolTable, id, CONST_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1324,7 +1325,7 @@ Symbol *createConstSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createFuncSymbol(char *id) {
-	return createSymbol(symbolTable, id, FUNC_KIND, 0);
+	return createSymbol(symbolTable, id, FUNC_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1336,7 +1337,7 @@ Symbol *createFuncSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createParamSymbol(char *id) {
-	return createSymbol(symbolTable, id, PARAM_KIND, 0);
+	return createSymbol(symbolTable, id, PARAM_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1348,7 +1349,7 @@ Symbol *createParamSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createProcSymbol(char *id) {
-	return createSymbol(symbolTable, id, PROC_KIND, 0);
+	return createSymbol(symbolTable, id, PROC_KIND, TYPEORIGINATOR_NO);
 }
 
 
@@ -1360,7 +1361,7 @@ Symbol *createProcSymbol(char *id) {
  * Return: Newly created symbol
  */
 Symbol *createVarSymbol(char *id) {
-	return createSymbol(symbolTable, id, VAR_KIND, 0);
+	return createSymbol(symbolTable, id, VAR_KIND, TYPEORIGINATOR_NO);
 }
 
 
