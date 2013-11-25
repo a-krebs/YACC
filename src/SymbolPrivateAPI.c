@@ -69,6 +69,9 @@ Symbol *createSymbol(
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
 
+	// TODO we should pass table through here
+	// but make sure that this works for records
+	// see issue #51
 	setSymbolSize(symbol);
 	setSymbolOffset(symbol);
 	
