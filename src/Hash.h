@@ -4,6 +4,8 @@
 
 /* Macros and const string variable declarations. */
 #define TABLE_SIZE 1000
+#define LEXICAL_LEVELS 1024	
+
 #if HASHDEBUG
 	#define HASH_DEBUG 1
 #else
@@ -12,20 +14,21 @@
 
 /* Global variables. */
 struct hashElement {
-    char *key;
-    struct Symbol *symbol;
-    struct hashElement *prev;
-    struct hashElement *next;
+	char *key;
+	struct Symbol *symbol;
+	struct hashElement *prev;
+	struct hashElement *next;
 };
 
 struct hash {
-    struct hashElement *elements[TABLE_SIZE];
-    unsigned int (*hashFunction)();
-    int lexLevel;
+	struct hashElement *elements[TABLE_SIZE];
+	int offset[LEXICAL_LEVELS];
+	unsigned int (*hashFunction)();
+	int lexLevel;
+
 };
 
 /* Non-C99 compliant function prototypes. */
-
 
 /* Function declarations. */
 unsigned int getHashedKeySimple(char *string);
@@ -62,6 +65,15 @@ int popLexLevel(struct hash *hash);
 int incrementLexLevel(struct hash *hash);
 int decrementLexLevel(struct hash *hash);
 
+/* 
+ * Functions implementing functionality regarding offset getting and
+ * incrementing.
+ */
+
+int getOffset(struct hash *hash);
+void addToOffset(struct hash *hash, int toAdd);
+void incrementOffset(struct hash *hash);
+void resetOffset(struct hash *hash);
 
 
 #endif
