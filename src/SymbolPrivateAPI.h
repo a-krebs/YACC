@@ -2,8 +2,15 @@
 #define SYMBOL_PRIVATE_h
 
 
-void
-setSymbolName(Symbol *s, char *id);
+/* Set the name of the passed symbol
+ *
+ * Parameters:
+ * 		s: symbol to be named
+ *		id: name of symbole
+ *
+ * Return: void
+ */
+void setSymbolName(Symbol *s, char *id) 
 
 
 /* Creates a new symbol. Auto-determines all substructures

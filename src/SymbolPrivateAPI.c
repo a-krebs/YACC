@@ -12,17 +12,18 @@
 #include "SymbolAll.h"
 
 
-/*For error reporting*/
-// extern int yylineno;
-// extern int colno;
-// static char *errMsg;
-// struct Error *e;
 
-
-void
-setSymbolName(Symbol *s, char *id)
-{
+/* Set the name of the passed symbol
+ *
+ * Parameters:
+ * 		s: symbol to be named
+ *		id: name of symbole
+ *
+ * Return: void
+ */
+void setSymbolName(Symbol *s, char *id) {
 	size_t len;
+	
 	if (id == NULL) {
 		s->name = NULL;
 		return;
@@ -34,6 +35,7 @@ setSymbolName(Symbol *s, char *id)
 		err(1, "Failed to allocate memory for symbol name!");
 		exit(EXIT_FAILURE);
 	}
+	
 	strcpy(s->name, id);
 }
 
