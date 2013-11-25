@@ -68,6 +68,9 @@ Symbol *createSymbol(
 
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
+
+	setSymbolSize(symbol);
+	setSymbolOffset(symbol);
 	
 	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
@@ -105,8 +108,9 @@ Symbol *allocateSymbol() {
  */
 void setSymbolSize(Symbol *s)
 {
+	if (!s) return;
+	if (!getTypeSym(s)) return;
 	switch (s->kind) {
-
 	case CONST_KIND:
 	case VAR_KIND:
 		s->size = getTypeSym(s)->size;
@@ -134,6 +138,7 @@ void setSymbolSize(Symbol *s)
  */
 void setSymbolOffset(Symbol *s)
 {
+	if (!s) return;
 	s->offset = getOffset(symbolTable);
 	addToOffset(symbolTable, s->size);
 }
