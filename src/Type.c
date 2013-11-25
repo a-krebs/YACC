@@ -699,6 +699,19 @@ int calculateScalarSize(Symbol *s)
 }
 
 /*
+ * Increments the size of the given symbol of kind TYPE_KIND whose typePtr
+ * is of type SCALAR_T.
+ * Parameters:
+ * 		s : the symbol, which is a scalar type symbol, whose size
+ *		    is to be incremented
+ */
+void incrementScalarSymbolSize(Symbol *s)
+{
+	if (!s) return;
+	s->size++;
+}
+
+/*
  * Calculates the size of the given symbol defining a subrange type (in ASC
  * memory units)
  * Parameters
