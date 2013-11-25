@@ -61,36 +61,40 @@ int typeIsInValidArgs(Symbol *s, type_t type) {
  * Given a linked list of ProxySymbols, returns the type which results
  * from using the linked list of ProxySymbols to access the array given
  * by var.
+ *
+ * Parameters:
+ * 	var: symbol for array variable to be indexed into
+ * 	indices: linked-list of array indices to use to index into var
+ * 
+ * Return:
+ * 	A Symbol of kind TYPE_KIND that is the expected resultant type of the
+ * 		array indexing.
+ * 	NULL on error
+ *
  * TODO: if index is const not part of scalar, see if its value falls in the
  * allowable range.
  *
  */
-Symbol *
-isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
-{
+Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 	Symbol *arrayTypeSym = NULL;
 	Symbol *indexTypeSym = NULL;
 	Symbol *arg = indices;
 	int typeErr = 0;
 
-	if (!var) {
-		return NULL;
+	if ((var == NULL)||(indices == NULL)) {
+		err(EXIT_FAILURE, "Tried to do array access with NULL args.");
 	}
+
 	arrayTypeSym = getTypeSym(var);
 
 	if (getType(arrayTypeSym) != ARRAY_T) {
-		return arrayTypeSym;
+		errMsg = customErrorString("Tried to index into %s, which is "
+		    "of type %s, and not an array type.",
+		    arg->name,
+		    typeToString(getType(arrayTypeSym)));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
 	}
-//	arrayDim = getArrayDim(arrayTypeSym);
-//	nArgs = getSymbolListLength(indices);
-
-//	if (arrayDim != nArgs) {
-//		errMsg = customErrorString("Trying to access array %s of "
-//		    "dimension %d with %d index/indices.", var->name,
-//		    arrayDim, nArgs);
-//		recordError(errMsg, yylineno, colno, SEMANTIC);
-//		return NULL;
-//	}
 
 	indexTypeSym = getArrayIndexSym(arrayTypeSym);
 	while ( (arg) && (getType(arrayTypeSym) == ARRAY_T)) {
@@ -111,11 +115,12 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 		}
 		if (typeErr) {
 			errMsg = customErrorString("Invalid array "
-			    "subscript.  Expected type %d "
-			    "%d but got %s",
+			    "subscript.  Expected type %s "
+			    "but got %s",
 		    	    typeToString(getType(indexTypeSym)),
 		    	    typeToString(getType(arg)));
 			recordError(errMsg, yylineno, colno, SEMANTIC);
+			return NULL;
 		}
 		typeErr = 0;
 		arrayTypeSym = getArrayBaseSym(arrayTypeSym);
@@ -130,7 +135,7 @@ isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices)
 		 * Return arrayTypeSym */
 		recordError("Illegal array access -- too many indices.",
 		    yylineno, colno, SEMANTIC);
-		return arrayTypeSym;
+		return NULL;
 	} 
 	return arrayTypeSym;
 }

@@ -11,7 +11,7 @@
 #include "ElementArray.h"
 #include "testSymbol.h"
 #include "Type.h"
-#include "Symbol.h"
+#include "SymbolAll.h"
 #include "Hash.h"
 #include "Globals.h"
 
@@ -210,7 +210,7 @@ test_newConstProxySym()
 	double doubleResult = 123.321;
 
 	typeSym->kindPtr.TypeKind->type = BOOLEAN_T;
-	constProxySym = newConstProxySym(&(intResult), typeSym);
+	constProxySym = newConstProxySym(NULL, &(intResult), typeSym);
 
 	mu_assert("newConstProxySym() should not return NULL ProxySymbol"
 	    " when given valid input", constProxySym);
@@ -223,7 +223,7 @@ test_newConstProxySym()
 	
 
 	typeSym->kindPtr.TypeKind->type = REAL_T;
-	constProxySym = newConstProxySym(&(doubleResult), typeSym);
+	constProxySym = newConstProxySym(NULL, &(doubleResult), typeSym);
 
 	mu_assert("newConstProxySym() should not return NULL ProxySymbol"
 	    " when given valid input", constProxySym);
@@ -235,7 +235,7 @@ test_newConstProxySym()
 	    (getTypeSym(constProxySym) == typeSym));
 
 	typeSym->kindPtr.TypeKind->type = INTEGER_T;
-	constProxySym = newConstProxySym(&(intResult), typeSym);
+	constProxySym = newConstProxySym(NULL, &(intResult), typeSym);
 
 	mu_assert("newConstProxySym() should not return NULL ProxySymbol"
 	    " when given valid input", constProxySym);
@@ -404,7 +404,7 @@ test_newAnonScalarSym()
 	growElementArray(ea);
 	appendElement(ea, c);
 
-	ss = newAnonScalarSym(ea);
+	ss = newAnonScalarListTypeSym(ea);
 	mu_assert("newAnonScalar is not NULL when given valid inputs", ss);
 	mu_assert("newAnonScalar should have lvl as epxected", ss->lvl == 10);
 	mu_assert("newAnonScalar should have expected symbol in its element "
@@ -435,7 +435,7 @@ test_isConstInScalar()
 
 	setLexLevel(symbolTable, lvl);
 
-	ss = newAnonScalarSym(ea);
+	ss = newAnonScalarListTypeSym(ea);
 	mu_assert("isConstInScalar() should recognize c1 appears in scalar",
 	    isConstInScalar(c1, ss));
 	c3->lvl = 102;
@@ -463,13 +463,19 @@ test_isValidArrayAccess()
 	Symbol *subrangeSym = newSubrangeSym(lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	Symbol *var = NULL;
+
 	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
-	var = newVariableSym("hello", newArraySym);	
+	var = newVariableSym("hello", newArraySym);
+
 	ProxySymbol *index1 = (ProxySymbol *) lowConst;
+
 	index1->kindPtr.ConstKind->typeSym =
 	    lowConst->kindPtr.ConstKind->typeSym;
+
 	mu_assert("isValidArrayAccess() should recognize valid array access",
 	    isValidArrayAccess(newArraySym, lowConst)); 
+	mu_assert("isValidArrayAccess() should recognize invalid array access",
+	    isValidArrayAccess(newArraySym, var) == NULL); 
 
 	destroyHash(symbolTable);
 	free(symbolTable);
