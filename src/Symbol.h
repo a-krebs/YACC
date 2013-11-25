@@ -152,7 +152,7 @@ Symbol *newAnonScalarListTypeSym(struct ElementArray *ea);
 
 
 Symbol *
-newStringTypeSym(int lexLevel, int strlen);
+newStringTypeSym(int strlen);
 
 
 /*

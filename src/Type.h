@@ -56,4 +56,11 @@ void typeMemoryFailure();
 struct TypeKind *getKindPtrForTypeKind(Symbol *);
 
 Symbol *getInnerTypeSymbol(Symbol *symbol);
+
+
+struct String *allocateString();
+void setStringStr(struct String *string, char *str);
+struct String *newString(char *str, unsigned int strlen);
+
+
 #endif

@@ -65,7 +65,7 @@ Symbol *proxyStringLiteral(struct String s) {
 	ProxySymbol *proxy;
 	int lvl = getCurrentLexLevel(symbolTable);
 	proxy= newStringProxySym(lvl, (s.str+1), s.strlen);
-	typeSym = newStringTypeSym(getCurrentLexLevel(symbolTable), s.strlen);
+	typeSym = newStringTypeSym(s.strlen);
 	createHashElement(symbolTable, NULL, typeSym);
 	setInnerTypeSymbol(proxy, typeSym);
 	return proxy;
