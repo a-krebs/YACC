@@ -11,7 +11,7 @@
 
 #include "testActions.h"
 #include "testSymbol.h"	/* for setUpTypeSymbol() */
-#include "Actions.h"
+#include "ActionsAll.h"
 
 char *test_assertOpCompat() {
 	Symbol *type1 = setUpTypeSymbol();

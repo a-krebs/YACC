@@ -39,7 +39,6 @@ test_growElementArray(){
 	
 	
 	struct ElementArray *ea = newElementArray();
-	unsigned int len;
 		
 	growElementArray(ea);
 	
@@ -48,7 +47,6 @@ test_growElementArray(){
 	mu_assert("growElementArray(): should not change nElements\
 		  in the array", ea->nElements == 0);
 		  
-	len = ea->len;
 	growElementArray(ea);
 	mu_assert("growParamArray(): should be 4*EA_DEFAULT_SZ", ea->len == 4*EA_DEFAULT_SZ);
 	return NULL;

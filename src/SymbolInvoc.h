@@ -27,4 +27,16 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType);
 Symbol *paramToVar(Symbol * param);
 
 
+/* Checks each memeber of the passed ElementArray to see if each
+ * memeber is of simple type.
+ *
+ * Parameters:
+ *              elementArray: elementArray passed
+ *
+ * Return: Boolean: 1 if elemetn array is simple
+ *		    0 if not
+ */
+int isElementArraySimple(struct ElementArray *elementArray);
+
+
 #endif
