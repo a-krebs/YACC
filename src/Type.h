@@ -64,7 +64,5 @@ int calculateScalarSize(Symbol *);
 
 int calculateSubrangeSize(Symbol *);
 
-int incrementScalarSymbolSize(Symbol *);
-
 Symbol *getInnerTypeSymbol(Symbol *symbol);
 #endif

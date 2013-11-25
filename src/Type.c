@@ -690,26 +690,10 @@ int calculateArraySize(Symbol *s)
  */
 int calculateScalarSize(Symbol *s)
 {
-	/* TODO: actual functionality dependent on how we create scalar list
-	 * in the grammar -- if we add scalar list components one at a time
-	 * then we have to increment the size of the scalar symbol every time
-	 * a new constant is added to the list (and thus this function returns
-	 * 1), else we can calculate the size of the scalar list right here */
-	return 1;
+	struct Scalar *scalar = getTypePtr(s)->Scalar;
+	return (scalar->consts->nElements); 
 }
 
-/*
- * Increments the size of the given symbol of kind TYPE_KIND whose typePtr
- * is of type SCALAR_T.
- * Parameters:
- * 		s : the symbol, which is a scalar type symbol, whose size
- *		    is to be incremented
- */
-void incrementScalarSymbolSize(Symbol *s)
-{
-	if (!s) return;
-	s->size++;
-}
 
 /*
  * Calculates the size of the given symbol defining a subrange type (in ASC
