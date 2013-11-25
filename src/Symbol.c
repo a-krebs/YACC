@@ -404,9 +404,10 @@ Symbol *newAnonScalarListTypeSym(struct ElementArray *ea) {
 	return newAnonScalarList;
 }
 
-
-Symbol *
-newStringTypeSym(int lexLevel, int strlen) {
+/*
+ * Create a new string type symbol using the given length
+ */
+Symbol *newStringTypeSym(int lexLevel, int strlen) {
 	Symbol *newStringSym = newStringSym = calloc(1, sizeof (Symbol));
 
 	newStringSym = calloc(1, sizeof (ProxySymbol));
