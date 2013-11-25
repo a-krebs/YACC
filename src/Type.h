@@ -65,4 +65,11 @@ int calculateScalarSize(Symbol *);
 int calculateSubrangeSize(Symbol *);
 
 Symbol *getInnerTypeSymbol(Symbol *symbol);
+
+
+struct String *allocateString();
+void setStringStr(struct String *string, char *str);
+struct String *newString(char *str, unsigned int strlen);
+
+
 #endif

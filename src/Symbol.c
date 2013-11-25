@@ -404,22 +404,26 @@ Symbol *newAnonScalarListTypeSym(struct ElementArray *ea) {
 	return newAnonScalarList;
 }
 
-/*
- * Create a new string type symbol using the given length
+/* 
+ * Create a new symbol for String Type Symbol using the given length
+ *
+ * Parameters:
+ * 	strlen: length of string 
+ *
+ * Return:
+ * 	a symbol to the new type.
  */
-Symbol *newStringTypeSym(int lexLevel, int strlen) {
-	Symbol *newStringSym = newStringSym = calloc(1, sizeof (Symbol));
+Symbol *newStringTypeSym(int strlen) {
+	Symbol *newStringSym = createTypeSymbol(NULL, TYPEORIGINATOR_YES);
+	
+	/* get kindPtr */
+	struct TypeKind *kindPtr = getKindPtrForTypeKind(newStringSym);
 
-	newStringSym = calloc(1, sizeof (ProxySymbol));
-	newStringSym->kind = TYPE_KIND;
-	allocateKindPtr(newStringSym);
-	newStringSym->name = NULL;
-	newStringSym->lvl = lexLevel;
-	newStringSym->kindPtr.TypeKind->type = STRING_T;
-	newStringSym->kindPtr.TypeKind->typePtr.String = calloc(1, sizeof(struct String));
-	getTypePtr(newStringSym)->String->strlen = strlen;
+	kindPtr->type = STRING_T;
+	kindPtr->typePtr.String = newString(NULL, strlen);
+	// TODO may need to change this off null in future
+	
 	return newStringSym;
-
 }
 
 
