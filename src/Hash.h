@@ -69,7 +69,9 @@ int decrementLexLevel(struct hash *hash);
  * Functions implementing functionality regarding offset getting and
  * incrementing.
  */
+
 int getOffset(struct hash *hash);
+void addToOffset(struct hash *hash, int toAdd);
 void incrementOffset(struct hash *hash);
 void resetOffset(struct hash *hash);
 

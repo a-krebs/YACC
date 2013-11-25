@@ -148,8 +148,7 @@ void freeProxySymbol(ProxySymbol *p) {
 Symbol *
 getTypeSym(Symbol *s) 
 {
-	if (!s) return NULL;
-
+	if (!s) return NULL; 
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym;

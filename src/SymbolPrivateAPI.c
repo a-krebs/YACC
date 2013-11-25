@@ -95,3 +95,45 @@ Symbol *allocateSymbol() {
 	return symbol;
 }
 
+
+/*
+ * Sets the size (i.e., the number of ASC memory units occupied by) the given
+ * symbol.  In appropriate cases, it calculates the size of the given symbol
+ * and then correctly sets the value.
+ * Parameters:
+ *		s: the symbol whose size is to be set
+ */
+void setSymbolSize(Symbol *s)
+{
+	switch (s->kind) {
+
+	case CONST_KIND:
+	case VAR_KIND:
+		s->size = getTypeSym(s)->size;
+		break;
+	case PROC_KIND:
+	case FUNC_KIND:
+		/* Procs and Func symbols have no size */
+		s->size = -1;
+		break;
+	case TYPE_KIND:
+		/* Calculate size based on type */
+		break;
+	default:
+		/* NOT REACHED */
+		break;  
+	}
+}
+
+
+/*
+ * Sets the given Symbol's offset appropriate and increments the offset
+ * value in the symbol table for the current lexical level.
+ * Parameter:
+ * 		s: the symbol whose offset value is to be set
+ */
+void setSymbolOffset(Symbol *s)
+{
+	s->offset = getOffset(symbolTable);
+	addToOffset(symbolTable, s->size);
+}

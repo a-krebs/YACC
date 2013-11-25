@@ -38,5 +38,21 @@ Symbol *createSymbol(
  */
 Symbol *allocateSymbol();    
 
+/*
+ * Sets the size (i.e., the number of ASC memory units occupied by) the given
+ * symbol.  In appropriate cases, it calculates the size of the given symbol
+ * and then correctly sets the value.
+ * Parameters:
+ *		s: the symbol whose size is to be set
+ */
+void setSymbolSize(Symbol *);
+
+/*
+ * Sets the given Symbol's offset appropriate and increments the offset
+ * value in the symbol table for the current lexical level.
+ * Parameter:
+ * 		s: the symbol whose offset value is to be set
+ */
+void setSymbolOffset(Symbol *);
 
 #endif

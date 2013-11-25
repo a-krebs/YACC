@@ -201,6 +201,10 @@ struct Symbol {
 	Kind kindPtr;	/* kind specific description of symbol */
 	int lvl;	/* the lexical level at which the entry is defined */
 	int typeOriginator; /* set if the symbol is the originator of its kindPtr*/
+	int offset;	/* the offset (i.e., position in the stack offset from
+			 * display register) at which the variable appears */
+	int size;	/* the ASC memory units this symbol occupies in the
+			 * stack */
 	struct Symbol *next;	
 };
 
