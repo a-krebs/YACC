@@ -469,14 +469,14 @@ struct hashElement *findHashElementByKey(struct hash *hash, char *key) {
  *
  */
 struct hashElement *allocHashElement(char *key, struct Symbol *symbolPtr) {    
-        struct hashElement *element = malloc(sizeof(struct hashElement));
+        struct hashElement *element = calloc(1, sizeof(struct hashElement));
 
         if (element == NULL ) {
                 err(1, "Error: Could not create hash element. alloc returned NULL.");
                 exit(EXIT_FAILURE);
         }
 
-        element->key = malloc(strlen(key) + 1);
+        element->key = calloc(1, strlen(key) + 1);
         strcpy(element->key, key);
 
         element->symbol = symbolPtr;
@@ -577,7 +577,7 @@ char *createNameForAnonType(struct Symbol *symbol) {
         tim = tv.tv_sec + ( tv.tv_usec / 1000000.0 );
 
         size = snprintf(NULL, 0, "%f", tim);
-        name = malloc(size + 1);
+        name = calloc(1, size + 1);
         sprintf(name, "%f", tim);
 
         symbol->name = name;
@@ -653,7 +653,7 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
  * Return: createHash: created hash struct
  */
 struct hash *createHash(unsigned int (*hashFunction)(char *)) {
-        struct hash *hash = malloc(sizeof(struct hash));
+        struct hash *hash = calloc(1, sizeof(struct hash));
         hash->hashFunction = hashFunction;
         hash->lexLevel = 0;             //default value
 
@@ -813,7 +813,7 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         //only item in list
         if ( isOnlySymbolInList(element, symbol) ) {
                 retval = deleteHashElement(hash, key);
-                return retval;
+		return retval;
         }
 
         //at head of list
@@ -845,8 +845,10 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         struct Symbol *symbol;
         int lexLevel = getCurrentLexLevel(hash);
 
-        if (lexLevel == 0) {
-                if (HASH_DEBUG) { printf("Cannot pop lexical levels when already at level 0.\n");}
+        if (lexLevel == 0 ) {
+#if HASH_DEBUG
+                printf("Cannot pop lexical levels when already at level 0.\n");
+#endif
                 return 1;
         }
 
@@ -857,9 +859,18 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
                         symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
 
                         if (symbol != NULL) {
-                                if (deleteSymbolAtLexLevel(hash, element->key, lexLevel) != 0) {
+                                if (deleteSymbolAtLexLevel(
+				    hash, element->key, lexLevel) != 0) {
                                         return 1;
                                 }
+				if (hash->elements[i] == NULL) {
+					/* 
+					 * if there was only one element in
+					 * the list, element->next is now
+					 * and invalid read
+					 */
+					break;
+				}
                         }
                 }
         }
