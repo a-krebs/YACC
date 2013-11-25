@@ -10,7 +10,7 @@
  *
  * Return: void
  */
-void setSymbolName(Symbol *s, char *id) 
+void setSymbolName(Symbol *s, char *id);
 
 
 /* Creates a new symbol. Auto-determines all substructures
