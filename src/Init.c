@@ -25,8 +25,7 @@ int initialize() {
 }
 
 int deInitialize() {
-	destroyHash(symbolTable);
-	free(symbolTable);
+	destroyHash(&symbolTable);
 
 	return 0;
 }

@@ -41,7 +41,7 @@ int isKeysIdentical(struct hashElement *element, char *key);
 int isKeyCollison(struct hash *hash, char *key);
 void freeHashElement(struct hashElement *element);
 void deleteHashBucket(struct hashElement *current);
-void destroyHash(struct hash *hash);
+void destroyHash(struct hash **hashPtr);
 int deleteHashElement(struct hash *hash, char *key);
 struct hashElement *findHashElementByKey(struct hash *hash, char *key);
 // struct hashElement *allocHashElement(char *key, int value);

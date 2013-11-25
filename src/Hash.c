@@ -348,19 +348,23 @@ void deleteHashBucket(struct hashElement *current) {
 }
 
 
-/* Destroys the symbol table for program end. Frees and alloced memory.
+/* Destroys the symbol table for program end. Frees all allocated memory.
+ * Zeros out the hash pointer (which is why the argument is a double pointer).
  *
  * Parameters: void
  *
  * Return: void
  */
-void destroyHash(struct hash *hash) {
+void destroyHash(struct hash **hashPtr) {
+	struct hash *hash = *hashPtr;
         for (int i = 0; i < TABLE_SIZE; ++i) {
                 if ( hash->elements[i] != NULL ) {     
                         deleteHashBucket(hash->elements[i]);
                         hash->elements[i] = NULL;     
                 }
         }
+	free(hash);
+	*hashPtr = NULL;
 }
 
 
