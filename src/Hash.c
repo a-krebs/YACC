@@ -67,7 +67,8 @@ int incrementLexLevel(struct hash *hash) {
         }
 
         hash->lexLevel = hash->lexLevel + 1;
-        return 0;        
+	//resetOffset(hash);
+	return 0;        
 }
 
 
@@ -862,4 +863,49 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         decrementLexLevel(hash);
 
         return 0;
+}
+
+/*
+ * Increments the offset value for the given hash table by the given integer
+ * at the current lexical level.
+ * NOTE: do not call with toAdd == 1, instead call incrementOffset().
+ * Parameters:
+ * 		hash: the hash table whose offset is to be changed
+ *		toAdd: the integer value by which to increment offset
+ */
+void addToOffset(struct hash *hash, int toAdd)
+{
+	hash->offset[getCurrentLexLevel(hash)] += toAdd;
+}
+/* 
+ * Increments the the offset value for the given hash table by 1 at the current
+ * lexical level.
+ * Parameters:
+ * 		hash: the has table whose offset is to be incremented
+ */
+void incrementOffset(struct hash *hash)
+{
+	hash->offset[getCurrentLexLevel(hash)]++;
+}
+
+/*
+ * Returns the value of the offset for the given hash table at the current
+ * lexical level.
+ * Parameters:
+ * 		hash: the table whose offset value is to be retrieved 
+ */
+int getOffset(struct hash *hash)
+{
+	return hash->offset[getCurrentLexLevel(hash)];
+}
+
+/*
+ * Resets the offset value for the given hash table when a new lexical level
+ * is pushed.
+ * Parameters:
+ * 		hash: the hash table whose offset value is to be reset
+ */
+void resetOffset(struct hash *hash)
+{
+	hash->offset[getCurrentLexLevel(hash)] = 0;	
 }
