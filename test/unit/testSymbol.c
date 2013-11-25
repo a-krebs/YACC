@@ -463,15 +463,19 @@ test_isValidArrayAccess()
 	Symbol *subrangeSym = newSubrangeSym(lowConst, highConst);
 	Symbol *baseTypeSym = setUpTypeSymbol();
 	Symbol *var = NULL;
+
 	newArraySym = newAnonArraySym(baseTypeSym, subrangeSym);
-	var = newVariableSym("hello", newArraySym);	
+	var = newVariableSym("hello", newArraySym);
+
 	ProxySymbol *index1 = (ProxySymbol *) lowConst;
+
 	index1->kindPtr.ConstKind->typeSym =
 	    lowConst->kindPtr.ConstKind->typeSym;
+
 	mu_assert("isValidArrayAccess() should recognize valid array access",
 	    isValidArrayAccess(newArraySym, lowConst)); 
-	mu_assert("isValidArrayAccess() should recognize valid array access",
-	    !isValidArrayAccess(newArraySym, var)); 
+	mu_assert("isValidArrayAccess() should recognize invalid array access",
+	    isValidArrayAccess(newArraySym, var) == NULL); 
 
 	destroyHash(symbolTable);
 	free(symbolTable);
