@@ -70,38 +70,16 @@ setUpTypeSymbolForSimple(char *name, type_t type, int lexLevel)
 Symbol *
 setUpTypeSymbol()
 {
-	char id[] = "testType";
-	Symbol *typeSym = calloc(1, sizeof(Symbol));
-	size_t len = strlen(id);
-	if (!typeSym) {
-		err(1, "Failed to allocate memory for test type symbol!");
-		exit(1);
-	}
+	Symbol *typeSym = NULL;
 
-	typeSym->name = calloc(1, (sizeof(char))*len);
-	if (!typeSym->name) {
-		err(1, "Failed to allocate memory for test type symbol name!");
-		exit(1);
-	}
-	strcpy(typeSym->name, id);
-	typeSym->kind = TYPE_KIND;
-	
-	allocateKindPtr(typeSym);
+	typeSym = createTypeSymbol("testType", TYPEORIGINATOR_NO);
 	typeSym->kindPtr.TypeKind->typePtr.Integer =
 	     calloc(1, sizeof(struct Integer));
-	if (!typeSym->kindPtr.TypeKind->typePtr.Integer) {
-		err(1, 
-		    "Failed to allocate memory for test type symbol typeptr!");
-		exit(1);
-	}
-	
+
 	typeSym->kindPtr.TypeKind->type = INTEGER_T;
 	typeSym->kindPtr.TypeKind->typePtr.Integer->value = INTLOW_VAL;
 	return typeSym; 	
 }
-
-
-
 
 Symbol *
 setUpIntConst()
@@ -127,18 +105,12 @@ setUpConstSymbol()
 {
 	char id[] = "testType";
 	Symbol *constSym = calloc(1, sizeof(Symbol));
-	size_t len = strlen(id);
 	if (!constSym) {
 		err(1, "Failed to allocate memory for test type symbol!");
 		exit(1);
 	}
 
-	constSym->name = calloc(1, (sizeof(char))*len);
-	if (!constSym->name) {
-		err(1, "Failed to allocate memory for test type symbol name!");
-		exit(1);
-	}
-	strcpy(constSym->name, id);
+	setSymbolName(constSym, id);
 	constSym->kind = CONST_KIND;
 	
 	allocateKindPtr(constSym);
@@ -152,7 +124,6 @@ setUpConstSymbol()
 char *
 test_newAnonArraySym()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *newArraySym = NULL;
 	Symbol *lowConst = setUpIntConst();
 	Symbol *highConst = setUpIntConst();
@@ -168,17 +139,12 @@ test_newAnonArraySym()
 	mu_assert("newArraySym should be at the expected lexical level",
 	    newArraySym->lvl == 0);
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;	
-
 	return NULL;
 }
 
 char *
 test_newParamSym()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *s = NULL;
 	Symbol *typeSym = setUpTypeSymbol();
 	char id[] = "testParam";
@@ -192,10 +158,6 @@ test_newParamSym()
 	mu_assert("newParamSym should have the name as expected",
 	    strcmp(id, s->name) == 0);
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
 	return NULL;
 
 }
@@ -203,7 +165,6 @@ test_newParamSym()
 char *
 test_newConstProxySym()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	ProxySymbol *constProxySym = NULL;
 	Symbol *typeSym = setUpTypeSymbol();
 	int intResult = 123;
@@ -246,17 +207,12 @@ test_newConstProxySym()
 	    (getConstVal(constProxySym)->Integer.value == intResult) &&
 	    (getTypeSym(constProxySym) == typeSym));
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
 	return NULL;
 }
 
 char *
 test_newConstSymFromProxy()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	ProxySymbol *proxySym = (ProxySymbol *) setUpConstSymbol();
 	Symbol *newConstSym = NULL;
 	char id[] = "testSymbol";
@@ -272,11 +228,7 @@ test_newConstSymFromProxy()
 	mu_assert("newConstSymFromProxy() should have copy of value it got"
 	    " from proxysymbol evern after proxy is freed",
 	    getConstVal(newConstSym)->Real.value == REAL_VAL);
-
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
+	
 	return NULL;
 }
 
@@ -289,7 +241,6 @@ test_newTypeSymFromSym()
 	int lvl = 10; 
 	char id[] = "testArray";	
 
-	symbolTable = createHash(&getHashedKeyNormal);
 	setLexLevel(symbolTable, 10);
 
 	newTypeSym = newTypeSymFromSym(id, typeSym);
@@ -303,10 +254,6 @@ test_newTypeSymFromSym()
 	mu_assert("newTypeSym should NOT be a type originator",
 	    newTypeSym->typeOriginator == 0);
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
 	return NULL;
 }
 
@@ -314,7 +261,6 @@ test_newTypeSymFromSym()
 char *
 test_newVariableSym()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *typeSym = setUpTypeSymbol();
 	Symbol *newVar = NULL;
 	Symbol *varTypeSym = NULL;
@@ -345,17 +291,12 @@ test_newVariableSym()
 		  "the symbol expected",
 		(varTypeSym == typeSym));
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
 	return NULL;
 }
 
 char *
 test_newSubrangeSym() 
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 
 	Symbol *subrangeSym = NULL;
 	Symbol *testSymLow = setUpConstSymbol();
@@ -385,17 +326,12 @@ test_newSubrangeSym()
 	mu_assert("newSubrangeSym() should return null when symbol types \
 		   mistmatch.", !subrangeSym);
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
 	return NULL;
 }
 
 char *
 test_newAnonScalarSym()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	setLexLevel(symbolTable, 10);
 
 	Symbol *ss = NULL;
@@ -410,17 +346,12 @@ test_newAnonScalarSym()
 	mu_assert("newAnonScalar should have expected symbol in its element "
 	    "array", getElementAt(getTypePtr(ss)->Scalar->consts, 0) == c); 
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-	
 	return NULL;
 }
 
 char *
 test_isConstInScalar()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 
 	Symbol *ss = NULL;
 	Symbol *c1 = setUpIntConst();
@@ -446,17 +377,12 @@ test_isConstInScalar()
 	    "even though it appears in element array", 
 	    !isConstInScalar(ss, c1));
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-	
 	return NULL;
 }
 
 char *
 test_isValidArrayAccess()
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *newArraySym = NULL;
 	Symbol *lowConst = setUpIntConst();
 	Symbol *highConst = setUpIntConst();
@@ -477,10 +403,6 @@ test_isValidArrayAccess()
 	mu_assert("isValidArrayAccess() should recognize invalid array access",
 	    isValidArrayAccess(newArraySym, var) == NULL); 
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-
 	return NULL;
 }
 
@@ -488,7 +410,6 @@ test_isValidArrayAccess()
 char * 
 test_isElementArraySimple() 
 {
-	symbolTable = createHash(&getHashedKeyNormal);
 	struct Symbol *symbol = setUpIntConst();
 	struct Symbol *integer = setUpTypeSymbolForSimple("billy", INTEGER_T, 0);
 	struct Symbol *real = setUpTypeSymbolForSimple("bob", REAL_T, 0);
@@ -522,15 +443,10 @@ test_isElementArraySimple()
 	mu_assert("Unexpected valued returned from isElementArraySimple, test6.",
 		isElementArraySimple(elementArray) == 0 );
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-	
 	return NULL;
 }
 
 char *test_allocateSymbol() {
-	symbolTable = createHash(&getHashedKeyNormal);
 	Symbol *sym = NULL;
 
 	sym = allocateSymbol();
@@ -538,10 +454,6 @@ char *test_allocateSymbol() {
 	mu_assert("Symbol is NULL",
 	    sym != NULL);
 
-	destroyHash(symbolTable);
-	free(symbolTable);
-	symbolTable = NULL;
-	
 	return NULL;
 }
 
@@ -564,9 +476,7 @@ char *test_createConstSymbol() {
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
 
-	destroyHash(table);
-	free(table);
-	table = NULL;
+	destroyHash(&table);
 
 	return NULL;
 }
@@ -590,9 +500,7 @@ char *test_createFuncSymbol() {
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
 
-	destroyHash(table);
-	free(table);
-	table = NULL;
+	destroyHash(&table);
 
 	return NULL;
 }
@@ -617,9 +525,7 @@ char *test_createParamSymbol() {
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
 
-	destroyHash(table);
-	free(table);
-	table = NULL;
+	destroyHash(&table);
 
 	return NULL;
 }
@@ -643,9 +549,7 @@ char *test_createProcSymbol() {
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
 
-	destroyHash(table);
-	free(table);
-	table = NULL;
+	destroyHash(&table);
 
 	return NULL;
 }
@@ -669,9 +573,7 @@ char *test_createTypeSymbol() {
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
 
-	destroyHash(table);
-	free(table);
-	table = NULL;
+	destroyHash(&table);
 
 	return NULL;
 }
@@ -695,9 +597,7 @@ char *test_createVarSymbol() {
 	mu_assert("Symbol typeOriginator not set properly",
 	    symbol->typeOriginator == 0);
 
-	destroyHash(table);
-	free(table);
-	table = NULL;
+	destroyHash(&table);
 
 	return NULL;
 }

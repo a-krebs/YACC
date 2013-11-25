@@ -57,7 +57,7 @@ char *test_destroyHash() {
 			symbolTable->elements[i] == NULL);
 	}	
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
 	return NULL;
@@ -84,7 +84,7 @@ char *test_createHash() {
 	mu_assert("Expected initial lex level of 0",
 		symbolTable->lexLevel == 0);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
 //normal hash function	
@@ -107,7 +107,7 @@ char *test_createHash() {
 	mu_assert("Expected initial lex level of 0",
 		symbolTable->lexLevel == 0);	
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 	return NULL;
 }
@@ -129,7 +129,7 @@ char *test_getHashIndex() {
 	mu_assert("getHashIndex does not return expected value on key 'b'", 
 		index == 61);			
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 //normal hash function	
@@ -144,7 +144,7 @@ char *test_getHashIndex() {
 	mu_assert("getHashIndex does not return expected value on key 'b'", 
 		index == 660);			
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -167,7 +167,7 @@ char *test_isKeyCollison() {
 	mu_assert("Found key collision where one should not exist.", 
  		isKeyCollison(symbolTable, "green") == 0); 			
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -209,7 +209,7 @@ char *test_createHashElement() {
 	// createHashElement(symbolTable, "red", symbol) ;
 	// dumpHash(symbolTable);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 //normal hash function
@@ -222,7 +222,7 @@ char *test_createHashElement() {
 	mu_assert("Could not create element where bucket collison happened.", 
  		createHashElement(symbolTable, "boo", symbol) == 0);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -310,7 +310,7 @@ char *test_findHashElementByKey() {
 	mu_assert("Found element that should not be table.", 
  		findHashElementByKey(symbolTable, "green") == NULL);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 //normal hash function
@@ -325,7 +325,7 @@ char *test_findHashElementByKey() {
 	mu_assert("Found element that should not be table.", 
  		findHashElementByKey(symbolTable, "green") == NULL);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -354,7 +354,7 @@ char *test_isKeyInBucket() {
 	mu_assert("Could not find expected key 'blue' in bucket.", 
 		isKeyInBucket(symbolTable, "boo") == 1 );		
 	
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -379,7 +379,7 @@ char *test_getHashBucketHead() {
 	mu_assert("Returned bucket head is incorrect.", 
 		getHashBucketHead(symbolTable, "bobby") != findHashElementByKey(symbolTable, "bobby") );
 	
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -412,7 +412,7 @@ char *test_dumpHash() {
 	mu_assert("Hash dumper gives unexpected output on empty hash.", 
  		strcmp(expectedOutput, buffer) == 0);	
 	
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	hash = createHash(&getHashedKeySimple);
@@ -424,7 +424,7 @@ char *test_dumpHash() {
 
 	// dumpHash(hash);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -460,7 +460,7 @@ char *test_deleteHashElement_begining() {
 	mu_assert("Resulting bucket should have more than one element.", 
  		newHead->next != NULL);	
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -492,7 +492,7 @@ char *test_deleteHashElement_end() {
 	mu_assert("Did not delete end of list propertly.", 
  		newTail->prev != NULL);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -528,7 +528,7 @@ char *test_deleteHashElement_middle() {
 	mu_assert("Did not reset prev in list propertly", 
  		tail->prev == head);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -557,7 +557,7 @@ char *test_deleteHashElement_single() {
 	mu_assert("Single element not deleted.", 
  		hash->elements[index] == NULL);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 //normal hash function
@@ -581,7 +581,7 @@ char *test_deleteHashElement_single() {
 	mu_assert("Single element not deleted.", 
  		hash->elements[index] == NULL);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -610,7 +610,7 @@ char *test_getSizeOfBucket() {
 	mu_assert("Expected bucket size of 4.",
 		getSizeOfBucket(hash, "r") == 4);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 //normal hash	
@@ -634,7 +634,7 @@ char *test_getSizeOfBucket() {
 	mu_assert("Expected bucket size of 4.",
 		getSizeOfBucket(hash, "red") == 1);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 	return NULL;
 }
