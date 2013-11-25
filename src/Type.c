@@ -673,8 +673,9 @@ int calculateSymbolSize(Symbol *s)
  */
 int calculateArraySize(Symbol *s)
 {
-	
-	return 0;
+	struct Array *array = getTypePtr(s)->Array;
+	return ( (calculateSymbolSize(array->baseTypeSym)) *
+	    (calculateSymbolSize(array->indexTypeSym)) );		
 }
 
 /*
@@ -689,6 +690,11 @@ int calculateArraySize(Symbol *s)
  */
 int calculateScalarSize(Symbol *s)
 {
+	/* TODO: actual functionality dependent on how we create scalar list
+	 * in the grammar -- if we add scalar list components one at a time
+	 * then we have to increment the size of the scalar symbol every time
+	 * a new constant is added to the list (and thus this function returns
+	 * 1), else we can calculate the size of the scalar list right here */
 	return 1;
 }
 
