@@ -55,5 +55,12 @@ void typeMemoryFailure();
 
 struct TypeKind *getKindPtrForTypeKind(Symbol *);
 
+/* Type symbol size calculation functions */
+int calculateSymbolSize(Symbol *);
+int calculateArraySize(Symbol *);
+int calculateScalarSize(Symbol *);
+int calculateSubrangeSize(Symbol *);
+
+
 Symbol *getInnerTypeSymbol(Symbol *symbol);
 #endif

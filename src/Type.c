@@ -617,4 +617,93 @@ void setInnerTypeSymbol(Symbol *s, Symbol *typeSym) {
 	}
 }
 
+/*
+ * Calculate the size (in ASC memory units) of the given symbol of kind
+ * TYPE_KIND.
+ * Parameters
+ *		s: the symbol whose size is to be calculated
+ * Return
+ *		the size of the symbol as an integer
+ */
+int calculateSymbolSize(Symbol *s)
+{
+	if (!s) {
+		fprintf(stderr, "Cannot calculate size of null symbol!\n");
+		exit(EXIT_FAILURE);
+	}
+	if (s->kind != TYPE_KIND) {
+		fprintf(stderr, "Cannot calculate size of symbol which is not "
+		    "of kind TYPE_KIND.\n");
+		exit(EXIT_FAILURE);
+	}
 
+	switch (getKindPtrForTypeKind(s)->type) {
+	case ARRAY_T:
+		return calculateArraySize(s);
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:		/* basic pre-defined types have size == 1 */
+	case SCALARINT_T:	/* a scalar int is just an int */
+	case STRING_T:		/* string stored as pointer to heap */
+	case RECORD_T:		/* record stored as pointer to heap */
+		return 1;
+	case SCALAR_T:
+		return calculateScalarSize(s);
+	case SUBRANGE_T:
+		return calculateSubrangeSize(s);
+	case VOID_T:
+		return 0;
+	default:
+		/* NOT REACHED */
+		return 0;
+	}
+
+}
+
+/*
+ * Calculates the size of the given symbol defining an array type (in ASC
+ * memory units)
+ * Parameters
+ * 		s: the symbol, which if of kind TYPE_KIND and defines an 
+ *		    array type, whose size is to be calculated.
+ * Return:
+ *		the size of the array symbol in ASC memory units (as an
+ * 		    integer)
+ */
+int calculateArraySize(Symbol *s)
+{
+	
+	return 0;
+}
+
+/*
+ * Calculates the size of the given symbol defining a scalar list type (in ASC
+ * memory units)
+ * Parameters
+ * 		s: the symbol, which if of kind TYPE_KIND and defines a 
+ *		    scalar type, whose size is to be calculated.
+ * Return:
+ *		the size of the scalar list symbol in ASC memory units (as an
+ * 		    integer)
+ */
+int calculateScalarSize(Symbol *s)
+{
+	return 1;
+}
+
+/*
+ * Calculates the size of the given symbol defining a subrange type (in ASC
+ * memory units)
+ * Parameters
+ * 		s: the symbol, which if of kind TYPE_KIND and defines a 
+ *		    subrange type, whose size is to be calculated.
+ * Return:
+ *		the size of the subrange symbol in ASC memory units (as an
+ * 		    integer)
+ */
+int calculateSubrangeSize(Symbol *s)
+{
+	//TODO: implement
+	return 0;
+}
