@@ -30,12 +30,13 @@ static char *errMsg;
 /*
  * Invoke procedure with given name.
  *
- * The argument argv contains a list of arguments.
+ * The argument ea contains a list of arguments.
  */
 void procInvok(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	s = getGlobalSymbol(symbolTable, id);
 	if (!s) {
+		printf("this is the error\n");
 		notDefinedError(id);
 		return;
 	}

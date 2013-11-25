@@ -286,7 +286,7 @@ Symbol *newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh) {
 
 
 /*
- * Constructs a	named type symbol given a ptr to another type symbol.
+ * Constructs a non-anonymous type symbol given a ptr to another type symbol.
  * (so the new symbol will either be constructed from an anonymous type symbol
  * or be a copy of another named symbol)
  *

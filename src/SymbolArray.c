@@ -18,43 +18,7 @@ static char *errMsg;
 struct Error *e;
 
 
-int typeIsInValidArgs(Symbol *s, type_t type) {
-	char *name = NULL;
-	if (!s) return 0;
-	name = s->name;
 
-	if (
-	    (strcmp(name, "abs") == 0) ||
-	    (strcmp(name, "sqr") == 0) ||
-	    (strcmp(name, "sin") == 0) ||
-	    (strcmp(name, "cos") == 0) ||
-	    (strcmp(name, "exp") == 0) ||
-	    (strcmp(name, "ln") == 0) ||
-	    (strcmp(name, "sqrt") == 0) ||
-	    (strcmp(name, "arctan") == 0)
-	) {
-		if ((type == INTEGER_T) || (type == REAL_T)) {
-			return 1;
-		}
-	} else if (
-	    (strcmp(name, "trunc") == 0) ||
-	    (strcmp(name, "round") == 0)
-	){
-		if (type == REAL_T) return 1;
-	} else if (
-	    (strcmp(name, "chr") == 0) ||
-	    (strcmp(name, "odd") == 0)
-	){
-		if (type == INTEGER_T) return 1;
-	} else if (
-	    (strcmp(name, "ord") == 0) ||
-	    (strcmp(name, "succ") == 0) ||
-	    (strcmp(name, "pred") == 0)
-	){
-		if (isOrdinal(type)) return 1;
-	}
-	return 0;
-}
 
 
 /*

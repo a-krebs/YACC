@@ -106,26 +106,10 @@ struct Symbol *createPreDefProc(char *name) {
 }
 
 struct Symbol *createPreDefFunc(char *name) {
-	struct Symbol *symbol;
+	struct Symbol *symbol = createFuncSymbol(name);
 
-	symbol = calloc(1, sizeof(struct Symbol));
-	
-	if (symbol == NULL) {
-		err(1, "Failed to allocate memory for symbol name!");
-		exit(EXIT_FAILURE);
-	}
-
-	setSymbolName(symbol, name);
-	symbol->kind = FUNC_KIND;
-
-	allocateKindPtr(symbol);
 	symbol->kindPtr.FuncKind->params = NULL;
 	setInnerTypeSymbol(symbol, NULL); 
-
-
-	symbol->lvl = getCurrentLexLevel(symbolTable);
-	symbol->typeOriginator = 0;
-	symbol->next = NULL;
 
 	return symbol;
 }
