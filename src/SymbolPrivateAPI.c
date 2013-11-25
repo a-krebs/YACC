@@ -36,7 +36,7 @@ void setSymbolName(Symbol *s, char *id) {
 		exit(EXIT_FAILURE);
 	}
 	
-	strcpy(s->name, id);
+	strncpy(s->name, id, len - 1);
 }
 
 
