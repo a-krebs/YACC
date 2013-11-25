@@ -12,13 +12,6 @@
 #include "SymbolAll.h"
 
 
-/*For error reporting*/
-// extern int yylineno;
-// extern int colno;
-// static char *errMsg;
-// struct Error *e;
-
-
 /* Creates const kind symbol using scope of global symbol table.
  *
  * Parameters:
@@ -121,6 +114,32 @@ Symbol *createAndInsertSymbol(
 }
 
 
+/* Returns pointer to base type symbol of the subrange symbol
+ *
+ * Parameters:
+ * 		s: subrange symbol
+ *
+ * Return: a pointer to the type symbol
+ */
+Symbol * getSubrangeBaseTypeSym(Symbol *sr) {
+	if (!sr) return NULL;
+	if (getType(sr) != SUBRANGE_T) return NULL;
+	return getTypePtr(sr)->Subrange->baseTypeSym;
+}
+
+
+/* Frees passed proxy symbol
+ *
+ * Parameters:
+ * 		p: proxy symbol
+ *
+ * Return: void
+ */
+void freeProxySymbol(ProxySymbol *p) {
+	free(p);
+}
+
+
 /*
  * Returns a pointer to the Symbol of TYPE_KIND defining the type for the
  * given CONST_KIND, FUNC_KIND, PROC_KIND, or VAR_KIND symbol.  Returns
@@ -149,22 +168,4 @@ getTypeSym(Symbol *s)
 		/* NOT REACHED */
 		return NULL;
 	}
-}
-
-
-/*
- * Returns a pointer to the type symbol defining the base type for the given
- * subrange symbol.
- */
-Symbol *
-getSubrangeBaseTypeSym(Symbol *sr) {
-	if (!sr) return NULL;
-	if (getType(sr) != SUBRANGE_T) return NULL;
-	return getTypePtr(sr)->Subrange->baseTypeSym;
-
-}
-
-
-void freeProxySymbol(ProxySymbol *p) {
-	free(p);
 }

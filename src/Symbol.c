@@ -88,7 +88,7 @@ Symbol *createScalarListTypeSymbol(
 }
 
 
-/* Creates a varable symbol ands the inner type symbol. 
+/* Creates a varable symbol adds the inner type symbol. 
  *
  * Parameters:
  *              id: name of symbol
@@ -96,9 +96,7 @@ Symbol *createScalarListTypeSymbol(
  *
  * Return: Newly created symbol
  */
-Symbol *
-newVariableSym(char *id, Symbol* typeSym)
-{
+Symbol *newVariableSym(char *id, Symbol* typeSym) {
 	Symbol *newVar = NULL;	/* new symbol to be created */
 
 	/*
@@ -144,9 +142,7 @@ newVariableSym(char *id, Symbol* typeSym)
  *
  * Return: Newly created symbol
  */
-Symbol *
-newParamSym(char *id, Symbol *typeSym)
-{
+Symbol *newParamSym(char *id, Symbol *typeSym) {
 	Symbol *newParamSym = NULL;
 	if (!typeSym) {
 		return NULL;
@@ -167,13 +163,11 @@ newParamSym(char *id, Symbol *typeSym)
  *
  * Parameters:
  *              id: name of symbol
- *				ea: element of parameters to procdure
+ *		ea: element of parameters to procdure
  *
  * Return: Newly created symbol
  */
-Symbol *
-newProcSym(char *id, struct ElementArray *ea)
-{
+Symbol *newProcSym(char *id, struct ElementArray *ea) {
 	Symbol *s =  createProcSymbol(id);
 	s->kindPtr.ProcKind->params = ea;
 
@@ -189,8 +183,8 @@ newProcSym(char *id, struct ElementArray *ea)
  *
  * Return: Newly created symbol
  */
-Symbol *
-newFuncSym(int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
+Symbol *newFuncSym(
+    int lvl, char *id, Symbol *typeSym, struct ElementArray *ea)
 {
 	Symbol *s = createFuncSymbol(id); 
 
@@ -230,9 +224,7 @@ Symbol *newRecordTypeSym(char *id) {
  *
  * Return a pointer to the new subrange symbol.
  */
-Symbol *
-newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
-{
+Symbol *newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh) {
 	Symbol *newSubrangeSym = NULL;
 	
 	/*
@@ -307,8 +299,7 @@ newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh)
  * Returns: pointer to created symbol, or NULL on error
  *
  */
-Symbol *newTypeSymFromSym(char *id, Symbol *typeSym)
-{
+Symbol *newTypeSymFromSym(char *id, Symbol *typeSym) {
 	Symbol *newTypeSym = NULL;
 	if (!typeSym) {
 		/* action that gets type has already added an error message */
@@ -398,8 +389,7 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
  * Return:
  * 	a symbol to the new type.
  */
-Symbol *newAnonScalarListTypeSym(struct ElementArray *ea)
-{
+Symbol *newAnonScalarListTypeSym(struct ElementArray *ea) {
 	Symbol *newAnonScalarList = NULL;
 
 	if (ea == NULL) {
@@ -414,9 +404,10 @@ Symbol *newAnonScalarListTypeSym(struct ElementArray *ea)
 	return newAnonScalarList;
 }
 
-
-Symbol *
-newStringTypeSym(int lexLevel, int strlen) {
+/*
+ * Create a new string type symbol using the given length
+ */
+Symbol *newStringTypeSym(int lexLevel, int strlen) {
 	Symbol *newStringSym = newStringSym = calloc(1, sizeof (Symbol));
 
 	newStringSym = calloc(1, sizeof (ProxySymbol));
