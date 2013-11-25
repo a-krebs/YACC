@@ -2,9 +2,6 @@
 #define SYMBOL_ARRAY_H
 
 
-int typeIsInValidArgs(Symbol *s, type_t type);
-
-
 /*
  * Given a linked list of ProxySymbols, returns the type which results
  * from using the linked list of ProxySymbols to access the array given

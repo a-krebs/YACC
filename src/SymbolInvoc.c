@@ -28,7 +28,7 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 	Symbol *passedParam, *expectedParam = NULL;
 	int i;
 
-	// make sure we're given a proc and not a func
+	// make sure we're given a proc and not a func or any other symbol
 	if (s->kind != PROC_KIND) {
 		errMsg = customErrorString("Identifier %s cannot be called "
 		    "as a procedure.", s->name);
@@ -48,7 +48,6 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
 		return 0;	
 	}
-
 
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
@@ -315,4 +314,43 @@ int isElementArraySimple(struct ElementArray *elementArray) {
 	}
 
 	return 1;
+}
+
+
+int typeIsInValidArgs(Symbol *s, type_t type) {
+	char *name = NULL;
+	if (!s) return 0;
+	name = s->name;
+
+	if (
+	    (strcmp(name, "abs") == 0) ||
+	    (strcmp(name, "sqr") == 0) ||
+	    (strcmp(name, "sin") == 0) ||
+	    (strcmp(name, "cos") == 0) ||
+	    (strcmp(name, "exp") == 0) ||
+	    (strcmp(name, "ln") == 0) ||
+	    (strcmp(name, "sqrt") == 0) ||
+	    (strcmp(name, "arctan") == 0)
+	) {
+		if ((type == INTEGER_T) || (type == REAL_T)) {
+			return 1;
+		}
+	} else if (
+	    (strcmp(name, "trunc") == 0) ||
+	    (strcmp(name, "round") == 0)
+	){
+		if (type == REAL_T) return 1;
+	} else if (
+	    (strcmp(name, "chr") == 0) ||
+	    (strcmp(name, "odd") == 0)
+	){
+		if (type == INTEGER_T) return 1;
+	} else if (
+	    (strcmp(name, "ord") == 0) ||
+	    (strcmp(name, "succ") == 0) ||
+	    (strcmp(name, "pred") == 0)
+	){
+		if (isOrdinal(type)) return 1;
+	}
+	return 0;
 }

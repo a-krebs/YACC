@@ -39,4 +39,7 @@ Symbol *paramToVar(Symbol * param);
 int isElementArraySimple(struct ElementArray *elementArray);
 
 
+int typeIsInValidArgs(Symbol *s, type_t type);
+
+
 #endif

@@ -168,24 +168,31 @@ void exitProcOrFuncDecl(void) {
  *
  * Both arguments can be NULL if the definition contains errors.
  *
- * Return a pointer to the procedure.
+ * Parameters:	
+ *		id: name of procedure
+ *		ea: element array of parameters to procedure
+ *
+ * Return a pointer to the procedure symbol.
  */
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	Symbol *var = NULL;
-	int i;
+
 	if (!id) {
-		//TODO: push lvl?
+		/*Increament lex level to true to continue normally*/
 		incrementLexLevel(symbolTable);
 		return NULL;
 	}
 
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
-		errMsg = customErrorString("Procedure with name %s "
+		errMsg = customErrorString("Name %s "
 		    "is already defined.",id);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
+		
+		/*Increament lex level to true to continue normally*/
 		incrementLexLevel(symbolTable);
+
 		return NULL;
 	}
 
@@ -193,24 +200,36 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		ea = newElementArray();
 	}
 
+	/*Make sure parameters in declaration do not have same names.*/
 	if (hasDuplicateElement(ea)) {
 		errMsg = customErrorString("Procedure %s has duplicate "
 		   "argument names.", id);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
 
-	s = newProcSym(id, ea);
+	/*Create a symbol for the procedure in the symbolTable*/
+	s = newProcSym(id, ea);	
 	if (createHashElement(symbolTable, id, s) != 0) {
-		// TODO error
+		err(1, "Could not add element to symbol table.");
+		exit(EXIT_FAILURE);
 	}
+
+	/*Increment lexical level for all the parameters*/
 	incrementLexLevel(symbolTable);
-	/* Push params as local variables on new lexical level */
 	
-	for (i = 0; i < ea->nElements; i++) {
+	/* Push params as local variables on new lexical level */
+	for (int i = 0; i < ea->nElements; i++) {
+		/*Create variable symbol from parameter*/
 		var = paramToVar(getElementAt(ea, i));
+
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
-		}		
+		}
+		else {
+			errMsg = customErrorString("Name %s "
+		    		"is already defined.",id);
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+		}	
 	}
 
 	return s;
