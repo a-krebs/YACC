@@ -463,3 +463,16 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym)
 	return 0;
 }
 
+/*
+ * Sets the given Symbol's offset as  appropriate and increments the offset
+ * value in the symbol table for the current lexical level.
+ * Parameter:
+ * 		s: the symbol whose offset value is to be set
+ *		table : the symbol table in which s appears
+ */
+void setSymbolOffset(Symbol *s, struct hash *table)
+{
+	if (!s) return;
+	s->offset = getOffset(table);
+	addToOffset(table, s->size);
+}

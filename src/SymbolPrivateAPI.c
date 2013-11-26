@@ -73,7 +73,6 @@ Symbol *createSymbol(
 	// but make sure that this works for records
 	// see issue #51
 	setSymbolSize(symbol);
-	setSymbolOffset(symbol);
 	
 	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
@@ -132,16 +131,3 @@ void setSymbolSize(Symbol *s)
 	}
 }
 
-
-/*
- * Sets the given Symbol's offset appropriate and increments the offset
- * value in the symbol table for the current lexical level.
- * Parameter:
- * 		s: the symbol whose offset value is to be set
- */
-void setSymbolOffset(Symbol *s)
-{
-	if (!s) return;
-	s->offset = getOffset(symbolTable);
-	addToOffset(symbolTable, s->size);
-}

@@ -5,4 +5,4 @@ char *getAscFileName(char *);
 
 
 
-void emitVarDecl(Symbol *);
+//void emitVarDecl(Symbol *);

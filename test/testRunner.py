@@ -265,7 +265,7 @@ def make_asc_test_function(filename, expected_output, asc_filename):
                 format(asc_filename) 
             print err_str
             print genasc_filepath
-            diff_args = "-I \"#(>*)(\n)\" --ignore-case --ignore-all-space"
+            diff_args = "-I \"#(.*)(\n)\" --ignore-case --ignore-all-space"
 
             try:
                 check_call(["diff", diff_args, testasc_filepath, \
