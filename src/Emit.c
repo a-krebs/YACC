@@ -23,3 +23,8 @@ char *getAscFileName(char *palFileName)
 	return ascFileName;
 }
 
+
+
+/*
+ * Emits the var code necessary to 
+ */

@@ -3,3 +3,6 @@
  */
 char *getAscFileName(char *);
 
+
+
+void emitVarDecl(Symbol *);

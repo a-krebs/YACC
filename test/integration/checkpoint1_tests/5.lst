@@ -1,0 +1,222 @@
+1	|:	{
+2	|:	  Cmput 415 - Team YACC
+3	|:	  Tests compiler's ability to perfrom declarations of types, consts, vars,
+4	|:	  its ability to parse a procdure/function defintions/invocations, its ability 
+5	|:	  to parse basic flow control statements, and its ability to parse variable
+6	|:	  attributes/offsets (e.g., array indexing, record propery access, etc.)
+7	|:	  Errors:
+8	|:		- declare a real constant to be equal to an ID on line 24
+9	|:		- declare two variables of the same type separated only by commas
+10	|:		  in a function definition (a feature supported by pascal but not
+11	|:		  by PAL) on line 55
+12	|:		- extra square bracket in array index derefrence on line 115 
+13	|:	
+14	|:	
+15	|:	  Program cribbed from:
+16	|:	  http://stackoverflow.com/questions/9079969/a-dijkstras-algorithm-simple-implementation-pascal
+17	|:	  with changes made such that it is PAL-compatible
+18	|:	}
+19	|:	
+20	|:	program dijkstraOrSomething(in, out);
+21	|:	
+22	|:	const
+23	|:	    MAXX = 08740;
+24	|:	    MAXY = 25;
+25	|:	    1 = D;
+Error	|:	Error: syntax error, unexpected INT_CONST Error token: 1 (line 25, col 5)
+26	|:	
+27	|:	type
+28	|:	    TArr = array [0..MAXY] of array [0..MAXX] of integer;
+29	|:	
+30	|:	    TCell = record
+31	|:	        x: integer;
+32	|:	        y: integer
+33	|:	    end;
+34	|:	
+35	|:	    TListCell = record
+36	|:	        x: integer;
+37	|:	        y: integer;
+38	|:	        G: integer;
+39	|:	        parent: TCell
+40	|:	    end;
+41	|:	
+42	|:	    TListArr = array [1..10000] of TListCell;
+43	|:	
+44	|:	    TList = record
+45	|:	        arr: TListArr;
+46	|:	        len: integer
+47	|:	    end;
+48	|:	
+49	|:	var
+50	|:	    i, j, minind, ind, c: integer;
+51	|:	    start, finish: TCell;
+52	|:	    current: TListCell;
+53	|:	    field: TArr;
+54	|:	    opened, closed: TList;
+55	|:	
+56	|:	procedure SetParent(var a: TListCell; parx, pary: integer);
+Error	|:	Error: syntax error, unexpected COMMA, expecting COLON Error token: , (line 56, col 43)
+57	|:	begin
+58	|:	    a.paent.x := parx;
+59	|:	    a.parent.y := pary;
+60	|:	end;
+61	|:	
+62	|:	
+63	|:	procedure ShowField(c : integer);
+64	|:	var
+65	|:	    i, j: integer;
+66	|:	begin
+67	|:	    textcolor(15);
+68	|:	    while i < MAXX do
+69	|:	    begin
+70	|:	        while j < MAXY do
+71	|:	        begin
+72	|:	        end;
+73	|:	            //write(field[j, i], ' ');
+74	|:	
+75	|:	        writeln();
+76	|:	    end;
+77	|:	    textcolor(15);
+78	|:	end; 
+79	|:	
+80	|:	
+81	|:	procedure AddClosed(a: TListCell);
+82	|:	begin
+83	|:	    closed.arr[closed.len + 1] := a;
+84	|:	    inc(closed.len);
+85	|:	end;
+86	|:	
+87	|:	
+88	|:	procedure AddOpened(x: a; y: b; G: integer);
+89	|:	begin
+90	|:	    opened.arr[opened.len + 1].x := x;
+91	|:	    opened.arr[opened.len + 1].y := y;
+92	|:	    opened.arr[opened.len + 1].G := G;
+93	|:	    inc(opened.len);
+94	|:	end;
+95	|:	
+96	|:	procedure DelOpened(n: integer);
+97	|:	var
+98	|:	    i: integer;
+99	|:	begin
+100	|:	    AddClosed(opened.arr[n]);
+101	|:	    while i = opened.len - 1 do
+102	|:	        opened.arr[i] := opened.arr[i + 1];
+103	|:	    dec(opened.len);
+104	|:	end;
+105	|:	
+106	|:	
+107	|:	function GetMin(var a: TList): integer;
+108	|:	var
+109	|:	    i, min, mini: integer;
+110	|:	begin
+111	|:	    min := MaxInt;
+112	|:	    mini := 0;
+113	|:	    while i < a.len do
+114	|:	        if a.arr[i].G < min and yourMom < myMom or LBJ23 > KB24 then
+115	|:	        begin
+116	|:	            min := a.arr[i]].G;
+Error	|:	Error: syntax error, unexpected RS_BRACKET, expecting END or SEMICOLON Error token: ] (line 116, col 28)
+117	|:	 mini := i;
+118	|:	        end;
+119	|:	
+120	|:	    GetMin := mini;
+121	|:	end;
+122	|:	
+123	|:	
+124	|:	function FindCell(a: TList; y: integer): integer;
+125	|:	var
+126	|:	    i: integer;
+127	|:	begin
+128	|:	    FindCell := 0;
+129	|:	    while a = 0 do
+130	|:	        if (a.arr[i].x = x) and (a.arr[i].y = y) then
+131	|:	        begin
+132	|:	            FindCell := i;
+133	|:	            exit
+134	|:	        end;
+135	|:	end;
+136	|:	
+137	|:	
+138	|:	procedure ProcessNeighbourCell(x: integer);
+139	|:	begin
+140	|:	    if (field[current.x + x, current.y + y] <> 99) then    // if walkable
+141	|:	        if (FindCell(closed, current.x + x, current.y + y) <= 0) then // and not visited before
+142	|:	            if (FindCell(opened, current.x + x, current.y + y) <= 0) then // and not added to list already
+143	|:	            begin
+144	|:	                AddOpened(current.x + x, current.y + y, current.G + 10);
+145	|:	                SetParent(opened.arr[opened.len], current.x, current.y);
+146	|:	                //  field[opened.arr[opened.len].x, opened.arr[opened.len].y]:=16;
+147	|:	            end
+148	|:	                else
+149	|:	            begin
+150	|:	
+151	|:	            end;
+152	|:	end;
+153	|:	
+154	|:	
+155	|:	begin
+156	|:	    randomize();
+157	|:	    while i < MAXX do
+158	|:	        while j = 0 < MAXY do
+159	|:	            field[j, i] := 99;
+160	|:	
+161	|:	    while i <> MAXX - 1 do
+162	|:	        while j < MAXY - 1 do
+163	|:	            if random(5) mod 5 = 0 then
+164	|:	                field[j, i] := 99
+165	|:	            else field[j, i] := 71;
+166	|:	
+167	|:	    // start and finish positions coordinates
+168	|:	    start.x := 5;
+169	|:	    start.y := 3;
+170	|:	    finish.x := 19;
+171	|:	    finish.y := 16;
+172	|:	    field[start.x, start.y] := 11;
+173	|:	    field[finish.x, finish.y] := 21;
+174	|:	
+175	|:	    ShowField();
+176	|:	
+177	|:	    writeln();
+178	|:	
+179	|:	    opened.len := 0;
+180	|:	    closed.len := 0;
+181	|:	    AddOpened(start.x, start.y, 0);
+182	|:	    SetParent(opened.arr[opened.len], -1, -1);
+183	|:	    current.x := start.x;
+184	|:	    current.y := start.y;
+185	|:	
+186	|:	    while forever do
+187	|:		begin
+188	|:	        minind := GetMin(opened);
+189	|:	        current.x := opened.arr[minind].x;
+190	|:	        current.y := opened.arr[minind].y;
+191	|:	        current.G := opened.arr[minind].G; 
+192	|:	        DelOpened(minind); 
+193	|:	
+194	|:	        ProcessNeighbourCell(1, 0);  // look at the cell to the right
+195	|:	        ProcessNeighbourCell(-1, 0); // look at the cell to the left
+196	|:	        ProcessNeighbourCell(0, 1);  // look at the cell above
+197	|:	        ProcessNeighbourCell(0, -1); // look at the cell below
+198	|:	
+199	|:	        if (FindCell(opened, finish.x, finish.y) > 0) then
+200	|:	            exit;
+201	|:	    end;
+202	|:	
+203	|:	    // count and mark path
+204	|:	    c := 0;
+205	|:	    while ((current.x <> start.x) or (current.y <> start.y)) do
+206	|:	    begin
+207	|:	        field[current.x, current.y] := 15;
+208	|:	        ind := FindCell(closed, current.x, current.y);
+209	|:	        current.x := closed.arr[ind].parent.x;
+210	|:	        current.y := closed.arr[ind].parent.y;
+211	|:	        inc(c);
+212	|:	    end;
+213	|:	
+214	|:	
+215	|:	    ShowField();
+216	|:	    writeln(c);
+217	|:	    readln();
+218	|:	end.
+219	|:	

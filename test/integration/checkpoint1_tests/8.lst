@@ -1,0 +1,104 @@
+1	|:	{
+2	|:		This program devastates our compiler.
+3	|:		Maybe your's too.
+4	|:	
+5	|:	}
+6	|:	
+7	|:	program ohNo(in, out);
+8	|:	
+9	|:	const
+10	|:	
+11	|:		8 = D
+Error	|:	Error: syntax error, unexpected INT_CONST, expecting ID Error token: 8 (line 11, col 2)
+12	|:		3 = Tree
+13	|:		19 :- 293847023981-8274098ur qopidfqh43tp;7ut'k
+Error	|:	Error: syntax error, unexpected INT_CONST Error token: 7 (line 13, col 44)
+Error	|:	Error: Unrecognized token(s) Error token: ' (line 13, col 47)
+14	|:	
+15	|:	<C-S-F10>
+Error	|:	Error: Unrecognized token(s) Error token:  (line 15, col 1)
+Error	|:	Error: Unrecognized token(s) Error token:  (line 15, col 11)
+16	|:	
+17	|:		a = array[(I, hope, you, are, not, resynching, at, the, rparen]
+18	|:	
+19	|:	
+20	|:	
+21	|:	
+22	|:	of
+23	|:	
+24	|:	
+25	|:	
+26	|:							whitespacefun;
+27	|:		rec0rd = record
+Error	|:	Error: syntax error, unexpected RECORD Error token: record (line 27, col 11)
+28	|:		x : integer;
+29	|:		y : integer;			//oh no
+Error	|:	Error: syntax error, unexpected COLON, expecting EQUAL Error token: : (line 29, col 4)
+30	|:		end;
+Error	|:	Error: syntax error, unexpected END Error token: end (line 30, col 2)
+31	|:	
+32	|:		hello = Record
+33	|:		x: integer;
+Error	|:	Error: syntax error, unexpected ID, expecting SEMICOLON Error token: x (line 33, col 2)
+34	|:		y: integer
+Error	|:	Error: syntax error, unexpected COLON, expecting EQUAL Error token: : (line 34, col 3)
+35	|:		end
+36	|:	
+37	|:	procedure p(var i : integer;  : notinteger) : int : int : int :int :int :int : returnType;
+Error	|:	Error: syntax error, unexpected COLON Error token: : (line 37, col 31)
+38	|:	var
+39	|:		a : integer;
+40	|:		b : integer;
+41	|:		c : integer;
+42	|:	begin
+43	|:		do := nothing
+Error	|:	Error: syntax error, unexpected DO, expecting END or SEMICOLON Error token: do (line 43, col 2)
+44	|:	end;
+45	|:	
+46	|:	
+47	|:	begin
+48	|:		while i < MMAX do
+49	|:			field[j, i] := 99;
+50	|:		while i<> blah do
+51	|:			while j < hello do
+52	|:				if random(s) mod 390 = 2309E93939 then
+53	|:					field[j,i] := 99
+54	|:				else filed[j,i] := 71;
+55	|:		while i < MMAX do
+56	|:	
+57	|:		while i < MMAX do
+58	|:		while i < MMAX do
+59	|:		while i < MMAX do
+60	|:		while i < MMAX do
+61	|:		while i < MMAX do
+62	|:		while i < MMAX do
+63	|:		while i < MMAX do
+64	|:		while i < MMAX do
+65	|:		while i < MMAX do
+66	|:		while i < MMAX do
+67	|:		while i < MMAX do
+68	|:		while i < MMAX do
+69	|:		while i < MMAX do
+70	|:		while i < MMAX do
+71	|:		while i < MMAX do
+72	|:		while i < MMAX do
+73	|:		while i < MMAX do
+74	|:		while i < MMAX do
+75	|:		while i < MMAX do
+76	|:		while 		i 			do
+77	|:		while i < MMAX do
+78	|:				while i < MMAX do
+79	|:		while i < MMAX do
+80	|:					while i < MMAX do
+81	|:		x.x := x;
+82	|:		y.x := y;
+83	|:		z.x := z;
+84	|:	
+85	|:		open.len := 0
+86	|:		catch = this;
+Error	|:	Error: syntax error, unexpected ID, expecting END or SEMICOLON Error token: catch (line 86, col 2)
+87	|:	
+88	|:	
+89	|:	end.
+Error	|:	Error: syntax error, unexpected PERIOD, expecting END or SEMICOLON Error token: . (line 89, col 4)
+90	|:	

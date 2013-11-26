@@ -1,0 +1,168 @@
+1	|:	{
+2	|:		Cmput 415 - Team YACC
+3	|:		Tests general ability to properly parse function definitions, 
+4	|:		array defintions, loops and other flow control statements.
+5	|:	
+6	|:		Errors:	- attempt to declare array bounds using anonymous scalar type
+7	|:			  on line 22
+8	|:			- define a procedure as having a return type, line 52
+9	|:			- extra parenthesis on line 156
+10	|:	
+11	|:	
+12	|:		Code skeleton cribbed from:
+13	|:		http://stackoverflow.com/questions/19057986/why-does-procedure-affect-on-a-loop
+14	|:	
+15	|:	}
+16	|:	program hello(in, out);
+17	|:	type
+18	|:		a = array[1..019283019283019283019283019283019283019283019283] of array[1..019283019283019283019283019283019283019283019283] of array[0..1E10] of poop;
+19	|:		no = (means, no, pervert);
+20	|:		a = array[no] of array[means] of array[no] of empowerDaYouth;
+21	|:		b = array[thatLastOneWasOkay] of array[(but, this, one, inst)] of integer;
+Error	|:	Error: syntax error, unexpected COMMA Error token: , (line 21, col 45)
+22	|:	
+23	|:	var
+24	|:	n, i :integer;
+25	|:	a, b, h, x, res :real;
+26	|:	
+27	|:	
+28	|:	function funcx1(y :real; a : real) : real;
+29	|:	  begin
+30	|:	    funcx1:= (y*y*y*y) * (1 + sin(y) * sin(y));
+31	|:	  end;
+32	|:	
+33	|:	
+34	|:	function funcx1(y :real) : real;
+35	|:	  begin
+36	|:	    funcx1:= (y*y*y*y) * (1 + sin(y) * sin(y));
+37	|:	  end;
+38	|:	
+39	|:	
+40	|:	function funcx2(y :real) : real;
+41	|:	  begin
+42	|:	    funcx2:= sin(y/2) / cos(y/2);
+43	|:	  end;
+44	|:	
+45	|:	
+46	|:	function funcx3(y :real) :real;
+47	|:	  begin
+48	|:	    funcx3:= sin(y) * cos(y);
+49	|:	  end;
+50	|:	
+51	|:	procedure Line(sideSymbolLeft: kar; usualSymbol: kar;
+52	|:	               divideSymbol: kar; sideSymbolRight: kar) : integer;
+Error	|:	Error: syntax error, unexpected COLON, expecting SEMICOLON Error token: : (line 52, col 57)
+53	|:	  begin
+54	|:	    write(kar(sideSymbolLeft));
+55	|:	    while i <> 75 do
+56	|:	      begin
+57	|:	        write(kar(usualSymbol));
+58	|:	        if ( (i mod 19) = 0 ) then
+59	|:	          write(kar(divideSymbol));
+60	|:		if ((((nothing <> 2)))) then
+61	|:		  doNothingAtAll(hello, you, big, big);
+62	|:	      end;
+63	|:	    writeln(kar(sideSymbolRight));
+64	|:	  end;
+65	|:	
+66	|:	procedure Line(sideSymbolLeft: kar; usualSymbol: kar;
+67	|:	               divideSymbol: kar; sideSymbolRight: kar);
+68	|:	  begin
+69	|:	    write(kar(sideSymbolLeft));
+70	|:	    while i <> 75 do
+71	|:	      begin
+72	|:	        write(kar(usualSymbol));
+73	|:	        if ( (i mod 19) = 0 ) then
+74	|:	          write(kar(divideSymbol));
+75	|:		if ((((nothing <> 2)))) then
+76	|:		  doNothingAtAll(hello, you, big, big);
+77	|:	      end;
+78	|:	    writeln(kar(sideSymbolRight));
+79	|:	  end;
+80	|:	
+81	|:	
+82	|:	begin
+83	|:	 { clrscr();
+84	|:	  a:= 0;
+85	|:	  b:= 2 * pi;
+86	|:	  n:= 7;
+87	|:	  h:= ( b - a ) / n;
+88	|:	
+89	|:	
+90	|:	  Line(kar(201), kar(205), kar(205), kar(187));
+91	|:	  writeln(kar(186),'Functions of one variable',kar(186));
+92	|:	  Line(kar(204), kar(205), kar(203), kar(185));
+93	|:	  writeln(kar(186),'    Argument X    ',kar(186),'  x^4*(1+sin^2(x)) ',
+94	|:	          kar(186),'      tg(x/2)      ',kar(186),'   sin(x)*cos(x)  ',kar(186));
+95	|:	
+96	|:	  while I < n do { calculating all Xs (arguments) }
+97	|:	    begin
+98	|:	      x:= a + (i * h);
+99	|:	      write('   ');
+100	|:	      write(x,8,3);
+101	|:	
+102	|:	      res:= funcx1(x);
+103	|:	      write('              ');
+104	|:	      write(res,8,3);
+105	|:	
+106	|:	      res:= funcx2(x);
+107	|:	      write('   ');
+108	|:	      write(res,8,3);
+109	|:	
+110	|:	      res:= funcx3(x);
+111	|:	      write('         ');
+112	|:	      writeln(res,8,3);
+113	|:	
+114	|:	      //(* HERE IS THAT PROCEDURE *)
+115	|:	      //(* When I put it here, the loop becomes endless *)
+116	|:	      //(* and I have to close the console (and lose all unsaved data) *)
+117	|:	      Line(kar(204), kar(205), kar(203), kar(185));
+118	|:	
+119	|:	    end;
+120	|:	
+121	|:	  clrscr();
+122	|:	  a:= 0;
+123	|:	  b:= 2 * pi;
+124	|:	  n:= 7;
+125	|:	  h:= ( b - a ) / n;
+126	|:	
+127	|:	
+128	|:	  Line(kar(201), kar(205), kar(205), kar(187));
+129	|:	  writeln(kar(186),'Functions of one variable',kar(186));
+130	|:	  Line(kar(204), kar(205), kar(203), kar(185));
+131	|:	  writeln(kar(186),'    Argument X    ',kar(186),'  x^4*(1+sin^2(x)) ',
+132	|:	          kar(186),'      tg(x/2)      ',kar(186),'   sin(x)*cos(x)  ',kar(186));
+133	|:	
+134	|:	  while I < n do { calculating all Xs (arguments) }
+135	|:	    begin
+136	|:	      x:= a + (i * h);
+137	|:	      write('   ');
+138	|:	      write(x,8,3);
+139	|:	
+140	|:	      res:= funcx1(x);
+141	|:	      write('              ');
+142	|:	      write(res,8,3);
+143	|:	
+144	|:	      res:= funcx2(x);
+145	|:	      write('   ');
+146	|:	      write(res,8,3);
+147	|:	
+148	|:	      res:= funcx3(x);
+149	|:	      write('         ');
+150	|:	      writeln(res,8,3);
+151	|:	
+152	|:	      //(* HERE IS THAT PROCEDURE *)
+153	|:	      //(* When I put it here, the loop becomes endless *)
+154	|:	      //(* and I have to close the console (and lose all unsaved data) *)
+155	|:	      Line((kar(204), kar(205), kar(203), kar(185));
+Error	|:	Error: syntax error, unexpected COMMA Error token: , (line 155, col 21)
+156	|:	
+157	|:	    end;
+158	|:	
+159	|:	
+160	|:	  readln();
+161	|:	
+162	|:	
+163	|:	  readln();
+164	|:	end.
+165	|:	

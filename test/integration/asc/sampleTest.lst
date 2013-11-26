@@ -1,0 +1,6 @@
+1	|:	{       100}
+2	|:	program hello(what, ever);
+3	|:	begin
+4	|:		writeln(100)
+5	|:	end.
+6	|:	

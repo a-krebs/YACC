@@ -1,0 +1,29 @@
+1	|:	{}
+2	|:	{ 0.pal -- tests for the correct operation of the lexical analyzer}
+3	|:	program testLex0(in, out);
+4	|:	
+5	|:	var
+6	|:		a : real;
+7	|:		b : integer;
+8	|:	begin
+9	|:		a := E-32;
+10	|:		b := -123456789;
+11	|:		b := 123456789;
+12	|:		b := +430982345098724350982348590234098572;
+13	|:		a := E+32;
+14	|:		a := 0.0;
+15	|:		a := 12345.234234E3838;
+16	|:		a := -45674567856786;
+17	|:		a := +45678765678900.203948023984230984E298374209387422304987230487;
+18	|:		a := -0000000000000000000000000000000000000000000000.00000000000000000000000000000000000000E0000000000000000000000000000000000000000;
+19	|:		
+20	|:		{ The following should produce errors }
+21	|:		a := -.123123;	// Also not a valid real 
+Error	|:	Error: syntax error, unexpected PERIOD Error token: . (line 21, col 8)
+22	|:		a := 3456789.;	// Not a valid real or int	
+Error	|:	Error: syntax error, unexpected PERIOD, expecting END or SEMICOLON Error token: . (line 22, col 14)
+23	|:		a := 101239e023480923;
+Error	|:	Error: syntax error, unexpected ID, expecting END or SEMICOLON Error token: e023480923 (line 23, col 13)
+24	|:	end.
+25	|:	
+26	|:	
