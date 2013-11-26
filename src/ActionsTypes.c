@@ -142,6 +142,10 @@ Symbol *createScalarListType(struct ElementArray *ea) {
 		symbolTableInsertFailure();
 	}
 
+	/* Each element in the scalar list will be a local var with
+	 * appropriate offset */
+	setSymbolOffset(s, symbolTable);
+
 	return s;
 }
 
@@ -259,6 +263,8 @@ Symbol *createRecordType(struct ElementArray *fields) {
 			freeProxySymbol(f);
 			continue;
 		}
+		/* Give record field appropriate offset in record symbol table*/
+		setSymbolOffset(newField, recHash);
 	}
 
 	return recType;

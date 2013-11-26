@@ -66,6 +66,8 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 	s = newConstSymFromProxy(lvl, id, proxy);		
 	if (s) {
 		createHashElement(symbolTable, id, s);
+		/* Consts have a value and thus need an offset, so we set it */
+		setSymbolOffset(s, symbolTable);
 	}
 }
 
@@ -142,6 +144,8 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 	s = newVariableSym(id, type);
 	if (s) {
 		createHashElement(symbolTable, id, s);
+		/* Set the variables offset */
+		setSymbolOffset(s, symbolTable);
 	}
 	return type;
 }
@@ -218,6 +222,8 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	incrementLexLevel(symbolTable);
 	
 	/* Push params as local variables on new lexical level */
+	/* Note that this is for semantic analysis only, params will be vars
+	 * without offsets since their offsets are implicit in the call frame */
 	for (int i = 0; i < ea->nElements; i++) {
 		/*Create variable symbol from parameter*/
 		var = paramToVar(getElementAt(ea, i));
@@ -279,7 +285,8 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	}
 	incrementLexLevel(symbolTable);
 	/* Push params as local variables on new lexical level */
-
+	/* Note that this is for semantic analysis only, params will be vars
+	 * without offsets since their offsets are implicit in the call frame */
 	for (i = 0; i < ea->nElements; i++) {
 		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
