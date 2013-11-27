@@ -18,6 +18,7 @@ OBJS+=		$(BIN)/ActionsConsts.o $(BIN)/ActionsDecls.o
 OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o 
 OBJS+=		$(BIN)/ActionsLoops.o $(BIN)/ActionsTypes.o 
 OBJS+=		$(BIN)/StmtLL.o
+OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -27,6 +28,8 @@ LEX_FILTER=	$(BIN)/parser.tab.o
 
 # Root source directory
 SRC=		src
+# Directory for asc code emission modules (Emit*.c files)
+EMIT=		Emit
 # Directory to store compiled binaries
 BIN=		bin
 # Location of test source files
@@ -136,6 +139,15 @@ $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
 $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
+	$(COMPILE)
+
+$(BIN)/EmitArithmetic.o: $(SRC)/$(EMIT)/EmitArithmetic.c $(SRC)/$(EMIT)/EmitArithmetic.h
+	$(COMPILE)
+
+$(BIN)/EmitDecls.o: $(SRC)/$(EMIT)/EmitDecls.c $(SRC)/$(EMIT)/EmitDecls.h
+	$(COMPILE)
+
+$(BIN)/EmitUtils.o: $(SRC)/$(EMIT)/EmitUtils.c $(SRC)/$(EMIT)/EmitUtils.h
 	$(COMPILE)
 
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
