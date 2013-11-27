@@ -62,8 +62,7 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 		return;
 	}
 
-	/* Else we can try to make new const  and add it to symbol table
-*/	
+	/* Else we can try to make new const  and add it to symbol table */	
 	s = newConstSymFromProxy(lvl, id, proxy);		
 	if (s) {
 		createHashElement(symbolTable, id, s);
