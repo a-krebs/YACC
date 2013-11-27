@@ -72,7 +72,16 @@ Symbol *getInnerTypeSymbol(Symbol *symbol);
  */
 struct StringType *allocateStringType();
 
-	
+
+/* Set the str member of the struct String
+ *
+ * Parameters:
+ * 		string: struct String
+ * 		str: char* to be copied into struct
+ *		len: lenght of str
+ *
+ * Return: void
+ */
 void setStringStr(struct String *string, char *str, unsigned int len);
 
 
