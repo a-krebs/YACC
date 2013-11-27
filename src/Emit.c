@@ -77,6 +77,14 @@ void emitComment(char *s, ...)
 	appendStmt(&stmts, comment);
 }
 
+/*
+ * Turns the given format string s into an ASC statement given additional
+ * args and appends it to list of stmts.
+ * Parameters
+ *		len : length >= length of string s after being formatted
+ *		s : the statement to be formatted
+ *		... : arguments to format the string
+ */
 void emitStmt(int len, char *s, ...)
 {
 	va_list args;
@@ -115,31 +123,22 @@ void emitStmt(int len, char *s, ...)
  */
 void emitPushVarValue(Symbol *s)
 {
-	char *stmt = NULL;
 
 	CHECK_CAN_EMIT(s);
-
-	allocStmt(&stmt, STMT_LEN);
-	
 	if (!isByReference(s)) {
 		/* 
 		 * The variable has not been passed by reference, just
 		 * push the value stored in the stack
 		 */
-		snprintf(stmt, STMT_LEN - 1, "\t\tPUSH %d[%d]\n", s->offset,
-		    s->lvl);	
+		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	
 	} else {
 		/* 
 		 * Else the variable has been passed by reference 
 		 * and we have to push the value of the variable referenced by
 		 * the address in the stack
 		 */
-		snprintf(stmt, STMT_LEN -1, "\t\tPUSH %d[%d]\n", s->offset,
-		    s->lvl);
-		appendStmt(&stmts, stmt);
-		allocStmt(&stmt, STMT_LEN);
-		snprintf(stmt, STMT_LEN - 1, "\t\tPUSHI\n");
-		appendStmt(&stmts, stmt);
+		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);
+		emitStmt(STMT_LEN, "PUSHI");	
 	}
 }
 
@@ -165,8 +164,6 @@ void emitVarDecl(Symbol *s)
  */
 void emitConstDecl(Symbol *s)
 {
-	char *stmt = NULL;
-
 	CHECK_CAN_EMIT(s);
 
 	emitComment("Make room on the stack for new const %s.", s->name);
@@ -218,37 +215,55 @@ void emitRealConstDecl(Symbol *s, float value)
 	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);	
 }
 
+/*
+ * Emits asc code to perform an addition operation with the two given symbols
+ * and leaves the result on top of the stack
+ * Parameters:
+ * 		x : the LHS operand
+ * 		y : the RHS operand
+ */
 void emitAddition(Symbol *x, Symbol *y)
 {
-	char *stmt = NULL;
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
+
+	emitComment("Perform addition of %s %s and %s %s",
+	    typeToString(getType(x)), x->name, 
+	    typeToString(getType(y)), y->name);
 
 	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {
 	
 		/* Emit code to add two integers */
-		emitAdditionIntInt(x, y);
+		emitPushVarValue(x);
+		emitPushVarValue(y);
+		emitStmt(STMT_LEN, "ADDI");
 
 	} else if ((getType(x) == REAL_T) && (getType(y) == REAL_T)) {
 
-		/* Emit code to add two integers */
-		emitAdditionRealReal(x, y);
+		/* Emit code to add two REALS */
+		emitPushVarValue(x);
+		emitPushVarValue(y);
+		emitStmt(STMT_LEN, "ADDR");
 
 	} else if ((getType(x) == INTEGER_T) && (getType(y) == REAL_T)) {
 		/* 
 		 * Emit code to change x to a real, then emit code to add
 		 * two reals 
-		 */		
+		 */
+		emitPushVarValue(x);
+		emitStmt(STMT_LEN, "ITOR");
+		emitPushVarValue(y);
+		emitStmt(STMT_LEN, "ADDR");
+			
+	} else if ((getType(x) == REAL_T) && (getType(y) == INTEGER_T)) {
+		/* 
+		 * Emit code to change y to a real, then emit code to add
+		 * two reals 
+		 */
+		emitPushVarValue(y);
+		emitStmt(STMT_LEN, "ITOR");
+		emitPushVarValue(x);
+		emitStmt(STMT_LEN, "ADDR");
+			
 	}
 }
-
-void emitAdditionIntInt(Symbol *x, Symbol *y)
-{
-
-}
-
-void emitAdditionRealReal(Symbol *x, Symbol *y)
-{
-	
-}
-

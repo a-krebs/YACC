@@ -210,6 +210,8 @@ ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), PLUS, getTypeSym((Symbol *)y)));
 
+	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);	
+
 	return ps;
 }
 
