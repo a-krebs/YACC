@@ -500,7 +500,7 @@ void setParamOffset(Symbol *s, struct ElementArray *params)
 	for (i = 0; i < params->nElements; i++) {
 		
 		param = getElementAt(params, i);
-		if (param->kindPtr.VarKind->byRef) offset += 1;
+		if (isByReference(param)) offset += 1;
 		else offset += param->size;
 		
 		if (strcmp(param->name, s->name) == 0) {

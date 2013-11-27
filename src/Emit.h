@@ -12,12 +12,13 @@
 #include "Error.h"
 #include "Definitions.h"
 #include "StmtLL.h"
+#include "SymbolAPI.h"
 
 #define STMT_LEN 128	/* default size of an asc statement, the only exception
 			 * to this size would be for labels which may have the
 			 * the same name as proc/funcs, in which case we would
 			 * not use this default size */
-extern int doNotEmit;	/* */ 
+
 #define CHECK_CAN_EMIT(s)\
 do {\
 	if(!(s) || (doNotEmit)) {\
@@ -41,7 +42,7 @@ char *getAscFileName(char *);
 void allocStmt(char **, size_t);
 void emitComment(char *);
 void emitVarDecl(Symbol *);
-
+void emitPushVarValue(Symbol *);
 //void emitVarDecl(Symbol *);
 
 #endif

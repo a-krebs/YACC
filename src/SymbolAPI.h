@@ -93,6 +93,16 @@ getTypeSym(Symbol *s);
 Symbol *
 getSubrangeBaseTypeSym(Symbol *sr);
 
+/*
+ * Returns 1 if the symbol (which is kind PARAM_KIND or VAR_KIND) has been
+ * passed by reference (e.g., the byRef flag in its kindPtr is set)
+ * Parameters
+ *		s: the symbol for which we would are inquiring if it has been
+ *		    passed by reference
+ * Return: 1 if the conditions above are met, 0 if not	
+ */
+int isByReference(Symbol *);
+
 
 void freeProxySymbol(ProxySymbol *p);
 

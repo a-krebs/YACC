@@ -67,6 +67,43 @@ void emitComment(char *s)
 }
 
 /*
+ * Constructs the asc statement necessary to push the value of the variable
+ * / constant symbol s on the top of the stack and appends it to the list
+ * of asc statements.
+ * Parameters:
+ *		s : the symbol whose value is to be placed on top of the stack
+ */
+void emitPushVarValue(Symbol *s)
+{
+	char *stmt = NULL;
+
+	CHECK_CAN_EMIT(s);
+
+	allocStmt(&stmt, STMT_LEN);
+	
+	if (!isByReference(s)) {
+		/* 
+		 * The variable has not been passed by reference, just
+		 * push the value stored in the stack
+		 */
+		snprintf(stmt, STMT_LEN - 1, "\t\tPUSH %d[%d]\n", s->offset,
+		    s->lvl);	
+	} else {
+		/* 
+		 * Else the variable has been passed by reference 
+		 * and we have to push the value of the variable referenced by
+		 * the address in the stack
+		 */
+		snprintf(stmt, STMT_LEN -1, "\t\tPUSH %d[%d]\n", s->offset,
+		    s->lvl);
+		appendStmt(&stmts, stmt);
+		allocStmt(&stmt, STMT_LEN);
+		snprintf(stmt, STMT_LEN - 1, "\t\tPUSHI\n");
+		appendStmt(&stmts, stmt);
+	}
+}
+
+/*
  * Creates asc statement necessary to make room on the stack for the given
  * variable.
  * Parameters

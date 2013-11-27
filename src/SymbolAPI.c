@@ -138,3 +138,19 @@ getTypeSym(Symbol *s)
 		return NULL;
 	}
 }
+
+/*
+ * Returns 1 if the symbol (which is kind PARAM_KIND or VAR_KIND) has been
+ * passed by reference (e.g., the byRef flag in its kindPtr is set)
+ * Parameters
+ *		s: the symbol for which we would are inquiring if it has been
+ *		    passed by reference
+ * Return: 1 if the conditions above are met, 0 if not	
+ */
+int isByReference(Symbol *s)
+{
+	if (!s) return 0;
+	if (s->kind == PARAM_KIND) return s->kindPtr.ParamKind->byRef;
+	if (s->kind == VAR_KIND) return s->kindPtr.VarKind->byRef;
+	return 0;
+}
