@@ -52,7 +52,7 @@ void setTypePtr(Type *, Type, type_t);
 void typeMemoryFailure();
 
 struct TypeKind *getKindPtrForTypeKind(Symbol *);
-struct ConstKind *getKindPtrForConstKind(Symbol *);
+struct ConstantKind *getKindPtrForConstKind(Symbol *);
 
 /* Type symbol size calculation functions */
 int calculateSymbolSize(Symbol *);
@@ -66,9 +66,29 @@ int calculateSubrangeSize(Symbol *);
 Symbol *getInnerTypeSymbol(Symbol *symbol);
 
 
+/* Allocates memory for the StringType struct
+ *
+ * Parameters:
+ *
+ * Return: Pointer to newly allocated memory chunk
+ */
+struct StringType *allocateStringType();
+
+	
 struct String *allocateString();
-void setStringStr(struct String *string, char *str);
+void setStringStr(struct String *string, char *str, unsigned int len);
 struct String *newString(char *str, unsigned int strlen);
+
+
+/*
+ * Creates a new StringType struct
+ * 
+ * Parameters:
+ * 	strlen: length for the new string type
+ * Returns:
+ * 	a pointer the the new struct
+ */
+struct StringType *newStringType(unsigned int strlen);
 
 
 #endif

@@ -73,6 +73,10 @@ ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 	// enforce that the given typeSym is a pre-defined type
 	setInnerTypeSymbol(constSym, typeSym);
 
+	/* 
+	 * The memory for Boolean.value, Char.value, etc is allocated
+	 * when the symbol is created.
+	 */
 	switch (getType(typeSym)) {
 	case BOOLEAN_T:
 		intResult = (int *) result;
@@ -138,23 +142,20 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 }
 
 
-ProxySymbol *
-newStringProxySym(int lvl, char *str, int strlen)
-{
+/*
+ * Make a new ProxySymbol of kind CONST_KIND for the given string.
+ */
+ProxySymbol *newStringProxySym(char *str, int strlen, Symbol *type) {
 	ProxySymbol *newStringSym = NULL;
 
-	newStringSym = calloc(1, sizeof (ProxySymbol));
+	/* new anonymous constant */
+	newStringSym = createConstSymbol(NULL);
 
-	newStringSym->name = NULL;
-	newStringSym->kind = CONST_KIND;
-	allocateKindPtr(newStringSym);
+	/* set string value */
+	setStringStr(&getConstVal(newStringSym)->String, str, strlen);
 
-	newStringSym->kindPtr.ConstKind->value.String.str = calloc(1, (sizeof(char)* strlen));
-	strncpy(newStringSym->kindPtr.ConstKind->value.String.str, str, strlen);
-	newStringSym->kindPtr.ConstKind->value.String.strlen = strlen;
-
-	setInnerTypeSymbol(newStringSym, calloc(1, sizeof (struct ConstantKind)));
-	setInnerTypeSymbol(newStringSym, getPreDefString(preDefTypeSymbols));
+	/* assign type */
+	setInnerTypeSymbol(newStringSym, type);
 
 	return newStringSym;	
 }

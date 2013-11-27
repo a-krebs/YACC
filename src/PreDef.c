@@ -24,44 +24,24 @@ Symbol *getPreDefReal(struct preDefTypeSymbols *preDefTypeSymbols) {
 }
 
 
-Symbol *getPreDefString(struct preDefTypeSymbols *preDefTypeSymbols) {
-	return preDefTypeSymbols->string;
-}
-
-
 struct Symbol *createPreDefType(char *name, type_t type) {
-	struct Symbol *symbol = malloc(sizeof(struct Symbol));
+	struct Symbol *symbol = NULL;
 
-	setSymbolName(symbol, name);
-	symbol->kind = TYPE_KIND;
-
-	allocateKindPtr(symbol);
-	symbol->kindPtr.TypeKind->type = type;
-
-	if ( strcmp(name, "boolean") == 0 ) {
-		getTypePtr(symbol)->Boolean = calloc(1, sizeof(struct Boolean));
-	}
-	else if ( strcmp(name, "char") == 0 ) {
-		getTypePtr(symbol)->Char = calloc(1, sizeof(struct Char));
-	}
-	else if ( strcmp(name, "integer") == 0 ) {
-		getTypePtr(symbol)->Integer = calloc(1, sizeof(struct Integer));
-	}
-	else if ( strcmp(name, "real") == 0 ) {
-		getTypePtr(symbol)->Real = calloc(1, sizeof(struct Real));
-	}
-	else if ( strcmp(name, "string") == 0 ) {
-		getTypePtr(symbol)->String = malloc(sizeof(struct String));
-	}	
-	else {
-		err(2, "Could not determine type asked in pre-def.");
+	if (! ( (strcmp(name, "boolean") == 0 )  ||
+		( strcmp(name, "char") == 0 )    ||
+		( strcmp(name, "integer") == 0 ) ||
+		( strcmp(name, "real") == 0 )    ||
+		( strcmp(name, "string") == 0 ) ))
+	{
+		err(2, "createPreDefType does not support the given type.");
 		exit(EXIT_FAILURE);
 	}
 
-	symbol->lvl = getCurrentLexLevel(symbolTable);
-	symbol->typeOriginator = 1;
-	symbol->next = NULL;
+	symbol = createTypeSymbol(name, TYPEORIGINATOR_YES);
+	symbol->kindPtr.TypeKind->type = type;
 
+	createHashElement(symbolTable, name, symbol);
+	
 	return symbol;
 }
 
@@ -72,13 +52,6 @@ struct preDefTypeSymbols *initializePreDefTypes() {
 	preDefs->chars = createPreDefType(CHAR_KEY, CHAR_T);
 	preDefs->integer = createPreDefType(INTEGER_KEY, INTEGER_T);
 	preDefs->real = createPreDefType(REAL_KEY, REAL_T);
-	preDefs->string = createPreDefType(STRING_KEY, STRING_T);
-
-	createHashElement(symbolTable, BOOLEAN_KEY, preDefs->boolean);
-	createHashElement(symbolTable, CHAR_KEY, preDefs->chars);
-	createHashElement(symbolTable, INTEGER_KEY, preDefs->integer);
-	createHashElement(symbolTable, REAL_KEY, preDefs->real);
-	createHashElement(symbolTable, STRING_KEY, preDefs->string);
 
 	return preDefs;
 }

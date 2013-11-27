@@ -283,6 +283,7 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 /*
  * Set type pointer new to point to type old of type passed as arg.
  */
+// TODO this is dead code
 void
 setTypePtr(Type *new, Type old, type_t type)
 {
@@ -290,22 +291,6 @@ setTypePtr(Type *new, Type old, type_t type)
 
 	case ARRAY_T:
 		new->Array = old.Array;
-		break;
-	case BOOLEAN_T:
-		new->Boolean->value = old.Boolean->value;
-		new->Boolean = old.Boolean;
-		break;
-	case CHAR_T:
-		new->Char->value = old.Char->value;
-		new->Char = old.Char;
-		break;
-	case INTEGER_T:
-		new->Integer->value = old.Integer->value;
-		new->Integer = old.Integer;
-		break;
-	case REAL_T:
-		new->Real->value = old.Real->value;
-		new->Real = old.Real;
 		break;
 	case RECORD_T:
 		new->Record = old.Record;
@@ -321,6 +306,7 @@ setTypePtr(Type *new, Type old, type_t type)
 		break;
 	default:
 		/* Not reached */
+		err(EXIT_FAILURE, "setTypePtr called with invalid type.");
 		break;
 	}
 }
@@ -445,7 +431,7 @@ struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
  * Return:
  * 	A pointer to the ConstKind struct that is the kindPtr for symbol.
  */
-struct ConstKind *getKindPtrForConstKind(Symbol *symbol) {
+struct ConstantKind *getKindPtrForConstKind(Symbol *symbol) {
 	if ((symbol == NULL) || (symbol->kind != CONST_KIND)) {
 		err(EXIT_FAILURE, "Called getKindPtrForConstKind on "
 		    "symbol that is not CONST_KIND.");
@@ -699,31 +685,50 @@ struct String *allocateString() {
 }
 
 
+/* Allocates memory for the StringType struct
+ *
+ * Parameters:
+ *
+ * Return: Pointer to newly allocated memory chunk
+ */
+struct StringType *allocateStringType() {
+	struct StringType *newString = NULL;
+
+	newString = calloc(1, sizeof(struct StringType));
+	if ( newString == NULL ) {
+		err(1, "Could not allocate memory for struct StringType!");
+		exit(EXIT_FAILURE);
+	}
+
+	return newString;
+}
+
+
 /* Set the str member of the struct String
  *
  * Parameters:
  * 		string: struct String
- *		strlen: lenght of str
+ * 		str: char* to be copied into struct
+ *		len: lenght of str
  *
  * Return: void
  */
-void setStringStr(struct String *string, char *str) {
-	size_t len;
-
+void setStringStr(struct String *string, char *str, unsigned int len) {
 	if (str == NULL) {
 		string->str = NULL;
+		string->strlen = 0;
 		return;
 	}
 	else {
-		len = strlen(str) + 1;
-
-		string->str = calloc(1, sizeof(char)*len);
+		/* extra byte for null termination */
+		string->str = calloc(1, sizeof(char)*(len+1));
 		if ( string->str == NULL) {
-			err(1, "Failed to allocate memory for string str!");
-			exit(EXIT_FAILURE);
+			err(EXIT_FAILURE, 
+			    "Failed to allocate memory for string!");
 		}
 
-		strcpy(string->str, str);		
+		strncpy(string->str, str, len);
+		string->strlen = len;
 		return;
 	}
 }
@@ -741,8 +746,24 @@ struct String *newString(char *str, unsigned int strlen) {
 	struct String *newString = allocateString();
 
 	newString->strlen = strlen;
-	setStringStr(newString, str);	
+	setStringStr(newString, str, strlen);
 
 	return newString;
 }
 
+
+/*
+ * Creates a new StringType struct
+ * 
+ * Parameters:
+ * 	strlen: length for the new string type
+ * Returns:
+ * 	a pointer the the new struct
+ */
+struct StringType *newStringType(unsigned int strlen) {
+	struct StringType *newStringType = allocateStringType();
+
+	newStringType->strlen = strlen;
+
+	return newStringType;
+}

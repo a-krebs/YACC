@@ -53,7 +53,6 @@ struct preDefTypeSymbols {
 	Symbol *chars;
 	Symbol *integer;
 	Symbol *real;	
-	Symbol *string;	
 };
 
 

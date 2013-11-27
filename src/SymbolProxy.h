@@ -27,6 +27,6 @@ ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym);
 Symbol * newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym);
 
 
-ProxySymbol * newStringProxySym(int lvl, char *str, int strlen);
+ProxySymbol * newStringProxySym(char *str, int strlen, Symbol *type);
 
 #endif
