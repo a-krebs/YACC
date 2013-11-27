@@ -49,19 +49,30 @@ void allocStmt(char **stmt, size_t len)
  * Parameters:
  *		s : the string to be made into an ASC comment
  */
-void emitComment(char *s)
+void emitComment(char *s, ...)
 {
+	static char cmt[MAX_COMMENT_LEN];
+	va_list args;
 	size_t len = 0;
 	char *comment = NULL; 
 
 	CHECK_CAN_EMIT(s);
+
+	memset(cmt, '\0', MAX_COMMENT_LEN);
+
+	va_start(args, s);
+	vsnprintf(cmt, MAX_COMMENT_LEN - 1, s, args);
+	va_end(args);
+
+	cmt[MAX_COMMENT_LEN - 1] = '\0';
 	
-	len = strlen(s) + 3;	/* + 3 for '#', '\n', and safety '\0' */
+	len = strlen(cmt) + 4;	/* + 3 for '#', '\n', and safety '\0' */
 	allocStmt(&comment, len);
 	
 	/* Turn string s into a asc comment */
 	comment[0] = '#';
-	strncat(comment + 1, s, len - 3); 
+	comment[1] = ' ';
+	strncat(comment + 2, cmt, len - 3); 
 	comment[len - 2] = '\n';
 	comment[len - 1] = '\0';
 
@@ -118,7 +129,7 @@ void emitVarDecl(Symbol *s)
 
 	CHECK_CAN_EMIT(s);
 
-	emitComment("Make room on the stack for new var");	
+	emitComment("Make room on the stack for new var %s", s->name);	
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1,"\t\tADJUST %d\n", s->size);
 	appendStmt(&stmts, stmt);
@@ -137,7 +148,7 @@ void emitConstDecl(Symbol *s)
 
 	CHECK_CAN_EMIT(s);
 
-	emitComment("Make room on the stack for new const.");
+	emitComment("Make room on the stack for new const %s.", s->name);
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1, "\t\tADJUST 1\n");
 	appendStmt(&stmts, stmt);

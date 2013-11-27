@@ -5,6 +5,7 @@
 #define EMIT_H
 
 #include <err.h>
+#include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -20,6 +21,8 @@
 			 * to this size would be for labels which may have the
 			 * the same name as proc/funcs, in which case we would
 			 * not use this default size */
+
+#define MAX_COMMENT_LEN 1024
 
 #define CHECK_CAN_EMIT(s)\
 do {\
@@ -42,7 +45,7 @@ char *getAscFileName(char *);
 
 
 void allocStmt(char **, size_t);
-void emitComment(char *);
+void emitComment(char *, ...);
 
 /* Constant declarations emission functions */
 void emitConstDecl(Symbol *);

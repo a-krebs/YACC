@@ -146,7 +146,6 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 	if ((!id) || !(type)) return NULL;
 
 	s = newVariableSym(id, type);
-	printf("var size = %d\n", s->size);
 	if (s) {
 		createHashElement(symbolTable, id, s);
 		/* Set the variables offset */
