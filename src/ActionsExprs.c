@@ -8,6 +8,7 @@
 #include "Error.h"
 #include "Globals.h"
 #include "Hash.h"
+#include "Emit.h"
 #include "PreDef.h"
 #include "Type.h"
 #include "SymbolAll.h"

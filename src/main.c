@@ -165,8 +165,9 @@ int main( int argc, char *argv[] )
 	/* parse file */
 	yyparse();
 
+#ifdef DEBUG
 	dumpStmtLL(stmts);
-
+#endif
 	/* 
 	 * print program listing.
 	 * 0 means the flag is NOT SET, so produce file
