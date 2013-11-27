@@ -51,9 +51,10 @@ extern StmtLL *stmts;
  */
 char *getAscFileName(char *);
 
-
+/* Utility functions */
 void allocStmt(char **, size_t);
 void emitComment(char *, ...);
+void emitStmt(int len, char *, ...);
 
 /* Constant declarations emission functions */
 void emitConstDecl(Symbol *);
@@ -68,5 +69,9 @@ void emitPushVarValue(Symbol *);
 
 /* Arithmetic functions */
 void emitAddition(Symbol *, Symbol *);
+void emitAdditionIntInt(Symbol *, Symbol *);
+void emitAdditionRealReal(Symbol *, Symbol *);
+void emitAdditionRealInt(Symbol *, Symbol *);
+
 
 #endif

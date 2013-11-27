@@ -55,8 +55,6 @@ void emitComment(char *s, ...)
 	size_t len = 0;
 	char *comment = NULL; 
 
-	CHECK_CAN_EMIT(s);
-
 	memset(cmt, '\0', MAX_COMMENT_LEN);
 
 	va_start(args, s);
@@ -71,13 +69,42 @@ void emitComment(char *s, ...)
 	/* Turn string s into a asc comment */
 	comment[0] = '#';
 	comment[1] = ' ';
-	strncat(comment + 2, cmt, len - 3); 
+	strncat(comment + 2, cmt, len - 4); 
 	comment[len - 2] = '\n';
 	comment[len - 1] = '\0';
 
 	/* Append comment to list of statements */
 	appendStmt(&stmts, comment);
 }
+
+void emitStmt(int len, char *s, ...)
+{
+	va_list args;
+	char *stmt = NULL, *formattedStr = NULL;
+
+	allocStmt(&formattedStr, len);
+
+	/* Create formatted string from args */
+	va_start(args, s);
+	vsnprintf(formattedStr, len - 1, s, args);	
+	va_end(args);
+
+	/* we add 4 to make room for '\t', '\t', '\n', '\0' */
+	len = strlen(formattedStr) + 4;
+
+	allocStmt(&stmt, len);
+	
+	/* Turn formatted string into ASC statement */
+	stmt[0] = '\t';
+	stmt[1] = '\t';
+	strncat(stmt + 2, formattedStr, len - 4);
+	stmt[len - 2] = '\n';
+	stmt[len - 1] = '\0';
+
+	free(formattedStr);
+	appendStmt(&stmts, stmt);
+}
+
 
 /*
  * Constructs the asc statement necessary to push the value of the variable
@@ -124,14 +151,9 @@ void emitPushVarValue(Symbol *s)
  */
 void emitVarDecl(Symbol *s)
 {
-	char *stmt = NULL;
-
 	CHECK_CAN_EMIT(s);
-
 	emitComment("Make room on the stack for new var %s", s->name);	
-	allocStmt(&stmt, STMT_LEN);
-	snprintf(stmt, STMT_LEN - 1,"\t\tADJUST %d\n", s->size);
-	appendStmt(&stmts, stmt);
+	emitStmt(STMT_LEN, "ADJUST %d", s->size);
 }
 
 /*
@@ -148,9 +170,7 @@ void emitConstDecl(Symbol *s)
 	CHECK_CAN_EMIT(s);
 
 	emitComment("Make room on the stack for new const %s.", s->name);
-	allocStmt(&stmt, STMT_LEN);
-	snprintf(stmt, STMT_LEN - 1, "\t\tADJUST 1\n");
-	appendStmt(&stmts, stmt);
+	emitStmt(STMT_LEN, "ADJUST %d", s->size);
 
 	switch (getType(s)) {
 	case BOOLEAN_T:
@@ -186,31 +206,16 @@ void emitConstDecl(Symbol *s)
  */
 void emitIntConstDecl(Symbol *s, int value)
 {
-	char *stmt = NULL;
-
 	emitComment("Push const val = %d on stack, pop it into place.", value);
-	allocStmt(&stmt, STMT_LEN);
-	snprintf(stmt, STMT_LEN - 1, "\t\tCONSTI %d\n", value);
-	appendStmt(&stmts, stmt);
-
-	allocStmt(&stmt, STMT_LEN);
-	snprintf(stmt, STMT_LEN - 1, "\t\tPOP %d[%d]\n", s->offset, s->lvl);
-	appendStmt(&stmts, stmt);
+	emitStmt(STMT_LEN, "CONSTI %d", value);
+	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);
 }
 
 void emitRealConstDecl(Symbol *s, float value)
 {
-	char *stmt = NULL;
-
 	emitComment("Push const val = %f on stack, pop it into place.", value);
-	allocStmt(&stmt, STMT_LEN);
-	snprintf(stmt, STMT_LEN - 1, "\t\tCONSTR %f\n", value);
-	appendStmt(&stmts, stmt);
-
-	allocStmt(&stmt, STMT_LEN);
-	snprintf(stmt, STMT_LEN - 1, "\t\tPOP %d[%d]\n", s->offset, s->lvl);
-	appendStmt(&stmts, stmt);
-	
+	emitStmt(STMT_LEN, "CONSTR %f", value);
+	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);	
 }
 
 void emitAddition(Symbol *x, Symbol *y)
