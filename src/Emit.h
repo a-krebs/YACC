@@ -11,8 +11,10 @@
 
 #include "Error.h"
 #include "Definitions.h"
+#include "Kind.h"
 #include "StmtLL.h"
 #include "SymbolAPI.h"
+#include "Type.h"
 
 #define STMT_LEN 128	/* default size of an asc statement, the only exception
 			 * to this size would be for labels which may have the
@@ -41,8 +43,16 @@ char *getAscFileName(char *);
 
 void allocStmt(char **, size_t);
 void emitComment(char *);
+
+/* Constant declarations emission functions */
+void emitConstDecl(Symbol *);
+void emitIntConstDecl(Symbol *, int);
+void emitRealConstDecl(Symbol *, float);
+
+/* Variable declaration emission function */
 void emitVarDecl(Symbol *);
+
+/* Value pushing emission functions */
 void emitPushVarValue(Symbol *);
-//void emitVarDecl(Symbol *);
 
 #endif

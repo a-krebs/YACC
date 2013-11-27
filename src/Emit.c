@@ -110,16 +110,95 @@ void emitPushVarValue(Symbol *s)
  * Creates asc statement necessary to make room on the stack for the given
  * variable.
  * Parameters
- *		s: the symbol form whom we need to declare space on the stack
+ *		s: the symbol for whom we need to declare space on the stack
  */
 void emitVarDecl(Symbol *s)
 {
 	char *stmt = NULL;
 
 	CHECK_CAN_EMIT(s);
+	
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1,"\t\tADJUST %d\n", s->size);
 	appendStmt(&stmts, stmt);
 }
 
+/*
+ * Creates asc statement necessary to make room on the stack for the given
+ * constant and stores the value of the given constant in the location
+ * allocated.
+ * Parameters:
+ *		s: the constant symbol whose value we need to store
+ */
+void emitConstDecl(Symbol *s)
+{
+	char *stmt = NULL;
+
+	CHECK_CAN_EMIT(s);
+
+	emitComment("Make room on the stack for new const.");
+	allocStmt(&stmt, STMT_LEN);
+	snprintf(stmt, STMT_LEN - 1, "\t\tADJUST 1\n");
+	appendStmt(&stmts, stmt);
+
+	switch (getType(s)) {
+	case BOOLEAN_T:
+		emitIntConstDecl(s, getConstVal(s)->Boolean.value);
+		break;
+	case CHAR_T:
+		emitIntConstDecl(s, getConstVal(s)->Char.value);
+		break;
+	case INTEGER_T:
+		emitIntConstDecl(s, getConstVal(s)->Integer.value);
+		break;
+	case REAL_T:
+		emitRealConstDecl(s, getConstVal(s)->Real.value);
+		break;
+	case STRING_T:
+		//TODO: implement this case
+		break;
+	default:
+		/* Should not be reached */
+		break;
+	}
+
+}
+
+/*
+ * Creates asc statement necessary to make room on the stack for the given
+ * integer constant and stores the value of the constant in the location
+ * allocated.
+ * Parameters:
+ *		s : the integer constant symbol whose value is to be stored
+ *		value : the integer value of the constant symbol s 
+ *
+ */
+void emitIntConstDecl(Symbol *s, int value)
+{
+	char *stmt = NULL;
+
+	emitComment("Push value of const onto stack, and pop it to storage");
+	allocStmt(&stmt, STMT_LEN);
+	snprintf(stmt, STMT_LEN - 1, "\t\tCONSTI %d\n", value);
+	appendStmt(&stmts, stmt);
+
+	allocStmt(&stmt, STMT_LEN);
+	snprintf(stmt, STMT_LEN - 1, "\t\tPOP %d[%d]\n", s->offset, s->lvl);
+	appendStmt(&stmts, stmt);
+}
+
+void emitRealConstDecl(Symbol *s, float value)
+{
+	char *stmt = NULL;
+
+	emitComment("Push value of const onto stack, and pop it to storage");
+	allocStmt(&stmt, STMT_LEN);
+	snprintf(stmt, STMT_LEN - 1, "\t\tCONSTR %f\n", value);
+	appendStmt(&stmts, stmt);
+
+	allocStmt(&stmt, STMT_LEN);
+	snprintf(stmt, STMT_LEN - 1, "\t\tPOP %d[%d]\n", s->offset, s->lvl);
+	appendStmt(&stmts, stmt);
+	
+}
 
