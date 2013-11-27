@@ -52,7 +52,7 @@ ProxySymbol *proxyRealLiteral(double value) {
 ProxySymbol *proxyCharLiteral(struct String s) {
 	Symbol *charType = getPreDefChar(preDefTypeSymbols);
 	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, (s.str+1), charType);
+	return newConstProxySym(NULL, s.str, charType);
 }
 
 
