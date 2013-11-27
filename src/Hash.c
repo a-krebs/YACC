@@ -9,6 +9,7 @@
 #include "Definitions.h"
 #include "ActionsAll.h"
 #include "Type.h"
+#include "SymbolPrivateAPI.h"
 
 
 
@@ -639,6 +640,9 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
         if (HASH_DEBUG) {
                 printf("Created hash element with data:\n\tkey: %s\n\tsymbol pointer: %p\n", element->key, element->symbol);  
         }
+
+	/* This is the most appropriate place to calculate a symbol's size */
+	setSymbolSize(symbol);
 
         return 0;
 }

@@ -165,9 +165,8 @@ int main( int argc, char *argv[] )
 	/* parse file */
 	yyparse();
 
-#if DEBUG
+	fprintf(stderr, "hey hey hey hey\n");
 	dumpStmtLL(stmts);
-#endif
 
 	/* 
 	 * print program listing.

@@ -8,6 +8,7 @@
 #include "Error.h"
 #include "Globals.h"
 #include "Hash.h"
+#include "Emit.h"
 #include "PreDef.h"
 #include "Type.h"
 #include "SymbolAll.h"
@@ -69,6 +70,9 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 		/* Consts have a value and thus need an offset, so we set it */
 		setSymbolOffset(s, symbolTable);
 	}
+	
+	/* Hey, everything went well.  Let's EMIT SOME COOOODE BAYBAY. */
+	emitConstDecl(s);
 }
 
 
@@ -142,11 +146,15 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 	if ((!id) || !(type)) return NULL;
 
 	s = newVariableSym(id, type);
+	printf("var size = %d\n", s->size);
 	if (s) {
 		createHashElement(symbolTable, id, s);
 		/* Set the variables offset */
 		setSymbolOffset(s, symbolTable);
 	}
+	
+	emitVarDecl(s);
+
 	return type;
 }
 

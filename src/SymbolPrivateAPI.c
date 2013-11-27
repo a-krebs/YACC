@@ -69,11 +69,6 @@ Symbol *createSymbol(
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
 
-	// TODO we should pass table through here
-	// but make sure that this works for records
-	// see issue #51
-	setSymbolSize(symbol);
-	
 	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
 	symbol->next = NULL;
@@ -123,7 +118,7 @@ void setSymbolSize(Symbol *s)
 		s->size = -1;
 		break;
 	case TYPE_KIND:
-		/* Calculate size based on type */
+		s->size = calculateSymbolSize(s);
 		break;
 	default:
 		/* NOT REACHED */

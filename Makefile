@@ -88,7 +88,7 @@ SED_INCLUDE= 	sed -e "/<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->/r\
 all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
-debug: CFLAGS+= -g
+debug: CFLAGS+= -g 
 debug: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug: $(EXE)
 

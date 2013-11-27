@@ -117,7 +117,8 @@ void emitVarDecl(Symbol *s)
 	char *stmt = NULL;
 
 	CHECK_CAN_EMIT(s);
-	
+
+	emitComment("Make room on the stack for new var");	
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1,"\t\tADJUST %d\n", s->size);
 	appendStmt(&stmts, stmt);
