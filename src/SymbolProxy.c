@@ -56,6 +56,7 @@ ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 	double *doubleResult;
 	int *intResult;
 	char *charResult;
+	struct String *stringResult;
 
 	/* id can be NULL, this makes the constant anonymous */
 	if ((result == NULL) || (typeSym == NULL)) {
@@ -92,6 +93,13 @@ ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 	case REAL_T:
 		doubleResult = (double *) result;
 		getConstVal(constSym)->Real.value = *doubleResult;
+		break;
+	case STRING_T:
+		stringResult = (struct String *) result;
+		setStringStr(
+		    &getConstVal(constSym)->String, 
+		    stringResult->str,
+		    stringResult->strlen);
 		break;
 	default:
 		/* Shouldn't be reached */
@@ -139,23 +147,4 @@ newConstSymFromProxy(int lvl, char * id, ProxySymbol * proxySym)
 	newConstSym->lvl = lvl;
 
 	return newConstSym;
-}
-
-
-/*
- * Make a new ProxySymbol of kind CONST_KIND for the given string.
- */
-ProxySymbol *newStringProxySym(char *str, int strlen, Symbol *type) {
-	ProxySymbol *newStringSym = NULL;
-
-	/* new anonymous constant */
-	newStringSym = createConstSymbol(NULL);
-
-	/* set string value */
-	setStringStr(&getConstVal(newStringSym)->String, str, strlen);
-
-	/* assign type */
-	setInnerTypeSymbol(newStringSym, type);
-
-	return newStringSym;	
 }
