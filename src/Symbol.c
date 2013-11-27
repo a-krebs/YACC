@@ -476,3 +476,8 @@ void setSymbolOffset(Symbol *s, struct hash *table)
 	s->offset = getOffset(table);
 	addToOffset(table, s->size);
 }
+
+void setParamOffset(Symbol *s, struct ElementArray *params)
+{
+	return;
+}

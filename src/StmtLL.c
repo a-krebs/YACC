@@ -10,7 +10,7 @@
 #include "StmtLL.h"
 
 
-struct StmtLL *stmts = NULL;
+StmtLL *stmts = NULL;
 
 void
 appendStmt(StmtLL **ll, char *s)

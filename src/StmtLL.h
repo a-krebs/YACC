@@ -10,8 +10,6 @@ struct stmtll {
 
 typedef struct stmtll StmtLL;
 
-extern struct StmtLL *stmts;
-
 void appendStmt(StmtLL **, char *);
 char *getNextStmt(StmtLL **);
 void freeStmtLL(StmtLL *);

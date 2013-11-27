@@ -174,4 +174,14 @@ isConstInScalar(Symbol *constSym, Symbol *scalarSym);
  *		table : the symbol table in which the symbol s resides
  */
 void setSymbolOffset(Symbol *, struct hash *);
+
+/*
+ * Sets the offset of the given Symbol which is of kind VAR_KIND derived from 
+ * a Symbol of PARAM_KIND. 
+ * Parameters:
+ *		s: the symbol whose offset value is to be calculated
+ * 		params: the array of parameters for the proc/func to which
+ *		    s belongs
+ */
+void setParamOffset(Symbol *, struct ElementArray *);
 #endif
