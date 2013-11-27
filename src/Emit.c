@@ -45,7 +45,6 @@ void allocStmt(char **stmt, size_t len)
 /*
  * Produces asc comment from the given string and appends it to list of
  * ASC statements (to help with debugging)
- * TODO: make this a var args func in the vein of customErrorString()?
  * Parameters:
  *		s : the string to be made into an ASC comment
  */
@@ -66,7 +65,7 @@ void emitComment(char *s, ...)
 
 	cmt[MAX_COMMENT_LEN - 1] = '\0';
 	
-	len = strlen(cmt) + 4;	/* + 3 for '#', '\n', and safety '\0' */
+	len = strlen(cmt) + 4;	/* + 4 for '#', ' ', '\n', and safety '\0' */
 	allocStmt(&comment, len);
 	
 	/* Turn string s into a asc comment */
@@ -211,6 +210,40 @@ void emitRealConstDecl(Symbol *s, float value)
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1, "\t\tPOP %d[%d]\n", s->offset, s->lvl);
 	appendStmt(&stmts, stmt);
+	
+}
+
+void emitAddition(Symbol *x, Symbol *y)
+{
+	char *stmt = NULL;
+	CHECK_CAN_EMIT(x);
+	CHECK_CAN_EMIT(y);
+
+	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {
+	
+		/* Emit code to add two integers */
+		emitAdditionIntInt(x, y);
+
+	} else if ((getType(x) == REAL_T) && (getType(y) == REAL_T)) {
+
+		/* Emit code to add two integers */
+		emitAdditionRealReal(x, y);
+
+	} else if ((getType(x) == INTEGER_T) && (getType(y) == REAL_T)) {
+		/* 
+		 * Emit code to change x to a real, then emit code to add
+		 * two reals 
+		 */		
+	}
+}
+
+void emitAdditionIntInt(Symbol *x, Symbol *y)
+{
+
+}
+
+void emitAdditionRealReal(Symbol *x, Symbol *y)
+{
 	
 }
 

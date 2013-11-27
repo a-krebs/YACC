@@ -1,5 +1,13 @@
 /*
  * Module -- implements asc code generation facilities.
+ *
+ * TODO: split this file into clearly separated modules as they reveal
+ * themselves
+ * 
+ * TODO: make function emitStmt(int length, char *formatted_string, ...)
+ * that takes formatted string and additional args, allocs a char * of 
+ * appropriate size, does a snprintf, then appends the created stmt to the list
+ * of stmts ---> will save you lots of trouble!
  */
 #ifndef EMIT_H
 #define EMIT_H
@@ -57,5 +65,8 @@ void emitVarDecl(Symbol *);
 
 /* Value pushing emission functions */
 void emitPushVarValue(Symbol *);
+
+/* Arithmetic functions */
+void emitAddition(Symbol *, Symbol *);
 
 #endif
