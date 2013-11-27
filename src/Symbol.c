@@ -420,9 +420,8 @@ Symbol *newStringTypeSym(int strlen) {
 	struct TypeKind *kindPtr = getKindPtrForTypeKind(newStringSym);
 
 	kindPtr->type = STRING_T;
-	kindPtr->typePtr.String = newString(NULL, strlen);
-	// TODO may need to change this off null in future
-	
+	kindPtr->typePtr.String = newStringType(strlen);
+
 	return newStringSym;
 }
 

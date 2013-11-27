@@ -21,17 +21,18 @@ typedef enum {
 	SUBRANGE_T,
 } type_t;
 
+/* For specific type information */
 typedef union type_union {
 	struct Array * Array;
-	struct Boolean * Boolean;
-	struct Char * Char;
-	struct Integer * Integer;
 	struct Function *Function;
 	struct Procedure *Procedure;
-	struct Real * Real;
 	struct Record * Record;
 	struct Scalar * Scalar;
-	struct String * String;
+	/* Note that String and StringType are two different structs.
+	 * Constant values are not stored on Type, so StringType only
+	 * keeps the string length
+	 */
+	struct StringType * String;
 	struct Subrange * Subrange;
 } Type;
 
@@ -77,17 +78,19 @@ struct ElementArray {
 	unsigned int nElements;
 };
 
-
+/* array type */
 struct Array {
 	struct Symbol *baseTypeSym;	/* pointer to struct of base type */
 	struct Symbol *indexTypeSym;	/* pointer to struct of index type */
 };
 
+/* bool constant */
 struct Boolean {
 	int value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
+/* char constant */
 struct Char {
 	char value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
@@ -106,38 +109,47 @@ struct Function {
 
 };
 
+/* integer constant */
 struct Integer {
 	int value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
+/* procedure type */
 struct Procedure {
 	struct ParamArray *params;
 };
 
-
+/* real constant */
 struct Real {
 	double value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
-
+/* string constant */
 struct String {
 	char * str;
 	unsigned int strlen;
 };
+
+/* string type */
+struct StringType {
+	unsigned int strlen;
+};
+
+/* subrange type */
 struct Subrange {
 	int high;
 	int low;
 	struct Symbol *baseTypeSym; /* pointer to struct of type of subrange indices */
 };
 
+/* scalar list type */
 struct Scalar {
 	struct ElementArray *consts;
 };
 
-
-
+/* record type */
 struct Record { 
 	/* each record implemented as its own symbol table */
 	struct hash *hash;

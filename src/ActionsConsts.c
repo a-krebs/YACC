@@ -52,21 +52,33 @@ ProxySymbol *proxyRealLiteral(double value) {
 ProxySymbol *proxyCharLiteral(struct String s) {
 	Symbol *charType = getPreDefChar(preDefTypeSymbols);
 	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, (s.str+1), charType);
+	return newConstProxySym(NULL, s.str, charType);
 }
 
 
 /*
  * Make a new anonymous symbol with the given string.
- * Return a pointer to the hash symbol.
+ * Each string constant gets a new type symbol that carries the string length
+ * around.
+ *
+ * Parameters:
+ * 	s: a String struct with the string length and a char* to the string
+ *
+ * Return:
+ * 	a pointer to the hash symbol with kind CONST_KIND
  */
 Symbol *proxyStringLiteral(struct String s) {
-	Symbol *typeSym;
-	ProxySymbol *proxy;
-	int lvl = getCurrentLexLevel(symbolTable);
-	proxy= newStringProxySym(lvl, (s.str+1), s.strlen);
+	Symbol *typeSym = NULL;
+	ProxySymbol *proxy = NULL;
+
+	/* make a new type */
 	typeSym = newStringTypeSym(s.strlen);
+
+	/* make the constant proxy symbol */
+	proxy = newConstProxySym(NULL, &s, typeSym);
+
+	/* add the type to the symbol table */
 	createHashElement(symbolTable, NULL, typeSym);
-	setInnerTypeSymbol(proxy, typeSym);
+
 	return proxy;
 }

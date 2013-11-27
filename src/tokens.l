@@ -140,17 +140,17 @@ comment.");
 				return(STRING_CONST);
 				}
 
-"'"(([^'\\])|(\\['tn\\]))*"'"		{
-				  char *s;
+"'"(([^'\\])|(\\['tn\\]))*"'"	{
 #if DEBUG
 				  printf("STRING FOUND\n");
-#endif	
+#endif
+				  /* Remove leading and trailing apostrophe
+				   * when copying. strndup adds null-termination
+				   */
 				  yylval.string.strlen = yyleng - 2;
-				
-				  yylval.string.str = strndup(yytext,
-				      yyleng);
-				  s = yylval.string.str;
-				  *(s+(yyleng-1)) = 0;
+				  yylval.string.str = strndup(yytext + 1,
+				      yylval.string.strlen);
+
 				  return(STRING_CONST);
 				}
 
