@@ -73,9 +73,7 @@ Symbol *getInnerTypeSymbol(Symbol *symbol);
 struct StringType *allocateStringType();
 
 	
-struct String *allocateString();
 void setStringStr(struct String *string, char *str, unsigned int len);
-struct String *newString(char *str, unsigned int strlen);
 
 
 /*

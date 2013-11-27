@@ -634,24 +634,6 @@ int calculateSubrangeSize(Symbol *s)
 	    calculateSymbolSize(subrange->baseTypeSym) );
 }
 
-/* Allocates memory for the string struct
- *
- * Parameters:
- *
- * Return: Pointer to newly allocated memory chunk
- */
-struct String *allocateString() {
-	struct String *newString = NULL;
-
-	newString = calloc(1, sizeof(struct String));
-	if ( newString == NULL ) {
-		err(1, "Could not allocate memory for struct String!");
-		exit(EXIT_FAILURE);
-	}
-
-	return newString;
-}
-
 
 /* Allocates memory for the StringType struct
  *
@@ -699,24 +681,6 @@ void setStringStr(struct String *string, char *str, unsigned int len) {
 		string->strlen = len;
 		return;
 	}
-}
-
-
-/* Creates a new struct String and sets memebers
- *
- * Parameters:
- * 		str: to be str member of struct String
- *		strlen: lenght of str
- *
- * Return: void
- */
-struct String *newString(char *str, unsigned int strlen) {
-	struct String *newString = allocateString();
-
-	newString->strlen = strlen;
-	setStringStr(newString, str, strlen);
-
-	return newString;
 }
 
 
