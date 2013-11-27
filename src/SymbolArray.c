@@ -109,8 +109,7 @@ Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
  * Returns the dimension of the given array (assumes that the given
  * Symbol describing the array is the "first dimensional array")
  */
-int
-getArrayDim(Symbol *s)
+int getArrayDim(Symbol *s)
 {
 	Symbol *nextIndexSym = NULL;
 	int dim = 0;	
@@ -126,8 +125,7 @@ getArrayDim(Symbol *s)
 /*
  * Returns the symbol which indexes the array.
  */
-Symbol *
-getArrayIndexSym(Symbol *s)
+Symbol *getArrayIndexSym(Symbol *s)
 {
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
@@ -135,8 +133,7 @@ getArrayIndexSym(Symbol *s)
 }
 
 
-Symbol *
-getArrayTerminalTypeSym(Symbol *s)
+Symbol *getArrayTerminalTypeSym(Symbol *s)
 {
 	Symbol *baseSym = NULL;
 	if (!s) return NULL;
@@ -150,8 +147,7 @@ getArrayTerminalTypeSym(Symbol *s)
 }
 
 
-Symbol *
-getArrayBaseSym(Symbol *s)
+Symbol *getArrayBaseSym(Symbol *s)
 {
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
