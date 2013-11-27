@@ -162,6 +162,9 @@ allocationErrorCheck(void *p)
 AnonConstVal *
 getConstVal(Symbol *s)
 {
+	if (s == NULL) {
+		err(EXIT_FAILURE, "NULL argument passed to getConstVal");
+	}
 	return &(s->kindPtr.ConstKind->value);
 }
 
