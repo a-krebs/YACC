@@ -417,13 +417,41 @@ typeMemoryFailure()
 }
 
 
+/*
+ * Utility function to access kindPtr for TYPE_KIND
+ *
+ * Parameters:
+ * 	symbol: The symbol from which to extract the kindPtr.
+ * 		Must be of kind TYPE_KIND
+ * Return:
+ * 	A pointer to the TypeKind struct that is the kindPtr for symbol.
+ */
 struct TypeKind *getKindPtrForTypeKind(Symbol *symbol) {
 	if ((symbol == NULL) || ( symbol->kind != TYPE_KIND)) {
-		err(EXIT_FAILURE, "Called getTypeKind on symbol that is not "
-		    "TYPE_KIND.");
+		err(EXIT_FAILURE, "Called getKindPtrForTypeKind on "
+		    "symbol that is not TYPE_KIND.");
 	}
 
 	return symbol->kindPtr.TypeKind;
+}
+
+
+/*
+ * Utility function to access kindPtr for CONST_KIND
+ *
+ * Parameters:
+ * 	symbol: The symbol from which to extract the kindPtr.
+ * 		Must be of kind CONST_KIND
+ * Return:
+ * 	A pointer to the ConstKind struct that is the kindPtr for symbol.
+ */
+struct ConstKind *getKindPtrForConstKind(Symbol *symbol) {
+	if ((symbol == NULL) || (symbol->kind != CONST_KIND)) {
+		err(EXIT_FAILURE, "Called getKindPtrForConstKind on "
+		    "symbol that is not CONST_KIND.");
+	}
+
+	return symbol->kindPtr.ConstKind;
 }
 
 

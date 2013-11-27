@@ -52,6 +52,7 @@ void setTypePtr(Type *, Type, type_t);
 void typeMemoryFailure();
 
 struct TypeKind *getKindPtrForTypeKind(Symbol *);
+struct ConstKind *getKindPtrForConstKind(Symbol *);
 
 /* Type symbol size calculation functions */
 int calculateSymbolSize(Symbol *);
