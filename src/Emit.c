@@ -22,6 +22,9 @@ char *getAscFileName(char *palFileName)
 	return ascFileName;
 }
 
+
+
+
 /*
  * Allocates memory for a statement of the given size and sets the given
  * character pointer to point to the allocated memory.  Performs error checking

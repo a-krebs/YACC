@@ -6,6 +6,7 @@
 #include "args.h"
 #include "Hash.h"
 #include "Emit.h"
+#include "StmtLL.h"
 /* must include for symbol typedef to work with parser. */
 #include "SymbolAll.h"
 #include "Init.h"
@@ -21,6 +22,7 @@
 extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
+extern StmtLL *stmts;
 // extern struct preDefTypeSymbols *preDefTypeSymbols;
 // extern struct hash *symbolTable;
 
@@ -162,6 +164,10 @@ int main( int argc, char *argv[] )
 	
 	/* parse file */
 	yyparse();
+
+#if DEBUG
+	dumpStmtLL(stmts);
+#endif
 
 	/* 
 	 * print program listing.

@@ -36,6 +36,22 @@ appendStmt(StmtLL **ll, char *s)
 	}
 }
 
+/*
+ * Debug function -- prints all statements in the stmtLL to stderr.
+ * Parameters:
+ *		ll : the StmtLL to be dumped
+ */
+void
+dumpStmtLL(StmtLL *ll)
+{
+	if (!ll) return;
+	while (ll) {
+		fprintf(stderr, "%s", ll->stmt);
+		ll = ll->next;
+	}
+
+}
+
 char *
 getNextStmt(StmtLL **ll)
 {
