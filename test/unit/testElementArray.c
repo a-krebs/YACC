@@ -88,8 +88,6 @@ test_appendElement(){
 	
 	mu_assert("appendElement(): The kind of the second symbol should be \
 		  TYPE_KIND",(((Symbol **)ea->data)[1]->kind == TYPE_KIND));
-	mu_assert("appendElement(): The value of the second symbol should be \
-		  INTLOW_VAL ",(((Symbol **)ea->data)[1]->kindPtr.TypeKind->typePtr.Integer->value == INTLOW_VAL));
 	return NULL;	
 }
 
@@ -125,9 +123,6 @@ test_getElementAt(){
 		  'testType'",strcmp(sym->name,typeId)==0);
 	mu_assert("getElementAt(): The kind of the second symbol should be \
 		  TYPE_KIND",sym->kind == TYPE_KIND);
-	mu_assert("getElementAt(): The value of the second symbol should be \
-		  INTLOW_VAL ",sym->kindPtr.TypeKind->typePtr.Integer->value == INTLOW_VAL);
-		
 	
 	return NULL;
 	

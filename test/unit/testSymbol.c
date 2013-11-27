@@ -27,41 +27,14 @@ double REAL_VAL = 123.321;
 Symbol *
 setUpTypeSymbolForSimple(char *name, type_t type, int lexLevel)
 {
-	struct Symbol *symbol = calloc(1, sizeof(struct Symbol));
+	struct Symbol *symbol = createTypeSymbol(name, TYPEORIGINATOR_YES);
 	if ( symbol == NULL ) {
 		err(1, "Failed to allocate memory for test type symbol!");
 		exit(EXIT_FAILURE);		
 	}
 
-	setSymbolName(symbol, name);
-	symbol->kind = TYPE_KIND;
-
-	allocateKindPtr(symbol);
 	symbol->kindPtr.TypeKind->type = type;
-
-
-	if ( type == BOOLEAN_T ) {
-		getTypePtr(symbol)->Boolean = malloc(sizeof(struct Boolean));
-	}
-	else if ( type == CHAR_T ) {
-		getTypePtr(symbol)->Char = malloc(sizeof(struct Char));
-	}
-	else if ( type == INTEGER_T ) {
-		getTypePtr(symbol)->Integer = malloc(sizeof(struct Integer));
-	}
-	else if ( type == REAL_T ) {
-		getTypePtr(symbol)->Real = malloc(sizeof(struct Real));
-	}
-	else if ( type == STRING_T ) {
-		getTypePtr(symbol)->String = malloc(sizeof(struct String));
-	}	
-	else {
-		err(2, "Could not determine type asked in setUpTypeSymbolForSimple");
-		exit(EXIT_FAILURE);
-	}
-
 	symbol->lvl = lexLevel;
-	symbol->typeOriginator = 1;
 	symbol->next = NULL;
 
 	return symbol; 	
@@ -73,11 +46,8 @@ setUpTypeSymbol()
 	Symbol *typeSym = NULL;
 
 	typeSym = createTypeSymbol("testType", TYPEORIGINATOR_NO);
-	typeSym->kindPtr.TypeKind->typePtr.Integer =
-	     calloc(1, sizeof(struct Integer));
 
 	typeSym->kindPtr.TypeKind->type = INTEGER_T;
-	typeSym->kindPtr.TypeKind->typePtr.Integer->value = INTLOW_VAL;
 	return typeSym; 	
 }
 
