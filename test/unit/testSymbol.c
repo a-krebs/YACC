@@ -431,7 +431,7 @@ char *test_allocateSymbol() {
 char *test_createConstSymbol() {
 	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
-	char *id = malloc(5*sizeof(char));
+	char *id = calloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(table, id, CONST_KIND, 0);
@@ -455,7 +455,7 @@ char *test_createConstSymbol() {
 char *test_createFuncSymbol() {
 	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
-	char *id = malloc(5*sizeof(char));
+	char *id = calloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(table, id, FUNC_KIND, 0);
@@ -480,7 +480,7 @@ char *test_createFuncSymbol() {
 char *test_createParamSymbol() {
 	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
-	char *id = malloc(5*sizeof(char));
+	char *id = calloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(table, id, PARAM_KIND, 0);
@@ -504,7 +504,7 @@ char *test_createParamSymbol() {
 char *test_createProcSymbol() {
 	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
-	char *id = malloc(5*sizeof(char));
+	char *id = calloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(table, id, PROC_KIND, 0);
@@ -528,7 +528,7 @@ char *test_createProcSymbol() {
 char *test_createTypeSymbol() {
 	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
-	char *id = malloc(5*sizeof(char));
+	char *id = calloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(table, id, TYPE_KIND, 0);
@@ -552,7 +552,7 @@ char *test_createTypeSymbol() {
 char *test_createVarSymbol() {
 	struct hash *table = createHash(&getHashedKeySimple);
 	Symbol * symbol = NULL;
-	char *id = malloc(5*sizeof(char));
+	char *id = calloc(5, sizeof(char));
 	strncpy(id, "test\0", 5);
 
 	symbol = createSymbol(table, id, VAR_KIND, 0);

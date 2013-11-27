@@ -59,7 +59,7 @@ void printProgramListing(FILE *in, char *fileName)
 	 * than the amount of space we have allocated.
 	 */
 
-	buf = malloc(sizeof(char)*bufSize);
+	buf = calloc(bufSize, sizeof(char));
 	if (!buf) {
 		err(1, "Failed to allocate memory to write program listing.\n");
 		return;

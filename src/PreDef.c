@@ -47,7 +47,8 @@ struct Symbol *createPreDefType(char *name, type_t type) {
 
 
 struct preDefTypeSymbols *initializePreDefTypes() {
-	struct preDefTypeSymbols *preDefs = malloc(sizeof(struct preDefTypeSymbols));	
+	struct preDefTypeSymbols *preDefs = calloc(
+	    1, sizeof(struct preDefTypeSymbols));	
 	preDefs->boolean = createPreDefType(BOOLEAN_KEY, BOOLEAN_T);
 	preDefs->chars = createPreDefType(CHAR_KEY, CHAR_T);
 	preDefs->integer = createPreDefType(INTEGER_KEY, INTEGER_T);
