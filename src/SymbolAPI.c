@@ -84,36 +84,6 @@ Symbol *createTypeSymbol(char *id, int typeOriginator) {
 	return createSymbol(symbolTable, id, TYPE_KIND, typeOriginator);
 }
 
-
-/* Creates and inserts a symbol into the symbol table
- *
- * Parameters:
- * 		table: the symbol table into which to insert
- *              id: name of symbol
- *		kind: kind of symbol. Comes from kind_t enum
- *		typeOriginator: flag for if type originator 
- *
- * Return: a pointer to the created symbol
- */
-Symbol *createAndInsertSymbol(
-    struct hash *table, char *key, kind_t kind, int typeOriginator)
-{
-	Symbol *symbol = createSymbol(table, key, kind, typeOriginator);
-
-	if (symbol == NULL) {
-		err(1, "Could not create symbol.");
-		exit(EXIT_FAILURE);
-	}
-
-	if (createHashElement(table, key, symbol) != 0) {
-		err(1, "Could not insert into symbol table.");
-		exit(EXIT_FAILURE);
-	}
-
-	return symbol;
-}
-
-
 /* Returns pointer to base type symbol of the subrange symbol
  *
  * Parameters:

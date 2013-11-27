@@ -275,10 +275,14 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 Symbol *
 paramToVar(Symbol * param)
 {
+	Symbol *s = NULL;
 	if (!param) return NULL;
 	if (param->kind != PARAM_KIND) return NULL;
 	Symbol *typeSym = getTypeSym(param);
-	return newVariableSym(param->name, typeSym);
+	s = newVariableSym(param->name, typeSym);
+	if (!s) return NULL;
+	if (param->kindPtr.ParamKind->byRef) s->kindPtr.ParamKind->byRef = 1;
+	return s;
 }
 
 

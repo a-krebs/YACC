@@ -187,6 +187,9 @@ struct TypeKind {
 
 struct VariableKind {
 	struct Symbol *typeSym;
+	int byRef;		/* flag indicated if the variable is a value
+				 * or a reference to a value (e.g., an address)
+				 */
 };
 
 

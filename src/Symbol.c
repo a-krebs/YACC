@@ -479,5 +479,23 @@ void setSymbolOffset(Symbol *s, struct hash *table)
 
 void setParamOffset(Symbol *s, struct ElementArray *params)
 {
-	return;
+	Symbol *param = NULL;
+	int offset = 0, i;
+
+	/*
+	 * Strategy: 
+ 	 */
+	for (i = 0; i < params->nElements; i++) {
+		
+		param = getElementAt(params, i);
+		if (param->kindPtr.VarKind->byRef) offset += 1;
+		else offset += param->size;
+		
+		if (strcmp(param->name, s->name) == 0) {
+			/* We found s in the parameter array */
+			break;	
+		}
+	}
+
+		
 }
