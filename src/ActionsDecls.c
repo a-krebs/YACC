@@ -230,6 +230,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
+			setParamOffset(var, ea);
 		}
 		else {
 			errMsg = customErrorString("Name %s "
@@ -291,6 +292,7 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			createHashElement(symbolTable, var->name, var);
+			setParamOffset(var, ea);
 		}		
 	}
 	return s;

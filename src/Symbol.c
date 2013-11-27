@@ -477,13 +477,25 @@ void setSymbolOffset(Symbol *s, struct hash *table)
 	addToOffset(table, s->size);
 }
 
+/*
+ * Sets the offset of the given Symbol which is of kind VAR_KIND derived from 
+ * a Symbol of PARAM_KIND. 
+ * Parameters:
+ *		s: the symbol whose offset value is to be calculated
+ * 		params: the array of parameters for the proc/func to which
+ *		    s belongs
+ */
+
 void setParamOffset(Symbol *s, struct ElementArray *params)
 {
 	Symbol *param = NULL;
 	int offset = 0, i;
 
 	/*
-	 * Strategy: 
+	 * Strategy: calculate offset of var by the formula
+	 *	offset = -(sum of sizes of variables appearing before s
+	 *		    in the parameter array) + -(size of s) - 2
+	 * 	where size of s = 1 if s is passed by reference
  	 */
 	for (i = 0; i < params->nElements; i++) {
 		
@@ -496,6 +508,9 @@ void setParamOffset(Symbol *s, struct ElementArray *params)
 			break;	
 		}
 	}
+	offset += 2;	/* add 2 for saved value of old pc and old dipslay reg*/
 
-		
+	offset *= -1; 	/* make it negative since parameters saved below 
+			 * display register in the call frame */
+	s->offset = offset;		
 }
