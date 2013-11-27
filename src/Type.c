@@ -403,66 +403,6 @@ struct Scalar *newScalar(struct ElementArray *scalars) {
 }
 
 
-Type newAnonConstType(AnonConstVal value, type_t type)
-{
-	Type anonConstType;
-	switch(type) {
-	case BOOLEAN_T: {
-		struct Boolean constVal = value.Boolean;
-		struct Boolean *constValPtr = calloc(1, sizeof(struct Boolean));
-		if (!constValPtr) typeMemoryFailure();
-		constValPtr->value = constVal.value;
-		anonConstType.Boolean = constValPtr;
-		break;
-	}
-
-	case CHAR_T: {
-		struct Char constVal = value.Char;
-		struct Char *constValPtr = calloc(1, sizeof(struct Char));
-		if (!constValPtr) typeMemoryFailure();
-		constValPtr->value = constVal.value;
-		anonConstType.Char = constValPtr;
-		break;
-	}
-	case INTEGER_T: {
-		struct Integer constVal = value.Integer;
-		struct Integer *constValPtr = calloc(1, sizeof(struct Integer));
-		if (!constValPtr) typeMemoryFailure();
-		constValPtr->value = constVal.value;
-		anonConstType.Integer = constValPtr;
-		break;
-	}
-	case REAL_T: {
-		struct Real constVal = value.Real;
-		struct Real *constValPtr = calloc(1, sizeof(struct Real));
-		if (!constValPtr) typeMemoryFailure();
-		constValPtr->value = constVal.value;
-		anonConstType.Real = constValPtr;
-		break;
-	}
-	case STRING_T: {
-		struct String constVal = value.String;
-		struct String *constValPtr = calloc(1, sizeof(struct String));
-		if (!constValPtr) typeMemoryFailure();
-				
-		constValPtr->strlen = constVal.strlen;
-		if (constVal.strlen > 0) {
-			constValPtr->str = calloc(1, sizeof(char)*constVal.strlen);
-			if(!constValPtr->str) typeMemoryFailure();
-			strncpy(constValPtr->str, constVal.str, constVal.strlen);
-		}
-		anonConstType.String = constValPtr;
-		break;
-	}
-	default:
-		/* NOT REACHED */
-		break;
-	}
-
-	return anonConstType;
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 /*
  * 			OTHER STUFF:
