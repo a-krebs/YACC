@@ -40,7 +40,7 @@ struct Symbol *createPreDefType(char *name, type_t type) {
 	symbol = createTypeSymbol(name, TYPEORIGINATOR_YES);
 	symbol->kindPtr.TypeKind->type = type;
 
-	createHashElement(symbolTable, name, symbol);
+	addToSymbolTable(symbolTable, symbol);
 	
 	return symbol;
 }
@@ -94,16 +94,16 @@ int initializePreDefProc() {
 
 	/* IO functions */
 	symbol = createPreDefProc(WRITE);
-	createHashElement(symbolTable, WRITE, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefProc(WRITELN);
-	createHashElement(symbolTable, WRITELN, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefProc(READ);
-	createHashElement(symbolTable, READ, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefProc(READLN);
-	createHashElement(symbolTable, READLN, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	return 0;
 }
@@ -114,49 +114,49 @@ int initializePreDefFunc() {
 
 	/* IO functions */
 	symbol = createPreDefFunc(ODD);
-	createHashElement(symbolTable, ODD, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(ABS);
-	createHashElement(symbolTable, ABS, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(SQR);
-	createHashElement(symbolTable, SQR, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(SQRT);
-	createHashElement(symbolTable, SQRT, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(SIN);
-	createHashElement(symbolTable, SIN, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(COS);
-	createHashElement(symbolTable, COS, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(EXP);
-	createHashElement(symbolTable, EXP, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(LN);
-	createHashElement(symbolTable, LN, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(ARCTAN);
-	createHashElement(symbolTable, ARCTAN, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(TRUNC);
-	createHashElement(symbolTable, TRUNC, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(ROUND);
-	createHashElement(symbolTable, ROUND, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(ORD);
-	createHashElement(symbolTable, ORD, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(CHR);
-	createHashElement(symbolTable, CHR, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(SUCC);
-	createHashElement(symbolTable, SUCC, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(PRED);
-	createHashElement(symbolTable, PRED, symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	return 0;
 }
@@ -165,14 +165,14 @@ int initializePreDefConstants() {
 	Symbol *symbol = NULL;
 
 	symbol = createNewBoolConst("true", 1);
-	createHashElement(symbolTable, "true", symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createNewBoolConst("false", 0);
-	createHashElement(symbolTable, "false", symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	// TODO set max in value
 	symbol = createNewIntConst("maxint", 0);
-	createHashElement(symbolTable, "maxint", symbol);
+	addToSymbolTable(symbolTable, symbol);
 
 	return 0;
 }

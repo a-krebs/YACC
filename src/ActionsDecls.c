@@ -65,7 +65,7 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 	/* Else we can try to make new const  and add it to symbol table */	
 	s = newConstSymFromProxy(lvl, id, proxy);		
 	if (s) {
-		createHashElement(symbolTable, id, s);
+		addToSymbolTable(symbolTable, s);
 		/* Consts have a value and thus need an offset, so we set it */
 		setSymbolOffset(s, symbolTable);
 	}
@@ -115,7 +115,7 @@ void doTypeDecl(char *id, Symbol *type) {
 		return;
 	}
 		
-	if (createHashElement(symbolTable, id, s) != 0) {
+	if (addToSymbolTable(symbolTable, s) != 0) {
 		err(EXIT_FAILURE, "Could not insert symbol into symbol table");
 	}
 }
@@ -146,7 +146,7 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 
 	s = newVariableSym(id, type);
 	if (s) {
-		createHashElement(symbolTable, id, s);
+		addToSymbolTable(symbolTable, s);
 		/* Set the variables offset */
 		setSymbolOffset(s, symbolTable);
 	}
@@ -219,7 +219,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 
 	/*Create a symbol for the procedure in the symbolTable*/
 	s = newProcSym(id, ea);	
-	if (createHashElement(symbolTable, id, s) != 0) {
+	if (addToSymbolTable(symbolTable, s) != 0) {
 		err(1, "Could not add element to symbol table.");
 		exit(EXIT_FAILURE);
 	}
@@ -235,7 +235,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		var = paramToVar(getElementAt(ea, i));
 
 		if (!getLocalSymbol(symbolTable, var->name)) {
-			createHashElement(symbolTable, var->name, var);
+			addToSymbolTable(symbolTable, var);
 			setParamOffset(var, ea);
 		}
 		else {
@@ -287,7 +287,7 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	}
 
 	s = newFuncSym(lvl, id, typeSym, ea);
-	if (createHashElement(symbolTable, id, s) != 0) {
+	if (addToSymbolTable(symbolTable, s) != 0) {
 		// TODO error
 	}
 	incrementLexLevel(symbolTable);
@@ -297,7 +297,8 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	for (i = 0; i < ea->nElements; i++) {
 		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
-			createHashElement(symbolTable, var->name, var);
+			// TODO error checking
+			addToSymbolTable(symbolTable, var);
 			setParamOffset(var, ea);
 		}		
 	}

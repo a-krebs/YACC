@@ -72,7 +72,7 @@ struct ElementArray *appendToScalarListType(struct ElementArray *ea,
 	s = (Symbol *) newConstProxySym(id, &ea->nElements, 
 	    getPreDefInt(preDefTypeSymbols));
 	s->lvl = getCurrentLexLevel(symbolTable);
-	createHashElement(symbolTable, s->name, s);
+	addToSymbolTable(symbolTable, s);
 	appendElement(ea, s);
 	return ea;
 }
@@ -109,7 +109,7 @@ struct ElementArray * createScalarList(char *id) {
 	s = (Symbol *) newConstProxySym(
 	    id, &value, getPreDefInt(preDefTypeSymbols));
 
-	if (createHashElement(symbolTable, s->name, s) != 0) {
+	if (addToSymbolTable(symbolTable, s) != 0) {
 		symbolTableInsertFailure();
 	}
 	
@@ -138,7 +138,7 @@ Symbol *createScalarListType(struct ElementArray *ea) {
 		err(EXIT_FAILURE, "Failed to create scalar list symbol.");
 	}
 	
-	if (createHashElement(symbolTable, NULL, s) != 0) {
+	if (addToSymbolTable(symbolTable, s) != 0) {
 		symbolTableInsertFailure();
 	}
 
@@ -170,7 +170,7 @@ Symbol *createArrayType(Symbol *index, Symbol *base) {
 		/* newAnonArraySym has already done error reporting. */
 		return NULL;
 	}
-	if (createHashElement(symbolTable, NULL, newArraySym) != 0) {
+	if (addToSymbolTable(symbolTable, newArraySym) != 0) {
 		symbolTableInsertFailure();
 	}
 
@@ -259,7 +259,7 @@ Symbol *createRecordType(struct ElementArray *fields) {
 			continue;
 		}
 		
-		if (createHashElement(recHash, fieldId, newField) != 0) {
+		if (addToSymbolTable(recHash, newField) != 0) {
 			freeProxySymbol(f);
 			continue;
 		}

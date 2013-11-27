@@ -78,7 +78,7 @@ Symbol *proxyStringLiteral(struct String s) {
 	proxy = newConstProxySym(NULL, &s, typeSym);
 
 	/* add the type to the symbol table */
-	createHashElement(symbolTable, NULL, typeSym);
+	addToSymbolTable(symbolTable, typeSym);
 
 	return proxy;
 }

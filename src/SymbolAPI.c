@@ -163,3 +163,30 @@ int isByReference(Symbol *s)
 	if (s->kind == VAR_KIND) return s->kindPtr.VarKind->byRef;
 	return 0;
 }
+
+/*
+ * Adds the given symbol to the symbol table supplied.
+ *
+ * This is a wrapper around createHashElement that also sets the
+ * symbols size, since when we add to the hash table we know all the elements
+ * needed to set the size.
+ *      
+ * Parameters: 
+ *              table: hash table for element to be created in
+ *              symbol: pointer to symbol to add to hash table.
+ *
+ * Returns: 0 on success 
+ *         1 current lex level and symbol's lex level differ
+ *         2 element on hash table has symbol set to NULL
+ *         3 element's symbol list head lex level same as symbol's
+ *         4 symbol's lex level lower than element's symbol list head    
+ *         5 could not create a name for null key
+*/
+int addToSymbolTable(struct hash *table, Symbol *symbol) {
+	int retval = 0;
+
+	retval = createHashElement(table, symbol->name, symbol);
+	setSymbolSize(symbol);
+
+	return retval;
+}
