@@ -648,7 +648,7 @@ int calculateScalarSize(Symbol *s)
 int calculateSubrangeSize(Symbol *s)
 {	
 	struct Subrange *subrange = getTypePtr(s)->Subrange;
-	return ( (subrange->high - subrange->low) *
+	return ( ((subrange->high - subrange->low) + 1) *
 	    calculateSymbolSize(subrange->baseTypeSym) );
 }
 

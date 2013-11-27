@@ -189,7 +189,7 @@ void emitIntConstDecl(Symbol *s, int value)
 {
 	char *stmt = NULL;
 
-	emitComment("Push value of const onto stack, and pop it to storage");
+	emitComment("Push const val = %d on stack, pop it into place.", value);
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1, "\t\tCONSTI %d\n", value);
 	appendStmt(&stmts, stmt);
@@ -203,7 +203,7 @@ void emitRealConstDecl(Symbol *s, float value)
 {
 	char *stmt = NULL;
 
-	emitComment("Push value of const onto stack, and pop it to storage");
+	emitComment("Push const val = %f on stack, pop it into place.", value);
 	allocStmt(&stmt, STMT_LEN);
 	snprintf(stmt, STMT_LEN - 1, "\t\tCONSTR %f\n", value);
 	appendStmt(&stmts, stmt);
