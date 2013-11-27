@@ -11,6 +11,9 @@
 #include "PreDef.h"
 #include "SymbolAll.h"
 
+/* macro used in getTypeSym */
+#define assertKindPtr(ptr) if (ptr == NULL) {\
+    err(EXIT_FAILURE, "kindPtr is NULL");}
 
 /* Creates const kind symbol using scope of global symbol table.
  *
@@ -112,29 +115,35 @@ void freeProxySymbol(ProxySymbol *p) {
 
 /*
  * Returns a pointer to the Symbol of TYPE_KIND defining the type for the
- * given CONST_KIND, FUNC_KIND, PROC_KIND, or VAR_KIND symbol.  Returns
- * NULL for Symbols of TYPE_KIND.
+ * given CONST_KIND, FUNC_KIND, PROC_KIND, or VAR_KIND symbol.
+ * Parameters:
+ * 	s: the symbol for which to return the type pointer
+ * Returns:
+ * 	NULL if symbol has no type, or s for Symbols of TYPE_KIND.
  */
-Symbol *
-getTypeSym(Symbol *s) 
-{
+Symbol *getTypeSym(Symbol *s) {
 	if (!s) return NULL; 
 	switch (s->kind) {
 	case CONST_KIND:
+		assertKindPtr(s->kindPtr.ConstKind);
 		return s->kindPtr.ConstKind->typeSym;
 	case PARAM_KIND:
+		assertKindPtr(s->kindPtr.ParamKind);
 		return s->kindPtr.ParamKind->typeSym;
 	case PROC_KIND: 
 		/* Procedures do not have associated type symbols */
 		return NULL;
 	case FUNC_KIND:
+		assertKindPtr(s->kindPtr.FuncKind);
 		return s->kindPtr.FuncKind->typeSym;
 	case TYPE_KIND:
+		assertKindPtr(s->kindPtr.TypeKind);
 		return s;
 	case VAR_KIND:
+		assertKindPtr(s->kindPtr.VarKind);
 		return s->kindPtr.VarKind->typeSym;
 	default:
-		/* NOT REACHED */
+		err(EXIT_FAILURE, "Unknown kind set on given symbol");
 		return NULL;
 	}
 }
