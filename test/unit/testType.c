@@ -61,26 +61,10 @@ test_isSimpleType()
 }
 
 char *
-test_setTypePtr()
-{
-	Type new, old;
-	type_t type;
-	void * addr = (void *) 0x3924ff30;
-
-	old.Array = addr;
-	type = ARRAY_T;
-	setTypePtr(&new, old, type);
-	mu_assert("new.Array should point to test addr",
-		  new.Array == addr);
-	return NULL;
-}
-
-char *
 test_all_Type()
 {
 	mu_run_test(test_areOpCompatible);
 	mu_run_test(test_areSameType);
-	mu_run_test(test_setTypePtr);
 	mu_run_test(test_isOrdinal);
 	mu_run_test(test_isSimpleType);
 	return NULL;

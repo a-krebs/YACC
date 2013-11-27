@@ -280,38 +280,6 @@ areOpCompatible(Symbol *s1, Symbol *s2)
 //////////////////////////////////////////////////////////////////////////
 
 
-/*
- * Set type pointer new to point to type old of type passed as arg.
- */
-// TODO this is dead code
-void
-setTypePtr(Type *new, Type old, type_t type)
-{
-	switch (type) {
-
-	case ARRAY_T:
-		new->Array = old.Array;
-		break;
-	case RECORD_T:
-		new->Record = old.Record;
-		break;
-	case SCALAR_T:
-		new->Scalar = old.Scalar;
-		break;
-	case STRING_T:
-		new->String = old.String;
-
-	case SUBRANGE_T:
-		new->Subrange = old.Subrange;
-		break;
-	default:
-		/* Not reached */
-		err(EXIT_FAILURE, "setTypePtr called with invalid type.");
-		break;
-	}
-}
-
-
 //////////////////////////////////////////////////////////////////////////
 /*
  * 			TYPE CREATION FUNCTIONS:
