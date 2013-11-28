@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "Kind.h"
+#include "Type.h"
 
 /*
  * Allocates memory for the kindPtr of the symbol based on the kind of the
@@ -195,13 +196,18 @@ copyConstVal(AnonConstVal *newacl, AnonConstVal * acl, type_t type)
 		newacl->Real.value = acl->Real.value;
 		break;
 	case STRING_T:
-		newacl->String.str = calloc(1, sizeof(AnonConstVal));
+		setStringStr(&newacl->String, acl->String.str, acl->String.strlen);
+
+		/*
+			newacl->String.str = calloc(1, sizeof(AnonConstVal));
 		if (!newacl->String.str) {
 			err(1, "failed to allocate memory for string literal!");
 			exit(1);
 		}
 		newacl->String.strlen = acl->String.strlen;
-		strcpy(newacl->String.str, acl->String.str);
+		strncpy(
+		    newacl->String.str, acl->String.str, newacl->String.strlen);
+		*/
 		break;
 	default:
 		break;
