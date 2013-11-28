@@ -366,12 +366,15 @@ Symbol *assertOpCompat(
 
 
 /*
- * Return 0 if the given types are assignment compatible, otherwise return
- * non-zero
+ * Boolean function to determine if two symbols are assignment
+ * compatible
+ *
+ * Parameters:  type1: type symbole to compare
+ *		type2: type symbole to compare
+ *
+ * Returns: 1 if both symbols are compatible. 0 otherwise
  */
 int isAssignmentCompat(Symbol * type1, Symbol * type2) {
-	// if (!type1->name) return 0;
-
 	if (areSameType(type1, type2)) {
 		return 1;
 	} else if (areCompatibleStrings(type1, type2)) {
@@ -385,5 +388,6 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
 	    " of type %s", typeToString(getType(type1)), 
 	    typeToString(getType(type2)));
 	recordError(errMsg, yylineno, colno, SEMANTIC);
+	
 	return 0;
 }
