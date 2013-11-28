@@ -37,7 +37,7 @@
 type_t
 getType(Symbol *s)
 {
-	if (!s) return VOID_T;		///SHOUDL THIS CHANGE TO EXIT?
+	if (!s) return VOID_T;
 
 	switch (s->kind) {
 	case CONST_KIND:
