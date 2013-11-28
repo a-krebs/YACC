@@ -73,7 +73,6 @@ int inDecl = 0;
 "}"             { colno++;
                   struct Error *e = recordError("Closing comment brace '}' "
                   "found without matching '{'", yylineno, colno, SYNTAX);
-                  printError(e);
 #if DEBUG
                   printf("'}' FOUND WITHOUT MATCHING '{'\n");
 #endif

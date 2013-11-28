@@ -49,6 +49,7 @@ appendError(struct ErrorLL **eLL, struct Error *e)
 	}
 
 #ifndef TESTBUILD
+	/* do not output when running unit tests */
 	if (givenArgs.q == 0) {
 		printError(e);
 	}
