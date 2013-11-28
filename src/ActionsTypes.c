@@ -237,7 +237,6 @@ Symbol *createRecordType(struct ElementArray *fields) {
 
 	for (int i = 0; i < fields->nElements; i++) {
 		f = getElementAt(fields, i);
-		printf("%p\n", f);
 		if (!f) continue;
 		fieldId = f->name;
 
