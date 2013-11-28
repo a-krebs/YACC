@@ -269,92 +269,89 @@ ProxySymbol *unaryNotOp(ProxySymbol *y) {
  * Check that the given types are compatible when using the given
  * operator.
  *
- * Return a pointer to a Symbol struct 
- * that is populated with the resulting type when performing the operation, and
- * the value of the expression if it can be evaluated (like when dealing with
- * constants).
+ * Parameters:  typeSymbol1: a symobol of type TYPE
+ *		opToken: operation to check against	
+ *		typeSymbol1: a symobol of type TYPE
  *
- * If the types are not combatible for this operator, set error and return NULL.
- * TODO: right now success returns non-NULL for the benefit of unit tests.
+ * Returns: Return a pointer to a Symbol struct that is populated 
+ * 		with the resulting type when performing the operation. 
+ *		Otherwise, returns and if possible, sets an opError message.
  */
 Symbol *assertOpCompat(
-    Symbol *type1, int opToken, Symbol *type2) {
+    Symbol *typeSymbol1, int opToken, Symbol *typeSymbol2) {
 	
-	type_t s1_t, s2_t;
-	s1_t = getType(type1);
-	s2_t = getType(type2);
+	type_t type1 = getType(typeSymbol1);
+	type_t type2 = getType(typeSymbol2);
 
-	if ( (!type1) && (!type2)) return NULL;
+	if ( (!typeSymbol1) && (!typeSymbol2)) return NULL;
 
 #if DEBUG
-	printf("\n%s %s %s\n", typeToString(getType(type1)), 
-	opToString(opToken), typeToString(getType(type2)));
+	printf("\n%s %s %s\n", typeToString(getType(typeSymbol1)), 
+	opToString(opToken), typeToString(getType(typeSymbol2)));
 #endif
-	/* if type1 pointer is null but the operator is PLUS or MINUS (i.e.,
+
+	/* if typeSymbol1 pointer is null but the operator is PLUS or MINUS (i.e.,
 	 * it is a unary operator) then we assume the best */ 
-	if ((!type1) && (isUnaryOperator(opToken))) {
-		if ((s2_t == REAL_T) 
-			|| (s2_t == INTEGER_T)
-			|| (s2_t == BOOLEAN_T)) {
-			return type2;
-		}	
-		else {
-			opError(typeToString(s2_t), opToken, 
-			    typeToString(s2_t));
-			return NULL;
-		}
-	} else if (!type1) {
-		opError(typeToString(s2_t), opToken, typeToString(s2_t));
-		return NULL; /* else it was an error */
+	if ( typeSymbol1 == NULL
+		&& isUnaryOperator(opToken)
+		&& isRealIntBool(type2)
+	) {
+		return typeSymbol2;
+	}
+
+	/* At this point, we do not accept nulls */
+	if ( typeSymbol1 == NULL || typeSymbol2 == NULL ) {
+		opError(typeToString(type2), opToken, typeToString(type2));
+		return NULL; /* else it was an error */		
 	}
 
 	/* If the operator is relational, we just need op compatible types */
-	if ( isRelationalOperator(opToken) && areOpCompatible(type1, type2) ) {
+	if ( isRelationalOperator(opToken) 
+		&& areOpCompatible(typeSymbol1, typeSymbol2) ) {
 		return getPreDefBool(preDefTypeSymbols);
 	}	
 
-	if ( (isRelationalOperator(opToken) && areSameType(type1, type2) ) &&
-	    	getType(type1) == SCALAR_T ) {
+	/* If the operator is relational and both types are scalar */
+	if ( isRelationalOperator(opToken) 
+		&& areSameType(typeSymbol1, typeSymbol2) 
+		&& type1 == SCALAR_T 
+	) 
+	{
 		return getPreDefBool(preDefTypeSymbols); 
-	}
-
-	/* Only simple and string types are compatible with operators */
-	if (!(isSimpleType(s1_t) && isSimpleType(s2_t)) &&
-	    (s1_t != STRING_T)) {
-		opError(typeToString(s1_t), opToken, typeToString(s2_t));
-		return NULL;
 	}
 
 	/* If operator is a logical operator, we only accept boolean types */
 	if (isLogicalOperator(opToken)) {
-		if ((s1_t != BOOLEAN_T) || (s2_t != BOOLEAN_T)) {
-			opError(typeToString(s1_t), opToken,
-			    typeToString(s2_t));
+		/*check to see if both types are boolean*/
+		if ((type1 != BOOLEAN_T) || (type2 != BOOLEAN_T)) {
+			opError(typeToString(type1), opToken,
+			    typeToString(type2));
 			return NULL;
 		}
+
 		/* Else return pointer to pre-defined boolean type */
 		return getPreDefBool(preDefTypeSymbols); 
 	}
 
-	if (areArithmeticCompatible(type1, type2)) {
+
+	if (areArithmeticCompatible(typeSymbol1, typeSymbol2)) {
 		switch (opToken) {
-			case PLUS:
-			case MINUS:
+			case PLUS: //drop through
+			case MINUS: //drop through
 			case MULTIPLY:
-				if (areBothInts(type1, type2)) {
-					return type1;
+				if (areBothInts(typeSymbol1, typeSymbol2)) {
+					return getPreDefInt(preDefTypeSymbols);
 				}
-				else return getPreDefReal(
-				    preDefTypeSymbols);
+				else {
+				       return getPreDefReal(preDefTypeSymbols);
+				} 
 				break;
 			case DIVIDE:
 				return getPreDefReal(preDefTypeSymbols);
-			case DIV:
+			case DIV: //drop throught
 			case MOD:
-				if (areBothInts(type1, type2)) {
-					/* return ptr to int type */
-					return getPreDefInt(
-					    preDefTypeSymbols);
+				if (areBothInts(typeSymbol1, typeSymbol2)) {
+					return getPreDefInt(preDefTypeSymbols);
 				}
 				break;
 			default:
@@ -363,7 +360,7 @@ Symbol *assertOpCompat(
 		}
 	}
 	
-	opError(typeToString(s1_t), opToken, typeToString(s2_t));
+	opError(typeToString(type1), opToken, typeToString(type2));
 	return NULL;
 }
 

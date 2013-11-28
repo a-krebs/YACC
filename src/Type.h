@@ -95,5 +95,17 @@ void setStringStr(struct String *string, char *str, unsigned int len);
  */
 struct StringType *newStringType(unsigned int strlen);
 
+/*
+ * Boolean function to determine if passed type is an 
+ * either real, int, or bool.
+ * 
+ * Parameters:
+ * 	type: 
+ *
+ * Returns:
+ * 	boolean 0/1
+ */
+int isRealIntBool(type_t type);
+
 
 #endif
