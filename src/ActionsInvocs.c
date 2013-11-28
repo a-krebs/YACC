@@ -36,7 +36,6 @@ void procInvok(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	s = getGlobalSymbol(symbolTable, id);
 	if (!s) {
-		printf("this is the error\n");
 		notDefinedError(id);
 		return;
 	}
