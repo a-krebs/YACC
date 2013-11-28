@@ -314,8 +314,12 @@ ProxySymbol *newRecordFieldProxy(char *id, Symbol *type) {
 	if (!id) return NULL;
 	if (!type) return NULL;
 
+	/* 
+	 * this sets lex level to global symbolTable level, but that's
+	 * fine since this is a proxySymbol and the correct lex level
+	 * for the record field is set in createRecordType
+	 */
 	newField = newVariableSym(id, type);
-	// newField = newVariableSym(0, id, type);
 
 	return newField;
 }
