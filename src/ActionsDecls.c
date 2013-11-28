@@ -35,7 +35,6 @@ static char *errMsg;
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
 	incrementLexLevel(symbolTable);
-	// TODO push lexical level, figure this out
 }
 
 
