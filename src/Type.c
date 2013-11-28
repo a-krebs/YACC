@@ -12,18 +12,6 @@
 #include "Hash.h"
 
 
-/*
-	TODO:
-		- fix areCompatibleStrings
-		- fix areOpCompatible
-
-*/
-
-
-
-
-
-
 //////////////////////////////////////////////////////////////////////////
 /*
  * 			TYPE API FUNCTIONS:
@@ -228,17 +216,28 @@ int areCompatibleStrings(Symbol *s1, Symbol *s2)
 }
 
 
-/* TODO: Fix this function!!!
- * Returns true if the two type symbols are of operator compatible types.
+/*
+ * Check if the two type symbols are operator compatible.
+ *
+ * Records no errors. Calling function should record errors.
+ * 
+ * Parameters:
+ * 	s1, s2: the two symbols to check for compatibility. Should be of
+ * 		kind TYPE_KIND
+ * Return:
+ * 	0 if the two type symbols are not of operator compatible types.
+ * 	non-zero otherwise
  */
-int
-areOpCompatible(Symbol *s1, Symbol *s2) 
+int areOpCompatible(Symbol *s1, Symbol *s2) 
 {
-	/*TODO: record errors */
 	type_t s1_t, s2_t;	
 
-	if ((!s1) || (!s2)) /* record error */ return 0;
-	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
+	if ((!s1) || (!s2)) {
+		return 0;
+	}
+	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) {
+		return 0;
+	}
 
 	s1_t = s1->kindPtr.TypeKind->type;
 	s2_t = s2->kindPtr.TypeKind->type;
