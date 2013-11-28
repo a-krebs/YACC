@@ -141,21 +141,19 @@ int isPreDefFunc(Symbol *s) {
 
 	name = s->name;
 
-	if ( (	(strcmp(name, "abs") == 0) ||
-		(strcmp(name, "sqr") == 0) ||
-		(strcmp(name, "sin") == 0) ||
-		(strcmp(name, "cos") == 0) ||
-		(strcmp(name, "exp") == 0) ||
-		(strcmp(name, "ln") == 0) ||
-		(strcmp(name, "sqrt") == 0) ||
-		(strcmp(name, "arctan") == 0) ||
-		(strcmp(name, "trunc") == 0) ||
-		(strcmp(name, "round") == 0) ||
-		(strcmp(name, "chr") == 0) ||
-		(strcmp(name, "odd") == 0) ||
-		(strcmp(name, "ord") == 0) ||
-		(strcmp(name, "succ") == 0) ||
-		(strcmp(name, "pred") == 0) ) &&
+	if ( (	(strcmp(name, ABS) == 0) ||
+		(strcmp(name, SQR) == 0) ||
+		(strcmp(name, SIN) == 0) ||
+		(strcmp(name, EXP) == 0) ||
+		(strcmp(name, LN) == 0) ||
+		(strcmp(name, SQRT) == 0) ||
+		(strcmp(name, TRUNC) == 0) ||
+		(strcmp(name, ROUND) == 0) ||
+		(strcmp(name, CHR) == 0) ||
+		(strcmp(name, ODD) == 0) ||
+		(strcmp(name, ORD) == 0) ||
+		(strcmp(name, SUCC) == 0) ||
+		(strcmp(name, PRED) == 0) ) &&
 			s->lvl == 0) {
 	   	return 1;
 	}
@@ -238,33 +236,31 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 	name = s->name;
 
 	if (
-	    (strcmp(name, "abs") == 0) ||
-	    (strcmp(name, "sqr") == 0) ||
-	    (strcmp(name, "succ") == 0) ||
-	    (strcmp(name, "pred") == 0)
+	    (strcmp(name, ABS) == 0) ||
+	    (strcmp(name, SQR) == 0) ||
+	    (strcmp(name, SUCC) == 0) ||
+	    (strcmp(name, PRED) == 0)
 	) {
 		return getTypeSym(s);
 	} else if (
-	    (strcmp(name, "sin") == 0) ||
-	    (strcmp(name, "cos") == 0) ||
-	    (strcmp(name, "exp") == 0) ||
-	    (strcmp(name, "ln") == 0) ||
-	    (strcmp(name, "sqrt") == 0) ||
-	    (strcmp(name, "arctan") == 0)
+	    (strcmp(name, SIN) == 0) ||
+	    (strcmp(name, EXP) == 0) ||
+	    (strcmp(name, LN) == 0) ||
+	    (strcmp(name, SQRT) == 0)
 	) {
 		return getPreDefReal(preDefTypeSymbols);
 	} else if (
-	    (strcmp(name, "trunc") == 0) ||
-	    (strcmp(name, "round") == 0) ||
-	    (strcmp(name, "ord") == 0)
+	    (strcmp(name, TRUNC) == 0) ||
+	    (strcmp(name, ROUND) == 0) ||
+	    (strcmp(name, ORD) == 0)
 	){
 		return getPreDefInt(preDefTypeSymbols);
 	} else if (
-	    (strcmp(name, "chr") == 0)
+	    (strcmp(name, CHR) == 0)
 	){
 		return getPreDefChar(preDefTypeSymbols);
 	} else if (
-	    (strcmp(name, "odd") == 0)
+	    (strcmp(name, ODD) == 0)
 	){
 		return getPreDefBool(preDefTypeSymbols);
 	}
@@ -327,32 +323,30 @@ int typeIsInValidArgs(Symbol *s, type_t type) {
 	name = s->name;
 
 	if (
-	    (strcmp(name, "abs") == 0) ||
-	    (strcmp(name, "sqr") == 0) ||
-	    (strcmp(name, "sin") == 0) ||
-	    (strcmp(name, "cos") == 0) ||
-	    (strcmp(name, "exp") == 0) ||
-	    (strcmp(name, "ln") == 0) ||
-	    (strcmp(name, "sqrt") == 0) ||
-	    (strcmp(name, "arctan") == 0)
+	    (strcmp(name, ABS) == 0) ||
+	    (strcmp(name, SQR) == 0) ||
+	    (strcmp(name, SIN) == 0) ||
+	    (strcmp(name, EXP) == 0) ||
+	    (strcmp(name, LN) == 0) ||
+	    (strcmp(name, SQRT) == 0)
 	) {
 		if ((type == INTEGER_T) || (type == REAL_T)) {
 			return 1;
 		}
 	} else if (
-	    (strcmp(name, "trunc") == 0) ||
-	    (strcmp(name, "round") == 0)
+	    (strcmp(name, TRUNC) == 0) ||
+	    (strcmp(name, ROUND) == 0)
 	){
 		if (type == REAL_T) return 1;
 	} else if (
-	    (strcmp(name, "chr") == 0) ||
-	    (strcmp(name, "odd") == 0)
+	    (strcmp(name, CHR) == 0) ||
+	    (strcmp(name, ODD) == 0)
 	){
 		if (type == INTEGER_T) return 1;
 	} else if (
-	    (strcmp(name, "ord") == 0) ||
-	    (strcmp(name, "succ") == 0) ||
-	    (strcmp(name, "pred") == 0)
+	    (strcmp(name, ORD) == 0) ||
+	    (strcmp(name, SUCC) == 0) ||
+	    (strcmp(name, PRED) == 0)
 	){
 		if (isOrdinal(type)) return 1;
 	}

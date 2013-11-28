@@ -128,16 +128,10 @@ int initializePreDefFunc() {
 	symbol = createPreDefFunc(SIN);
 	addToSymbolTable(symbolTable, symbol);
 
-	symbol = createPreDefFunc(COS);
-	addToSymbolTable(symbolTable, symbol);
-
 	symbol = createPreDefFunc(EXP);
 	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(LN);
-	addToSymbolTable(symbolTable, symbol);
-
-	symbol = createPreDefFunc(ARCTAN);
 	addToSymbolTable(symbolTable, symbol);
 
 	symbol = createPreDefFunc(TRUNC);

@@ -32,10 +32,8 @@
 #define SQR "sqr"
 #define SQRT "sqrt"
 #define SIN "sin"
-#define COS "cos"
 #define EXP "exp"
 #define LN "ln"
-#define ARCTAN "arctan"
 //type coercion
 #define TRUNC "trunc"
 #define ROUND "round"
