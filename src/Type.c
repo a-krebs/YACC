@@ -188,45 +188,43 @@ isSimpleType(type_t type)
 }
 
 
-/* TODO: Fix this function!!!
- * Returns true if the two symbols are compatible string types (i.e.,
- * both strings of the same length)
+/*
+ * Check if two type symbols represent compatible string types. (i.e.,
+ * 	both strings of the same length)
+ * 
+ * Parameters:
+ * 	s1, s2: symbols of kind TYPE_KIND for compatibility check
+ * Return:
+ * 	1 if if the two symbols are compatible string types
+ * 	0 otherwise
  */
-int
-areCompatibleStrings(Symbol *s1, Symbol *s2)
+int areCompatibleStrings(Symbol *s1, Symbol *s2)
 {
-	/* TODO: record errors */
-	if ((!s1) || (!s2)) return 0;
+	/* two string lengths */
+	int l1 = 0;
+	int l2 = 0;
 
-	// if ( s1->kind == CONST_KIND && s2->kind == CONST_KIND ) {
-	// 	if (  s1->kindPtr.ConstKind->value.String.strlen  == s2->kindPtr.ConstKind->value.String.strlen ) {
+	/* error checking */
+	if ((!s1) || (!s2)) {
+		return 0;
+	}
+	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) {
+		return 0;
+	}
+	if (!(getKindPtrForTypeKind(s1)->type == STRING_T) ||
+	    !(getKindPtrForTypeKind(s2)->type == STRING_T)) {
+		return 0;
+	}
 
-	// 	}
-	// 	else {
-	// 		return 0;
-	// 	}
-	// }
+	l1 = getKindPtrForTypeKind(s1)->typePtr.String->strlen;
+	l2 = getKindPtrForTypeKind(s2)->typePtr.String->strlen;
 
-
-	// int x = s1->kindPtr.ConstKind->value.String.strlen;
-	// int y = s2->kindPtr.ConstKind->value.String.strlen;
-
-	// printf("x: %d, y: %d\n", x, y);
-
-	// if ( x == y ) {
-	// 	return 1;
-	// }
-	// else {
-	// 	return 0;
-	// }
-
-	
-	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) return 0;
-	if (!(s1->kindPtr.TypeKind->type == STRING_T) ||
-	    !(s2->kindPtr.TypeKind->type == STRING_T)) return 0;
-	
-	return (s1->kindPtr.TypeKind->typePtr.String->strlen ==
-	    s2->kindPtr.TypeKind->typePtr.String->strlen);	
+	if ( l1 == l2 ) {
+		return 1;
+	}
+	else {
+		return 0;
+	}	
 }
 
 
