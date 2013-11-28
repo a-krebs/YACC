@@ -189,7 +189,7 @@ var_decl
 : ID_or_err COLON type
 	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>3); }
 | ID_or_err comma_or_error var_decl
-	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>2); }
+	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>3); }
 ;
 
 proc_decl_part

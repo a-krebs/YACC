@@ -98,7 +98,7 @@ void doTypeDecl(char *id, Symbol *type) {
 	/* check that type with id is not already defined in scope */
 	s = getLocalSymbol(symbolTable, id);
 	if (s != NULL) {
-		errMsg = customErrorString("The type %s is already "
+		errMsg = customErrorString("The identifier %s is already "
 		  "defined at this scope.", id);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		/* Assume first type decl is the one to use.

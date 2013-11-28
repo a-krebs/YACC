@@ -1,0 +1,8 @@
+{6}
+program test(input,out);
+const
+    l = 'integer';
+type
+    l = char;
+begin
+end.
