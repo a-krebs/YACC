@@ -17,7 +17,7 @@ char *test_assertOpCompat() {
 	Symbol *type1 = setUpTypeSymbol();
 	Symbol *type2 = setUpTypeSymbol();
 
-	mu_assert("Two integer types compatible with DIV",
+	mu_assert("Two integer types compatible with PLUS",
 	    assertOpCompat(type1, PLUS, type2));	
 	mu_assert("Two integer types are compatible with EQUAL",
 	    assertOpCompat(type1, EQUAL, type2));

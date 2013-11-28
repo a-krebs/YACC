@@ -690,3 +690,25 @@ struct StringType *newStringType(unsigned int strlen) {
 
 	return newStringType;
 }
+
+
+/*
+ * Boolean function to determine if passed type is an 
+ * either real, int, or bool.
+ * 
+ * Parameters:
+ * 	type: 
+ *
+ * Returns:
+ * 	boolean 0/1
+ */
+int isRealIntBool(type_t type) {
+	if ( (type == REAL_T) 
+		|| (type == INTEGER_T)
+		|| (type == BOOLEAN_T) ) 
+	{
+		return 1;
+	}
+
+	return 0;
+}
