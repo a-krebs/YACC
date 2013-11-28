@@ -223,7 +223,6 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
  * Return a pointer to the new record type symbol.
  */
 Symbol *createRecordType(struct ElementArray *fields) {
-	printf("Here I am\n");
 	Symbol *recType = NULL;
 	Symbol *newField = NULL;
 	int recordLexLvl = -1;
