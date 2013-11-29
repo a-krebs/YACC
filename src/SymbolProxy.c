@@ -34,6 +34,8 @@ newProxySymFromSym(Symbol *s)
 	ps->kindPtr = s->kindPtr;
 	ps->typeOriginator = 0;
 	ps->lvl = s->lvl;
+	ps->offset = s->offset;
+	ps->size = s->size;
 	return ps;
 }
 
