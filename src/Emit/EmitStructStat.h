@@ -31,4 +31,12 @@ extern int doNotEmit;
 void emitIfStat(Symbol *s);
 
 
+/*
+ * Emit ASC code for a then statment.
+ * Assumes the corresposding statement or matched_stat code has already
+ * been emitted.
+ */
+void emitThenMatchedStat();
+
+
 #endif

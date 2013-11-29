@@ -25,4 +25,9 @@ void endWhileLoop(void);
  */
 void ifPart(ProxySymbol *expr);
 
+/*
+ * THEN part of of IF-THEN-ELSE
+ */
+void thenMatchedStatPart();
+
 #endif

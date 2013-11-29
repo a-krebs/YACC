@@ -15,7 +15,23 @@ void emitIfStat(Symbol *s) {
 	reserveLabels(labelStack, 2);
 
 	emitComment("IF expr THEN");
-	emitStmt(
-	    STMT_LEN, "IFZ %s%d", 
+	emitStmt(STMT_LEN, "IFZ %s%d", 
+	    LABEL_PREFIX, peekLabelStackTop(labelStack));
+}
+
+
+/*
+ * Emit ASC code for a then statment.
+ * Assumes the corresposding statement or matched_stat code has already
+ * been emitted.
+ */
+void emitThenMatchedStat() {
+	/* we don't have a symbol pointer, so jsut pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	emitComment("THEN stat");
+	emitStmt(STMT_LEN, "GOTO %s%d",
+	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
+	emitStmt(STMT_LEN, "%s%d:",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack));
 }

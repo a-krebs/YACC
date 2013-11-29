@@ -477,6 +477,7 @@ then_stat_part
 
 then_matched_stat_part
 : THEN matched_stat
+	{ thenMatchedStatPart(); }
 ;
 
 else_stat_part
