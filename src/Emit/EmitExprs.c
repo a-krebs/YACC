@@ -257,8 +257,47 @@ void emitPushArrayLocationValue(Symbol *s)
 	}
 }
 
-void
-emitAssignmentOp(Symbol *x, Symbol *y)
-{
 
+/*
+ * Generates the asc code necessary to perform the assignment of the value y
+ * to the variable x.
+ * Parameters
+ *		x : the variable receiving the value
+ *		y : the const or type symbol of the value x will receive
+ */
+void emitAssignmentOp(Symbol *x, Symbol *y)
+{
+	CHECK_CAN_EMIT(x);
+	CHECK_CAN_EMIT(y);
+
+	/* 
+	 * When we enter this function, it is the case that the address of
+	 * the variable x appears below the value of the symbol y on the stack.
+	 */
+
+	emitComment("Assigning a value to %s", x->name);
+
+	switch (getType(x)) {
+	case ARRAY_T:
+		//TODO implement this case -- will have to make call to a 
+		// a function that will be hand written
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+		/* No checking to do, simply make the assignment */
+		emitStmt(STMT_LEN, "POPI");
+		break;
+	case REAL_T:
+		if (getType(y) == REAL_T) emitStmt(STMT_LEN, "POPI");
+		else {
+			/* Else y is an integer and we have to convert
+ 			 * it to a real */
+			emitStmt(STMT_LEN, "ITOR");
+			emitStmt(STMT_LEN, "POPI");
+		}
+	default:
+		/* No other types can have values */
+		break;
+
+	}
 }

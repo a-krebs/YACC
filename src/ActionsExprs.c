@@ -46,9 +46,9 @@ void assignOp(Symbol *x, ProxySymbol *y) {
 
 
 	if (isAssignmentCompat(getTypeSym(x), getTypeSym(y))) {
+		printf("got here\n");	
 		emitAssignmentOp(x, y);
 	}
-	
 }
 
 /*
