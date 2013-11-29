@@ -66,6 +66,8 @@ ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *unaryNotOp(ProxySymbol *y);
 
+ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y);
+
 /*
  * Check that the given types are compatible when using the given
  * operator.
