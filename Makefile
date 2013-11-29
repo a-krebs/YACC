@@ -323,4 +323,4 @@ full_tests_:
 clean_lst:
 	find . -name "*.lst" -delete
 
-include Checkpoint2.mk
+include Checkpoint3.mk
