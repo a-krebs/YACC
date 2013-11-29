@@ -155,13 +155,11 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
 
-	printf("GOT %s, %s\n", x->name, y->name);
-
 	if (x->wasArray) {
 		/* the value for x on top of the stack is an address, we need
 		 * to replace it with the value of x */
 		emitPushArrayLocationValue(x);
-	} else {
+	} else if (x->kind != TYPE_KIND){
 
 		emitPushSymbolValue(x);
 	}
@@ -171,9 +169,9 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		emitStmt(STMT_LEN, "ADJUST -1");
 		emitPushArrayLocationValue(y);
 		emitStmt(STMT_LEN, "ADJUST +1");
-	} else {
+	} else if (y->kind != TYPE_KIND){
 
-		emitPushSymbolValue(x);
+		emitPushSymbolValue(y);
 
 	}
 
@@ -192,7 +190,10 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		 * Emit code to change x to a real, then emit code to perform
 		 * arithmetic operation on two reals.
 		 */
+		emitComment("Converting %s to a real value.", x->name);
+		emitStmt(STMT_LEN, "ADJUST -1");
 		emitStmt(STMT_LEN, "ITOR");
+		emitStmt(STMT_LEN, "ADJUST 1");
 		*result = ARITHMETIC_RESULT_REAL;
 	
 	} else if ((getType(x) == REAL_T) && (getType(y) == INTEGER_T)) {
@@ -200,6 +201,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		 * Emit code to change x to a real, then emit code to perform
 		 * arithmetic operation on two reals.
 		 */
+		emitComment("Converting %s to a real value.", y->name);
 		emitStmt(STMT_LEN, "ITOR");
 		*result = ARITHMETIC_RESULT_REAL;
 	}
