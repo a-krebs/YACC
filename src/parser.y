@@ -443,7 +443,8 @@ parm
 ;
 
 struct_stat
-: if_part then_matched_stat_part else_stat_part
+: if_part error then_matched_stat_part else_stat_part
+| if_part then_matched_stat_part else_stat_part
 	{ /* ifThenElse($<proxy>1) */; }
 | if_part then_stat_part
 | WHILE expr DO stat
@@ -456,6 +457,7 @@ struct_stat
 
 matched_stat
 : simple_stat
+| if_part error then_matched_stat_part else_matched_stat_part
 | if_part then_matched_stat_part else_matched_stat_part
 | WHILE expr DO matched_stat
 	{ endWhileLoop(); }
@@ -471,8 +473,7 @@ if_part
 ;
 
 then_stat_part
-: error THEN stat
-| THEN stat
+: THEN stat
 ;
 
 then_matched_stat_part
