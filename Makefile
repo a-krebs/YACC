@@ -19,7 +19,7 @@ OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o
 OBJS+=		$(BIN)/ActionsLoops.o $(BIN)/ActionsTypes.o 
 OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
-
+OBJS+=		$(BIN)/EmitExprs.o
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
 TEST_FILTER=	$(BIN)/lex.yy.o $(BIN)/parser.tab.o #$(BIN)/Utils.o
@@ -143,6 +143,9 @@ $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 
 $(BIN)/EmitArithmetic.o: $(SRC)/$(EMIT)/EmitArithmetic.c $(SRC)/$(EMIT)/EmitArithmetic.h
 	$(COMPILE)
+
+$(BIN)/EmitExprs.o: $(SRC)/$(EMIT)/EmitExprs.c $(SRC)/$(EMIT)/EmitExprs.c
+	$(COMPILE) 
 
 $(BIN)/EmitDecls.o: $(SRC)/$(EMIT)/EmitDecls.c $(SRC)/$(EMIT)/EmitDecls.h
 	$(COMPILE)

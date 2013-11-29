@@ -45,7 +45,10 @@ void assignOp(Symbol *x, ProxySymbol *y) {
 	} 
 
 
-	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
+	if (isAssignmentCompat(getTypeSym(x), getTypeSym(y))) {
+		emitAssignmentOp(x, y);
+	}
+	
 }
 
 /*

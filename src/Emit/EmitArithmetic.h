@@ -18,6 +18,7 @@
 #include "../SymbolAPI.h"
 #include "../Type.h"
 
+#include "EmitExprs.h"
 #include "EmitUtils.h"
 
 #define ARITHMETIC_RESULT_INTEGER 0
