@@ -477,6 +477,28 @@ void setSymbolOffset(Symbol *s, struct hash *table)
 }
 
 /*
+ * Appropriately sets the offset for the given symbol which is a field in a 
+ * record type.
+ * Parameters:
+ *		s : the symbol which is a field in a record definition
+ *		recHash : the symbol table of the record type to which the
+ * 		    field s belongs
+ *		symbolTable : the symbol table for the compiler
+ */
+void
+setRecordFieldOffset(Symbol *s, struct hash *recHash, struct hash *symbolTable)
+{
+	/* The field gets its offset in the record */
+	setSymbolOffset(s, recHash);
+
+	/* 
+	 * But since it will be stored on the stack, we need to adjust
+	 * the "real" symbol table's offset to make room for it.
+	 */
+	addToOffset(symbolTable, s->size);
+}
+
+/*
  * Sets the offset of the given Symbol which is of kind VAR_KIND derived from 
  * a Symbol of PARAM_KIND. 
  * Parameters:

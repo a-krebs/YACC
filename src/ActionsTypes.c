@@ -258,6 +258,8 @@ Symbol *createRecordType(struct ElementArray *fields) {
 		}
 		
 		if (addToSymbolTable(recHash, newField) != 0) {
+			setRecordFieldOffset(newField, recHash);
+			setSymbolOffset(newField, recHash);
 			freeProxySymbol(f);
 			continue;
 		}

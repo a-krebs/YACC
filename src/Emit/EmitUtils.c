@@ -130,7 +130,6 @@ void emitPushVarValue(Symbol *s)
 	case CHAR_T:
 	case INTEGER_T:
 	case REAL_T:
-	case RECORD_T:
 	case SCALARINT_T:
 	{
 		if (!isByReference(s)) { 
