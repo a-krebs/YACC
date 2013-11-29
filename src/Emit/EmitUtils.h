@@ -15,6 +15,7 @@
 #include "../Kind.h"
 #include "../StmtLL.h"
 #include "../SymbolAPI.h"
+#include "../SymbolArray.h"
 #include "../Type.h"
 
 extern int doNotEmit;
@@ -45,5 +46,5 @@ void emitStmt(int len, char *, ...);
 
 void emitArrayElementLocation(Symbol *, Symbol *);
 void emitPushVarValue(Symbol *);
-
+void emitPushSymbolValue(Symbol *);
 #endif

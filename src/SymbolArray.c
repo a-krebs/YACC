@@ -155,3 +155,26 @@ Symbol *getArrayBaseSym(Symbol *s)
 
 }
 
+int getArrayLowIndexValue(Symbol *arrayType)
+{
+	Symbol *indexType = NULL;
+	if (!arrayType) {
+		fprintf(stderr, "Trying to get low index value of a NULL symbol"
+		    ".\n");
+		exit(1);
+	}
+
+	if (getType(arrayType) != ARRAY_T) {
+		fprintf(stderr, "Trying to low index value of a symbol which is"
+		    " not an array\n");
+		exit(1);
+	}
+
+	indexType = getTypePtr(arrayType)->Array->indexTypeSym;
+
+	if (getType(indexType) == SUBRANGE_T) {
+		return getTypePtr(indexType)->Subrange->low;
+	} else return 0;	/* else, indexed by scalar list, low val = 0 */ 
+
+}
+

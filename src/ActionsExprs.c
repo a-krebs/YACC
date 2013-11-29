@@ -105,12 +105,6 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	 */
 	if (accessResultType) {
 
-		/* 
-		 * We calculate the location of the element indexed by the
-		 * the value of the current symbol indices is pointing to 
-		 * in the array.  We do so for all elements indexed by
-		 * the symbols in indices and add the values together.
-		 */
 		while (indices) {
 			emitArrayElementLocation(var, indices);
 			if (onceThrough) {

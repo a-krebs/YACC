@@ -162,11 +162,62 @@ void emitPushVarValue(Symbol *s)
 	}
 }
 
+/*
+ * Given a list of indices and a base of array, this function emits the asc code
+ * necessary to calculate location of the element indexed by the indices 
+ * according to to the formula:
+ * for index in indices:
+ * 	location += (index_value - index_lower_bound) * base_type
+ * Parameters
+ *		arrayBase : the initial base of the array which the first index
+ *		    is an index for
+ *		indices : linked list of symbols of indices we are using to
+ * 		    index the array
+ */
 void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 {
-	//while (indices) {
+	Symbol *arrayType = NULL;
+	int onceThrough, lowVal, baseTypeSize;
+
+	arrayType = getTypeSym(arrayBase);
+
+	while (indices) {
+		emitComment("Pushing index_val - index_lowerbound_val for"
+		    " location calculation.");
+		emitPushSymbolValue(indices);
+		lowVal = getArrayLowIndexValue(arrayType);
+		emitStmt(STMT_LEN, "CONSTI %d", lowVal);
 		
-	//}
+		emitComment("Pushing size of base type.");
+		baseTypeSize = getArrayBaseSym(arrayType)->size;
+		emitStmt(STMT_LEN, "CONSTI %d", baseTypeSize);
+		emitStmt(STMT_LEN, "MULI");
+
+		emitComment("If not our first time through, add the result "
+		    "to the results already calculated.");
+	
+		if (!onceThrough) onceThrough = 1;
+		else emitStmt(STMT_LEN, "ADDI");
+
+		/* Prepare for next iteration */
+		indices = indices->next;
+		arrayType = getArrayBaseSym(arrayType);
+	}
+
+	/*
+	 * If arrayBase is a symbol of kind VAR_KIND (as opposed to a TYPE_KIND)
+	 * then we know that the location value we have calculated from the 
+	 * indices needs to have the value of (a->offset)[a->lvl] (e.g., the
+	 * absolute address referenced by this display offset) added to the
+	 * location.  Else, if arrayBase is an array type, then we make a 
+	 * call to ADDI as we know in this case we must have previously 
+	 * calculated some location value and left it on top of the stack.
+	 */
+	if (arrayBase->kind == VAR_KIND) {
+		emitStmt(STMT_LEN, "PUSHA %d[%d]", arrayBase->offset,
+		    arrayBase->lvl);
+	}
+	emitStmt(STMT_LEN, "ADDI");
 }
 
 /*
