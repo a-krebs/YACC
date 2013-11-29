@@ -167,13 +167,6 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 
 	nArgs = ea->nElements;
 
-	if (!nArgs) {
-		errMsg = customErrorString("Procedure %s cannot be "
-		    "called without any arguments.", s->name);
-		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return 0;
-	}
-
 	// TODO use is isElementArraySimple() to do type checking?
 	for (i = 0; i < nArgs; i++) {
 		param = getElementAt(ea, i);
