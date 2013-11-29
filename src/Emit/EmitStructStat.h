@@ -19,7 +19,8 @@
 
 #include "EmitUtils.h"
 
-#define LABEL_PREFIX "L"
+#define LABEL_PREFIX "LABEL"
+#define LOOP_PREFIX "LOOP"
 
 extern int doNotEmit;
 
