@@ -29,7 +29,7 @@ void emitThenMatchedStat() {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);
 
-	emitComment("THEN stat");
+	emitComment("THEN as part of IF-THEN-ELSE");
 	emitStmt(STMT_LEN, "GOTO %s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
 	emitStmt(STMT_LEN, "%s%d:",
