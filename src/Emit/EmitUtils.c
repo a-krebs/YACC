@@ -187,17 +187,15 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 		emitPushSymbolValue(indices);
 		lowVal = getArrayLowIndexValue(arrayType);
 		emitStmt(STMT_LEN, "CONSTI %d", lowVal);
+		emitStmt(STMT_LEN, "SUBI");
 		
 		emitComment("Pushing size of base type.");
 		baseTypeSize = getArrayBaseSym(arrayType)->size;
 		emitStmt(STMT_LEN, "CONSTI %d", baseTypeSize);
 		emitStmt(STMT_LEN, "MULI");
 
-		emitComment("If not our first time through, add the result "
-		    "to the results already calculated.");
-	
-		if (!onceThrough) onceThrough = 1;
-		else emitStmt(STMT_LEN, "ADDI");
+		if (onceThrough) emitStmt(STMT_LEN, "ADDI");
+		else onceThrough = 1;
 
 		/* Prepare for next iteration */
 		indices = indices->next;
@@ -232,7 +230,7 @@ void emitPushSymbolValue(Symbol *s)
 
 	switch (s->kind) {
 	case CONST_KIND:
-		emitPushVarValue(s);	/* const same case as var */
+		emitPushConstValue(s);
 		break;
 	case VAR_KIND:
 		emitPushVarValue(s);
@@ -242,6 +240,54 @@ void emitPushSymbolValue(Symbol *s)
 		fprintf(stderr, "Trying to push value of a symbol which is not"
 		    "of kind CONST_KIND or VAR_KIND.\n");
 		exit(1);
+	}
+}
+
+
+void emitPushConstValue(Symbol *s)
+{
+	CHECK_CAN_EMIT(s);
+
+	if (s->name) {
+		/* 
+		 * The const symbol is named and so its value is saved in the
+		 * stack somewhere.
+		 */
+		emitComment("Pushing value of const %s of type %s onto stack.",
+		    s->name, typeToString(getType(s)));
+		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);
+	
+	} else {
+	
+		switch (getType(s)) {
+		case BOOLEAN_T:
+			emitStmt(STMT_LEN, "CONSTI %d", 
+			    getConstVal(s)->Boolean.value);
+			break;
+		case CHAR_T:
+			emitStmt(STMT_LEN, "CONSTI %d",
+			    getConstVal(s)->Char.value);
+			break;
+		case INTEGER_T:
+			emitStmt(STMT_LEN, "CONSTI %d",
+			    getConstVal(s)->Integer.value);
+			break;
+		case REAL_T:
+			emitStmt(STMT_LEN, "CONSTI %f",
+			    getConstVal(s)->Real.value);
+			break;
+		case SCALARINT_T:
+			emitStmt(STMT_LEN, "CONSTI %d",
+			    getConstVal(s)->Integer.value);
+			break;
+		case STRING_T:
+			//TODO implement this special case
+			break;
+		default:
+			/* Should not be reached */
+			break;
+		}		
+
 	}
 
 }

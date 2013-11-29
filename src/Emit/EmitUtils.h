@@ -46,5 +46,6 @@ void emitStmt(int len, char *, ...);
 
 void emitArrayElementLocation(Symbol *, Symbol *);
 void emitPushVarValue(Symbol *);
+void emitPushConstValue(Symbol *);
 void emitPushSymbolValue(Symbol *);
 #endif

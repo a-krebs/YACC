@@ -93,7 +93,6 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 
 	ProxySymbol *accessResultType = NULL;
-	int onceThrough = 0;
 
 	/* Record specific errors in isValidArrayAccess */
 	if ((!indices) || (!var)) return NULL;	
@@ -104,27 +103,7 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	 * symbol resultant from all the indexing)
 	 */
 	if (accessResultType) {
-
-		while (indices) {
 			emitArrayElementLocation(var, indices);
-			if (onceThrough) {
-				emitStmt(STMT_LEN, "ADDI");
-			} else onceThrough = 1;
-			indices = indices->next;
-		}	
-
-		/*
-		 * If var is a symbol of kind VAR_KIND, (as
-		 * opposed to a TYPE_KIND) then we know that the location
-		 * value we have calculated from the indices needs to have 
-		 * the value (a->offset)[a->lvl] added to it.  Else, var
-		 * will be of TYPE_KIND and we simply add the location we 
-		 * calculated to the one sitting below it on the stack. 
- 		 */
-		if (var->kind == VAR_KIND) {
-			emitPushVarValue(var);
-			emitStmt(STMT_LEN, "ADDI");
-		} else emitStmt(STMT_LEN, "ADDI");
 	}
 	return accessResultType;
 }
