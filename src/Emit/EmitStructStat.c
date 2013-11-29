@@ -8,6 +8,9 @@
 /*
  * Emit ASC code to start an if statement.
  * Assumes the correspoding expression has already been emitted
+ *
+ * Note that both IF-THEN-ELSE and IF-THEN statements
+ * reserve two labels, but only one is ever used in IF-THEN statements.
  */
 void emitIfStat(Symbol *s) {
 	CHECK_CAN_EMIT(s);
@@ -21,7 +24,7 @@ void emitIfStat(Symbol *s) {
 
 
 /*
- * Emit ASC code for a then statment.
+ * Emit ASC code for a then statment as part of IF-THEN-ELSE.
  * Assumes the corresposding statement or matched_stat code has already
  * been emitted.
  */
@@ -47,5 +50,21 @@ void emitElseStat() {
 	emitComment("ELSE stat");
 	emitStmt(STMT_LEN, "%s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
+	popLabels(labelStack);
+}
+
+
+/*
+ * Emit ASC code for a then statment as part of IF-THEN.
+ * Assumes the corresposding statement or matched_stat code has already
+ * been emitted.
+ */
+void emitThenStat() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	emitComment("THEN as part of IF-THEN");
+	emitStmt(STMT_LEN, "%s%d:",
+	    LABEL_PREFIX, peekLabelStackTop(labelStack));
 	popLabels(labelStack);
 }

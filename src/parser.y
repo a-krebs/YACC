@@ -10,6 +10,7 @@
 #include "args.h"
 #include "SymbolAll.h"
 #include "ActionsAll.h"
+#include "Utils.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -473,6 +474,7 @@ if_part
 
 then_stat_part
 : THEN stat
+	{ thenStatPart(); }
 ;
 
 then_matched_stat_part
@@ -487,6 +489,7 @@ else_stat_part
 
 else_matched_stat_part
 : ELSE matched_stat
+	{ elseStatPart(); }
 ;
 
 comma_or_error

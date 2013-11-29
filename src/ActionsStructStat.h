@@ -20,14 +20,29 @@ void exitLoop(void);
  */
 void endWhileLoop(void);
 
+
 /*
  * Confirm that exp is of boolean type.
  */
 void ifPart(ProxySymbol *expr);
 
+
+/*
+ * THEN part of IF-THEN
+ */
+void thenStatPart();
+
+
 /*
  * THEN part of of IF-THEN-ELSE
  */
 void thenMatchedStatPart();
+
+
+/*
+ * ELSE part of IF-THEN-ELSE
+ */
+void elseStatPart();
+
 
 #endif

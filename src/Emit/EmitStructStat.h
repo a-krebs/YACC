@@ -46,4 +46,12 @@ void emitThenMatchedStat();
 void emitElseStat();
 
 
+/*
+ * Emit ASC code for a then statment as part of IF-THEN.
+ * Assumes the corresposding statement or matched_stat code has already
+ * been emitted.
+ */
+void emitThenStat();
+
+
 #endif
