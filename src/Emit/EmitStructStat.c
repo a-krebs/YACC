@@ -26,7 +26,7 @@ void emitIfStat(Symbol *s) {
  * been emitted.
  */
 void emitThenMatchedStat() {
-	/* we don't have a symbol pointer, so jsut pass in non-null */
+	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);
 
 	emitComment("THEN stat");
@@ -34,4 +34,18 @@ void emitThenMatchedStat() {
 	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
 	emitStmt(STMT_LEN, "%s%d:",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack));
+}
+
+/*
+ * Emit ASC code for an else statement
+ * Assumes the corresponding statement code is already generated.
+ */
+void emitElseStat() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	emitComment("ELSE stat");
+	emitStmt(STMT_LEN, "%s%d",
+	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
+	popLabels(labelStack);
 }

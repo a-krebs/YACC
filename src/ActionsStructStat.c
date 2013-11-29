@@ -75,9 +75,14 @@ void ifPart(ProxySymbol *expr) {
 }
 
 /*
- * THEN part of IF-THEN or IF-THEN-ELSE
+ * THEN part of IF-THEN-ELSE
  */
 void thenMatchedStatPart() {
 	/* stat part already emitted */
 	emitThenMatchedStat();
+}
+
+void elseStatPart() {
+	/* stat part already emitted */
+	emitElseStat();
 }

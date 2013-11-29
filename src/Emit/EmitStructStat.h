@@ -39,4 +39,11 @@ void emitIfStat(Symbol *s);
 void emitThenMatchedStat();
 
 
+/*
+ * Emit ASC code for an else statement
+ * Assumes the corresponding statement code is already generated.
+ */
+void emitElseStat();
+
+
 #endif

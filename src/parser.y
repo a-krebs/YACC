@@ -482,6 +482,7 @@ then_matched_stat_part
 
 else_stat_part
 : ELSE stat
+	{ elseStatPart(); }
 ;
 
 else_matched_stat_part
