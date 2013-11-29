@@ -6,8 +6,9 @@
 #ifndef EMIT_H
 #define EMIT_H
 
-#include "Emit/EmitArithmetic.h"
-#include "Emit/EmitDecls.h"
-#include "Emit/EmitUtils.h"
+#include "EmitArithmetic.h"
+#include "EmitDecls.h"
+#include "EmitUtils.h"
+#include "EmitStructStat.h"
 
 #endif
