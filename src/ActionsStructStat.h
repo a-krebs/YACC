@@ -16,6 +16,12 @@ void exitLoop(void);
 
 
 /*
+ * Beginning of a While loop. Called from tokens.l
+ */
+void beginWhileLoop(void);
+
+
+/*
  * End of while loop.
  */
 void endWhileLoop(void);

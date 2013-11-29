@@ -53,11 +53,20 @@ void exitLoop(void) {
 }
 
 /*
+ * Beginning of a While loop. Called from tokens.l
+ */
+void beginWhileLoop(void) {
+	whileLoopDepth++;
+}
+
+
+/*
  * End of while loop.
  */
 void endWhileLoop(void) {
 	whileLoopDepth--;
 }
+
 
 /*
  * Confirm that exp is of boolean type.
