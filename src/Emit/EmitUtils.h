@@ -45,6 +45,7 @@ void emitComment(char *, ...);
 void emitStmt(int len, char *, ...);
 
 void emitArrayElementLocation(Symbol *, Symbol *);
+void emitPushVarAddress(Symbol *);
 void emitPushVarValue(Symbol *);
 void emitPushConstValue(Symbol *);
 void emitPushSymbolValue(Symbol *);

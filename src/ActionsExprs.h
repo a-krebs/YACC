@@ -8,7 +8,12 @@
 void assignOp(ProxySymbol *x, ProxySymbol *y);
 
 
+Symbol *variableAssignmentLookup(char *);
+Symbol *recordFieldAssignmentLookup(ProxySymbol *, char *);
+Symbol *arrayIndexAssignment(ProxySymbol *);
 ProxySymbol *hashLookupToProxy(char *id);
+
+
 
 
 /*

@@ -276,9 +276,18 @@ stat
 
 simple_stat
 : var ASSIGN expr
-	{ assignOp($<proxy>1, $<proxy>3); }
+	{ assignOp($<symbol>1, $<proxy>3); }
 | proc_invok
 | compound_stat
+;
+
+assigned_var
+: ID_or_err 
+	{ $<symbol>$ = variableAssignmentLookup($<id>1); }
+| var PERIOD ID_or_err 
+	{ $<symbol>$ = recordFieldAssignmentLookup($<proxy>1, $<id>3); }
+| subscripted_var RS_BRACKET 
+	{ $<symbol>$ = arrayIndexAssignment($<proxy>1); }
 ;
 
 var

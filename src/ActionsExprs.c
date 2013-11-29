@@ -29,20 +29,72 @@ static char *errMsg;
 
 
 /*
- * Perform assignment of x to y.
+ * Action which performs semantic analyis and code generation with the
+ * aim of assigned the symbol x the value of the proxysymbol y.
+ * Parameters
+ *		x : the symbol which is assigned a value
+ *		y : the proxysymbol of the value to assign to x
  */
-void assignOp(ProxySymbol *x, ProxySymbol *y) {
+void assignOp(Symbol *x, ProxySymbol *y) {
 	if (!(x) || !(y)) return;
 
 	if ( x->kind == CONST_KIND ) {
-		errMsg = customErrorString("The identifier %s is a constant and cannot be re-assigned a "
-			"value.", x->name);
+		errMsg = customErrorString("The identifier %s is a constant "
+		    " and cannot be re-assigned a value.", x->name);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	} 
 
 	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
 }
 
+/*
+ * 
+ */
+Symbol * variableAssignmentLookup(char *id)
+{
+	Symbol *s = NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return NULL;
+	}
+	emitPushVarAddress(s);
+	return s;
+}
+
+Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
+{
+	Symbol *s = NULL;
+	struct Record *r = NULL;
+
+	if ((!p) || (!id)) return NULL;
+
+	s = getTypeSym(p);
+	if (getType(s) != RECORD_T) {
+		errMsg = customErrorString("Cannot get field %s from %s. "
+		    "Identifier %s is not a record.", id, p->name, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	
+	r = s->kindPtr.TypeKind->typePtr.Record;
+
+	s = getGlobalSymbol(r->hash, id);
+	if (!s) {
+		errMsg = customErrorString("Field %s does not exist in %s.",
+		    id, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	//emitPushRecordFieldValue(s);
+	return newProxySymFromSym(s);
+}
+
+Symbol *arrayIndexAssignment(ProxySymbol *ps)
+{
+	return (Symbol *)ps;
+}
 
 ProxySymbol *hashLookupToProxy(char *id) {
 	Symbol *s = NULL;
@@ -81,6 +133,8 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
+
+	//emitPushRecordFieldValue(s);
 	return newProxySymFromSym(s);
 }
 

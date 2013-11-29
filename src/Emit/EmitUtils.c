@@ -113,53 +113,6 @@ void emitStmt(int len, char *s, ...)
 }
 
  
-/*  
- * Constructs the asc statement necessary to push the value of the variable 
- * / constant symbol s on the top of the stack and appends it to the list 
- * of asc statements. 
- * Parameters: 
- *		s : the symbol whose value is to be placed on top of the stack
- * 
- */ 
-void emitPushVarValue(Symbol *s) 
-{ 
- 	CHECK_CAN_EMIT(s); 
- 	
-	switch (getType(s)) {
-	case BOOLEAN_T:
-	case CHAR_T:
-	case INTEGER_T:
-	case REAL_T:
-	case SCALARINT_T:
-	{
-		if (!isByReference(s)) { 
- 			/*  
- 			 * The variable has not been passed by reference, just 
- 		 	* push the value stored in the stack 
- 		 	*/ 
-	 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
-	 	} else { 
-	 		/*  
- 			 * Else the variable has been passed by reference 
- 			 * and we have to push the value of the variable 
-			 * referenced by the address in the stack 
- 			 */
- 			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
- 			emitStmt(STMT_LEN, "PUSHI");	 
- 	
-		}
-		break;
-	}
-	case STRING_T:
-		//TODO implement this special case
-		break;
-	default:
-		/* Function should not be called with var of any other type! */
-		fprintf(stderr, "Trying to push value of a symbol of type which"
-		    " has no type.\n");
-		exit(1);
-	}
-}
 
 /*
  * Given a list of indices and a base of array, this function emits the asc code
@@ -291,3 +244,91 @@ void emitPushConstValue(Symbol *s)
 
 }
 
+/*
+ * Constructs the asc statement(s) necessary to push the address of the variable
+ * symbol s on top of the stack (in preparation for an assignment operation)
+ * Parameters
+ *		s : the symbol whose address is to be placed on top of the stack
+ */
+void emitPushVarAddress(Symbol *s)
+{
+	CHECK_CAN_EMIT(s);
+
+	switch(getType(s)) {
+	case ARRAY_T:
+		//TODO implement this special case
+		break;
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:
+	case SCALARINT_T:
+	{
+		if (!isByReference(s)) {
+			/* Not passed by reference, so we push the address
+			 * referenced by (offset)[lvl] */
+			emitStmt(STMT_LEN, "PUSHA %d[%d]", s->offset,
+			    s->lvl);		
+		} else {
+			/* Else, var was passed by reference so the value
+			 * that is stored at (offset)[lvl] is the address
+			 * to which we ultimately want to assign a new value */
+			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);
+		}
+	break;
+	}
+	default:
+		return;
+		break;
+	}
+	
+}
+
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * / constant symbol s on the top of the stack and appends it to the list 
+ * of asc statements. 
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ * 
+ */ 
+void emitPushVarValue(Symbol *s) 
+{ 
+ 	CHECK_CAN_EMIT(s); 
+ 	
+	switch (getType(s)) {
+	case ARRAY_T:
+		//TODO: implement this special case
+		break;
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:
+	case SCALARINT_T:
+	{
+		if (!isByReference(s)) { 
+ 			/*  
+ 			 * The variable has not been passed by reference, just 
+ 		 	* push the value stored in the stack 
+ 		 	*/ 
+	 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
+	 	} else { 
+	 		/*  
+ 			 * Else the variable has been passed by reference 
+ 			 * and we have to push the value of the variable 
+			 * referenced by the address in the stack 
+ 			 */
+ 			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
+ 			emitStmt(STMT_LEN, "PUSHI");	 
+ 	
+		}
+		break;
+	}
+	case STRING_T:
+		//TODO implement this special case
+		break;
+	default:
+		/* Else function is of type with no value, do nothing */
+		return;	
+	}
+}
