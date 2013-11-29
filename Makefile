@@ -29,7 +29,7 @@ LEX_FILTER=	$(BIN)/parser.tab.o
 # Root source directory
 SRC=		src
 # Directory for asc code emission modules (Emit*.c files)
-EMIT=		Emit
+EMIT=		$(SRC)/Emit
 # Directory to store compiled binaries
 BIN=		bin
 # Location of test source files
@@ -52,6 +52,7 @@ TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(BIN)/testingUtils.o
+TESTOBJS1+=	$(BIN)/testEmitUtils.o
 TESTOBJS1+=	$(BIN)/testPreDef.o $(BIN)/testPreDefAsc.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
@@ -62,7 +63,7 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
-CFLAGS+=	-Wall -std=c99
+CFLAGS+=	-Wall -std=c99 -I$(SRC) -I$(EMIT)
 # exclude these flags from compiles involving Bison/Flex
 FLEXBISONFLAGEXCLUDES= -Wall -std=c99
 
@@ -108,7 +109,7 @@ lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
 
 # Build test executable
-test: CFLAGS+= -g -Isrc/ -DTESTBUILD -D_POSIX_C_SOURCE=200809L
+test: CFLAGS+= -g -I$(SRC) -DTESTBUILD -D_POSIX_C_SOURCE=200809L
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)
@@ -141,13 +142,13 @@ $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 	$(COMPILE)
 
-$(BIN)/EmitArithmetic.o: $(SRC)/$(EMIT)/EmitArithmetic.c $(SRC)/$(EMIT)/EmitArithmetic.h
+$(BIN)/EmitArithmetic.o: $(EMIT)/EmitArithmetic.c $(EMIT)/EmitArithmetic.h
 	$(COMPILE)
 
-$(BIN)/EmitDecls.o: $(SRC)/$(EMIT)/EmitDecls.c $(SRC)/$(EMIT)/EmitDecls.h
+$(BIN)/EmitDecls.o: $(EMIT)/EmitDecls.c $(EMIT)/EmitDecls.h
 	$(COMPILE)
 
-$(BIN)/EmitUtils.o: $(SRC)/$(EMIT)/EmitUtils.c $(SRC)/$(EMIT)/EmitUtils.h
+$(BIN)/EmitUtils.o: $(EMIT)/EmitUtils.c $(EMIT)/EmitUtils.h
 	$(COMPILE)
 
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
@@ -218,6 +219,9 @@ $(BIN)/testPreDef.o: $(TEST)/testPreDef.c $(TEST)/testPreDef.h
 	$(COMPILE)
 
 $(BIN)/testPreDefAsc.o: $(TEST)/testPreDefAsc.c $(TEST)/testPreDefAsc.h
+	$(COMPILE)
+
+$(BIN)/testEmitUtils.o: $(TEST)/testEmitUtils.c $(TEST)/testEmitUtils.h
 	$(COMPILE)
 
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c

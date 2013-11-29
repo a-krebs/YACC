@@ -444,6 +444,7 @@ parm
 
 struct_stat
 : IF expr THEN matched_stat ELSE stat
+	{ /* ifThenElse($<proxy>1); */ }
 | IF expr THEN stat
 | WHILE expr DO stat
 	{ endWhileLoop(); }
