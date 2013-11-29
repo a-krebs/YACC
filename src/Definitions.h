@@ -220,6 +220,8 @@ struct Symbol {
 			 * display register) at which the variable appears */
 	int size;	/* the ASC memory units this symbol occupies in the
 			 * stack */
+	int wasArray; 	/* indicates that the value corresponding to the symbol that resides
+			 * on the stack is an address */
 	struct Symbol *next;	
 };
 

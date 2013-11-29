@@ -155,18 +155,36 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
 
+	printf("GOT %s, %s\n", x->name, y->name);
+
+	if (x->wasArray) {
+		/* the value for x on top of the stack is an address, we need
+		 * to replace it with the value of x */
+		emitPushArrayLocationValue(x);
+	} else {
+
+		emitPushSymbolValue(x);
+	}
+	if (y->wasArray) {
+		/* the value for x on top of the stack is an address, we need
+		 * to replace it with the value of x */
+		emitStmt(STMT_LEN, "ADJUST -1");
+		emitPushArrayLocationValue(y);
+		emitStmt(STMT_LEN, "ADJUST +1");
+	} else {
+
+		emitPushSymbolValue(x);
+
+	}
+
 	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {
 	
 		/* Emit code to perform arithmetic operation on two integers */
-		emitPushVarValue(x);
-		emitPushVarValue(y);
 		*result = ARITHMETIC_RESULT_INTEGER;
 
 	} else if ((getType(x) == REAL_T) && (getType(y) == REAL_T)) {
 
 		/* Emit code to arithmetic operaton on two reals */
-		emitPushVarValue(x);
-		emitPushVarValue(y);
 		*result = ARITHMETIC_RESULT_INTEGER;
 
 	} else if ((getType(x) == INTEGER_T) && (getType(y) == REAL_T)) {
@@ -174,9 +192,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		 * Emit code to change x to a real, then emit code to perform
 		 * arithmetic operation on two reals.
 		 */
-		emitPushVarValue(x);
 		emitStmt(STMT_LEN, "ITOR");
-		emitPushVarValue(y);
 		*result = ARITHMETIC_RESULT_REAL;
 	
 	} else if ((getType(x) == REAL_T) && (getType(y) == INTEGER_T)) {
@@ -184,9 +200,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		 * Emit code to change x to a real, then emit code to perform
 		 * arithmetic operation on two reals.
 		 */
-		emitPushVarValue(y);
 		emitStmt(STMT_LEN, "ITOR");
-		emitPushVarValue(x);
 		*result = ARITHMETIC_RESULT_REAL;
 	}
 }
@@ -217,7 +231,6 @@ void genericArithConstruct(Symbol *x, Symbol *y, char *opName,
 		emitStmt(STMT_LEN, ascRealName);
 	}
 }	
-
 
 /*
  * Generic check for two arithmetic operands for if we can emit.

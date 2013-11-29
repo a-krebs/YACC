@@ -188,7 +188,7 @@ void emitPushSymbolValue(Symbol *s)
 	default:
 		/* Should not be reached */
 		fprintf(stderr, "Trying to push value of a symbol which is not"
-		    "of kind CONST_KIND or VAR_KIND.\n");
+		    "of kind CONST_KIND or VAR_KIND. %s\n", s->name);
 		exit(1);
 	}
 }
@@ -344,18 +344,10 @@ void emitPushVarValue(Symbol *s)
  * the stack, the function emits the asc code necessary to replace this
  * addres with the actual value of the element.
  */
-void emitPushArrayLocationValue(Symbol *s, Symbol *last)
+void emitPushArrayLocationValue(Symbol *s)
 {
 	CHECK_CAN_EMIT(s);
 
-/*
-	if (last) {
-		if (getType(last) == ARRAY_T) {
-			emitStmt(STMT_LEN, "ADJUST -%d",
-			    getArrayLength(last));
-		}
-	}
-*/
 	switch (getType(s)) {
 	case ARRAY_T:
 		// TODO: implement this special case
@@ -367,7 +359,7 @@ void emitPushArrayLocationValue(Symbol *s, Symbol *last)
 	case INTEGER_T:
 	case SCALARINT_T:
 	case REAL_T:
-		emitStmt(STMT_LEN, "POPI");
+		emitStmt(STMT_LEN, "PUSHI");
 		break;
 	case SCALAR_T:
 		//TODO: test if this case occurs

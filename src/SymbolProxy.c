@@ -36,6 +36,7 @@ newProxySymFromSym(Symbol *s)
 	ps->lvl = s->lvl;
 	ps->offset = s->offset;
 	ps->size = s->size;
+	ps->wasArray = s->wasArray;
 	return ps;
 }
 

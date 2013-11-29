@@ -67,10 +67,8 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 		addToSymbolTable(symbolTable, s);
 		/* Consts have a value and thus need an offset, so we set it */
 		setSymbolOffset(s, symbolTable);
+		emitConstDecl(s);
 	}
-	
-	/* Hey, everything went well.  Let's EMIT SOME COOOODE BAYBAY. */
-	emitConstDecl(s);
 }
 
 
@@ -148,9 +146,9 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 		addToSymbolTable(symbolTable, s);
 		/* Set the variables offset */
 		setSymbolOffset(s, symbolTable);
+		emitVarDecl(s);
 	}
 	
-	emitVarDecl(s);
 
 	return type;
 }

@@ -9,6 +9,7 @@
 #include "Globals.h"
 #include "Hash.h"
 #include "PreDef.h"
+#include "Emit.h"
 #include "Type.h"
 #include "SymbolAll.h"
 #include "Utils.h"
@@ -33,8 +34,10 @@
  */
 ProxySymbol *proxyIntLiteral(int value) {
 	Symbol *integerType = getPreDefInt(preDefTypeSymbols);
+	Symbol *newConstProxy = NULL;
 	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, &value, integerType); 
+	newConstProxy =  newConstProxySym(NULL, &value, integerType);
+	return newConstProxy; 
 }
 	
 	

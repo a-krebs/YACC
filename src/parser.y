@@ -298,7 +298,7 @@ var
 | var PERIOD ID_or_err
 	{ $<proxy>$ = recordAccessToProxy($<proxy>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
-	{ $<proxy>$ = $<proxy>1 /*pushArrayIndexValue($<proxy>1)*/; }
+	{ $<proxy>$ = $<proxy>1; /*pushArrayIndexValue($<proxy>1);*/ }
 ;
 
 subscripted_var

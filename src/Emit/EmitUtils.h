@@ -49,5 +49,5 @@ void emitPushVarAddress(Symbol *);
 void emitPushVarValue(Symbol *);
 void emitPushConstValue(Symbol *);
 void emitPushSymbolValue(Symbol *);
-void emitPushArrayLocationValue(Symbol *, Symbol *);
+void emitPushArrayLocationValue(Symbol *);
 #endif

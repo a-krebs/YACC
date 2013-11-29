@@ -44,6 +44,7 @@ void assignOp(Symbol *x, ProxySymbol *y) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	} 
 
+
 	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
 }
 
@@ -58,6 +59,8 @@ Symbol * variableAssignmentLookup(char *id)
 		notDefinedError(id);
 		return NULL;
 	}
+	emitComment("Pushing address of %s in preparation for assignment.",
+	    s->name);
 	emitPushVarAddress(s);
 	return s;
 }
@@ -100,7 +103,7 @@ Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
  */
 ProxySymbol *pushArrayIndexValue(ProxySymbol *ps)
 {
-	if (ps->next) emitPushArrayLocationValue(ps->next, ps->next->next);
+	//if (ps->next) emitPushArrayLocationValue(ps->next, ps->next->next);
 	return ps;
 
 }
@@ -112,9 +115,9 @@ ProxySymbol *hashLookupToProxy(char *id) {
 		notDefinedError(id);
 		return NULL;
 	}
+	
 	return newProxySymFromSym(s);	
 }
-
 
 /*
  * id1 == name of record, id3 == name of field we are trying to access
@@ -168,8 +171,6 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	 */
 	if (accessResultType) {
 			emitArrayElementLocation(var, indices);
-			accessResultType->next = var;
-			
 	}
 	return accessResultType;
 }

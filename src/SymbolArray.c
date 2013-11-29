@@ -100,7 +100,8 @@ Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 		recordError("Illegal array access -- too many indices.",
 		    yylineno, colno, SEMANTIC);
 		return NULL;
-	} 
+	}
+	arrayTypeSym->wasArray = 1; 
 	return arrayTypeSym;
 }
 
