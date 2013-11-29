@@ -123,23 +123,43 @@ void emitStmt(int len, char *s, ...)
  */ 
 void emitPushVarValue(Symbol *s) 
 { 
-
  	CHECK_CAN_EMIT(s); 
- 	if (!isByReference(s)) { 
- 		/*  
- 		 * The variable has not been passed by reference, just 
- 		 * push the value stored in the stack 
- 		 */ 
- 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
- 	} else { 
- 		/*  
- 		 * Else the variable has been passed by reference 
- 		 * and we have to push the value of the variable referenced by
- 		 * the address in the stack 
- 		 */
- 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
- 		emitStmt(STMT_LEN, "PUSHI");	 
- 	}
+ 	
+	switch (getType(s)) {
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case REAL_T:
+	case RECORD_T:
+	case SCALARINT_T:
+	{
+		if (!isByReference(s)) { 
+ 			/*  
+ 			 * The variable has not been passed by reference, just 
+ 		 	* push the value stored in the stack 
+ 		 	*/ 
+	 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
+	 	} else { 
+	 		/*  
+ 			 * Else the variable has been passed by reference 
+ 			 * and we have to push the value of the variable 
+			 * referenced by the address in the stack 
+ 			 */
+ 			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
+ 			emitStmt(STMT_LEN, "PUSHI");	 
+ 	
+		}
+		break;
+	}
+	case STRING_T:
+		//TODO implement this special case
+		break;
+	default:
+		/* Function should not be called with var of any other type! */
+		fprintf(stderr, "Trying to push value of a symbol of type which"
+		    " has no type.\n");
+		exit(1);
+	}
 }
 
 void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
@@ -149,5 +169,29 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	//}
 }
 
+/*
+ * Emits the asc code necessary to push the value of the given symbol to the 
+ * top of the stack.
+ * Parameters
+ * 		s : the symbol whose value is to be pushed onto the stack
+ */
+void emitPushSymbolValue(Symbol *s)
+{
+	CHECK_CAN_EMIT(s);
 
+	switch (s->kind) {
+	case CONST_KIND:
+		emitPushVarValue(s);	/* const same case as var */
+		break;
+	case VAR_KIND:
+		emitPushVarValue(s);
+		break;
+	default:
+		/* Should not be reached */
+		fprintf(stderr, "Trying to push value of a symbol which is not"
+		    "of kind CONST_KIND or VAR_KIND.\n");
+		exit(1);
+	}
+
+}
 
