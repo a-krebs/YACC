@@ -189,7 +189,7 @@ ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *unaryPlusOp(ProxySymbol *y) {
-	return exprsOp(NULL, PLUS ,y);
+	return exprsOp(NULL, PLUS, y);
 }
 
 
@@ -279,24 +279,305 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 
 	return ps;
 }
-/*
-ProxySymbol *calculate(){
 
-	if ((getType(x)==INTEGER_T) || (getType(y) == INTEGER_T)){
+ProxySymbol *calculate
+	(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	
+
+	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {
+			
+		if (opToken == EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value ==
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == NOT_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value !=
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == LESS_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value <=
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == LESS) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value <
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == GREATER_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value >=
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == GREATER) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value >
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == PLUS) { 
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Integer.value + 
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == MINUS) {
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Integer.value - 
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == OR) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value || 
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == MULTIPLY) {
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Integer.value * 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == DIVIDE) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			(double)x->kindPtr.ConstKind->value.Integer.value / 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == DIV) {
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Integer.value / 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == MOD) {
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Integer.value % 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == AND) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value && 
+			y->kindPtr.ConstKind->value.Integer.value; }
 	
+	} else if ((getType(x) == REAL_T) && (getType(y) == INTEGER_T)) {
 	
-	}else if(){
+		if (opToken == EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value ==
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == NOT_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value !=
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == LESS_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value <=
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == LESS) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value <
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == GREATER_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value >=
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == GREATER) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value >
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == PLUS) { 
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value + 
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == MINUS) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value - 
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == OR) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value || 
+			y->kindPtr.ConstKind->value.Integer.value; }
+			
+		if (opToken == MULTIPLY) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value * 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == DIVIDE) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			(double)x->kindPtr.ConstKind->value.Real.value / 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == DIV) {
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Real.value / 
+			y->kindPtr.ConstKind->value.Integer.value; }
+		
+		if (opToken == MOD) {
+			/*TODO
+			Error Report
+			*/ }
+		
+		if (opToken == AND) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value && 
+			y->kindPtr.ConstKind->value.Integer.value; }
 	
+	} else if ((getType(x) == INTEGER_T) && (getType(y) == REAL_T)) {
 	
+		if (opToken == EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value ==
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == NOT_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value !=
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == LESS_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value <=
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == LESS) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value <
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == GREATER_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value >=
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == GREATER) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value >
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == PLUS) { 
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Integer.value + 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == MINUS) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Integer.value - 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == OR) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value || 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == MULTIPLY) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Integer.value * 
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == DIVIDE) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			(double)x->kindPtr.ConstKind->value.Integer.value / 
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == DIV) {
+			ps->kindPtr.ConstKind->value.Integer.value =
+			x->kindPtr.ConstKind->value.Integer.value / 
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == MOD) {
+			/*TODO
+			Error Report
+			*/ }
+		
+		if (opToken == AND) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Integer.value && 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+	} else if ((getType(x) == REAL_T) && (getType(y) == REAL_T)) {
 	
-	}else if(){
-	
-	
+		if (opToken == EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value ==
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == NOT_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value !=
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == LESS_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value <=
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == LESS) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value <
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == GREATER_OR_EQUAL) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value >=
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == GREATER) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value >
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == PLUS) { 
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value + 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == MINUS) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value - 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == OR) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value || 
+			y->kindPtr.ConstKind->value.Real.value; }
+			
+		if (opToken == MULTIPLY) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value * 
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == DIVIDE) {
+			ps->kindPtr.ConstKind->value.Real.value =
+			x->kindPtr.ConstKind->value.Real.value / 
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == DIV) {
+			ps->kindPtr.ConstKind->value.Integer.value = 
+			x->kindPtr.ConstKind->value.Real.value / 
+			y->kindPtr.ConstKind->value.Real.value; }
+		
+		if (opToken == MOD) {
+			/*TODO
+			Error Report
+			*/ }
+		
+		if (opToken == AND) {
+			ps->kindPtr.ConstKind->value.Boolean.value =
+			x->kindPtr.ConstKind->value.Real.value && 
+			y->kindPtr.ConstKind->value.Real.value; }
 	
 	}
+	
+	return ps;
+	
 }
-*/
+
 
 /*
  * Check that the given types are compatible when using the given
