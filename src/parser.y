@@ -275,7 +275,7 @@ stat
 ;
 
 simple_stat
-: var ASSIGN expr
+: assigned_var ASSIGN expr
 	{ assignOp($<symbol>1, $<proxy>3); }
 | proc_invok
 | compound_stat
@@ -287,7 +287,7 @@ assigned_var
 | var PERIOD ID_or_err 
 	{ $<symbol>$ = recordFieldAssignmentLookup($<proxy>1, $<id>3); }
 | subscripted_var RS_BRACKET 
-	{ $<symbol>$ = arrayIndexAssignment($<proxy>1); }
+	{ $<symbol>$ = (Symbol *) $<proxy>1; }
 ;
 
 var
@@ -298,9 +298,8 @@ var
 | var PERIOD ID_or_err
 	{ $<proxy>$ = recordAccessToProxy($<proxy>1, $<id>3 ); }
 | subscripted_var RS_BRACKET
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<proxy>$ = pushArrayIndexValue($<proxy>1); }
 ;
-
 
 subscripted_var
 : var LS_BRACKET subscripted_var_index_list

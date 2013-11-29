@@ -91,9 +91,18 @@ Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
 	return newProxySymFromSym(s);
 }
 
-Symbol *arrayIndexAssignment(ProxySymbol *ps)
+/*
+ * Calls the function to change the address resultant from the indexing
+ * operations into a value (in asc).
+ * Parameters
+ *		ps : the type resultant from the indexing operation, it
+ *		    is simply passed up the chain.
+ */
+ProxySymbol *pushArrayIndexValue(ProxySymbol *ps)
 {
-	return (Symbol *)ps;
+	if (ps) /* do stuff */ ;
+	return ps;
+
 }
 
 ProxySymbol *hashLookupToProxy(char *id) {
