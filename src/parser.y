@@ -447,12 +447,16 @@ struct_stat
 : if_part error then_matched_stat_part else_stat_part
 | if_part then_matched_stat_part else_stat_part
 | if_part then_stat_part
-| WHILE expr DO stat
+| WHILE expr do_loop
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+do_loop
+: DO stat
 ;
 
 matched_stat
