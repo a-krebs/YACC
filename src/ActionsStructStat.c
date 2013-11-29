@@ -13,6 +13,7 @@
 #include "SymbolAll.h"
 #include "Utils.h"
 #include "ActionsAll.h"
+#include "Emit.h"
 
 #ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
@@ -56,4 +57,19 @@ void exitLoop(void) {
  */
 void endWhileLoop(void) {
 	whileLoopDepth--;
+}
+
+/*
+ * Confirm that exp is of boolean type.
+ */
+void ifPart(ProxySymbol *expr) {
+	/* make sure we have boolean expression */
+	if ((expr == NULL) || (getType(getInnerTypeSymbol(expr)) != BOOLEAN_T)) {
+		errMsg = customErrorString("If statement must be given ",
+		    "boolean type expression.");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
+	/* expression code already emitted */
+	emitIfStat(expr);
 }

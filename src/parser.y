@@ -445,7 +445,6 @@ parm
 struct_stat
 : if_part error then_matched_stat_part else_stat_part
 | if_part then_matched_stat_part else_stat_part
-	{ /* ifThenElse($<proxy>1) */; }
 | if_part then_stat_part
 | WHILE expr DO stat
 	{ endWhileLoop(); }
@@ -469,7 +468,7 @@ matched_stat
 
 if_part
 : IF expr
-	{ /* ifPart($<proxy>2) */; }
+	{ ifPart($<proxy>2); }
 ;
 
 then_stat_part

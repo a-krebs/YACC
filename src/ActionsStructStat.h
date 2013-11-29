@@ -20,4 +20,9 @@ void exitLoop(void);
  */
 void endWhileLoop(void);
 
+/*
+ * Confirm that exp is of boolean type.
+ */
+void ifPart(ProxySymbol *expr);
+
 #endif

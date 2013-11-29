@@ -73,6 +73,20 @@ void reserveLabels(struct labelStack *stack, int n);
  */
 void popLabels(struct labelStack *stack);
 
+
+/*
+ * Check the value at the top of the stack without changing it.
+ * Errors and exits if the stack does not have labels reserved
+ *
+ * Parameters:
+ * 	stack: the stack at which to look
+ *
+ * Return:
+ * 	the label at the top of the stack
+ */
+int peekLabelStackTop(struct labelStack *stack);
+
+	
 /*
  * Create a new struct labelStack from which labels can be reserved 
  *

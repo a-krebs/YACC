@@ -180,6 +180,25 @@ void popLabels(struct labelStack *stack) {
 	stack->ltop -= 1;
 }
 
+/*
+ * Check the value at the top of the stack without changing it.
+ * Errors and exits if the stack does not have labels reserved
+ *
+ * Parameters:
+ * 	stack: the stack at which to look
+ *
+ * Return:
+ * 	the label at the top of the stack
+ */
+int peekLabelStackTop(struct labelStack *stack) {
+	if (stack->ltop < 0) {
+		err(EXIT_FAILURE, "Peeking at label stack without having any "
+		    "labels reserved.");
+	}
+
+	return stack->stack[stack->ltop];
+}
+
 
 /*
  * Create a new struct labelStack from which labels can be reserved 
