@@ -64,7 +64,7 @@ void endWhileLoop(void) {
  */
 void ifPart(ProxySymbol *expr) {
 	/* make sure we have boolean expression */
-	if ((expr == NULL) || (getType(getInnerTypeSymbol(expr)) != BOOLEAN_T)) {
+	if ((expr == NULL) || (getType(expr) != BOOLEAN_T)) {
 		errMsg = customErrorString("If statement must be given ",
 		    "boolean type expression.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
