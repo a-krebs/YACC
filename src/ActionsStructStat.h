@@ -1,5 +1,5 @@
-#ifndef ACTION_LOOPS_H
-#define ACTION_LOOPS_H
+#ifndef ACTION_STRUCT_STAT_H
+#define ACTION_STRUCT_STAT_H
 
 /*
  * Encountered 'continue' statement. Verify we're in a while loop and then

@@ -16,7 +16,7 @@ OBJS+=		$(BIN)/SymbolInvoc.o  $(BIN)/SymbolPrivateAPI.o
 OBJS+=		$(BIN)/SymbolProxy.o
 OBJS+=		$(BIN)/ActionsConsts.o $(BIN)/ActionsDecls.o 
 OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o 
-OBJS+=		$(BIN)/ActionsLoops.o $(BIN)/ActionsTypes.o 
+OBJS+=		$(BIN)/ActionsStructStat.o $(BIN)/ActionsTypes.o 
 OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
 
