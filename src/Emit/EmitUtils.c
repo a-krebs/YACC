@@ -142,3 +142,12 @@ void emitPushVarValue(Symbol *s)
  	}
 }
 
+void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
+{
+	//while (indices) {
+		
+	//}
+}
+
+
+

@@ -84,3 +84,8 @@ void emitAddition(Symbol *x, Symbol *y)
 	else emitStmt(STMT_LEN, "ADDR");
 
 }
+
+/*
+ * Emits asc code to perform an addition operation with the two given
+ * symbols and leaves the result on top of the stack.
+ */

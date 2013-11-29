@@ -88,13 +88,51 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 /*
  * Access an array given the list of indexes.
  *
- * Return a ProxySymbol of the expected type.
+ * Return a ProxySymbol of kind VAR_KIND of the expected type.
  */
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
+
+	ProxySymbol *accessResultType = NULL;
+	int onceThrough = 0;
+
 	/* Record specific errors in isValidArrayAccess */
 	if ((!indices) || (!var)) return NULL;	
-	return isValidArrayAccess((Symbol *) var, indices);
+	accessResultType = isValidArrayAccess((Symbol *) var, indices);
+	
+	/* It's in here that we have to set the offsets of these proxy symbols
+	 * such that the final symbol (e.g., the cumulative, non-array type
+	 * symbol resultant from all the indexing)
+	 */
+	if (accessResultType) {
 
+		/* 
+		 * We calculate the location of the element indexed by the
+		 * the value of the current symbol indices is pointing to 
+		 * in the array.  We do so for all elements indexed by
+		 * the symbols in indices and add the values together.
+		 */
+		while (indices) {
+			emitArrayElementLocation(var, indices);
+			if (onceThrough) {
+				emitStmt(STMT_LEN, "ADDI");
+			} else onceThrough = 1;
+			indices = indices->next;
+		}	
+
+		/*
+		 * If var is a symbol of kind VAR_KIND, (as
+		 * opposed to a TYPE_KIND) then we know that the location
+		 * value we have calculated from the indices needs to have 
+		 * the value (a->offset)[a->lvl] added to it.  Else, var
+		 * will be of TYPE_KIND and we simply add the location we 
+		 * calculated to the one sitting below it on the stack. 
+ 		 */
+		if (var->kind == VAR_KIND) {
+			emitPushVarValue(var);
+			emitStmt(STMT_LEN, "ADDI");
+		} else emitStmt(STMT_LEN, "ADDI");
+	}
+	return accessResultType;
 }
 
 
@@ -111,12 +149,9 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
  * Return a pointer to a concatenated list.
  */
 ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
+	
 	Symbol *tmp;
-	/*
-	 * b/c we are parsing right to left, make list2 the head of the
-	 * linked list of proxy symbols
- 	 * TODO: confirm this with Aaron
-	 */
+
 	if ((!list1) && (!list2)) {
 		return NULL;
 	}
@@ -126,10 +161,17 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
 	if (!list2) {
 		return list1;
 	}
+
+	/*
+	 * Each time we call the function, list1 is the head of the list
+	 * of symbols that we have already created and list2 is the new symbol
+	 * to be appended to the end.  Thus, we iterate through the elements
+	 * of list1 to the last and append list2 to the end of the linked list
+	 * which starts at list1.
+	 */
 	tmp = list1;
 	while (tmp->next != NULL) tmp = tmp->next;
 	tmp->next = list2;
-
 	return list1;
 }
 
