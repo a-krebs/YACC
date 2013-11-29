@@ -26,6 +26,7 @@ int initialize() {
 	/* control statement stuff */
 	whileLoopDepth = 0;
 	labelStack = newLabelStack();
+	loopLabelStack = newLabelStack();
 
 	return 0;
 }
@@ -37,6 +38,7 @@ int deInitialize() {
 
 	/* control statement stuff */
 	destroyLabelStack(&labelStack);
+	destroyLabelStack(&loopLabelStack);
 
 	return 0;
 }

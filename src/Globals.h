@@ -14,6 +14,7 @@ struct preDefTypeSymbols *preDefTypeSymbols;
 unsigned long long whileLoopDepth;
 
 /* label stuff for control statement code emmission */
-struct labelStack *labelStack;
+struct labelStack *labelStack;		/* for if statements */
+struct labelStack *loopLabelStack;	/* for while loops */
 
 #endif
