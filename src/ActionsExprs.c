@@ -155,8 +155,7 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	 * with regard to insuring the propogation of a compile time
 	 * known funciton.
 	 */
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), EQUAL, getTypeSym((Symbol *)y)));
+	return exprsOp(x, EQUAL ,y);
 
 	/* Else, we have two CONST_KIND symbols.  We must evaluate */
 
@@ -165,105 +164,139 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
+	return exprsOp(x, NOT_EQUAL ,y);
 }
 
 
-ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
+ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {    
+	return exprsOp(x, LESS_OR_EQUAL ,y);
 }
 
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), LESS, getTypeSym((Symbol *)y)));
+	return exprsOp(x, LESS ,y);
 }
 
 
 ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), GREATER_OR_EQUAL, getTypeSym((Symbol *)y)));
+	return exprsOp(x, GREATER_OR_EQUAL ,y);
 }
 
 
 ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), GREATER, getTypeSym((Symbol *)y)));
+	return exprsOp(x, GREATER ,y);
 }
 
 
 ProxySymbol *unaryPlusOp(ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(
-	    NULL, PLUS, getTypeSym((Symbol *)y)));
-	return ps;
+	return exprsOp(NULL, PLUS ,y);
 }
 
 
 ProxySymbol *unaryMinusOp(ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(
-	   NULL, MINUS, getTypeSym((Symbol *)y)));
+	return exprsOp(NULL, MINUS ,y);
 }
 
 
 ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), PLUS, getTypeSym((Symbol *)y)));
 
-	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);	
-
-	return ps;
+	ProxySymbol *ps = exprsOp(x, PLUS ,y);
+			  
+	if (ps) {
+		emitAddition( (Symbol *) x, (Symbol *) y);
+		return ps;
+	} else {
+		return NULL;
+	}
 }
 
 
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), MINUS, getTypeSym((Symbol *)y)));
+	return exprsOp(x, MINUS ,y);
 }
 
 
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), OR, getTypeSym((Symbol *)y)));
+	return exprsOp(x, OR ,y);
 }
 
 
 ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), MULTIPLY, getTypeSym((Symbol *)y)));
+	return exprsOp(x, MULTIPLY ,y);
 }
 
 
 ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), DIVIDE, getTypeSym((Symbol *)y)));
+	return exprsOp(x, DIVIDE ,y);
 }
 
 
 ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), DIV, getTypeSym((Symbol *)y)));
+	return exprsOp(x, DIV ,y);
 }
 
 
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), MOD, getTypeSym((Symbol *)y)));
+	return exprsOp(x, MOD ,y);
 }
 
 
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), AND, getTypeSym((Symbol *)y)));
+	return exprsOp(x, AND ,y);
 }
 
 
 ProxySymbol *unaryNotOp(ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(
-	    NULL, NOT, getTypeSym((Symbol *)y)));
+	return exprsOp(NULL, NOT ,y);
 }
 
+
+ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
+
+	ProxySymbol *ps = NULL;
+ 	
+	Symbol *sym_t = assertOpCompat(getTypeSym(
+	    (Symbol *) x), opToken, getTypeSym((Symbol *)y));
+	    
+	if (sym_t == NULL) {
+		return NULL;
+	}
+	
+	if ((x == NULL) || (y == NULL)){
+		/*
+		 * Add unary operation later
+		 */
+		return y;
+	
+	} else if ((x->kind == CONST_KIND) && (y->kind == CONST_KIND)) {
+		ps = (ProxySymbol *)createConstSymbol(NULL);
+		ps->kindPtr.ConstKind->typeSym = sym_t;
+		
+	} else {
+		ps = (ProxySymbol *)createVarSymbol(NULL);
+		ps->kindPtr.ConstKind->typeSym = sym_t;
+	} 
+
+	return ps;
+}
+/*
+ProxySymbol *calculate(){
+
+	if ((getType(x)==INTEGER_T) || (getType(y) == INTEGER_T)){
+	
+	
+	
+	}else if(){
+	
+	
+	
+	}else if(){
+	
+	
+	
+	}
+}
+*/
 
 /*
  * Check that the given types are compatible when using the given
