@@ -25,8 +25,17 @@
 
 extern int doNotEmit;
 
-void emitArithmeticPrep(Symbol *, Symbol *, int *);
+//void emitArithmeticPrep(Symbol *, Symbol *, int *);
 void emitAddition(Symbol *, Symbol *);
+void emitSubtraction(Symbol *, Symbol *);
+void emitMultiplication(Symbol *, Symbol *);
+void emitDivision(Symbol *, Symbol *);
+void emitMod(Symbol *, Symbol *);
+void emitITOR(Symbol *);
+void emitRTOI(Symbol *);
+void genericArithConstruct(Symbol *, Symbol *, char *, 
+	char *, char *);
+void emitArithmCheckAndComment(Symbol *, Symbol *, char *);
 
 
 #endif
