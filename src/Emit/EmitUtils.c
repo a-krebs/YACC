@@ -163,18 +163,16 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	 * call to ADDI as we know in this case we must have previously 
 	 * calculated some location value and left it on top of the stack.
 	 */
-	if (arrayBase->kind == VAR_KIND) {
-		emitStmt(STMT_LEN, "PUSHA %d[%d]", arrayBase->offset,
-		    arrayBase->lvl);
-	}
+	if (arrayBase->kind == VAR_KIND) emitPushVarAddress(arrayBase);
 	emitStmt(STMT_LEN, "ADDI");
 }
 
 /*
- * Emits the asc code necessary to push the value of the given symbol to the 
- * top of the stack.
+ * Emits the asc code necessary to push the value of the given symbol which is 
+ * of kind VAR_KIND to top of the stack.
  * Parameters
- * 		s : the symbol whose value is to be pushed onto the stack
+ * 		s : the symbol of kind VAR_KIND whose value is to be pushed
+ *		     onto the stack
  */
 void emitPushSymbolValue(Symbol *s)
 {
@@ -195,7 +193,15 @@ void emitPushSymbolValue(Symbol *s)
 	}
 }
 
-
+/*
+ * EMits the asc code necessary to push the value of the given symbol of
+ * kind CONST_KIND to the top of the stack.  Handles both the case where
+ * the symbol is named and the case where the symbol is anonymous.
+ * Parameter
+ *		s : the symbol of kidn CONST_KIND whose value is to be pushed
+ *		    onto the stack.
+ *
+ */
 void emitPushConstValue(Symbol *s)
 {
 	CHECK_CAN_EMIT(s);
@@ -285,7 +291,7 @@ void emitPushVarAddress(Symbol *s)
 }
 
 /*  
- * Constructs the asc statement necessary to push the value of the variable 
+ * Constructs the asc statement(s) necessary to push the value of the variable 
  * / constant symbol s on the top of the stack and appends it to the list 
  * of asc statements. 
  * Parameters: 
@@ -330,5 +336,44 @@ void emitPushVarValue(Symbol *s)
 	default:
 		/* Else function is of type with no value, do nothing */
 		return;	
+	}
+}
+
+/*
+ * Given that the address of an element of an array is currently on top of
+ * the stack, the function emits the asc code necessary to replace this
+ * addres with the actual value of the element.
+ */
+void emitPushArrayLocationValue(Symbol *s, Symbol *last)
+{
+	CHECK_CAN_EMIT(s);
+
+/*
+	if (last) {
+		if (getType(last) == ARRAY_T) {
+			emitStmt(STMT_LEN, "ADJUST -%d",
+			    getArrayLength(last));
+		}
+	}
+*/
+	switch (getType(s)) {
+	case ARRAY_T:
+		// TODO: implement this special case
+		// would need to push each element of the array referenced
+		// in order 
+		break;
+	case BOOLEAN_T:
+	case CHAR_T:
+	case INTEGER_T:
+	case SCALARINT_T:
+	case REAL_T:
+		emitStmt(STMT_LEN, "POPI");
+		break;
+	case SCALAR_T:
+		//TODO: test if this case occurs
+		break;
+	default:
+		/* Should not be reached */
+		break;
 	}
 }

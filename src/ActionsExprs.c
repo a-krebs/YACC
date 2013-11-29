@@ -100,7 +100,7 @@ Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
  */
 ProxySymbol *pushArrayIndexValue(ProxySymbol *ps)
 {
-	if (ps) /* do stuff */ ;
+	if (ps->next) emitPushArrayLocationValue(ps->next, ps->next->next);
 	return ps;
 
 }
@@ -160,6 +160,7 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	/* Record specific errors in isValidArrayAccess */
 	if ((!indices) || (!var)) return NULL;	
 	accessResultType = isValidArrayAccess((Symbol *) var, indices);
+
 	
 	/* It's in here that we have to set the offsets of these proxy symbols
 	 * such that the final symbol (e.g., the cumulative, non-array type
@@ -167,6 +168,8 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
 	 */
 	if (accessResultType) {
 			emitArrayElementLocation(var, indices);
+			accessResultType->next = var;
+			
 	}
 	return accessResultType;
 }

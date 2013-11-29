@@ -155,6 +155,40 @@ Symbol *getArrayBaseSym(Symbol *s)
 
 }
 
+/*
+ * Returns the length of the given array symbol.
+ * Parameters
+ *		s : a symbol with type == ARRAY_T whose length is to be
+ *		    calculated
+ */
+int getArrayLength(Symbol *s)
+{
+	return (getArrayHighIndexValue(s) - getArrayLowIndexValue(s));
+}
+
+/*
+ * Returns the upper bound on the index value of the given array symbol.
+ * Parameters
+ *		arrayType : a symbol with type == ARRAY_T whose index upper
+ *		    upper bound is to be calculated
+ */
+int getArrayHighIndexValue(Symbol *arrayType)
+{
+	Symbol *indexType = NULL;
+
+	indexType = getTypePtr(arrayType)->Array->indexTypeSym;
+
+	if (getType(indexType) == SUBRANGE_T) {
+		return getTypePtr(indexType)->Subrange->high;
+	} else return ((getTypePtr(indexType)->Scalar->consts->nElements) - 1);
+}
+
+/*
+ * Returns the lower  bound on the index value of the given array symbol.
+ * Parameters
+ *		arrayType : a symbol with type == ARRAY_T whose index upper
+ *		    lower bound is to be calculated
+ */
 int getArrayLowIndexValue(Symbol *arrayType)
 {
 	Symbol *indexType = NULL;
