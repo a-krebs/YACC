@@ -17,8 +17,11 @@
 #include "SymbolAPI.h"
 #include "SymbolArray.h"
 #include "Type.h"
+#include "Globals.h"
+#include "Hash.h"
 
 extern int doNotEmit;
+int adjustCounter[16];
 
 #define STMT_LEN 128	/* default size of an asc statement, the only exception
 			 * to this size would be for labels which may have the
@@ -123,6 +126,12 @@ void emitPushVarValueCommon(Symbol *s, int offset, int level);
 
 
 void emitPushParmVarValue(Symbol *s, int offset, int level);
+
+
+void increaseAdjustCounter();
+
+
+void resetAdjustCounter();
 
 
 #endif

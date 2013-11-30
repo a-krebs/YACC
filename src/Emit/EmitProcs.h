@@ -25,6 +25,7 @@ extern int doNotEmit;
 
 void emitProcDecl(Symbol *symbol, struct ElementArray *ea);
 void emitProcParam(Symbol *param, int paramNum);
+void emitEndProc();
 
 
 #endif

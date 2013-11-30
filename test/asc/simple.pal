@@ -4,7 +4,10 @@ var
 	a : integer;
 	b : integer;
 procedure gcd( a : integer; b : integer; c : integer  );
+	var
+		x: integer;
 begin
+	{x := 5 + 8;}
 end;	
 begin
 	a := 1;

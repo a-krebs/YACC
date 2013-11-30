@@ -4,14 +4,16 @@
  */
 
 #include "EmitProcs.h"
- #include "../ElementArray.h"
+#include "../ElementArray.h"
+ #include "../Hash.h"
 
 
 
 void emitProcDecl(Symbol *symbol, struct ElementArray *ea) {
  	CHECK_CAN_EMIT(symbol);
 
- 	emitComment("Procedure declaration: %s", symbol->name);
+ 	emitComment("");
+ 	emitComment("Procedure start: %s", symbol->name);
  	emitStmt(STMT_LEN, symbol->name); 
  	
 	for (int i = 0; i < ea->nElements; i++) {
@@ -30,4 +32,18 @@ void emitProcParam(Symbol *param, int paramNum) {
 	int offset = (paramNum + 3) * -1;
 
 	emitPushParmVarValue(param, offset, param->lvl);
+}
+
+void emitEndProc() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);	
+
+	int lexLevel = getCurrentLexLevel(symbolTable);
+	int adjustCount = adjustCounter[lexLevel] * -1;
+	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
+	emitStmt(STMT_LEN, "RET %d", lexLevel);
+
+	emitComment("Procedure/Function end.");
+	emitComment("");
+	emitComment("");
 }

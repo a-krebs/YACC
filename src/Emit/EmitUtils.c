@@ -463,3 +463,17 @@ void destroyLabelStack(struct labelStack **stack) {
 	/* set pointer to NULL */
 	*stack = NULL;
 }
+
+
+
+void increaseAdjustCounter() {
+	int lexLevel = getCurrentLexLevel(symbolTable);
+
+	adjustCounter[lexLevel] += 1;
+}
+
+void resetAdjustCounter() {
+	int lexLevel = getCurrentLexLevel(symbolTable);
+
+	adjustCounter[lexLevel] = 0;
+}

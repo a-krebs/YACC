@@ -166,6 +166,7 @@ void exitProcOrFuncDecl(void) {
 	printf("Popping lex level at line %d, from %d to %d\n", yylineno,
 	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
 #endif
+	emitEndProc();
 	popLexLevel(symbolTable);
 }
 
