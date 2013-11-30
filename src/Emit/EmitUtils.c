@@ -472,6 +472,6 @@ void resetAdjustCounter() {
  * 	
  * Returns: void
  */
-void getAdjustCounter() {
+int getAdjustCounter() {
 	return adjustCounter[getCurrentLexLevel(symbolTable)];
 }

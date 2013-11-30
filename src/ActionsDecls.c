@@ -166,7 +166,7 @@ void exitProcOrFuncDecl(void) {
 	printf("Popping lex level at line %d, from %d to %d\n", yylineno,
 	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
 #endif
-	emitEndProc();
+	//emitEndProc();
 	popLexLevel(symbolTable);
 }
 
@@ -245,7 +245,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		}	
 	}
 
-	emitProcOrFuncDecl(s, ea);
+	//emitProcOrFuncDecl(s, ea);
 
 	return s;
 }
@@ -305,7 +305,7 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 		}		
 	}
 
-	emitProcOrFuncDecl(s, ea);
+	//emitProcOrFuncDecl(s, ea);
 
 	return s;
 }

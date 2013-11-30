@@ -2,8 +2,8 @@
  * Module implementing functions generating asc code for 
  * procedures and functions.
  */
-#ifndef EMITARITHMETIC_H
-#define EMITARITHMETIC_H
+#ifndef EMITPROCS_H
+#define EMITPROCS_H
 
 #include <err.h>
 #include <stdarg.h>
@@ -19,6 +19,7 @@
 #include "../Type.h"
 #include "../ElementArray.h"
 #include "../Hash.h"
+
 #include "EmitUtils.h"
 
 extern int doNotEmit;
