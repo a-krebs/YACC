@@ -40,7 +40,6 @@ void allocStmt(char **stmt, size_t len)
 }
 
 
-
 /*
  * Produces asc comment from the given string and appends it to list of
  * ASC statements (to help with debugging)
