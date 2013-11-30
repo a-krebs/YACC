@@ -19,7 +19,13 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
  	CHECK_CAN_EMIT(symbol);
 
  	emitComment("");
- 	emitComment("Procedure/Function start: %s", symbol->name);
+
+ 	if (symbol->kind == PROC_KIND) {	
+		emitComment("Procedure start: %s", symbol->name);
+	}
+	else if (symbol->kind == FUNC_KIND)  {
+	 	emitComment("Function start: %s", symbol->name);
+	}
 
  	/* Emit procedure label */
  	emitStmt(STMT_LEN, symbol->name); 
@@ -27,93 +33,24 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
 
 
 /*
- * Emit code to push local procedure/function parameters onto the
- * the stack.
- *
- * Parameters: 	param: parameter symbol
- *				paramNum: the parameter's position number in the 
- *					parameter list.
- * 	
- * Returns: void
- */
-// void emitProcParam(Symbol *param, int paramNum) {
-// 	CHECK_CAN_EMIT(param);	
-
-// 	//  Get real offset. i.e. Take the parameter number
-// 	// and account for the PC and display reg in offset.
-// 	// We use 3 because first parameter is at index 0. 
-// 	int offset = (paramNum + 3) * -1;
-
-// 	/* Push local varaible onto the stack */
-// 	emitPushParmVarValue(param, offset, param->lvl);
-// }
-
-
-/*
- * Emit code to end a procedure. Adjusts for any local variables
- * and returns.
+ * Emit code to end a procedure.
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-// void emitEndProc() {
-// 	/* we don't have a symbol pointer, so just pass in non-null */
-// 	CHECK_CAN_EMIT(1);
-// 	char *emptyStr = "";	
-
-// 	/* Get the lexical so we can idenity the display register */
-// 	int lexLevel = getCurrentLexLevel(symbolTable);
-
-// 	 Determine how many levels on the stack we need to adjust by 
-// 	int adjustCount = getAdjustCounter() * -1;
-
-// 	/* Adjust and return */
-// 	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
-// 	emitStmt(STMT_LEN, "RET %d", lexLevel);
-
-// 	emitComment("Procedure end.");
-// 	emitStmt(STMT_LEN, emptyStr);
-// 	emitStmt(STMT_LEN, emptyStr);
-// }
 void emitEndProc() {
 	emitProcOrFuncEndCommon("Procedure end.");
 }
 
 
 /*
- * Emit code to end a functions. Adjusts for any local variables
- * and returns result.
+ * Emit code to end a functions. 
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-// void emitEndFunc() {
-// 	/* we don't have a symbol pointer, so just pass in non-null */
-// 	CHECK_CAN_EMIT(1);
-// 	char *emptyStr = "";	
-
-// 	/* Default return space on stack */
-// 	int offset = (getReturnOffset() + 2) * -1;
-
-// 	/* Get the lexical so we can idenity the display register */
-// 	int lexLevel = getCurrentLexLevel(symbolTable);
-
-// 	 Determine how many levels on the stack we need to adjust by 
-// 	int adjustCount = getAdjustCounter() * -1;
-
-// 	/* Return result */
-// 	emitStmt(STMT_LEN, "POP %d[%d]", offset, lexLevel);
-
-// 	/* Adjust and return */
-// 	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
-// 	emitStmt(STMT_LEN, "RET %d", lexLevel);
-
-// 	emitComment("Function end.");
-// 	emitStmt(STMT_LEN, emptyStr);
-// 	emitStmt(STMT_LEN, emptyStr);
-// }
 void emitEndFunc() {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);
@@ -131,7 +68,14 @@ void emitEndFunc() {
 } 
 
 
-
+/*
+ * Emit code to end a procedure/function. Adjusts for any local variables
+ * and returns.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void emitProcOrFuncEndCommon(char *msg) {
 	CHECK_CAN_EMIT(1);
 	char *emptyStr = "";		

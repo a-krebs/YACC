@@ -39,21 +39,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea);
 
 
 /*
- * Emit code to push local procedure/function parameters onto the
- * the stack.
- *
- * Parameters: 	param: parameter symbol
- *				paramNum: the parameter's position number in the 
- *					parameter list.
- * 	
- * Returns: void
- */
-void emitProcParam(Symbol *param, int paramNum);
-
-
-/*
- * Emit code to end a procedure. Adjusts for any local variables
- * and returns.
+ * Emit code to end a procedure.
  *
  * Parameters: void.
  * 	
@@ -62,9 +48,24 @@ void emitProcParam(Symbol *param, int paramNum);
 void emitEndProc();
 
 
-
+/*
+ * Emit code to end a functions. 
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void emitEndFunc() ;
 
+
+/*
+ * Emit code to end a procedure/function. Adjusts for any local variables
+ * and returns.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void emitProcOrFuncEndCommon(char *mgs);
 
 

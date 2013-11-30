@@ -174,7 +174,6 @@ void exitProcOrFuncDecl(Symbol *symbol) {
 		else if (symbol->kind == FUNC_KIND)  {
 		 	emitEndFunc();
 		}
-		//need some sort of test
 	}
 
 	popLexLevel(symbolTable);
