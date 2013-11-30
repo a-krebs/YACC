@@ -121,17 +121,61 @@ void growLabelStack(struct labelStack *stack);
 void destroyLabelStack(struct labelStack **stack);
 
 
-
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s on the top of the stack and appends it to the list 
+ * of asc statements. 
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ *		offset: 
+ *		level: display (lexical level)
+ * 
+ */ 
 void emitPushVarValueCommon(Symbol *s, int offset, int level);
 
 
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s from a function/procedure parameter on the top of the 
+ * stack and appends it to the list of asc statements. The offset and level
+ * must be passed by the caller
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ * 
+ */ 
 void emitPushParmVarValue(Symbol *s, int offset, int level);
 
 
+/*
+ * Increases the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void increaseAdjustCounter();
 
 
+/*
+ * Resets the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void resetAdjustCounter();
+
+
+/*
+ * Gets the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void getAdjustCounter()
 
 
 #endif

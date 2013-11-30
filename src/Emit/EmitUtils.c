@@ -22,8 +22,6 @@ char *getAscFileName(char *palFileName)
  } 
 
 
-
-
 /*
  * Allocates memory for a statement of the given size and sets the given
  * character pointer to point to the allocated memory.  Performs error checking
@@ -38,7 +36,6 @@ void allocStmt(char **stmt, size_t len)
 	*stmt = calloc(len, sizeof(char));
 	if (!(*stmt)) err(1, "Failed to allocate memory for asc statement.");
 }
-
 
 
 /*
@@ -115,65 +112,44 @@ void emitStmt(int len, char *s, ...)
  
 /*  
  * Constructs the asc statement necessary to push the value of the variable 
- * / constant symbol s on the top of the stack and appends it to the list 
+ * constant symbol s on the top of the stack and appends it to the list 
  * of asc statements. 
  * Parameters: 
  *		s : the symbol whose value is to be placed on top of the stack
  * 
  */ 
-// void emitPushVarValue(Symbol *s) 
-// { 
-//  	CHECK_CAN_EMIT(s); 
- 	
-// 	switch (getType(s)) {
-// 	case BOOLEAN_T:
-// 	case CHAR_T:
-// 	case INTEGER_T:
-// 	case REAL_T:
-// 	case RECORD_T:
-// 	case SCALARINT_T:
-// 	{
-// 		if (!isByReference(s)) { 
-//  			/*  
-//  			 * The variable has not been passed by reference, just 
-//  		 	* push the value stored in the stack 
-//  		 	*/ 
-// 	 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
-// 	 	} else { 
-	 		  
-//  			 * Else the variable has been passed by reference 
-//  			 * and we have to push the value of the variable 
-// 			 * referenced by the address in the stack 
- 			 
-//  			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
-//  			emitStmt(STMT_LEN, "PUSHI");	 
- 	
-// 		}
-// 		break;
-// 	}
-// 	case STRING_T:
-// 		//TODO implement this special case
-// 		break;
-// 	default:
-// 		/* Function should not be called with var of any other type! */
-// 		fprintf(stderr, "Trying to push value of a symbol of type which"
-// 		    " has no type.\n");
-// 		exit(1);
-// 	}
-// }
-
-
 void emitPushVarValue(Symbol *s) {
 	emitPushVarValueCommon(s, s->offset, s->lvl);
 }
 
 
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s from a function/procedure parameter on the top of the 
+ * stack and appends it to the list of asc statements. The offset and level
+ * must be passed by the caller
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ * 
+ */ 
 void emitPushParmVarValue(Symbol *s, int offset, int level) {
 	emitPushVarValueCommon(s, offset, level);
 }
 
-void emitPushVarValueCommon(Symbol *s, int offset, int level) 
-{ 
+
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s on the top of the stack and appends it to the list 
+ * of asc statements. 
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ *		offset: 
+ *		level: display (lexical level)
+ * 
+ */ 
+void emitPushVarValueCommon(Symbol *s, int offset, int level) { 
  	CHECK_CAN_EMIT(s); 
  	
 	switch (getType(s)) {
@@ -212,11 +188,6 @@ void emitPushVarValueCommon(Symbol *s, int offset, int level)
 		exit(1);
 	}
 }
-
-
-
-
-
 
 
 /*
@@ -274,6 +245,7 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	}
 	emitStmt(STMT_LEN, "ADDI");
 }
+
 
 /*
  * Emits the asc code necessary to push the value of the given symbol to the 
@@ -465,15 +437,41 @@ void destroyLabelStack(struct labelStack **stack) {
 }
 
 
-
+/*
+ * Increases the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void increaseAdjustCounter() {
 	int lexLevel = getCurrentLexLevel(symbolTable);
 
 	adjustCounter[lexLevel] += 1;
 }
 
+
+/*
+ * Resets the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void resetAdjustCounter() {
 	int lexLevel = getCurrentLexLevel(symbolTable);
 
 	adjustCounter[lexLevel] = 0;
+}
+
+
+/*
+ * Gets the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void getAdjustCounter() {
+	return adjustCounter[getCurrentLexLevel(symbolTable)];
 }
