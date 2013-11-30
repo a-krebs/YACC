@@ -60,14 +60,17 @@ void emitComment(char *s, ...)
 	va_end(args);
 
 	cmt[MAX_COMMENT_LEN - 1] = '\0';
-	
-	len = strlen(cmt) + 4;	/* + 4 for '#', ' ', '\n', and safety '\0' */
+
+	/* + 6 for '\t', '\t', '#', ' ', '\n', and safety '\0' */
+	len = strlen(cmt) + 6;
 	allocStmt(&comment, len);
 	
 	/* Turn string s into a asc comment */
-	comment[0] = '#';
-	comment[1] = ' ';
-	strncat(comment + 2, cmt, len - 4); 
+	comment[0] = '\t';
+	comment[1] = '\t';
+	comment[2] = '#';
+	comment[3] = ' ';
+	strncat(comment + 4, cmt, len - 6); 
 	comment[len - 2] = '\n';
 	comment[len - 1] = '\0';
 
