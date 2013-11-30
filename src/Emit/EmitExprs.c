@@ -50,7 +50,10 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	 * call to ADDI as we know in this case we must have previously 
 	 * calculated some location value and left it on top of the stack.
 	 */
-	if (arrayBase->kind == VAR_KIND) emitPushVarAddress(arrayBase);
+	if (arrayBase->kind == VAR_KIND) {
+		emitComment("We now push the base address of the array");
+		emitPushVarAddress(arrayBase);
+	}
 	emitStmt(STMT_LEN, "ADDI");
 }
 
@@ -183,8 +186,6 @@ void emitPushVarAddress(Symbol *s)
 
 	switch(getType(s)) {
 	case ARRAY_T:
-		//TODO implement this special case
-		break;
 	case BOOLEAN_T:
 	case CHAR_T:
 	case INTEGER_T:
