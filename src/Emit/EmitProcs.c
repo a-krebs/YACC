@@ -4,22 +4,30 @@
  */
 
 #include "EmitProcs.h"
-#include "../ElementArray.h"
- #include "../Hash.h"
 
 
-
-void emitProcDecl(Symbol *symbol, struct ElementArray *ea) {
+/*
+ * Emit code to push procedure/function call onto the the stack.
+ *
+ * Parameters: 	param: parameter symbol
+ *				paramNum: the parameter's position number in the 
+ *					parameter list.
+ * 	
+ * Returns: void
+ */
+void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
  	CHECK_CAN_EMIT(symbol);
 
  	emitComment("");
- 	emitComment("Procedure start: %s", symbol->name);
+ 	emitComment("Procedure/Function start: %s", symbol->name);
+
+ 	/* Emit procedure label */
  	emitStmt(STMT_LEN, symbol->name); 
  	
+ 	/* Foreach parameter, grab local variable */
 	for (int i = 0; i < ea->nElements; i++) {
 		emitProcParam(getElementAt(ea, i), i);
 	}
-
 }
 
 
@@ -67,6 +75,8 @@ void emitEndProc() {
 	/* Adjust and return */
 	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
+
+	resetAdjustCounter();
 
 	emitComment("Procedure/Function end.");
 	emitComment("");

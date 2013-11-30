@@ -3,15 +3,31 @@ var
 	i : integer;
 	a : integer;
 	b : integer;
-procedure gcd( a : integer; b : integer; c : integer  );
+procedure tampon( a : integer; b : integer; c : integer  );
 	var
 		x: integer;
 		y: integer;
 begin
 	{x := 5 + 8;}
-end;	
+end;
+
+procedure pad( a : integer );
+	var
+		z: integer;
+begin
+end;
+
+function gcd( a : integer; b : integer ) : integer;
+	function blue( c : integer; d : integer ) : integer;
+	begin
+	end;
+begin
+end;
+
 begin
 	a := 1;
 	b := 4;
 	i := a + b
 end.
+
+

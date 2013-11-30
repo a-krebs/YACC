@@ -245,7 +245,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		}	
 	}
 
-	emitProcDecl(s, ea);
+	emitProcOrFuncDecl(s, ea);
 
 	return s;
 }
@@ -304,6 +304,9 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 			setParamOffset(var, ea);
 		}		
 	}
+
+	emitProcOrFuncDecl(s, ea);
+
 	return s;
 }
 

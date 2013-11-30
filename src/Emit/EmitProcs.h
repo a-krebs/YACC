@@ -34,7 +34,7 @@ extern int doNotEmit;
  * 	
  * Returns: void
  */
-void emitProcDecl(Symbol *symbol, struct ElementArray *ea);
+void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea);
 
 
 /*
