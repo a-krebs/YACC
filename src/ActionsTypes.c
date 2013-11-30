@@ -230,12 +230,15 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 Symbol *createRecordType(struct ElementArray *fields) {
 	Symbol *recType = NULL;
 	Symbol *newField = NULL;
-	int recordLexLvl = -1;
+	int recordLexLvl = -1, recordSize = 0;
 	ProxySymbol *f = NULL;
 	struct hash *recHash = NULL;
 	char *fieldId;
 
 	recType = newRecordTypeSym(NULL);
+	/* Record types are given an offset such that we know how to
+	 * properly address their fields */
+	setSymbolOffset(recType, symbolTable);
 	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 
 	recordLexLvl = getCurrentLexLevel(recHash);
@@ -253,6 +256,10 @@ Symbol *createRecordType(struct ElementArray *fields) {
 		newField = newVariableSym(fieldId, getTypeSym(f));
 		newField->lvl = recordLexLvl;
 
+		/* Keep running sum of sizes of fields for use in calculation
+		 * of size of record type*/
+		recordSize += newField->size;
+
 		if (getLocalSymbol(recHash, fieldId) != NULL) {
 			errMsg = customErrorString(
 			    "Record field with name %s already defined.",
@@ -261,15 +268,22 @@ Symbol *createRecordType(struct ElementArray *fields) {
 			freeProxySymbol(f);
 			continue;
 		}
-		
+	
+
 		if (addToSymbolTable(recHash, newField) != 0) {
-			setRecordFieldOffset(newField, recHash, symbolTable);
 			freeProxySymbol(f);
 			continue;
 		}
-		/* Give record field appropriate offset in record symbol table*/
-		setSymbolOffset(newField, recHash);
+		recordSize += newField->size;
+		setRecordFieldOffset(newField, recHash, symbolTable);
+		
 	}
+
+	/* Setting the size for a record must be treated as a special case
+	 * as we do not know at symbol creation the number of fields in
+	 * the record */
+	emitComment("record size %d", recordSize);
+	recType->size = recordSize;
 
 	return recType;
 }

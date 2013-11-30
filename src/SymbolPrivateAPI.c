@@ -65,6 +65,7 @@ Symbol *createSymbol(
 
 	// set symbol independent values
 	setSymbolName(symbol, id);
+	
 
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
@@ -118,8 +119,12 @@ void setSymbolSize(Symbol *s)
 		s->size = -1;
 		break;
 	case TYPE_KIND:
-		s->size = calculateSymbolSize(s);
+	{
+		/* We do not set the size for record types as at this point
+		 * we have lost the information we need to do so correctly */
+		if (getType(s) != RECORD_T) s->size = calculateSymbolSize(s);
 		break;
+	}
 	default:
 		/* NOT REACHED */
 		break;  

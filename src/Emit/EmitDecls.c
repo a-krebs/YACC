@@ -14,8 +14,10 @@
 void emitVarDecl(Symbol *s)
 {
 	CHECK_CAN_EMIT(s);
+
 	emitComment("Make room on the stack for new var %s", s->name);	
 	emitStmt(STMT_LEN, "ADJUST %d", s->size);
+
 }
 
 /*
@@ -77,4 +79,3 @@ void emitRealConstDecl(Symbol *s, float value)
 	emitStmt(STMT_LEN, "CONSTR %f", value);
 	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);	
 }
-

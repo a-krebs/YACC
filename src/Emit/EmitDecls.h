@@ -27,7 +27,7 @@ void emitConstDecl(Symbol *);
 void emitIntConstDecl(Symbol *, int);
 void emitRealConstDecl(Symbol *, float);
 
+
 /* Variable declaration emission function */
 void emitVarDecl(Symbol *);
-
 #endif

@@ -27,6 +27,10 @@ getType(Symbol *s)
 {
 	if (!s) return VOID_T;
 
+	/* Handle special case of the program head */
+	//if (!s->kindPtr.FuncKind->typeSym) return VOID_T;
+
+
 	switch (s->kind) {
 	case CONST_KIND:
 		return s->kindPtr.ConstKind->typeSym->kindPtr.TypeKind->type;
@@ -558,8 +562,9 @@ int calculateSymbolSize(Symbol *s)
 	case REAL_T:		/* basic pre-defined types have size == 1 */
 	case SCALARINT_T:	/* a scalar int is just an int */
 	case STRING_T:		/* string stored as pointer to heap */
-	case RECORD_T:		/* record stored as pointer to heap */
 		return 1;
+	case RECORD_T:
+		return 0;
 	case SCALAR_T:
 		return calculateScalarSize(s);
 	case SUBRANGE_T:

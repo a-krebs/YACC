@@ -186,6 +186,11 @@ int addToSymbolTable(struct hash *table, Symbol *symbol) {
 	int retval = 0;
 
 	retval = createHashElement(table, symbol->name, symbol);
+
+	/* For symbol which are record types we do not call setSymbolSize()
+	 * as at this point in the program we have lost the information we 
+	 * need to accureately calculate size */
+
 	setSymbolSize(symbol);
 
 	return retval;

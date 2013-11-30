@@ -184,7 +184,7 @@ void exitProcOrFuncDecl(void) {
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	Symbol *var = NULL;
-
+	
 	if (!id) {
 		/*Increament lex level to true to continue normally*/
 		incrementLexLevel(symbolTable);
@@ -241,6 +241,10 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 		}	
 	}
+
+	/* Size calculation for record is a special case as at creation we do
+	 * not know the number of fields it contains (and hence its size) */
+	
 
 	return s;
 }

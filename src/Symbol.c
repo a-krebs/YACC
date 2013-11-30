@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "ElementArray.h"
+#include "Emit.h"
 #include "Error.h"
 #include "ErrorLL.h"
 #include "Type.h"
@@ -328,6 +329,16 @@ Symbol *newTypeSymFromSym(char *id, Symbol *typeSym) {
 
 	/* set type pointer to same as typeSym */
 	newTypeSym->kindPtr = typeSym->kindPtr;
+
+	/* If the type is a RECORD_T, then we must manually copy over the
+	 * size of the RECORD_T symbol which is defining it as size calculation
+	 * information is only known at the time we create the origin type.*/
+	if (getType(newTypeSym) == RECORD_T) {
+		newTypeSym->size = typeSym->size;
+	}
+
+	emitComment("type1 size: %d, type2 size: %d", typeSym->size,
+	    newTypeSym->size);
 	
 	return newTypeSym;
 }
