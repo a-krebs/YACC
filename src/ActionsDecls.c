@@ -167,13 +167,15 @@ void exitProcOrFuncDecl(Symbol *symbol) {
 	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
 #endif
 
-	if (symbol->kind == PROC_KIND) {	
-		emitEndProc();
+	if (symbol != NULL) {
+		if (symbol->kind == PROC_KIND) {	
+		 	emitEndProc();
+		}
+		else if (symbol->kind == FUNC_KIND)  {
+		// 	// emitEndFuncTest();
+		}
+		//need some sort of test
 	}
-	else if (symbol->kind == FUNC_KIND)  {
-		// emitEndFuncTest();
-	}
-	//need some sort of test
 
 	popLexLevel(symbolTable);
 }

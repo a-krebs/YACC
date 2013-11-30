@@ -118,8 +118,5 @@ Symbol *createNewVarParm(char *id, Symbol *type);
 
 
 
-void exitProc();
-void exitFunc();
-
 
 #endif

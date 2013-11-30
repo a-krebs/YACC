@@ -210,29 +210,6 @@ proc_decl
 	{ exitProcOrFuncDecl($<symbol>1); }
 ;
 
-/*
-proc_heading
-: PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
-| FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
-| FUNCTION ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, NULL); }
-
-| PROCEDURE ID semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
-	  yyerrok; }
-| FUNCTION ID semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
-	  yyerrok; }
-| PROCEDURE semicolon_or_error
-	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
-| FUNCTION semicolon_or_error
-	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
-;
-*/
-
-
 proc_heading
 : PROCEDURE proc_heading_proc
 	{ $<symbol>$ = $<symbol>2; } 
