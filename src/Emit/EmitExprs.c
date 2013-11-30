@@ -21,8 +21,8 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	arrayType = getTypeSym(arrayBase);
 
 	while (indices) {
-		emitComment("Pushing index_val - index_lowerbound_val for"
-		    " location calculation.");
+		emitComment("Pushing index_val - index_lowerbound_val for");
+		emitComment("location calculation.");
 		emitPushSymbolValue(indices);
 		lowVal = getArrayLowIndexValue(arrayType);
 		emitStmt(STMT_LEN, "CONSTI %d", lowVal);
@@ -314,6 +314,14 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 		emitPushArrayLocationValue(y);
 	}
 
+	if (y->kind == VAR_KIND) {
+		emitComment("RHS of assignment operation is a single variable "
+		    "value.");
+		emitComment("So we push its value now as it was not pushed "
+		    "before.");
+		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl);
+	}
+
 	emitComment("Assigning a value to %s", x->name);
 
 	switch (getType(x)) {
@@ -341,6 +349,14 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	}
 }
 
+/*
+ * Emits asc code which calculate the address of the given field with respect
+ * the given record.
+ * Parameters
+ *		field : the field whose address we want to calculate
+ *		record : symbol of var_kind which has type record_t, field
+ *		    is a field value in this record.
+ */
 void emitPushRecordFieldAddress(Symbol *record, Symbol *field)
 {
 	CHECK_CAN_EMIT(record);
@@ -349,13 +365,12 @@ void emitPushRecordFieldAddress(Symbol *record, Symbol *field)
 	emitComment("Calculating offset of record field %s in record %s",
 	    field->name, record->name);
 
-	emitComment("%s has rec head flag val of %d", record->name,
-	    record->isRecordHead);
-
 	if (record->isRecordHead) {
 		/* If the record is the record head, we have to push
 		 * the absolute address referenced by its offset/lexical
 		 * lvl values */
+		emitComment("%s is a record head, so we push its "
+		    "address", record->name);
 		emitStmt(STMT_LEN, "PUSHA %d[%d]", record->offset,
 		    record->lvl);
 	}

@@ -47,6 +47,7 @@ void assignOp(Symbol *x, ProxySymbol *y) {
 	if (isAssignmentCompat(getTypeSym(x), getTypeSym(y))) {
 		emitAssignmentOp(x, y);
 	}
+
 }
 
 /*
@@ -95,7 +96,9 @@ Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
 		return NULL;
 	}
 
-//	emitPushRecordFieldValue(s);
+	emitComment("Pushing address of %s in preparation for assignment.",
+	    s->name);
+	emitPushRecordFieldAddress(p, s);
 	return newProxySymFromSym(s);
 }
 
