@@ -197,7 +197,9 @@ void emitPushVarValue(Symbol *s)
  	
 	switch (getType(s)) {
 	case ARRAY_T:
-		/* We never push an entire array of values onto the stack */
+		/* s is an array and a var kind <=> it is the sole value on
+		 * the RHS of an assignment operation.  This is handled
+ 		 * elsewhere. */
 		break;
 	case BOOLEAN_T:
 	case CHAR_T:
@@ -261,6 +263,38 @@ void emitPushArrayLocationValue(Symbol *s)
 	}
 }
 
+/*
+ * Generates the asc code necessary to perfrom the assignment of the array
+ * y to the array x. (essentially a memory copy)
+ * Parameters
+ *		x : the array variable whose value is to be assigned, we have
+ *		    that the base address of the array is the second value
+ *		    on the stack
+ *		y : the array variable whose value x will be assigned, we have
+ *		    that the base address of the array is the first value
+ *		    on the stack
+ */
+void emitArrayAssignment(Symbol *x, Symbol *y)
+{
+	if (y->kind == VAR_KIND) {
+		/* If y is an array and a var_kind, then the RHS of the 
+		 * assignment operation has never undergone indexing and thus
+		 * the address of y is not on the stack.  We push its value
+		 * now */
+		
+		if (!isByReference(y)) { 
+	 		emitStmt(STMT_LEN, "PUSHA %d[%d]", y->offset, y->lvl);	 
+	 	} else { 
+ 			emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl); 
+		}
+	}
+	emitComment("Calling pre-defined function __do_array_assignment");
+	emitComment("First, we place the array size on the stack.");
+	emitStmt(STMT_LEN, "CONSTI %d", getTypeSym(x)->size);
+	emitStmt(STMT_LEN, "CALL 0, __do_array_assignment");
+	emitComment("Array assignment done; kick local params off the stack");
+	emitStmt(STMT_LEN, "ADJUST -3");
+}
 
 /*
  * Generates the asc code necessary to perform the assignment of the value y
@@ -278,6 +312,14 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	 * When we enter this function, it is the case that the address of
 	 * the variable x appears below the value of the symbol y on the stack.
 	 */
+
+	if (getType(x) == ARRAY_T) {
+		/* We are doing an array assignment.  Let's let the specialist
+		 * handle this one. */
+		emitArrayAssignment(x, y);
+		return;
+	}
+
 
 	if (y->isAddress) {
 		emitComment("Value of y is address, convert to actual value");

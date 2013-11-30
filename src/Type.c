@@ -566,9 +566,7 @@ int calculateSymbolSize(Symbol *s)
 	case RECORD_T:
 		return 0;
 	case SCALAR_T:
-		return 1;	/* We never need the full size of the scalar
-				 * list since we push the elements of the
-				 * stack individually */
+		return calculateScalarSize(s);
 	case SUBRANGE_T:
 		return calculateSubrangeSize(s);
 	case VOID_T:
@@ -595,11 +593,20 @@ int calculateArraySize(Symbol *s)
 	struct Array *array = getTypePtr(s)->Array;
 	int baseTypeSize = 0;
 
-	/* Need to consider special case of array of records -- in this case,
-	 * calculateSymbolSize() will not return correct results. */
+	/* Need to consider special case of array of records or scalars,in 
+	 * this case, calculateSymbolSize() will not return correct results. */
 	if (getType(array->baseTypeSym) == RECORD_T) {
+
 		baseTypeSize = array->baseTypeSym->size;
+
+	} else if(getType(array->baseTypeSym) == SCALAR_T) {
+
+		baseTypeSize = 1;
+
+
 	} else baseTypeSize = calculateSymbolSize(array->baseTypeSym);
+	
+
 	
 	return ( (baseTypeSize) * (calculateSymbolSize(array->indexTypeSym)) );		
 }
