@@ -591,8 +591,15 @@ int calculateSymbolSize(Symbol *s)
 int calculateArraySize(Symbol *s)
 {
 	struct Array *array = getTypePtr(s)->Array;
-	return ( (calculateSymbolSize(array->baseTypeSym)) *
-	    (calculateSymbolSize(array->indexTypeSym)) );		
+	int baseTypeSize = 0;
+
+	/* Need to consider special case of array of records -- in this case,
+	 * calculateSymbolSize() will not return correct results. */
+	if (getType(array->baseTypeSym) == RECORD_T) {
+		baseTypeSize = array->baseTypeSym->size;
+	} else baseTypeSize = calculateSymbolSize(array->baseTypeSym);
+	
+	return ( (baseTypeSize) * (calculateSymbolSize(array->indexTypeSym)) );		
 }
 
 /*
