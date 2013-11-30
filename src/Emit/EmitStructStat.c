@@ -73,3 +73,62 @@ void emitThenStat() {
 	    LABEL_PREFIX, peekLabelStackTop(labelStack));
 	popLabels(labelStack);
 }
+
+
+/*
+ * Beginning of a while loop
+ */
+void emitBeginWhile() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	/* Reserve loop labels. One for the top, one for the bottom */
+	reserveLabels(loopLabelStack, 2);
+
+	emitComment("Top of WHILE loop %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
+	emitStmt(STMT_LEN, "%s%d:",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
+}
+
+/*
+ * Check that expr is true to do loop, otherwise skip loop
+ */
+void emitWhileLoopCondCheck(Symbol *s) {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(s);
+
+	emitComment("If expr is false, skip loop body");
+	emitStmt(STMT_LEN, "IFZ %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack) + 1);
+}
+
+
+/*
+ * Emit code to return to the top of the current loop.
+ */
+void emitGotoLoopTop() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	emitComment("Bottom of loop body for %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
+	emitStmt(STMT_LEN, "GOTO %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
+}
+
+
+/*
+ * Emit code for the end of a while loop.
+ */
+void emitEndWhile() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	emitComment("End of WHILE loop %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
+	emitStmt(STMT_LEN, "%s%d:",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack) + 1);
+
+	popLabels(loopLabelStack);
+}

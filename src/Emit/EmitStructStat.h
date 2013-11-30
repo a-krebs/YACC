@@ -55,4 +55,28 @@ void emitElseStat();
 void emitThenStat();
 
 
+/*
+ * Beginning of a while loop
+ */
+void emitBeginWhile();
+
+
+/*
+ * Check that expr is true to do loop, otherwise skip loop
+ */
+void emitWhileLoopCondCheck(Symbol *s);
+
+
+/*
+ * Emit code to return to the top of the current loop.
+ */
+void emitGotoLoopTop();
+
+
+/*
+ * Emit code for the end of a while loop.
+ */
+void emitEndWhile();
+
+
 #endif

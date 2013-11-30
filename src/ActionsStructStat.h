@@ -28,6 +28,24 @@ void endWhileLoop(void);
 
 
 /*
+ * Check whether the expr given as the loop condition is true or false
+ */
+void whileLoopCondCheck(ProxySymbol *expr);
+
+
+/*
+ * Return to the top of the current loop
+ */
+void gotoLoopTop();
+
+
+/*
+ * End of while loop.
+ */
+void endWhileLoop(void);
+
+	
+/*
  * Confirm that exp is of boolean type.
  */
 void ifPart(ProxySymbol *expr);

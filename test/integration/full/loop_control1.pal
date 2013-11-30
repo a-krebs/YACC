@@ -1,0 +1,29 @@
+{}
+program test(in, out);
+begin
+	// basic loop
+	while (1=1) do
+	begin
+	end;
+
+	// two nested loops
+	while (1=1) do
+	begin
+		while (1=1) do
+		begin
+		end;
+	end;
+
+	// with continues
+	while (1=1) do
+	begin
+		while (1=1) do
+			while (1=1) do
+				begin
+					continue;
+				end;
+		continue;
+		continue;
+	end;
+
+end.
