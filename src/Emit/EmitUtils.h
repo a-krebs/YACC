@@ -21,7 +21,6 @@
 #include "Hash.h"
 
 extern int doNotEmit;
-int adjustCounter[16];
 
 #define STMT_LEN 128	/* default size of an asc statement, the only exception
 			 * to this size would be for labels which may have the
@@ -146,26 +145,6 @@ void emitPushVarValueCommon(Symbol *s, int offset, int level);
  * 
  */ 
 void emitPushParmVarValue(Symbol *s, int offset, int level);
-
-
-/*
- * Increases the adjust counter for the current lexical level.
- *
- * Parameters: void.
- * 	
- * Returns: void
- */
-void increaseAdjustCounter();
-
-
-/*
- * Resets the adjust counter for the current lexical level.
- *
- * Parameters: void.
- * 	
- * Returns: void
- */
-void resetAdjustCounter();
 
 
 /*

@@ -3,32 +3,20 @@
 3	|:		i : integer;
 4	|:		a : integer;
 5	|:		b : integer;
-6	|:	procedure tampon( a : integer; b : integer; c : integer  );
-7	|:		var
-8	|:			x: integer;
-9	|:			y: integer;
-10	|:	begin
-11	|:		{x := 5 + 8;}
+6	|:	
+7	|:	
+8	|:	procedure pad( a : integer );
+9	|:		var
+10	|:			z: integer;
+11	|:	begin
 12	|:	end;
 13	|:	
-14	|:	procedure pad( a : integer );
-15	|:		var
-16	|:			z: integer;
-17	|:	begin
-18	|:	end;
-19	|:	
-20	|:	function gcd( a : integer; b : integer ) : integer;
-21	|:		function blue( c : integer; d : integer ) : integer;
-22	|:		begin
-23	|:		end;
-24	|:	begin
-25	|:	end;
-26	|:	
-27	|:	begin
-28	|:		a := 1;
-29	|:		b := 4;
-30	|:		i := a + b
-31	|:	end.
-32	|:	
-33	|:	
-34	|:	
+14	|:	
+15	|:	begin
+16	|:		a := 1;
+17	|:		b := 4;
+18	|:		i := a + b
+19	|:	end.
+20	|:	
+21	|:	
+22	|:	

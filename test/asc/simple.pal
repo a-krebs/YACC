@@ -3,13 +3,7 @@ var
 	i : integer;
 	a : integer;
 	b : integer;
-procedure tampon( a : integer; b : integer; c : integer  );
-	var
-		x: integer;
-		y: integer;
-begin
-	{x := 5 + 8;}
-end;
+
 
 procedure pad( a : integer );
 	var
@@ -17,12 +11,6 @@ procedure pad( a : integer );
 begin
 end;
 
-function gcd( a : integer; b : integer ) : integer;
-	function blue( c : integer; d : integer ) : integer;
-	begin
-	end;
-begin
-end;
 
 begin
 	a := 1;

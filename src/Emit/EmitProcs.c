@@ -64,21 +64,22 @@ void emitProcParam(Symbol *param, int paramNum) {
  */
 void emitEndProc() {
 	/* we don't have a symbol pointer, so just pass in non-null */
-	CHECK_CAN_EMIT(1);	
+	CHECK_CAN_EMIT(1);
+	char *emptyStr = "";	
 
 	/* Get the lexical so we can idenity the display register */
 	int lexLevel = getCurrentLexLevel(symbolTable);
 
 	/* Determine how many levels on the stack we need to adjust by */
-	int adjustCount = adjustCounter[lexLevel] * -1;
+	int adjustCount = getAdjustCounter() * -1;
 
 	/* Adjust and return */
 	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 
-	resetAdjustCounter();
-
 	emitComment("Procedure/Function end.");
-	emitComment("");
-	emitComment("");
+	emitStmt(STMT_LEN, emptyStr);
+	emitStmt(STMT_LEN, emptyStr);
 }
+
+

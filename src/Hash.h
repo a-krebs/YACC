@@ -76,4 +76,13 @@ void incrementOffset(struct hash *hash);
 void resetOffset(struct hash *hash);
 
 
+/* Gets the number of symbols at the current lexical level
+ *
+ * Parameters: 
+ *
+ * Return: count of local symbols
+*/
+int getLocalSymbolCount(struct hash *hash);	
+
+
 #endif

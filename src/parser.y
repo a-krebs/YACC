@@ -205,12 +205,12 @@ proc_decl_list
 
 proc_decl
 : proc_heading decls compound_stat semicolon_or_error
-	{ exitProcOrFuncDecl(); }
+	{ exitProcOrFuncDecl($<symbol>1); }
 | proc_heading semicolon_or_error
-	{ exitProcOrFuncDecl(); }
+	{ exitProcOrFuncDecl($<symbol>1); }
 ;
 
-
+/*
 proc_heading
 : PROCEDURE ID_or_err f_parm_decl semicolon_or_error
 	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
@@ -230,18 +230,21 @@ proc_heading
 | FUNCTION semicolon_or_error
 	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
 ;
+*/
 
-/*
+
 proc_heading
 : PROCEDURE proc_heading_proc
+	{ $<symbol>$ = $<symbol>2; } 
 | FUNCTION proc_heading_func
+	{ $<symbol>$ = $<symbol>2; } 
 ;
 
 proc_heading_proc
 : ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
+	{ $<symbol>$ = enterProcDecl($<id>1, $<elemarray>2); }
 | ID semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
+	{ $<symbol>$ = enterProcDecl($<id>1, NULL);
 	  yyerrok; }
 | semicolon_or_error
 	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
@@ -249,16 +252,16 @@ proc_heading_proc
 
 proc_heading_func
 : ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
+	{ $<symbol>$ = enterFuncDecl($<id>1, $<elemarray>2, $<symbol>4); }
 | ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, NULL); }
+	{ $<symbol>$ = enterFuncDecl($<id>1, $<elemarray>2, NULL); }
 | ID semicolon_or_error
 	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
 	  yyerrok; }
 | semicolon_or_error
 	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
 ;
-*/
+
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN

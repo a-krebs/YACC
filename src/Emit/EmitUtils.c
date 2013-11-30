@@ -438,34 +438,6 @@ void destroyLabelStack(struct labelStack **stack) {
 
 
 /*
- * Increases the adjust counter for the current lexical level.
- *
- * Parameters: void.
- * 	
- * Returns: void
- */
-void increaseAdjustCounter() {
-	int lexLevel = getCurrentLexLevel(symbolTable);
-
-	adjustCounter[lexLevel] += 1;
-}
-
-
-/*
- * Resets the adjust counter for the current lexical level.
- *
- * Parameters: void.
- * 	
- * Returns: void
- */
-void resetAdjustCounter() {
-	int lexLevel = getCurrentLexLevel(symbolTable);
-
-	adjustCounter[lexLevel] = 0;
-}
-
-
-/*
  * Gets the adjust counter for the current lexical level.
  *
  * Parameters: void.
@@ -473,5 +445,5 @@ void resetAdjustCounter() {
  * Returns: void
  */
 int getAdjustCounter() {
-	return adjustCounter[getCurrentLexLevel(symbolTable)];
+	return getLocalSymbolCount(symbolTable);
 }
