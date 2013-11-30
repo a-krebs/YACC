@@ -307,7 +307,7 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	}
 }
 
-void emitPushRecordFieldAddress(p, s)
+void emitPushRecordFieldAddress(Symbol *p, Symbol *s)
 {
 
 }
