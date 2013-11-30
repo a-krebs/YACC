@@ -118,4 +118,11 @@ void growLabelStack(struct labelStack *stack);
 void destroyLabelStack(struct labelStack **stack);
 
 
+
+void emitPushVarValueCommon(Symbol *s, int offset, int level);
+
+
+void emitPushParmVarValue(Symbol *s, int offset, int level);
+
+
 #endif

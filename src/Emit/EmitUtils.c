@@ -121,7 +121,58 @@ void emitStmt(int len, char *s, ...)
  *		s : the symbol whose value is to be placed on top of the stack
  * 
  */ 
-void emitPushVarValue(Symbol *s) 
+// void emitPushVarValue(Symbol *s) 
+// { 
+//  	CHECK_CAN_EMIT(s); 
+ 	
+// 	switch (getType(s)) {
+// 	case BOOLEAN_T:
+// 	case CHAR_T:
+// 	case INTEGER_T:
+// 	case REAL_T:
+// 	case RECORD_T:
+// 	case SCALARINT_T:
+// 	{
+// 		if (!isByReference(s)) { 
+//  			/*  
+//  			 * The variable has not been passed by reference, just 
+//  		 	* push the value stored in the stack 
+//  		 	*/ 
+// 	 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
+// 	 	} else { 
+	 		  
+//  			 * Else the variable has been passed by reference 
+//  			 * and we have to push the value of the variable 
+// 			 * referenced by the address in the stack 
+ 			 
+//  			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
+//  			emitStmt(STMT_LEN, "PUSHI");	 
+ 	
+// 		}
+// 		break;
+// 	}
+// 	case STRING_T:
+// 		//TODO implement this special case
+// 		break;
+// 	default:
+// 		/* Function should not be called with var of any other type! */
+// 		fprintf(stderr, "Trying to push value of a symbol of type which"
+// 		    " has no type.\n");
+// 		exit(1);
+// 	}
+// }
+
+
+void emitPushVarValue(Symbol *s) {
+	emitPushVarValueCommon(s, s->offset, s->lvl);
+}
+
+
+void emitPushParmVarValue(Symbol *s, int offset, int level) {
+	emitPushVarValueCommon(s, offset, level);
+}
+
+void emitPushVarValueCommon(Symbol *s, int offset, int level) 
 { 
  	CHECK_CAN_EMIT(s); 
  	
@@ -138,14 +189,14 @@ void emitPushVarValue(Symbol *s)
  			 * The variable has not been passed by reference, just 
  		 	* push the value stored in the stack 
  		 	*/ 
-	 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);	 
+	 		emitStmt(STMT_LEN, "PUSH %d[%d]", offset, level);	 
 	 	} else { 
 	 		/*  
  			 * Else the variable has been passed by reference 
  			 * and we have to push the value of the variable 
 			 * referenced by the address in the stack 
  			 */
- 			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
+ 			emitStmt(STMT_LEN, "PUSH %d[%d]", offset, level); 
  			emitStmt(STMT_LEN, "PUSHI");	 
  	
 		}
@@ -161,6 +212,12 @@ void emitPushVarValue(Symbol *s)
 		exit(1);
 	}
 }
+
+
+
+
+
+
 
 /*
  * Given a list of indices and a base of array, this function emits the asc code

@@ -1,0 +1,13 @@
+program test(input, output);
+var
+	i : integer;
+	a : integer;
+	b : integer;
+procedure gcd( a : integer; b : integer; c : integer  );
+begin
+end;	
+begin
+	a := 1;
+	b := 4;
+	i := a + b
+end.

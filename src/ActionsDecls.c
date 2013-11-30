@@ -244,6 +244,8 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		}	
 	}
 
+	emitProcDecl(s, ea);
+
 	return s;
 }
 
