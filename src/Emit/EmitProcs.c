@@ -17,14 +17,17 @@
  */
 void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
  	CHECK_CAN_EMIT(symbol);
-
  	emitComment("");
 
+ 	char *label = createProcOrFunctionLabel(symbol);
+ 	
  	if (symbol->kind == PROC_KIND) {	
-		emitComment("Procedure start: %s", symbol->name);
+ 		symbol->kindPtr.ProcKind->label = label;
+		emitComment("Procedure start: %s", label);
 	}
 	else if (symbol->kind == FUNC_KIND)  {
-	 	emitComment("Function start: %s", symbol->name);
+		symbol->kindPtr.FuncKind->label = label;
+	 	emitComment("Function start: %s", label);
 	}
 
  	/* Emit procedure label */
@@ -93,4 +96,38 @@ void emitProcOrFuncEndCommon(char *msg) {
 	emitComment(msg);
 	emitStmt(STMT_LEN, emptyStr);
 	emitStmt(STMT_LEN, emptyStr);	
+}
+
+
+/*
+ * Creates a label for procedure/function. Label would have form
+ * symbolName_currentStackNumber.
+ *
+ * I fully realize this function was coded as stupid...
+ *
+ * Parameters: symbol: procedure/function symbol to create label for.
+ * 	
+ * Returns: generated label
+ */
+char *createProcOrFunctionLabel(Symbol *symbol) {
+	char *tempName = NULL;
+	char *name = NULL;
+	int labelCount;
+	int size;
+
+	reserveLabels(procOrFuncStack, 1);
+	labelCount = peekLabelStackTop(procOrFuncStack);
+
+	size = snprintf(NULL, 0, "%i", labelCount);
+        tempName = calloc(1, size + 1);
+        sprintf(tempName, "%i", labelCount);
+
+        name = calloc(1, (strlen(symbol->name) + 2 + strlen(tempName) ));
+        strcat(name, symbol->name);
+        strcat(name, "_");
+        strcat(name, tempName);
+
+        free(tempName);
+
+        return name;
 }

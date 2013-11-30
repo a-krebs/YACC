@@ -69,4 +69,16 @@ void emitEndFunc() ;
 void emitProcOrFuncEndCommon(char *mgs);
 
 
+/*
+ * Creates a label for procedure/function. Label would have form
+ * symbolName_currentStackNumber.
+ *
+ * I fully realize this function was coded as stupid...
+ *
+ * Parameters: symbol: procedure/function symbol to create label for.
+ * 	
+ * Returns: generated label
+ */
+char *createProcOrFunctionLabel(Symbol *symbol);
+
 #endif

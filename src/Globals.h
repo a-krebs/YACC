@@ -16,4 +16,7 @@ unsigned long long whileLoopDepth;
 /* label stuff for control statement code emmission */
 struct labelStack *labelStack;
 
+/* label stuff for procedure/function statement code emmission */
+struct labelStack *procOrFuncStack;
+
 #endif
