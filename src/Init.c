@@ -1,6 +1,6 @@
 #include "Init.h"
-#include "EmitUtils.h"
-#include "EmitToFile.h"
+
+extern StmtLL *stmts;
 
 int initialize() {
 	/* symbol table */
@@ -30,6 +30,7 @@ int initialize() {
 	loopLabelStack = newLabelStack();
 
 	/* emit pre-defined functions to StmtLL */
+	stmts = NULL;
 	emitInit();
 
 	return 0;
@@ -43,6 +44,9 @@ int deInitialize() {
 	/* control statement stuff */
 	destroyLabelStack(&labelStack);
 	destroyLabelStack(&loopLabelStack);
+
+	/* Linked List of emitted code */
+	freeStmtLL(stmts);
 
 	return 0;
 }

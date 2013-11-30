@@ -11,7 +11,9 @@
 #include "Globals.h"
 #include "Hash.h"
 #include "PreDef.h"
-
+#include "EmitUtils.h"
+#include "EmitToFile.h"
+#include "StmtLL.h"
 
 /* Macros and const string variable declarations. */
 

@@ -73,7 +73,7 @@ getNextStmt(StmtLL **ll)
 }
 
 void
-freeStmtList(StmtLL *ll)
+freeStmtLL(StmtLL *ll)
 {
 	StmtLL *copy;
 	while (ll) {
