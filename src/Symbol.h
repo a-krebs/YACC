@@ -185,5 +185,4 @@ void setSymbolOffset(Symbol *, struct hash *);
  */
 void setParamOffset(Symbol *, struct ElementArray *);
 
-void setRecordFieldOffset(Symbol *, struct hash*, struct hash *);
 #endif

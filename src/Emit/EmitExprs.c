@@ -103,7 +103,8 @@ void emitPushConstValue(Symbol *s)
 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);
 	
 	} else {
-	
+		/* It is an anonymous const value, so its value is already
+		 * on the stack 	
 		switch (getType(s)) {
 		case BOOLEAN_T:
 			emitStmt(STMT_LEN, "CONSTI %d", 
@@ -129,13 +130,46 @@ void emitPushConstValue(Symbol *s)
 			//TODO implement this special case
 			break;
 		default:
-			/* Should not be reached */
+			// Should not be reached 
 			break;
 		}		
-
+		*/
 	}
 
 }
+
+void emitPushAnonConstValue(Symbol *s)
+{
+	switch (getType(s)) {
+	case BOOLEAN_T:
+		emitStmt(STMT_LEN, "CONSTI %d", 
+		    getConstVal(s)->Boolean.value);
+		break;
+	case CHAR_T:
+		emitStmt(STMT_LEN, "CONSTI %d",
+		    getConstVal(s)->Char.value);
+		break;
+	case INTEGER_T:
+		emitStmt(STMT_LEN, "CONSTI %d",
+		    getConstVal(s)->Integer.value);
+		break;
+	case REAL_T:
+		emitStmt(STMT_LEN, "CONSTI %f",
+		    getConstVal(s)->Real.value);
+		break;
+	case SCALARINT_T:
+		emitStmt(STMT_LEN, "CONSTI %d",
+		    getConstVal(s)->Integer.value);
+		break;
+	case STRING_T:
+		//TODO implement this special case
+		break;
+	default:
+		// Should not be reached 
+		break;
+	}		
+}
+
 
 /*
  * Constructs the asc statement(s) necessary to push the address of the variable
@@ -275,7 +309,7 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	 * the variable x appears below the value of the symbol y on the stack.
 	 */
 
-	if (y->wasArray) {
+	if (y->isAddress) {
 		emitComment("Value of y is address, convert to actual value");
 		emitPushArrayLocationValue(y);
 	}
@@ -307,7 +341,30 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	}
 }
 
-void emitPushRecordFieldAddress(Symbol *p, Symbol *s)
+void emitPushRecordFieldAddress(Symbol *record, Symbol *field)
 {
+	CHECK_CAN_EMIT(record);
+	CHECK_CAN_EMIT(field);
 
+	emitComment("Calculating offset of record field %s in record %s",
+	    field->name, record->name);
+
+	emitComment("%s has rec head flag val of %d", record->name,
+	    record->isRecordHead);
+
+	if (record->isRecordHead) {
+		/* If the record is the record head, we have to push
+		 * the absolute address referenced by its offset/lexical
+		 * lvl values */
+		emitStmt(STMT_LEN, "PUSHA %d[%d]", record->offset,
+		    record->lvl);
+	}
+	emitStmt(STMT_LEN, "CONSTI %d", field->offset);
+	emitStmt(STMT_LEN, "ADDI", field->offset);
 }
+
+
+
+
+
+

@@ -272,7 +272,7 @@ Symbol *createRecordType(struct ElementArray *fields) {
 			continue;
 		}
 		recordSize += newField->size;
-		setRecordFieldOffset(newField, recHash, symbolTable);
+		setSymbolOffset(newField, recHash);
 		
 	}
 

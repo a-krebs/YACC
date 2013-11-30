@@ -14,4 +14,5 @@ void emitPushConstValue(Symbol *);
 void emitPushSymbolValue(Symbol *);
 void emitPushArrayLocationValue(Symbol *);
 void emitPushRecordFieldAddress(Symbol *, Symbol *);
+void emitPushAnonConstValue(Symbol *);
 #endif

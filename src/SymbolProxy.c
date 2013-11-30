@@ -36,10 +36,13 @@ newProxySymFromSym(Symbol *s)
 	ps->lvl = s->lvl;
 	ps->offset = s->offset;
 	ps->size = s->size;
-	if (s->wasArray) {
-		ps->wasArray = 1;
-		s->wasArray = 0;
+	if (s->isAddress) {
+		/* The old symbol sheds the flag of isAddress, this is for
+		 * protection in the case that s is a type symbol */
+		ps->isAddress = 1;
+		s->isAddress = 0;
 	}
+	if (s->isRecordHead) ps->isRecordHead = 1;
 	return ps;
 }
 

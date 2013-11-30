@@ -155,7 +155,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
 
-	if (x->wasArray) {
+	if (x->isAddress) {
 		/* the value for x on top of the stack is an address, we need
 		 * to replace it with the value of x */
 		emitPushArrayLocationValue(x);
@@ -167,7 +167,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	  else if (x->kind != TYPE_KIND){
 		emitPushSymbolValue(x);
 	}
-	if (y->wasArray) {
+	if (y->isAddress) {
 		/* the value for x on top of the stack is an address, we need
 		 * to replace it with the value of x */
 		emitStmt(STMT_LEN, "ADJUST -1");

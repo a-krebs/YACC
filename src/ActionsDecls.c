@@ -144,9 +144,14 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 	s = newVariableSym(id, type);
 	if (s) {
 		addToSymbolTable(symbolTable, s);
+		
 		/* Set the variables offset */
 		setSymbolOffset(s, symbolTable);
 		emitVarDecl(s);
+
+		/* If var is being declared to be a record type, then we know that
+		 * it is the record head and set the appropriate flag */
+		if (getType(type) == RECORD_T) s->isRecordHead = 1;
 	}
 
 	return type;

@@ -104,7 +104,7 @@ Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 	}
 
 	returnTypeSym = newProxySymFromSym(arrayTypeSym);
-	returnTypeSym->wasArray = 1;
+	returnTypeSym->isAddress = 1;
 	return returnTypeSym;
 }
 

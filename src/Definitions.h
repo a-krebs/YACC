@@ -220,8 +220,10 @@ struct Symbol {
 			 * display register) at which the variable appears */
 	int size;	/* the ASC memory units this symbol occupies in the
 			 * stack */
-	int wasArray; 	/* indicates that the value corresponding to the symbol that resides
-			 * on the stack is an address */
+	int isAddress; 	/* indicates that the value corresponding to the symbol 
+			 * that resides on the stack is an address */
+	int isRecordHead;/* flag indicating whether or not the symbol is the
+			  * "outmost" record in a record definition */
 	struct Symbol *next;	
 };
 

@@ -72,6 +72,7 @@ Symbol *createSymbol(
 
 	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
+	symbol->isRecordHead = 0;
 	symbol->next = NULL;
 
 	return symbol;
