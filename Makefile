@@ -21,6 +21,7 @@ OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
 OBJS+=		$(BIN)/EmitExprs.o
 OBJS+=		$(BIN)/EmitStructStat.o
+OBJS+=		$(BIN)/EmitToFile.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -157,6 +158,9 @@ $(BIN)/EmitUtils.o: $(EMIT)/EmitUtils.c $(EMIT)/EmitUtils.h
 	$(COMPILE)
 
 $(BIN)/EmitStructStat.o: $(EMIT)/EmitStructStat.c $(EMIT)/EmitStructStat.h
+	$(COMPILE)
+
+$(BIN)/EmitToFile.o: $(EMIT)/EmitToFile.c $(EMIT)/EmitToFile.h
 	$(COMPILE)
 
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h

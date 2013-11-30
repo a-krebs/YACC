@@ -134,9 +134,9 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
  */
 int main( int argc, char *argv[] )
 {
+	int fileGenerated = -1;
 	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
-	FILE *ascfp = NULL;
 
 	/* initialize global args struct */
 	memset(&givenArgs, 0, sizeof(struct args));
@@ -179,24 +179,34 @@ int main( int argc, char *argv[] )
 		printProgramListing(fp, givenArgs.listingFile);
 	}
 
-	/* Create .asc file */
-	ascfp = fopen(givenArgs.ascFile, "w");
+	/* Generate .asc file */
+	fileGenerated = emitToFile(givenArgs.ascFile);
+	if (fileGenerated != 0) {
+		/* 
+		 * Print to standard output, as this is not an error in our
+		 * compiler.
+		 */
+		fprintf(stdout, "Did not generate .asc file, as the "
+		    "given .pal file contains errors.");
+	}
 
-	/* close file, clean up, and exit */
+	/* close file input file*/
 	if (fclose(fp) != 0) {
-		fprintf(stderr, "File IO error.\n");
-		return EXIT_FAILURE;
+		err(EXIT_FAILURE, "File IO error.");
 	}
 
-	if (fclose(ascfp) != 0) {
-		fprintf(stderr, "File IO error.\n");
-		return EXIT_FAILURE;
-	}
-
-	if (givenArgs.S == 0) {
-		remove(givenArgs.ascFile);
+	/*
+	 * Remove the generated asc file.
+	 * If the flag is not set, we remove the file.
+	 */
+	if ((givenArgs.S == 0) && (fileGenerated == 0)) {
+		if (remove(givenArgs.ascFile) != 0) {
+			err(EXIT_FAILURE, "Failed to remove generated .asc "
+			    "file.");
+		}
 	}
 	
+	/* clean up */
 	free(givenArgs.listingFile);
 	free(givenArgs.ascFile);
 	deInitialize();

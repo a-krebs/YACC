@@ -181,8 +181,7 @@ def make_parser_test_function(filename, expected_errors, test_type):
     """
 
     def new_test(self):
-        output = check_output([PAL_EXE, PAL_OPTION1, PAL_OPTION2,\
-            PAL_OPTION3, filename])
+        output = check_output([PAL_EXE, PAL_OPTION1, PAL_OPTION2, filename])
         actual_errors = get_error_lines_from_output(output, test_type)
 
         for error in actual_errors:
@@ -406,8 +405,9 @@ if __name__ == "__main__":
     usage = "Run with -x option for syntax tests or -c option for semantic "\
             "tests.\n"\
             "By default both types of tests are run.\n"\
-            "Use -i option to ignore expected error list."\
-            "Use -d option to specify test directory."
+            "Use -i option to ignore expected error list.\n"\
+            "Use -d option to specify test directory.\n"\
+            "Use -a option to run asc tests."
     
     try:
         opts, args = getopt.getopt(argv, "h?xcitad:")

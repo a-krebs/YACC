@@ -45,11 +45,22 @@ void
 dumpStmtLL(StmtLL *ll)
 {
 	if (!ll) return;
+	writeStmtLL(stderr, ll);
+}
+
+
+/*
+ * Print all statments in the stmtLL to the given file stream.
+ * Parameters:
+ * 	outStream: the file stream to which to write
+ * 	ll: the StmtLL to be printed
+ */
+void writeStmtLL(FILE *outStream, StmtLL *ll) {
+	if ((!ll)||(!outStream)) return;
 	while (ll) {
-		fprintf(stderr, "%s", ll->stmt);
+		fprintf(outStream, "%s", ll->stmt);
 		ll = ll->next;
 	}
-
 }
 
 char *
@@ -71,6 +82,4 @@ freeStmtList(StmtLL *ll)
 		free(copy->stmt);
 		free(copy);
 	}
-
-
 }
