@@ -75,6 +75,7 @@ void emitComment(char *s, ...)
 	appendStmt(&stmts, comment);
 }
 
+
 /*
  * Turns the given format string s into an ASC statement given additional
  * args and appends it to list of stmts.
@@ -161,6 +162,7 @@ void emitPushVarValue(Symbol *s)
 	}
 }
 
+
 /*
  * Given a list of indices and a base of array, this function emits the asc code
  * necessary to calculate location of the element indexed by the indices 
@@ -216,6 +218,7 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	}
 	emitStmt(STMT_LEN, "ADDI");
 }
+
 
 /*
  * Emits the asc code necessary to push the value of the given symbol to the 
@@ -328,6 +331,7 @@ void reserveLabels(struct labelStack *stack, int n) {
 void popLabels(struct labelStack *stack) {
 	stack->ltop -= 1;
 }
+
 
 /*
  * Check the value at the top of the stack without changing it.
