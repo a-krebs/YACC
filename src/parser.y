@@ -451,11 +451,16 @@ parm
 	  $<elemarray>$ = createArgList($<proxy>1); }
 ;
 
+while_expr
+: expr
+	{ whileLoopCondCheck($<proxy>1); }
+;
+
 struct_stat
 : if_part error then_matched_stat_part else_stat_part
 | if_part then_matched_stat_part else_stat_part
 | if_part then_stat_part
-| WHILE expr DO stat
+| WHILE while_expr do_loop_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
@@ -463,16 +468,26 @@ struct_stat
 	{ exitLoop(); }
 ;
 
+do_loop_stat
+: DO stat
+	{ gotoLoopTop(); }
+;
+
 matched_stat
 : simple_stat
 | if_part error then_matched_stat_part else_matched_stat_part
 | if_part then_matched_stat_part else_matched_stat_part
-| WHILE expr DO matched_stat
+| WHILE while_expr do_loop_matched_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+do_loop_matched_stat
+: DO matched_stat
+	{ gotoLoopTop(); }
 ;
 
 if_part

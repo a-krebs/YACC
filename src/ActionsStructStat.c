@@ -38,6 +38,8 @@ void continueLoop(void) {
 		    "allowed inside a while loop.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
+
+	emitGotoLoopTop();
 }
 
 /*
@@ -50,14 +52,52 @@ void exitLoop(void) {
 		    "allowed inside a while loop.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
+
+	emitGotoLoopEnd();
 }
+
+/*
+ * Beginning of a While loop. Called from tokens.l
+ */
+void beginWhileLoop(void) {
+	whileLoopDepth++;
+
+	/* expr code will be emitted after this */
+	emitBeginWhile();
+}
+
+/*
+ * Check whether the expr given as the loop condition is true or false
+ */
+void whileLoopCondCheck(ProxySymbol *expr) {
+	/* make sure we have boolean expression */
+	if ((expr == NULL) || (getType(expr) != BOOLEAN_T)) {
+		errMsg = customErrorString("Loop conditions must be ",
+		    "boolean type.");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
+	emitWhileLoopCondCheck(expr);	
+}
+
+
+/*
+ * Return to the top of the current loop
+ */
+void gotoLoopTop() {
+	emitGotoLoopTop();
+}
+
 
 /*
  * End of while loop.
  */
 void endWhileLoop(void) {
 	whileLoopDepth--;
+
+	emitEndWhile();
 }
+
 
 /*
  * Confirm that exp is of boolean type.
