@@ -111,7 +111,7 @@ void emitGotoLoopTop() {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);
 
-	emitComment("Bottom of loop body for %s%d",
+	emitComment("Return to top of %s%d",
 	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
 	emitStmt(STMT_LEN, "GOTO %s%d",
 	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
@@ -132,3 +132,17 @@ void emitEndWhile() {
 
 	popLabels(loopLabelStack);
 }
+
+/*
+ * Emit code to goto the endo of the loop. Used for exit statments.
+ */
+void emitGotoLoopEnd() {
+	/* we don't have a symbol pointer, so just pass in non-null */
+	CHECK_CAN_EMIT(1);
+
+	emitComment("Go to end of %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
+	emitStmt(STMT_LEN, "GOTO %s%d",
+	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack) + 1);
+}
+

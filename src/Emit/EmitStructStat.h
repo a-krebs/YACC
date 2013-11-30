@@ -79,4 +79,10 @@ void emitGotoLoopTop();
 void emitEndWhile();
 
 
+/*
+ * Emit code to goto the endo of the loop. Used for exit statments.
+ */
+void emitGotoLoopEnd();
+
+
 #endif

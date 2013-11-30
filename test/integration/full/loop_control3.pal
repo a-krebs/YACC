@@ -1,16 +1,14 @@
 {}
 program test(in, out);
 begin
-	// basic loop
-	while (1=1) do
-	begin
-	end;
-
-	// two nested loops
+	// with exits
 	while (1=1) do
 	begin
 		while (1=1) do
-		begin
-		end;
+			while (1=1) do
+				begin
+					exit;
+				end;
+		continue;
 	end;
 end.

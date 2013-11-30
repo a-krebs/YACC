@@ -38,6 +38,8 @@ void continueLoop(void) {
 		    "allowed inside a while loop.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
+
+	emitGotoLoopTop();
 }
 
 /*
@@ -50,6 +52,8 @@ void exitLoop(void) {
 		    "allowed inside a while loop.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
+
+	emitGotoLoopEnd();
 }
 
 /*
