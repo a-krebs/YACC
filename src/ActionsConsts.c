@@ -66,7 +66,6 @@ ProxySymbol *proxyCharLiteral(struct String s) {
 	return newConstProxy;
 }
 
-
 /*
  * Make a new anonymous symbol with the given string.
  * Each string constant gets a new type symbol that carries the string length
@@ -95,3 +94,4 @@ Symbol *proxyStringLiteral(struct String s) {
 
 	return proxy;
 }
+

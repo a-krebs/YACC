@@ -400,6 +400,33 @@ void emitPushRecordFieldAddress(Symbol *record, Symbol *field)
 }
 
 
+void emitPushStringLiteralValue(Symbol *s)
+{
+	char *str;
+	int i, strlen;
+
+	str = getConstVal(s)->String.str;
+	strlen = getConstVal(s)->String.strlen;
+
+	emitComment("Allocating memory for string literal.");
+	emitStmt(STMT_LEN, "ALLOC %d", strlen);
+	emitComment("We now push the values in the string constant ");
+	emitComment("onto the stack.");
+
+	for (i = 0; i < strlen; i++) {
+		emitStmt(STMT_LEN, "CONSTI %d", *(str + i)); 
+	}
+
+	emitComment("We push the length of the string onto the stack");
+	emitStmt(STMT_LEN, "CONSTI %d", strlen);
+
+	emitComment("We call the pre-defined function which will store the ");
+	emitComment("appropriate values at the allocated memory location");
+	emitStmt(STMT_LEN, "CALL 0, __store_string_values");
+
+	emitComment("On return, we leave the allocated address on the stack");
+	emitStmt(STMT_LEN, "ADJUST -%d", strlen);
+}
 
 
 

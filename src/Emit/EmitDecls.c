@@ -48,7 +48,6 @@ void emitConstDecl(Symbol *s)
 		emitRealConstDecl(s, getConstVal(s)->Real.value);
 		break;
 	case STRING_T:
-		//TODO: implement this case
 		break;
 	default:
 		/* Should not be reached */
@@ -79,3 +78,6 @@ void emitRealConstDecl(Symbol *s, float value)
 	emitStmt(STMT_LEN, "CONSTR %f", value);
 	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);	
 }
+
+
+
