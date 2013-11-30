@@ -107,36 +107,7 @@ void emitPushConstValue(Symbol *s)
 	
 	} else {
 		/* It is an anonymous const value, so its value is already
-		 * on the stack 	
-		switch (getType(s)) {
-		case BOOLEAN_T:
-			emitStmt(STMT_LEN, "CONSTI %d", 
-			    getConstVal(s)->Boolean.value);
-			break;
-		case CHAR_T:
-			emitStmt(STMT_LEN, "CONSTI %d",
-			    getConstVal(s)->Char.value);
-			break;
-		case INTEGER_T:
-			emitStmt(STMT_LEN, "CONSTI %d",
-			    getConstVal(s)->Integer.value);
-			break;
-		case REAL_T:
-			emitStmt(STMT_LEN, "CONSTI %f",
-			    getConstVal(s)->Real.value);
-			break;
-		case SCALARINT_T:
-			emitStmt(STMT_LEN, "CONSTI %d",
-			    getConstVal(s)->Integer.value);
-			break;
-		case STRING_T:
-			//TODO implement this special case
-			break;
-		default:
-			// Should not be reached 
-			break;
-		}		
-		*/
+		 * on the stack and we do nothing */
 	}
 
 }
@@ -226,7 +197,7 @@ void emitPushVarValue(Symbol *s)
  	
 	switch (getType(s)) {
 	case ARRAY_T:
-		//TODO: implement this special case
+		/* We never push an entire array of values onto the stack */
 		break;
 	case BOOLEAN_T:
 	case CHAR_T:
@@ -272,9 +243,7 @@ void emitPushArrayLocationValue(Symbol *s)
 
 	switch (getType(s)) {
 	case ARRAY_T:
-		// TODO: implement this special case
-		// would need to push each element of the array referenced
-		// in order 
+		/* We never push an entire array of values onto the stack */
 		break;
 	case BOOLEAN_T:
 	case CHAR_T:

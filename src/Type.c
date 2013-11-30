@@ -566,7 +566,9 @@ int calculateSymbolSize(Symbol *s)
 	case RECORD_T:
 		return 0;
 	case SCALAR_T:
-		return calculateScalarSize(s);
+		return 1;	/* We never need the full size of the scalar
+				 * list since we push the elements of the
+				 * stack individually */
 	case SUBRANGE_T:
 		return calculateSubrangeSize(s);
 	case VOID_T:
@@ -611,6 +613,7 @@ int calculateArraySize(Symbol *s)
  * Return:
  *		the size of the scalar list symbol in ASC memory units (as an
  * 		    integer)
+ * TODO: probably dead code
  */
 int calculateScalarSize(Symbol *s)
 {

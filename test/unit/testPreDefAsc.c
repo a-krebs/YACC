@@ -12,7 +12,7 @@
 
 #include "testPreDefAsc.h"
 
-#define N_PREDEF_FUNCS 22
+#define N_PREDEF_FUNCS 23
 
 char *ascFiles[N_PREDEF_FUNCS] = {
 	"__abs.asc",
@@ -20,6 +20,7 @@ char *ascFiles[N_PREDEF_FUNCS] = {
 	"__chr.asc",
 	"__cos.asc",
 	"__factorial.asc",
+	"__do_array_assignment.asc",
 	"__is_bad_real.asc",
 	"__ln.asc",
 	"__odd.asc",
@@ -131,7 +132,15 @@ testCos()
 	setUpTest("__cosTests.asc", "testCos.asc");
 	runTest("__cos");
 	return 0;
+}
 
+int
+testDoArrayAssignment()
+{
+	setUpTest("__do_array_assignmentTests.asc", 
+	    "testDoArrayAssignment.asc");
+	runTest("__do_array_assignment");
+	return 0; 
 }
 
 int

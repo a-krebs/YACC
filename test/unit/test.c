@@ -78,6 +78,7 @@ testAsc()
 	testAbs();
 	testChr();
 	testCos();
+	testDoArrayAssignment();
 	testExp();
 	testLn();
 	testPred();
