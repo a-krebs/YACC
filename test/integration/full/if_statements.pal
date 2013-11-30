@@ -1,0 +1,26 @@
+{}
+program ifStats(input, output);
+var
+	a : boolean;
+	b : integer;
+begin
+
+	// simple IF-THEN statement
+	if a then
+		b := 2;
+
+	// IF-THEN-ELSE statement
+	if a then
+		b := 3
+	else
+		b := 4;
+
+	// nested IF-THEN within IF-THEN-ELSE
+	if a then
+		// this must be a matched stat
+		begin
+			if a then b := 6
+		end
+	else
+		if a then b := 22;
+end.

@@ -44,9 +44,7 @@ void assignOp(Symbol *x, ProxySymbol *y) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	} 
 
-
 	if (isAssignmentCompat(getTypeSym(x), getTypeSym(y))) {
-		printf("got here\n");	
 		emitAssignmentOp(x, y);
 	}
 }
@@ -303,8 +301,12 @@ ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps =  newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), MINUS, getTypeSym((Symbol *)y)));
+
+	if (ps) emitSubtraction(x, y);
+
+	return ps;
 }
 
 
@@ -315,8 +317,12 @@ ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), MULTIPLY, getTypeSym((Symbol *)y)));
+	
+	if (ps) emitMultiplication(x, y);
+
+	return ps;
 }
 
 
@@ -333,8 +339,12 @@ ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps =  newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), MOD, getTypeSym((Symbol *)y)));
+	
+	if (ps) emitMod(x, y);
+
+	return ps;
 }
 
 

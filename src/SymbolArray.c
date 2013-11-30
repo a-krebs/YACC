@@ -42,6 +42,7 @@ struct Error *e;
 Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 	Symbol *arrayTypeSym = NULL;
 	Symbol *indexTypeSym = NULL;
+	Symbol *returnTypeSym = NULL;
 	Symbol *arg = indices;
 	int typeErr = 0;
 
@@ -101,8 +102,10 @@ Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 		    yylineno, colno, SEMANTIC);
 		return NULL;
 	}
-	arrayTypeSym->wasArray = 1; 
-	return arrayTypeSym;
+
+	returnTypeSym = newProxySymFromSym(arrayTypeSym);
+	returnTypeSym->wasArray = 1;
+	return returnTypeSym;
 }
 
 

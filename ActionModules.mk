@@ -10,7 +10,7 @@ $(BIN)/ActionsExprs.o: $(SRC)/ActionsExprs.c $(SRC)/ActionsExprs.h $(SRC)/parser
 $(BIN)/ActionsInvocs.o: $(SRC)/ActionsInvocs.c $(SRC)/ActionsInvocs.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
-$(BIN)/ActionsLoops.o: $(SRC)/ActionsLoops.c $(SRC)/ActionsLoops.h $(SRC)/parser.tab.c
+$(BIN)/ActionsStructStat.o: $(SRC)/ActionsStructStat.c $(SRC)/ActionsStructStat.h $(SRC)/parser.tab.c
 	$(COMPILE)
 
 $(BIN)/ActionsTypes.o: $(SRC)/ActionsTypes.c $(SRC)/ActionsTypes.h $(SRC)/parser.tab.c

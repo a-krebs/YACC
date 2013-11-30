@@ -10,6 +10,7 @@
 #include "args.h"
 #include "SymbolAll.h"
 #include "ActionsAll.h"
+#include "Utils.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -451,8 +452,9 @@ parm
 ;
 
 struct_stat
-: IF expr THEN matched_stat ELSE stat
-| IF expr THEN stat
+: if_part error then_matched_stat_part else_stat_part
+| if_part then_matched_stat_part else_stat_part
+| if_part then_stat_part
 | WHILE expr DO stat
 	{ endWhileLoop(); }
 | CONTINUE
@@ -463,13 +465,39 @@ struct_stat
 
 matched_stat
 : simple_stat
-| IF expr THEN matched_stat ELSE matched_stat
+| if_part error then_matched_stat_part else_matched_stat_part
+| if_part then_matched_stat_part else_matched_stat_part
 | WHILE expr DO matched_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+if_part
+: IF expr
+	{ ifPart($<proxy>2); }
+;
+
+then_stat_part
+: THEN stat
+	{ thenStatPart(); }
+;
+
+then_matched_stat_part
+: THEN matched_stat
+	{ thenMatchedStatPart(); }
+;
+
+else_stat_part
+: ELSE stat
+	{ elseStatPart(); }
+;
+
+else_matched_stat_part
+: ELSE matched_stat
+	{ elseStatPart(); }
 ;
 
 comma_or_error

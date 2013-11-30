@@ -7,3 +7,6 @@
 	Describe what this program does and what parts of the compiler
 	it is supposed to test.
 }
+program test(input, output);
+begin
+end.

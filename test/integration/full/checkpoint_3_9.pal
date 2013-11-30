@@ -4,3 +4,6 @@
 	Team YACC Checkpoint 3 Test 9
 	Anything-goes test. No limit on number of errors.
 }
+program test(input, output);
+begin
+end.
