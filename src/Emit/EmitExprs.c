@@ -275,8 +275,6 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	 * the variable x appears below the value of the symbol y on the stack.
 	 */
 
-	
-
 	if (y->wasArray) {
 		emitComment("Value of y is address, convert to actual value");
 		emitPushArrayLocationValue(y);
@@ -307,4 +305,9 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 		break;
 
 	}
+}
+
+void emitPushRecordFieldAddress(p, s)
+{
+
 }

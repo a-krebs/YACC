@@ -66,6 +66,10 @@ Symbol * variableAssignmentLookup(char *id)
 	return s;
 }
 
+/*
+ *
+ *
+ */
 Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
 {
 	Symbol *s = NULL;
@@ -91,22 +95,21 @@ Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
 		return NULL;
 	}
 
-	//emitPushRecordFieldValue(s);
+//	emitPushRecordFieldValue(s);
 	return newProxySymFromSym(s);
 }
 
 /*
  * Calls the function to change the address resultant from the indexing
  * operations into a value (in asc).
+ * TODO: determine if this action is still needed  
  * Parameters
  *		ps : the type resultant from the indexing operation, it
  *		    is simply passed up the chain.
  */
 ProxySymbol *pushArrayIndexValue(ProxySymbol *ps)
 {
-	//if (ps->next) emitPushArrayLocationValue(ps->next, ps->next->next);
 	return ps;
-
 }
 
 ProxySymbol *hashLookupToProxy(char *id) {
@@ -121,7 +124,11 @@ ProxySymbol *hashLookupToProxy(char *id) {
 }
 
 /*
- * id1 == name of record, id3 == name of field we are trying to access
+ * Creates a new proxy symbol dependent on the field in the record type p
+ * which was accessed.
+ * Parameters
+ *		p : the record to which the field id belongs
+ *		id : the id of the field that is to be accessed
  */
 ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 	Symbol *s = NULL;
@@ -147,7 +154,7 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 		return NULL;
 	}
 
-	//emitPushRecordFieldAddress(p, s);
+	emitPushRecordFieldAddress(p, s);
 	return newProxySymFromSym(s);
 }
 
