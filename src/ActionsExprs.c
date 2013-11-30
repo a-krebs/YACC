@@ -147,7 +147,7 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 		return NULL;
 	}
 
-	//emitPushRecordFieldValue(s);
+	//emitPushRecordFieldAddress(p, s);
 	return newProxySymFromSym(s);
 }
 

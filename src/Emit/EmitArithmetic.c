@@ -159,8 +159,12 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		/* the value for x on top of the stack is an address, we need
 		 * to replace it with the value of x */
 		emitPushArrayLocationValue(x);
-	} else if (x->kind != TYPE_KIND){
-
+	} else if (x->kind == CONST_KIND) {
+		/* If x is an anonymous constant value, we have already placed
+		 * its value onto the stack.  Else, we need to push x's value */
+		if (x->name) emitPushSymbolValue(x);
+	}
+	  else if (x->kind != TYPE_KIND){
 		emitPushSymbolValue(x);
 	}
 	if (y->wasArray) {
@@ -169,10 +173,13 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		emitStmt(STMT_LEN, "ADJUST -1");
 		emitPushArrayLocationValue(y);
 		emitStmt(STMT_LEN, "ADJUST +1");
+	} else if (y->kind == CONST_KIND) {
+		/* If y is an anonymous constant value, we have already placed
+		 * its value onto the stack.  Else, we need to push y's value */
+		if (y->name) emitPushSymbolValue(y);
 	} else if (y->kind != TYPE_KIND){
 
 		emitPushSymbolValue(y);
-
 	}
 
 	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {

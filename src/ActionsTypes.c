@@ -9,6 +9,7 @@
 #include "Globals.h"
 #include "Hash.h"
 #include "PreDef.h"
+#include "Emit.h"
 #include "Type.h"
 #include "SymbolAll.h"
 #include "Utils.h"
@@ -213,6 +214,10 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
 	if (!(lower) || !(upper)) return NULL;
 	s = newSubrangeSym((Symbol *) lower, (Symbol *) upper);
+	
+	/* When we get here, we have evaluated two const expressions
+	 * whose values we do not need.  We kick them off the stack */
+	emitStmt(STMT_LEN, "ADJUST -2");
 	return s;
 }
 

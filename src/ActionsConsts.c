@@ -37,6 +37,8 @@ ProxySymbol *proxyIntLiteral(int value) {
 	Symbol *newConstProxy = NULL;
 	/* anonymous, so NULL id */
 	newConstProxy =  newConstProxySym(NULL, &value, integerType);
+
+	emitPushSymbolValue(newConstProxy);
 	return newConstProxy; 
 }
 	
@@ -47,15 +49,21 @@ ProxySymbol *proxyIntLiteral(int value) {
  */
 ProxySymbol *proxyRealLiteral(double value) {
 	Symbol *realType = getPreDefReal(preDefTypeSymbols);
+	Symbol *newConstProxy = NULL;
 	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, &value, realType);
+	newConstProxy =  newConstProxySym(NULL, &value, realType);
+	emitPushSymbolValue(newConstProxy);
+	return newConstProxy;
 }
 
 
 ProxySymbol *proxyCharLiteral(struct String s) {
 	Symbol *charType = getPreDefChar(preDefTypeSymbols);
-	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, s.str, charType);
+	Symbol *newConstProxy = NULL;
+
+	newConstProxy = newConstProxySym(NULL, s.str, charType);
+	emitPushSymbolValue(newConstProxy);
+	return newConstProxy;
 }
 
 
@@ -82,6 +90,8 @@ Symbol *proxyStringLiteral(struct String s) {
 
 	/* add the type to the symbol table */
 	addToSymbolTable(symbolTable, typeSym);
+
+	emitPushSymbolValue(proxy);
 
 	return proxy;
 }
