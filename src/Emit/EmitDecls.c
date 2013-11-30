@@ -16,7 +16,7 @@ void emitVarDecl(Symbol *s)
 	CHECK_CAN_EMIT(s);
 	emitComment("Make room on the stack for new var %s", s->name);	
 	emitStmt(STMT_LEN, "ADJUST %d", s->size);
-	increaseAdjustCounter();
+	//increaseAdjustCounter();
 }
 
 /*
@@ -32,7 +32,7 @@ void emitConstDecl(Symbol *s)
 
 	emitComment("Make room on the stack for new const %s.", s->name);
 	emitStmt(STMT_LEN, "ADJUST %d", s->size);
-	increaseAdjustCounter();
+	//increaseAdjustCounter();
 
 	switch (getType(s)) {
 	case BOOLEAN_T:
