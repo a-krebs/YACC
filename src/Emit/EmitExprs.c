@@ -314,12 +314,21 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 		emitPushArrayLocationValue(y);
 	}
 
+	// TODO : factor the two conditionals below out into its own function
 	if (y->kind == VAR_KIND) {
 		emitComment("RHS of assignment operation is a single variable "
 		    "value.");
 		emitComment("So we push its value now as it was not pushed "
 		    "before.");
 		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl);
+	}
+
+	if ((y->kind == CONST_KIND) && (y->name != NULL) ) {
+		emitComment("RHS of assignment operation is a single, name "
+		    "constant value.");
+		emitComment("So, we push its value now as it was not pushed "
+		    "before.");
+		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl); 
 	}
 
 	emitComment("Assigning a value to %s", x->name);
