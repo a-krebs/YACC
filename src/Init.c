@@ -1,5 +1,6 @@
 #include "Init.h"
 #include "EmitUtils.h"
+#include "EmitToFile.h"
 
 int initialize() {
 	/* symbol table */
@@ -27,6 +28,9 @@ int initialize() {
 	whileLoopDepth = 0;
 	labelStack = newLabelStack();
 	loopLabelStack = newLabelStack();
+
+	/* emit pre-defined functions to StmtLL */
+	emitInit();
 
 	return 0;
 }

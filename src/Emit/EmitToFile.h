@@ -28,4 +28,11 @@ extern StmtLL *stmts;
 int emitToFile(char *fileName);
 
 
+/*
+ * Emit anything that must be emitted before the code generated from the
+ * input PAL. This includes predefined funcs and procs, constants, etc.
+ */
+void emitInit();
+
+
 #endif
