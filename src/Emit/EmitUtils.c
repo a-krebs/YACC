@@ -40,7 +40,6 @@ void allocStmt(char **stmt, size_t len)
 }
 
 
-
 /*
  * Produces asc comment from the given string and appends it to list of
  * ASC statements (to help with debugging)
@@ -61,20 +60,24 @@ void emitComment(char *s, ...)
 	va_end(args);
 
 	cmt[MAX_COMMENT_LEN - 1] = '\0';
-	
-	len = strlen(cmt) + 4;	/* + 4 for '#', ' ', '\n', and safety '\0' */
+
+	/* + 6 for '\t', '\t', '#', ' ', '\n', and safety '\0' */
+	len = strlen(cmt) + 6;
 	allocStmt(&comment, len);
 	
 	/* Turn string s into a asc comment */
-	comment[0] = '#';
-	comment[1] = ' ';
-	strncat(comment + 2, cmt, len - 4); 
+	comment[0] = '\t';
+	comment[1] = '\t';
+	comment[2] = '#';
+	comment[3] = ' ';
+	strncat(comment + 4, cmt, len - 6); 
 	comment[len - 2] = '\n';
 	comment[len - 1] = '\0';
 
 	/* Append comment to list of statements */
 	appendStmt(&stmts, comment);
 }
+
 
 /*
  * Turns the given format string s into an ASC statement given additional
@@ -113,6 +116,41 @@ void emitStmt(int len, char *s, ...)
 }
 
  
+/*
+ * Turns the given format string s into an ASC statement given additional
+ * args and appends it to list of stmts.
+ * Parameters
+ *		len : length >= length of string s after being formatted
+ *		s : the statement to be formatted
+ *		... : arguments to format the string
+ */
+void emitLabel(int len, char *s, ...)
+{
+	va_list args;
+	char *stmt = NULL, *formattedStr = NULL;
+
+	allocStmt(&formattedStr, len);
+
+	/* Create formatted string from args */
+	va_start(args, s);
+	vsnprintf(formattedStr, len - 1, s, args);	
+	va_end(args);
+
+	/* we add 2 to make room for '\n', '\0' */
+	len = strlen(formattedStr) + 2;
+
+	allocStmt(&stmt, len);
+	
+	/* Turn formatted string into ASC statement */
+	strncat(stmt, formattedStr, len);
+	stmt[len - 2] = '\n';
+	stmt[len - 1] = '\0';
+
+	free(formattedStr);
+	appendStmt(&stmts, stmt);
+}
+
+
 /*  
  * Constructs the asc statement necessary to push the value of the variable 
  * / constant symbol s on the top of the stack and appends it to the list 
@@ -161,6 +199,7 @@ void emitPushVarValue(Symbol *s)
 		exit(1);
 	}
 }
+
 
 /*
  * Given a list of indices and a base of array, this function emits the asc code
@@ -217,6 +256,7 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	}
 	emitStmt(STMT_LEN, "ADDI");
 }
+
 
 /*
  * Emits the asc code necessary to push the value of the given symbol to the 
@@ -329,6 +369,7 @@ void reserveLabels(struct labelStack *stack, int n) {
 void popLabels(struct labelStack *stack) {
 	stack->ltop -= 1;
 }
+
 
 /*
  * Check the value at the top of the stack without changing it.

@@ -52,6 +52,7 @@ char *getAscFileName(char *);
 void allocStmt(char **, size_t);
 void emitComment(char *, ...);
 void emitStmt(int len, char *, ...);
+void emitLabel(int len, char*, ...);
 
 void emitArrayElementLocation(Symbol *, Symbol *);
 void emitPushVarValue(Symbol *);

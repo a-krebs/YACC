@@ -19,7 +19,8 @@
 
 #include "EmitUtils.h"
 
-#define LABEL_PREFIX "L"
+#define LABEL_PREFIX "LABEL"
+#define LOOP_PREFIX "LOOP"
 
 extern int doNotEmit;
 
@@ -52,6 +53,36 @@ void emitElseStat();
  * been emitted.
  */
 void emitThenStat();
+
+
+/*
+ * Beginning of a while loop
+ */
+void emitBeginWhile();
+
+
+/*
+ * Check that expr is true to do loop, otherwise skip loop
+ */
+void emitWhileLoopCondCheck(Symbol *s);
+
+
+/*
+ * Emit code to return to the top of the current loop.
+ */
+void emitGotoLoopTop();
+
+
+/*
+ * Emit code for the end of a while loop.
+ */
+void emitEndWhile();
+
+
+/*
+ * Emit code to goto the endo of the loop. Used for exit statments.
+ */
+void emitGotoLoopEnd();
 
 
 #endif
