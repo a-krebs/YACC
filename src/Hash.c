@@ -925,3 +925,72 @@ void resetOffset(struct hash *hash)
 {
 	hash->offset[getCurrentLexLevel(hash)] = 0;	
 }
+
+
+/* Gets the number of symbols at the current lexical level
+ *
+ * Parameters: 
+ *
+ * Return: count of local symbols
+*/
+int getLocalSymbolCount(struct hash *hash) {
+        int lexLevel = getCurrentLexLevel(hash);
+        struct Symbol *symbol;    
+        struct hashElement *element;
+        int count = 0;
+
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                element = hash->elements[i];
+
+                if ( element == NULL ) {
+                        continue;
+                }
+
+                symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
+
+                if ( symbol != NULL ) {
+                        if ( (symbol->kind == CONST_KIND 
+                                || symbol->kind == VAR_KIND)
+                                && symbol->offset >= 0 ) {
+                                count++;
+                        }
+                }
+        }
+
+        return count;
+}
+
+
+/* Gets the number of symbols that have negative offsets.
+ * i.e. parameters to function
+ *
+ * Parameters: 
+ *
+ * Return: count of function/procedure parameters
+*/
+int getLocalParamSymbolCount(struct hash *hash) {
+        int lexLevel = getCurrentLexLevel(hash);
+        struct Symbol *symbol;    
+        struct hashElement *element;
+        int count = 0;
+
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                element = hash->elements[i];
+
+                if ( element == NULL ) {
+                        continue;
+                }
+
+                symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
+
+                if ( symbol != NULL ) {
+                        if ( (symbol->kind == CONST_KIND 
+                                || symbol->kind == VAR_KIND)
+                                && symbol->offset < 0 ) {
+                                count++;
+                        }
+                }
+        }
+
+        return count;
+}

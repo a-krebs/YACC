@@ -17,6 +17,8 @@
 #include "SymbolAPI.h"
 #include "SymbolArray.h"
 #include "Type.h"
+#include "Globals.h"
+#include "Hash.h"
 
 extern int doNotEmit;
 
@@ -111,5 +113,53 @@ void growLabelStack(struct labelStack *stack);
  * 	stack: a double pointer to the label stack to destory
  */
 void destroyLabelStack(struct labelStack **stack);
+
+
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s on the top of the stack and appends it to the list 
+ * of asc statements. 
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ *		offset: 
+ *		level: display (lexical level)
+ * 
+ */ 
+void emitPushVarValueCommon(Symbol *s, int offset, int level);
+
+
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s from a function/procedure parameter on the top of the 
+ * stack and appends it to the list of asc statements. The offset and level
+ * must be passed by the caller
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ * 
+ */ 
+void emitPushParmVarValue(Symbol *s, int offset, int level);
+
+
+/*
+ * Gets the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+int getAdjustCounter();
+
+
+/*
+ * Gets the return offset of a function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+int getReturnOffset();
+
 
 #endif

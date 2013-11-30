@@ -10,7 +10,7 @@ OpenBSD )
   ;;
 
 Linux )
- ~/c415/compiler/YACC/bin/asc-Linux $*
+ ~/Fall_2013/CMPUT_415/YACC/bin/asc-Linux $*
   ;;
 * )
   echo Sorry - no prebuilt binary for this architecture.
