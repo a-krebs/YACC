@@ -116,6 +116,41 @@ void emitStmt(int len, char *s, ...)
 }
 
  
+/*
+ * Turns the given format string s into an ASC statement given additional
+ * args and appends it to list of stmts.
+ * Parameters
+ *		len : length >= length of string s after being formatted
+ *		s : the statement to be formatted
+ *		... : arguments to format the string
+ */
+void emitLabel(int len, char *s, ...)
+{
+	va_list args;
+	char *stmt = NULL, *formattedStr = NULL;
+
+	allocStmt(&formattedStr, len);
+
+	/* Create formatted string from args */
+	va_start(args, s);
+	vsnprintf(formattedStr, len - 1, s, args);	
+	va_end(args);
+
+	/* we add 2 to make room for '\n', '\0' */
+	len = strlen(formattedStr) + 2;
+
+	allocStmt(&stmt, len);
+	
+	/* Turn formatted string into ASC statement */
+	strncat(stmt, formattedStr, len);
+	stmt[len - 2] = '\n';
+	stmt[len - 1] = '\0';
+
+	free(formattedStr);
+	appendStmt(&stmts, stmt);
+}
+
+
 /*  
  * Constructs the asc statement necessary to push the value of the variable 
  * / constant symbol s on the top of the stack and appends it to the list 

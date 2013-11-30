@@ -40,7 +40,7 @@ void emitThenMatchedStat() {
 	
 	emitStmt(STMT_LEN, "GOTO %s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
-	emitStmt(STMT_LEN, "%s%d:",
+	emitLabel(STMT_LEN, "%s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack));
 }
 
@@ -53,7 +53,7 @@ void emitElseStat() {
 	CHECK_CAN_EMIT(1);
 
 	emitComment("Bottom of ELSE stat");
-	emitStmt(STMT_LEN, "%s%d:",
+	emitLabel(STMT_LEN, "%s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack) + 1);
 	popLabels(labelStack);
 }
@@ -69,7 +69,7 @@ void emitThenStat() {
 	CHECK_CAN_EMIT(1);
 
 	emitComment("Bottom of IF-THEN as part of IF-THEN");
-	emitStmt(STMT_LEN, "%s%d:",
+	emitLabel(STMT_LEN, "%s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack));
 	popLabels(labelStack);
 }
@@ -87,7 +87,7 @@ void emitBeginWhile() {
 
 	emitComment("Top of WHILE loop %s%d",
 	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
-	emitStmt(STMT_LEN, "%s%d:",
+	emitLabel(STMT_LEN, "%s%d",
 	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
 }
 
@@ -127,7 +127,7 @@ void emitEndWhile() {
 
 	emitComment("End of WHILE loop %s%d",
 	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack));
-	emitStmt(STMT_LEN, "%s%d:",
+	emitLabel(STMT_LEN, "%s%d",
 	    LOOP_PREFIX, peekLabelStackTop(loopLabelStack) + 1);
 
 	popLabels(loopLabelStack);
