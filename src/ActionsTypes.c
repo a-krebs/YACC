@@ -236,9 +236,6 @@ Symbol *createRecordType(struct ElementArray *fields) {
 	char *fieldId;
 
 	recType = newRecordTypeSym(NULL);
-	/* Record types are given an offset such that we know how to
-	 * properly address their fields */
-	setSymbolOffset(recType, symbolTable);
 	recHash = recType->kindPtr.TypeKind->typePtr.Record->hash;
 
 	recordLexLvl = getCurrentLexLevel(recHash);
@@ -282,7 +279,6 @@ Symbol *createRecordType(struct ElementArray *fields) {
 	/* Setting the size for a record must be treated as a special case
 	 * as we do not know at symbol creation the number of fields in
 	 * the record */
-	emitComment("record size %d", recordSize);
 	recType->size = recordSize;
 
 	return recType;

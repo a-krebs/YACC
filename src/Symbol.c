@@ -337,9 +337,6 @@ Symbol *newTypeSymFromSym(char *id, Symbol *typeSym) {
 		newTypeSym->size = typeSym->size;
 	}
 
-	emitComment("type1 size: %d, type2 size: %d", typeSym->size,
-	    newTypeSym->size);
-	
 	return newTypeSym;
 }
 

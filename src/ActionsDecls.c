@@ -148,7 +148,6 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 		setSymbolOffset(s, symbolTable);
 		emitVarDecl(s);
 	}
-	
 
 	return type;
 }
@@ -241,11 +240,6 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 		}	
 	}
-
-	/* Size calculation for record is a special case as at creation we do
-	 * not know the number of fields it contains (and hence its size) */
-	
-
 	return s;
 }
 
