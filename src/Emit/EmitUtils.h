@@ -175,7 +175,7 @@ void resetAdjustCounter();
  * 	
  * Returns: void
  */
-void getAdjustCounter()
+void getAdjustCounter();
 
 
 #endif

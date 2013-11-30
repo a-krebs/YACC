@@ -23,6 +23,16 @@ void emitProcDecl(Symbol *symbol, struct ElementArray *ea) {
 }
 
 
+/*
+ * Emit code to push local procedure/function parameters onto the
+ * the stack.
+ *
+ * Parameters: 	param: parameter symbol
+ *				paramNum: the parameter's position number in the 
+ *					parameter list.
+ * 	
+ * Returns: void
+ */
 void emitProcParam(Symbol *param, int paramNum) {
 	CHECK_CAN_EMIT(param);	
 
@@ -31,15 +41,30 @@ void emitProcParam(Symbol *param, int paramNum) {
 	We use 3 because first parameter is at index 0. */
 	int offset = (paramNum + 3) * -1;
 
+	/* Push local varaible onto the stack */
 	emitPushParmVarValue(param, offset, param->lvl);
 }
 
+
+/*
+ * Emit code to end a procedure. Adjusts for any local variables
+ * and returns.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
 void emitEndProc() {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);	
 
+	/* Get the lexical so we can idenity the display register */
 	int lexLevel = getCurrentLexLevel(symbolTable);
+
+	/* Determine how many levels on the stack we need to adjust by */
 	int adjustCount = adjustCounter[lexLevel] * -1;
+
+	/* Adjust and return */
 	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 

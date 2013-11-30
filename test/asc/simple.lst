@@ -6,11 +6,12 @@
 6	|:	procedure gcd( a : integer; b : integer; c : integer  );
 7	|:		var
 8	|:			x: integer;
-9	|:	begin
-10	|:		{x := 5 + 8;}
-11	|:	end;	
-12	|:	begin
-13	|:		a := 1;
-14	|:		b := 4;
-15	|:		i := a + b
-16	|:	end.
+9	|:			y: integer;
+10	|:	begin
+11	|:		{x := 5 + 8;}
+12	|:	end;	
+13	|:	begin
+14	|:		a := 1;
+15	|:		b := 4;
+16	|:		i := a + b
+17	|:	end.

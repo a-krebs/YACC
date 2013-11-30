@@ -6,6 +6,7 @@ var
 procedure gcd( a : integer; b : integer; c : integer  );
 	var
 		x: integer;
+		y: integer;
 begin
 	{x := 5 + 8;}
 end;	
