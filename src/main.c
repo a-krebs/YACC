@@ -122,6 +122,7 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 	printf("n: %d\n", n);
 	printf("a: %d\n", a);
 	printf("q: %d\n", q);
+	printf("c: %d\n", c);
 	printf("inFile: %s\n", file);
 	printf("listingFile: %s\n", listing);
 #endif

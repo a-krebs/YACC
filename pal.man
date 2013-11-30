@@ -6,18 +6,14 @@ pal - Compiler for PAL language
 
 .SH SYNOPSIS
 
-pal [-S][-n][-a][-q] infile
+pal [-S][-n][-a][-q][-c] infile
 
 .SH DESCRIPTION
 
 pal accepts a pal source file with a '.pal' extention
 and compiles it to an ASC file, then launches the ASC interpreter.
 
-Currently, only syntax analysis is implemented (see BUGS).
-
 .SH OPTIONS
-
-Some options are not implemented yet (see BUGS).
 
 -S Leave Asc code in file.asc instead of removing it.
 
@@ -27,6 +23,9 @@ Some options are not implemented yet (see BUGS).
 Default is to do the checking.
 
 -q Do not print errors to standard output. Default is to print errors.
+
+-c Compile PAL file to asc, but do not launch ASC interpreter. Useful when 
+combined with the -S option.
 
 .SH EXIT STATUS
 
@@ -42,11 +41,7 @@ Shihao Xu <shihao1@ualberta.ca>
 
 .SH BUGS
 
-According to Checkpoint 1 requirements,
-only lexical analysis and syntax validation
-are implemented.
-
-Further, the arguments [-S] [-a] do nothing, since compiling to ASC is not
+Further, the argument [-a] does nothing, since compiling to ASC is not
 supported yet.
 
 .SH SEE ALSO
