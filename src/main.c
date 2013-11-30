@@ -23,8 +23,6 @@ extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
 extern StmtLL *stmts;
-// extern struct preDefTypeSymbols *preDefTypeSymbols;
-// extern struct hash *symbolTable;
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -137,7 +135,8 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 int main( int argc, char *argv[] )
 {
 	int argsParsedSuccess = 0;
-	FILE *fp = NULL, *ascfp = NULL;
+	FILE *fp = NULL;
+	FILE *ascfp = NULL;
 
 	/* initialize global args struct */
 	memset(&givenArgs, 0, sizeof(struct args));
@@ -147,21 +146,19 @@ int main( int argc, char *argv[] )
 
 	/* check that parsing was success */
 	if (argsParsedSuccess != 0) {
-		printf("Argument parsing failed.\n");
+		fprintf(stderr, "Argument parsing failed.\n");
 		return EXIT_FAILURE;
 	}
 
 	fp = fopen(givenArgs.inFile, FILE_MODE);
 	if (fp == NULL) {
-		printf("Invalid input file.\n");
+		fprintf(stderr, "Invalid input file.\n");
 		return EXIT_FAILURE;
 	}
 	yyin = fp;
 
 	/* initizie symbol table and pre-defitions */
 	initialize();
-	// dumpHash(symbolTable);
-	// printf("%p\n", getPreDefBool(preDefTypeSymbols));
 	
 	/* parse file */
 	yyparse();
@@ -187,10 +184,15 @@ int main( int argc, char *argv[] )
 
 	/* close file, clean up, and exit */
 	if (fclose(fp) != 0) {
+		fprintf(stderr, "File IO error.\n");
 		return EXIT_FAILURE;
 	}
 
-	fclose(ascfp);
+	if (fclose(ascfp) != 0) {
+		fprintf(stderr, "File IO error.\n");
+		return EXIT_FAILURE;
+	}
+
 	if (givenArgs.S == 0) {
 		remove(givenArgs.ascFile);
 	}
