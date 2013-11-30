@@ -447,3 +447,15 @@ void destroyLabelStack(struct labelStack **stack) {
 int getAdjustCounter() {
 	return getLocalSymbolCount(symbolTable);
 }
+
+
+/*
+ * Gets the return offset of a function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+int getReturnOffset() {
+	return getLocalParamSymbolCount(symbolTable);
+}

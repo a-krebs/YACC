@@ -157,4 +157,14 @@ void emitPushParmVarValue(Symbol *s, int offset, int level);
 int getAdjustCounter();
 
 
+/*
+ * Gets the return offset of a function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+int getReturnOffset();
+
+
 #endif

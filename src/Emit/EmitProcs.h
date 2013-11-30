@@ -63,4 +63,9 @@ void emitEndProc();
 
 
 
+void emitEndFunc() ;
+
+void emitProcOrFuncEndCommon(char *mgs);
+
+
 #endif

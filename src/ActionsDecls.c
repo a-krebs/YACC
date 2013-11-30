@@ -172,7 +172,7 @@ void exitProcOrFuncDecl(Symbol *symbol) {
 		 	emitEndProc();
 		}
 		else if (symbol->kind == FUNC_KIND)  {
-		// 	// emitEndFuncTest();
+		 	emitEndFunc();
 		}
 		//need some sort of test
 	}
@@ -315,7 +315,7 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 		}		
 	}
 
-	//emitProcOrFuncDecl(s, ea);
+	emitProcOrFuncDecl(s, ea);
 
 	return s;
 }

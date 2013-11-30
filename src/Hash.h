@@ -85,4 +85,14 @@ void resetOffset(struct hash *hash);
 int getLocalSymbolCount(struct hash *hash);	
 
 
+/* Gets the number of symbols that have negative offsets.
+ * i.e. parameters to function
+ *
+ * Parameters: 
+ *
+ * Return: count of function/procedure parameters
+*/
+int getLocalParamSymbolCount(struct hash *hash);
+
+
 #endif
