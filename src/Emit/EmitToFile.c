@@ -56,7 +56,7 @@ void emitPreDefs() {
 	emitStmt(STMT_LEN, "");
 	emitComment("#######################################################");
 	emitStmt(STMT_LEN, "");
-	emitStmt(STMT_LEN, "Pre-defined ASC functions to follow");
+	emitComment("Pre-defined ASC functions to follow");
 	emitStmt(STMT_LEN, "");
 	emitComment("#######################################################");
 	emitStmt(STMT_LEN, "");
