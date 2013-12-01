@@ -115,6 +115,13 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	struct ElementArray *params, char *label);
 
 
+/*
+ * Determines the size of a parameter list
+ *
+ * Parameters: 	symbol: pointer to function or procedure symbol
+ * 	
+ * Returns: size of list
+ */
 int getSizeOfParams(Symbol *procOrFuncSymbol);
 
 
