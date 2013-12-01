@@ -149,10 +149,44 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
  	
 	char * label = symbol->kindPtr.ProcKind->label;
 
-	//  Foreach parameter, push onto stack 
-        for (int i = params->nElements ; i > 0 ; i--) {
-                emitPushSymbolValue(getElementAt(params, i - 1));
+	// printf("Number of params: %d\n", params->nElements);
+
+	
+
+
+	// //  Foreach parameter, push onto stack 
+        for (int i = params->nElements; i > 0 ; i--) {
+
+ //        	printf("on param: %d\n", i-1);
+        	tempSym = getElementAt(params, i - 1);
+        	// setParamOffset(tempSym, i-1);
+
+ //        	if (tempSym == NULL) {
+ //        		printf("FUCK IT ALL\n");
+ //        	}
+
+ //        	// setParamOffset(tempSym, params);
+
+
+		if ( tempSym->kind == CONST_KIND ) {
+			emitConst(tempSym);		
+		}
+		else {
+			emitPushSymbolValue(tempSym);	
+		}                
         }
  
 	emitStmt(STMT_LEN, "GOTO %s", label);
+}
+
+
+void emitConst(Symbol *symbol) {
+	if ( getType(symbol) == INTEGER_T ) {
+		emitStmt(STMT_LEN, "CONSTI %d", 
+			symbol->kindPtr.ConstKind->value.Integer.value);
+	}
+	else if ( getType(symbol) == REAL_T ) {
+		emitStmt(STMT_LEN, "CONSTR %f", 
+			symbol->kindPtr.ConstKind->value.Real.value);
+	}
 }

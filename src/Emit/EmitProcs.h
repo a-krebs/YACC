@@ -16,6 +16,7 @@
 #include "../Kind.h"
 #include "../StmtLL.h"
 #include "../SymbolAPI.h"
+ #include "../SymbolAll.h"
 #include "../Type.h"
 #include "../ElementArray.h"
 #include "../Hash.h"
@@ -91,5 +92,8 @@ char *createProcOrFunctionLabel(Symbol *symbol);
  * Returns: void
  */
 void emitProcInvok(Symbol *symbol, struct ElementArray *params);
+
+
+void emitConst(Symbol *symbol);
 
 #endif
