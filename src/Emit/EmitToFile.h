@@ -14,6 +14,8 @@
 #include "EmitUtils.h"
 #include "PreDefAsc.h"
 
+#define USER_PROG_START_LABEL "MAIN"
+
 extern StmtLL *stmts;
 
 

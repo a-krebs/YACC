@@ -2,6 +2,12 @@
 #define ACTION_DECLS_H
 
 /*
+ * Perform actions necessary once all declarations are finished.
+ */
+void exitDeclPart(void);
+
+	
+/*
  * Capture program header definitions of input and output arguments.
  *
  * Arguments may be null if program contains errors.

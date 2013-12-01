@@ -63,12 +63,9 @@ program_head
 	  inDecl = 1; }
 ;
 
-// no | here since this is a list
 decls
-: const_decl_part
-  type_decl_part
-  var_decl_part
-  proc_decl_part
+: const_decl_part type_decl_part var_decl_part proc_decl_part
+  	{ exitDeclPart(); }
 | error
 ;
 
