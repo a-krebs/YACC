@@ -24,7 +24,6 @@ int emitToFile(char *fileName) {
 	ascfp = fopen(fileName, "w");
 
 	/* append end-of-program stuff here (like a STOP) */
-	// TODO
 	emitComment("End of user-defined pgram");
 	emitStmt(STMT_LEN, "STOP");
 
@@ -76,5 +75,8 @@ void emitInit() {
 	emitComment("May the Force be ever in your favour, Mr. Potter.");
 	emitComment("CMPUT 415 - Fall 2013");
 	emitStmt(STMT_LEN, "");
+
+	/* emit pre-defined constants */
+	// TODO	
 }
 

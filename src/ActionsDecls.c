@@ -29,6 +29,16 @@ static char *errMsg;
 
 
 /*
+ * Perform actions necessary once all declarations are finished.
+ */
+void exitDeclPart(void) {
+	emitStmt(STMT_LEN, "");
+	emitComment("User-defined program follows:");
+	emitLabel(STMT_LEN, USER_PROG_START_LABEL);
+}
+
+
+/*
  * Capture program header definitions of input and output arguments.
  *
  * Arguments may be null if program contains errors.
@@ -122,7 +132,11 @@ void doTypeDecl(char *id, Symbol *type) {
  * Perform actions necessary when exiting variable dec section.
  */
 void exitVarDeclPart(void) {
-	// nothing to do here
+	emitStmt(STMT_LEN, "");
+	emitComment("End of var decls, jump to start of user-defined program");
+	emitStr(&stmts, "\t\tGOTO ", USER_PROG_START_LABEL, "\n");
+	emitStmt(STMT_LEN, "");
+	emitComment("Procedure and Function decls to follow");
 }
 
 
