@@ -12,7 +12,7 @@ void emitPushVarAddress(Symbol *);
 void emitPushVarValue(Symbol *);
 void emitPushConstValue(Symbol *);
 void emitPushSymbolValue(Symbol *);
-void emitPushArrayLocationValue(Symbol *);
+void emitPushAddressValue(Symbol *);
 void emitPushRecordFieldAddress(Symbol *, Symbol *);
 void emitPushAnonConstValue(Symbol *);
 void emitArrayAssignment(Symbol *, Symbol *);

@@ -236,11 +236,11 @@ void emitPushVarValue(Symbol *s)
 }
 
 /*
- * Given that the address of an element of an array is currently on top of
+ * Given that the address of some value is currently on top of
  * the stack, the function emits the asc code necessary to replace this
  * addres with the actual value of the element.
  */
-void emitPushArrayLocationValue(Symbol *s)
+void emitPushAddressValue(Symbol *s)
 {
 	CHECK_CAN_EMIT(s);
 
@@ -322,7 +322,7 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 
 	if (y->isAddress) {
 		emitComment("Value of y is address, convert to actual value");
-		emitPushArrayLocationValue(y);
+		emitPushAddressValue(y);
 	}
 
 	// TODO : factor the two conditionals below out into its own function
