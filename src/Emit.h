@@ -11,5 +11,6 @@
 #include "Emit/EmitExprs.h"
 #include "EmitUtils.h"
 #include "EmitStructStat.h"
+#include "EmitProcs.h"
 
 #endif

@@ -28,6 +28,9 @@ int initialize() {
 	labelStack = newLabelStack();
 	loopLabelStack = newLabelStack();
 
+	/* user defined procedures and functions stuff */
+	procOrFuncStack = newLabelStack();
+
 	return 0;
 }
 
@@ -39,6 +42,9 @@ int deInitialize() {
 	/* control statement stuff */
 	destroyLabelStack(&labelStack);
 	destroyLabelStack(&loopLabelStack);
+
+	/* user defined procedures and functions stuff */
+	destroyLabelStack(&procOrFuncStack);	
 
 	return 0;
 }

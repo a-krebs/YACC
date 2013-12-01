@@ -76,4 +76,23 @@ void incrementOffset(struct hash *hash);
 void resetOffset(struct hash *hash);
 
 
+/* Gets the number of symbols at the current lexical level
+ *
+ * Parameters: 
+ *
+ * Return: count of local symbols
+*/
+int getLocalSymbolCount(struct hash *hash);	
+
+
+/* Gets the number of symbols that have negative offsets.
+ * i.e. parameters to function
+ *
+ * Parameters: 
+ *
+ * Return: count of function/procedure parameters
+*/
+int getLocalParamSymbolCount(struct hash *hash);
+
+
 #endif

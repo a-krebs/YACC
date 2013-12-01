@@ -59,8 +59,7 @@ Symbol *doVarDecl(char *id, Symbol *type);
  *
  * This is a good time to pop lexical level.
  */
-void exitProcOrFuncDecl(void);
-
+void exitProcOrFuncDecl(Symbol *symbol);
 
 /*
  * Declare a new procedure with given arguments and perform anything
@@ -116,5 +115,8 @@ Symbol *createNewParm(char *id, Symbol *type);
  * Return a pointer to the new parameter.
  */
 Symbol *createNewVarParm(char *id, Symbol *type);
+
+
+
 
 #endif

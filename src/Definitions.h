@@ -106,7 +106,7 @@ struct Char {
 struct Function {
 	struct ParamArray *params;
 	struct Symbol  *returnTypeSym;
-
+	char *label;
 };
 
 /* integer constant */
@@ -118,6 +118,7 @@ struct Integer {
 /* procedure type */
 struct Procedure {
 	struct ParamArray *params;
+	char *label;
 };
 
 /* real constant */
@@ -186,10 +187,12 @@ struct ConstantKind {
 struct FunctionKind {
 	struct Symbol *typeSym;
 	struct ElementArray *params;
+	char *label;
 };
 
 struct ProcedureKind {
 	struct ElementArray *params;
+	char *label;
 };
 
 struct TypeKind {

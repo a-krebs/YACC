@@ -163,11 +163,21 @@ Symbol *doVarDecl(char *id, Symbol *type) {
  *
  * This is a good time to pop lexical level.
  */
-void exitProcOrFuncDecl(void) {
+void exitProcOrFuncDecl(Symbol *symbol) {
 #if DEBUG
 	printf("Popping lex level at line %d, from %d to %d\n", yylineno,
 	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
 #endif
+
+	if (symbol != NULL) {
+		if (symbol->kind == PROC_KIND) {	
+		 	emitEndProc();
+		}
+		else if (symbol->kind == FUNC_KIND)  {
+		 	emitEndFunc();
+		}
+	}
+
 	popLexLevel(symbolTable);
 }
 
@@ -245,6 +255,9 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 		}	
 	}
+
+	emitProcOrFuncDecl(s, ea);
+
 	return s;
 }
 
@@ -302,6 +315,9 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 			setParamOffset(var, ea);
 		}		
 	}
+
+	emitProcOrFuncDecl(s, ea);
+
 	return s;
 }
 

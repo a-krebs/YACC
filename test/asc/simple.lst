@@ -1,0 +1,37 @@
+1	|:	program test(input, output);
+2	|:	var
+3	|:		i : integer;
+4	|:		a : integer;
+5	|:		b : integer;
+6	|:	
+7	|:	
+8	|:	procedure pad( a : integer );
+9	|:		var
+10	|:			z: integer;
+11	|:	begin
+12	|:	end;
+13	|:	
+14	|:	function gcd( a : integer; b : integer ) : integer;
+15	|:	
+16	|:	begin
+17	|:	end;
+18	|:	
+19	|:	function pillows( b : integer ) : integer;
+20	|:	
+21	|:	begin
+22	|:	end;
+23	|:	
+24	|:	function pillows2( b : integer; c : integer; d : integer; e : integer ) : integer;
+25	|:		var
+26	|:			x:integer;
+27	|:	begin
+28	|:	end;
+29	|:	
+30	|:	begin
+31	|:		a := 1;
+32	|:		b := 4;
+33	|:		i := a + b
+34	|:	end.
+35	|:	
+36	|:	
+37	|:	

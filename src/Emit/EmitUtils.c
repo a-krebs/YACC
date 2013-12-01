@@ -22,8 +22,6 @@ char *getAscFileName(char *palFileName)
  } 
 
 
-
-
 /*
  * Allocates memory for a statement of the given size and sets the given
  * character pointer to point to the allocated memory.  Performs error checking
@@ -116,6 +114,86 @@ void emitStmt(int len, char *s, ...)
 }
 
  
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s on the top of the stack and appends it to the list 
+ * of asc statements. 
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ * 
+ */ 
+// void emitPushVarValue(Symbol *s) {
+	// emitPushVarValueCommon(s, s->offset, s->lvl);
+// }
+
+
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s from a function/procedure parameter on the top of the 
+ * stack and appends it to the list of asc statements. The offset and level
+ * must be passed by the caller
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ * 
+ */ 
+// void emitPushParmVarValue(Symbol *s, int offset, int level) {
+	// emitPushVarValueCommon(s, offset, level);
+// }
+
+
+/*  
+ * Constructs the asc statement necessary to push the value of the variable 
+ * constant symbol s on the top of the stack and appends it to the list 
+ * of asc statements. 
+ *
+ * Parameters: 
+ *		s : the symbol whose value is to be placed on top of the stack
+ *		offset: 
+ *		level: display (lexical level)
+ * 
+ */ 
+// void emitPushVarValueCommon(Symbol *s, int offset, int level) { 
+//  	CHECK_CAN_EMIT(s); 
+ 	
+// 	switch (getType(s)) {
+// 	case BOOLEAN_T:
+// 	case CHAR_T:
+// 	case INTEGER_T:
+// 	case REAL_T:
+// 	case RECORD_T:
+// 	case SCALARINT_T:
+// 	{
+// 		if (!isByReference(s)) { 
+//  			/*  
+//  			 * The variable has not been passed by reference, just 
+//  		 	* push the value stored in the stack 
+//  		 	*/ 
+// 	 		emitStmt(STMT_LEN, "PUSH %d[%d]", offset, level);	 
+// 	 	} else { 
+	 		  
+//  			 * Else the variable has been passed by reference 
+//  			 * and we have to push the value of the variable 
+// 			 * referenced by the address in the stack 
+ 			 
+//  			emitStmt(STMT_LEN, "PUSH %d[%d]", offset, level); 
+//  			emitStmt(STMT_LEN, "PUSHI");	 
+ 	
+// 		}
+// 		break;
+// 	}
+// 	case STRING_T:
+// 		//TODO implement this special case
+// 		break;
+// 	default:
+// 		/* Function should not be called with var of any other type! */
+// 		fprintf(stderr, "Trying to push value of a symbol of type which"
+// 		    " has no type.\n");
+// 		exit(1);
+// 	}
+// }
+
+
 /*
  * Turns the given format string s into an ASC statement given additional
  * args and appends it to list of stmts.
@@ -264,4 +342,28 @@ void destroyLabelStack(struct labelStack **stack) {
 	free(s);
 	/* set pointer to NULL */
 	*stack = NULL;
+}
+
+
+/*
+ * Gets the adjust counter for the current lexical level.
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+int getAdjustCounter() {
+	return getLocalSymbolCount(symbolTable);
+}
+
+
+/*
+ * Gets the return offset of a function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+int getReturnOffset() {
+	return getLocalParamSymbolCount(symbolTable);
 }

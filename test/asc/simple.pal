@@ -1,0 +1,36 @@
+program test(input, output);
+var
+	i : integer;
+	a : integer;
+	b : integer;
+
+
+procedure pad( a : integer );
+	var
+		z: integer;
+begin
+end;
+
+function gcd( a : integer; b : integer ) : integer;
+
+begin
+end;
+
+function pillows( b : integer ) : integer;
+
+begin
+end;
+
+function pillows2( b : integer; c : integer; d : integer; e : integer ) : integer;
+	var
+		x:integer;
+begin
+end;
+
+begin
+	a := 1;
+	b := 4;
+	i := a + b
+end.
+
+
