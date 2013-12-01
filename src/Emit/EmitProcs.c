@@ -17,7 +17,8 @@
  */
 void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
  	CHECK_CAN_EMIT(symbol);
- 	emitComment("");
+ 	emitStmt(STMT_LEN, "");
+ 	emitStmt(STMT_LEN, "");
 
  	char *label = createProcOrFunctionLabel(symbol);
  	
@@ -80,8 +81,7 @@ void emitEndFunc() {
  * Returns: void
  */
 void emitProcOrFuncEndCommon(char *msg) {
-	CHECK_CAN_EMIT(1);
-	char *emptyStr = "";		
+	CHECK_CAN_EMIT(1);		
 
 	/* Determine how many levels on the stack we need to adjust by */
 	int adjustCount = getAdjustCounter() * -1;	
@@ -94,8 +94,8 @@ void emitProcOrFuncEndCommon(char *msg) {
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 
 	emitComment(msg);
-	emitStmt(STMT_LEN, emptyStr);
-	emitStmt(STMT_LEN, emptyStr);	
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "");	
 }
 
 
@@ -134,17 +134,25 @@ char *createProcOrFunctionLabel(Symbol *symbol) {
 
 
 /*
- * Emit code to end invoce procedure
+ * Emit code to invoce procedure
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-void emitProcInvok(char *id) {
-	Symbol *symbol = getGlobalSymbol(symbolTable, id);
+void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 	CHECK_CAN_EMIT(symbol);
+	Symbol *tempSym;
 
-	printf("LABEL: %s\n", symbol->kindPtr.ProcKind->label);
+ 	emitStmt(STMT_LEN, "");
+ 	emitComment("Start procedure invocation:");
+ 	
+	char * label = symbol->kindPtr.ProcKind->label;
 
-
+	//  Foreach parameter, push onto stack 
+        for (int i = params->nElements ; i > 0 ; i--) {
+                emitPushSymbolValue(getElementAt(params, i - 1));
+        }
+ 
+	emitStmt(STMT_LEN, "GOTO %s", label);
 }

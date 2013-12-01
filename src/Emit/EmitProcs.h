@@ -21,6 +21,7 @@
 #include "../Hash.h"
 
 #include "EmitUtils.h"
+#include "EmitExprs.h"
 
 extern int doNotEmit;
 
@@ -83,12 +84,12 @@ char *createProcOrFunctionLabel(Symbol *symbol);
 
 
 /*
- * Emit code to end invoce procedure
+ * Emit code to invoce procedure
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-void emitProcInvok(char *id);
+void emitProcInvok(Symbol *symbol, struct ElementArray *params);
 
 #endif
