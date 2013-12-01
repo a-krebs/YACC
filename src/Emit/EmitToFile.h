@@ -12,6 +12,7 @@
 
 #include "StmtLL.h"
 #include "EmitUtils.h"
+#include "PreDefAsc.h"
 
 extern StmtLL *stmts;
 
@@ -26,6 +27,12 @@ extern StmtLL *stmts;
  * 	non-zero otherwise
  */
 int emitToFile(char *fileName);
+
+
+/*
+ * Emit the pre-defined ASC functions.
+ */
+void emitPreDefs();
 
 
 /*

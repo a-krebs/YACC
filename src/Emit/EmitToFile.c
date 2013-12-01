@@ -23,16 +23,19 @@ int emitToFile(char *fileName) {
 	/* open the file */
 	ascfp = fopen(fileName, "w");
 
+	/* append end-of-program stuff here (like a STOP) */
+	// TODO
+	emitComment("End of user-defined pgram");
+	emitStmt(STMT_LEN, "STOP");
+
 	/* 
-	 * any pre-defined functions are already on stmts, as they are emitted
-	 * in Init.c initialize().
+	 * append pre-defined ASC code here, so that it's at the bottom
+	 * of the file
 	 */
+	emitPreDefs();
 
 	/* write the emitted code to file */
 	writeStmtLL(ascfp, stmts);
-
-	/* write end-of-file stuff */
-	// TODO
 
 	/* close the file */
 	if (fclose(ascfp) != 0) {
@@ -40,6 +43,27 @@ int emitToFile(char *fileName) {
 	}
 
 	return 0;
+}
+
+
+/*
+ * Emit the pre-defined ASC functions.
+ */
+void emitPreDefs() {
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "");
+	emitComment("#######################################################");
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "Pre-defined ASC functions to follow");
+	emitStmt(STMT_LEN, "");
+	emitComment("#######################################################");
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "");
+
+	/* call to generated function in PreDefAsc.c */
+	emitPreDefAsc();
 }
 
 
