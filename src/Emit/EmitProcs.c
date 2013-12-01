@@ -5,6 +5,8 @@
 
 #include "EmitProcs.h"
 
+// printf("SIZE OF PARAMS: %d\n", getSizeOfParams(symbol));
+
 
 /*
  * Emit code to push procedure/function call onto the the stack.
@@ -32,7 +34,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
 	}
 
  	/* Emit procedure label */
- 	emitStmt(STMT_LEN, label); 
+ 	emitLabel(STMT_LEN, label); 
 }
 
 
@@ -43,8 +45,8 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
  * 	
  * Returns: void
  */
-void emitEndProc() {
-	emitProcOrFuncEndCommon("Procedure end.");
+void emitEndProc(Symbol *symbol) {
+	emitProcOrFuncEndCommon(symbol, "Procedure end.");
 }
 
 
@@ -55,12 +57,16 @@ void emitEndProc() {
  * 	
  * Returns: void
  */
-void emitEndFunc() {
+void emitEndFunc(Symbol *symbol) {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);
 
-	/* Default return space on stack */
-	int offset = (getReturnOffset() + 2) * -1;
+	/* Calucalate where to return to:
+	   determined by size of parameters 
+	   + 3 (PC, display reg, and return value)
+	   * -1	
+	*/
+	int offset = (getSizeOfParams(symbol) + 3) * -1;
 
 	/* Get the lexical so we can idenity the display register */
 	int lexLevel = getCurrentLexLevel(symbolTable);
@@ -68,8 +74,68 @@ void emitEndFunc() {
 	/* Return result */
 	emitStmt(STMT_LEN, "POP %d[%d]", offset, lexLevel);
 
-	emitProcOrFuncEndCommon("Function end.");
+	emitProcOrFuncEndCommon(symbol, "Function end.");
 } 
+
+
+/*
+ * Determines the size of a parameter list
+ *
+ * Parameters: 	symbol: pointer to function or procedure symbol
+ * 	
+ * Returns: size of list
+ */
+int getSizeOfParams(Symbol *procOrFuncSymbol) {
+	struct ElementArray *params = NULL;
+	Symbol *param = NULL;
+	int size = 0;
+	type_t type;
+
+	if (procOrFuncSymbol->kind == PROC_KIND) {	
+ 		params = procOrFuncSymbol->kindPtr.ProcKind->params;
+	}
+	else if (procOrFuncSymbol->kind == FUNC_KIND)  {
+		params = procOrFuncSymbol->kindPtr.FuncKind->params;
+	}
+
+	for (int i = 0; i < params->nElements; ++i) {
+		param = getElementAt(params, i);
+
+		if ( isByReference(param) ) {
+			size++;
+			continue;
+		}
+
+		if ( param->kind == CONST_KIND ) {
+			size++;
+			continue;
+		}
+
+		param = getTypeSym(param);
+		type = getType(param);
+
+		if ( type == BOOLEAN_T 
+			|| type == CHAR_T 
+			|| type == INTEGER_T
+			|| type == REAL_T
+			//include array because only want base
+			|| type == ARRAY_T ) 
+		{
+			size++;
+			continue;	
+		}
+
+		if ( type == RECORD_T 
+			|| type == SCALAR_T 
+			|| type == STRING_T
+			) {
+
+			size = size + param->size;
+		}
+	}
+
+	return size;
+}
 
 
 /*
@@ -80,11 +146,11 @@ void emitEndFunc() {
  * 	
  * Returns: void
  */
-void emitProcOrFuncEndCommon(char *msg) {
+void emitProcOrFuncEndCommon(Symbol *symbol, char *msg) {
 	CHECK_CAN_EMIT(1);		
 
 	/* Determine how many levels on the stack we need to adjust by */
-	int adjustCount = getAdjustCounter() * -1;	
+	int adjustCount = getSizeOfParams(symbol) * -1;	
 
 	/* Get the lexical so we can idenity the display register */
 	int lexLevel = getCurrentLexLevel(symbolTable);	
@@ -166,6 +232,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
 
+ 	//TODO fix this, this should be done for both proc and func
  	for (int i = params->nElements; i > 0 ; i--) {
  		param = getElementAt(params, i - 1);
 
@@ -175,6 +242,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  		}
  	}
 
+ 	//make room for return value
 	emitStmt(STMT_LEN, "CONSTI 0");
 
  	emitProcOrFuncInvokCommon(symbol, params, label);
@@ -194,6 +262,8 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 {
 	Symbol *param = NULL;
 
+ 	/* Need to do this backwardss so parameters are in expected place on stack.
+ 	   i.e. First parameter at -3, second at -4, ect */
 	for (int i = params->nElements; i > 0 ; i--) {
         	param = getElementAt(params, i - 1);
 
@@ -205,6 +275,6 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 		}                
         }
  
-	emitStmt(STMT_LEN, "GOTO %s", label);
+	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
 }
 
