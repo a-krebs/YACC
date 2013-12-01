@@ -161,6 +161,7 @@ void emitPushVarAddress(Symbol *s)
 	case CHAR_T:
 	case INTEGER_T:
 	case REAL_T:
+	case RECORD_T:
 	case SCALARINT_T:
 	{
 		if (!isByReference(s)) {
@@ -281,7 +282,6 @@ void emitArrayAssignment(Symbol *x, Symbol *y)
 		 * assignment operation has never undergone indexing and thus
 		 * the address of y is not on the stack.  We push its value
 		 * now */
-		
 		if (!isByReference(y)) { 
 	 		emitStmt(STMT_LEN, "PUSHA %d[%d]", y->offset, y->lvl);	 
 	 	} else { 
@@ -313,13 +313,12 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	 * the variable x appears below the value of the symbol y on the stack.
 	 */
 
-	if (getType(x) == ARRAY_T) {
+	if (getType(x) == ARRAY_T || getType(x) == RECORD_T) {
 		/* We are doing an array assignment.  Let's let the specialist
 		 * handle this one. */
 		emitArrayAssignment(x, y);
 		return;
 	}
-
 
 	if (y->isAddress) {
 		emitComment("Value of y is address, convert to actual value");
