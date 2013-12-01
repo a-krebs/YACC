@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <wait.h>
+
 #include "ProgList.h"
 #include "args.h"
 #include "Hash.h"
@@ -18,6 +20,7 @@
 #endif
 
 #define FILE_MODE "r"
+#define ASC_FEXE_NAME "asc"
 
 extern FILE *yyin;
 /* global program arguments struct */
@@ -129,6 +132,34 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 }
 
 
+/* 
+ * Fork and run ASC interpreter.
+ */
+static void forkAndRun(char *ascFileName)
+{
+	int status = 0;
+	pid_t pid;
+	pid = fork();
+	if (pid == 0) {
+		/* pass ASC_FEXE_NAME once for file, once for argv[0] */
+		execlp(ASC_FEXE_NAME, ASC_FEXE_NAME, ascFileName);
+		/* execlp only returns on error */
+		exit(EXIT_FAILURE);
+	} else {
+		/* wait on child to return */
+		waitpid(pid, &status, 0);
+
+		/* if child exited with error status, we should too */
+		if ((WIFEXITED(status))
+		    && (WEXITSTATUS(status) != EXIT_SUCCESS)) {
+			fprintf(stderr,"Failed to launch ASC interpreter, or "
+			    "ASC interpreter returned with error status.\n");
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+
 /*
  * Main entry point for the Team YACC PAL compiler.
  */
@@ -193,6 +224,14 @@ int main( int argc, char *argv[] )
 	/* close file input file*/
 	if (fclose(fp) != 0) {
 		err(EXIT_FAILURE, "File IO error.");
+	}
+
+	/* 
+	 * If emitting went OK, call the ASC interpreter
+	 * unless c flag is set (IE c != 0)
+	 */
+	if ((givenArgs.c == 0) && (fileGenerated == 0)) {
+		forkAndRun(givenArgs.ascFile);
 	}
 
 	/*
