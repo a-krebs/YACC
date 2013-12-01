@@ -21,6 +21,8 @@ OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
 OBJS+=		$(BIN)/EmitExprs.o
 OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o 
+OBJS+=		$(BIN)/EmitToFile.o
+OBJS+=		$(BIN)/PreDefAsc.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -32,6 +34,8 @@ LEX_FILTER=	$(BIN)/parser.tab.o
 SRC=		src
 # Directory for asc code emission modules (Emit*.c files)
 EMIT=		$(SRC)/Emit
+# Directory for pre-defined asc code
+ASC=		$(SRC)/asc
 # Directory to store compiled binaries
 BIN=		bin
 # Location of test source files
@@ -162,6 +166,9 @@ $(BIN)/EmitStructStat.o: $(EMIT)/EmitStructStat.c $(EMIT)/EmitStructStat.h
 $(BIN)/EmitProcs.o: $(EMIT)/EmitProcs.c $(EMIT)/EmitProcs.h
 	$(COMPILE)	
 
+$(BIN)/EmitToFile.o: $(EMIT)/EmitToFile.c $(EMIT)/EmitToFile.h
+	$(COMPILE)
+
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
 	$(COMPILE)
 
@@ -189,6 +196,8 @@ $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 
 $(BIN)/Init.o: $(SRC)/Init.c $(SRC)/Init.h 
 	$(COMPILE)		
+
+include PreDefAsc.mk
 
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
@@ -268,6 +277,9 @@ clean:
 	-rm -f $(BISONREPORT)
 	-rm -f $(SRC)/generated_parser.y
 	-rm -f $(SRC)/generated_tokenTestParser.y
+	-rm -f $(ASC)/__PreDefAsc.__asc
+	-rm -f $(ASC)/__PreDefAsc.__c
+	-rm -f $(SRC)/PreDefAsc.c
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
 	-rm -f 0.pal 1.pal 2.pal 3.pal 4.pal

@@ -23,8 +23,6 @@ extern FILE *yyin;
 /* global program arguments struct */
 extern struct args givenArgs;
 extern StmtLL *stmts;
-// extern struct preDefTypeSymbols *preDefTypeSymbols;
-// extern struct hash *symbolTable;
 
 /*
  * Use getopt to parse and validate the given program arguments.
@@ -136,8 +134,9 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
  */
 int main( int argc, char *argv[] )
 {
+	int fileGenerated = -1;
 	int argsParsedSuccess = 0;
-	FILE *fp = NULL, *ascfp = NULL;
+	FILE *fp = NULL;
 
 	/* initialize global args struct */
 	memset(&givenArgs, 0, sizeof(struct args));
@@ -147,21 +146,19 @@ int main( int argc, char *argv[] )
 
 	/* check that parsing was success */
 	if (argsParsedSuccess != 0) {
-		printf("Argument parsing failed.\n");
+		fprintf(stderr, "Argument parsing failed.\n");
 		return EXIT_FAILURE;
 	}
 
 	fp = fopen(givenArgs.inFile, FILE_MODE);
 	if (fp == NULL) {
-		printf("Invalid input file.\n");
+		fprintf(stderr, "Invalid input file.\n");
 		return EXIT_FAILURE;
 	}
 	yyin = fp;
 
 	/* initizie symbol table and pre-defitions */
 	initialize();
-	// dumpHash(symbolTable);
-	// printf("%p\n", getPreDefBool(preDefTypeSymbols));
 	
 	/* parse file */
 	yyparse();
@@ -182,19 +179,34 @@ int main( int argc, char *argv[] )
 		printProgramListing(fp, givenArgs.listingFile);
 	}
 
-	/* Create .asc file */
-	ascfp = fopen(givenArgs.ascFile, "w");
-
-	/* close file, clean up, and exit */
-	if (fclose(fp) != 0) {
-		return EXIT_FAILURE;
+	/* Generate .asc file */
+	fileGenerated = emitToFile(givenArgs.ascFile);
+	if (fileGenerated != 0) {
+		/* 
+		 * Print to standard output, as this is not an error in our
+		 * compiler.
+		 */
+		fprintf(stdout, "Did not generate .asc file, as the "
+		    "given .pal file contains errors.");
 	}
 
-	fclose(ascfp);
-	if (givenArgs.S == 0) {
-		remove(givenArgs.ascFile);
+	/* close file input file*/
+	if (fclose(fp) != 0) {
+		err(EXIT_FAILURE, "File IO error.");
+	}
+
+	/*
+	 * Remove the generated asc file.
+	 * If the flag is not set, we remove the file.
+	 */
+	if ((givenArgs.S == 0) && (fileGenerated == 0)) {
+		if (remove(givenArgs.ascFile) != 0) {
+			err(EXIT_FAILURE, "Failed to remove generated .asc "
+			    "file.");
+		}
 	}
 	
+	/* clean up */
 	free(givenArgs.listingFile);
 	free(givenArgs.ascFile);
 	deInitialize();
