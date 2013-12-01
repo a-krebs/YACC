@@ -146,7 +146,10 @@ static void forkAndRun(char *ascFileName)
 		/* execlp only returns on error */
 		exit(EXIT_FAILURE);
 	} else {
+		/* wait on child to return */
 		waitpid(pid, &status, 0);
+
+		/* if child exited with error status, we should too */
 		if ((WIFEXITED(status))
 		    && (WEXITSTATUS(status) != EXIT_SUCCESS)) {
 			fprintf(stderr,"Failed to launch ASC interpreter, or "
@@ -224,7 +227,7 @@ int main( int argc, char *argv[] )
 	}
 
 	/* 
-	 * if emitting went OK, call the ASC interpreter
+	 * If emitting went OK, call the ASC interpreter
 	 * unless c flag is set (IE c != 0)
 	 */
 	if ((givenArgs.c == 0) && (fileGenerated == 0)) {
