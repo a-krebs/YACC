@@ -159,7 +159,6 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
  * Returns: void
  */
 void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
-	printf("is this being callled\n");
 	CHECK_CAN_EMIT(symbol);
 	char * label = symbol->kindPtr.FuncKind->label;	
 	Symbol *param = NULL;
@@ -209,27 +208,3 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	emitStmt(STMT_LEN, "GOTO %s", label);
 }
 
-
-
-// void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
-// 	CHECK_CAN_EMIT(symbol);
-// 	Symbol *param = NULL;
-// 	char * label = symbol->kindPtr.ProcKind->label;	
-
-//  	emitStmt(STMT_LEN, "");
-//  	emitComment("Start procedure invocation:");
- 	
-// 	//  Foreach parameter, push onto stack 
-//         for (int i = params->nElements; i > 0 ; i--) {
-//         	param = getElementAt(params, i - 1);
-
-// 		if ( param->kind == CONST_KIND ) {
-// 			emitPushAnonConstValue(param);	
-// 		}
-// 		else {
-// 			emitPushSymbolValue(param);	
-// 		}                
-//         }
- 
-// 	emitStmt(STMT_LEN, "GOTO %s", label);
-// }
