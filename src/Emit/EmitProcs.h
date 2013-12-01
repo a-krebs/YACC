@@ -94,6 +94,25 @@ char *createProcOrFunctionLabel(Symbol *symbol);
 void emitProcInvok(Symbol *symbol, struct ElementArray *params);
 
 
-void emitConst(Symbol *symbol);
+/*
+ * Emit code to invoce function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitFuncInvok(Symbol *symbol, struct ElementArray *params);
+
+
+/*
+ * Common code to emit functions and procedures invocation
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcOrFuncInvokCommon(Symbol *symbol, 
+	struct ElementArray *params, char *label);
+
 
 #endif

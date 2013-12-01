@@ -142,37 +142,67 @@ char *createProcOrFunctionLabel(Symbol *symbol) {
  */
 void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 	CHECK_CAN_EMIT(symbol);
-	Symbol *tempSym;
+	char * label = symbol->kindPtr.ProcKind->label;	
 
  	emitStmt(STMT_LEN, "");
- 	emitComment("Start procedure invocation:");
+ 	emitComment("Start procedure invocation '%s':", symbol->name);
  	
-	char * label = symbol->kindPtr.ProcKind->label;
-
-	// printf("Number of params: %d\n", params->nElements);
-
-	
+ 	emitProcOrFuncInvokCommon(symbol, params, label);
+}
 
 
-	// //  Foreach parameter, push onto stack 
-        for (int i = params->nElements; i > 0 ; i--) {
+/*
+ * Emit code to invoce function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
+	printf("is this being callled\n");
+	CHECK_CAN_EMIT(symbol);
+	char * label = symbol->kindPtr.FuncKind->label;	
+	Symbol *param = NULL;
 
- //        	printf("on param: %d\n", i-1);
-        	tempSym = getElementAt(params, i - 1);
-        	// setParamOffset(tempSym, i-1);
+ 	emitStmt(STMT_LEN, "");
+ 	emitComment("Start function invocation '%s':", symbol->name);	
 
- //        	if (tempSym == NULL) {
- //        		printf("FUCK IT ALL\n");
- //        	}
+ 	for (int i = params->nElements; i > 0 ; i--) {
+ 		param = getElementAt(params, i - 1);
 
- //        	// setParamOffset(tempSym, params);
+ 		if ( param->kind == CONST_KIND ) {
+ 			emitComment("NOT READY FOR CONST");	
+ 			emitStmt(STMT_LEN, "ADJUST -1");
+ 		}
+ 	}
+
+	emitStmt(STMT_LEN, "CONSTI 0");
+
+ 	emitProcOrFuncInvokCommon(symbol, params, label);
+}
 
 
-		if ( tempSym->kind == CONST_KIND ) {
-			emitConst(tempSym);		
+
+/*
+ * Common code to emit functions and procedures invocation
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcOrFuncInvokCommon(Symbol *symbol, 
+	struct ElementArray *params, char *label) 
+{
+	Symbol *param = NULL;
+
+	for (int i = params->nElements; i > 0 ; i--) {
+        	param = getElementAt(params, i - 1);
+
+		if ( param->kind == CONST_KIND ) {
+			emitPushAnonConstValue(param);	
 		}
 		else {
-			emitPushSymbolValue(tempSym);	
+			emitPushSymbolValue(param);	
 		}                
         }
  
@@ -180,13 +210,26 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 }
 
 
-void emitConst(Symbol *symbol) {
-	if ( getType(symbol) == INTEGER_T ) {
-		emitStmt(STMT_LEN, "CONSTI %d", 
-			symbol->kindPtr.ConstKind->value.Integer.value);
-	}
-	else if ( getType(symbol) == REAL_T ) {
-		emitStmt(STMT_LEN, "CONSTR %f", 
-			symbol->kindPtr.ConstKind->value.Real.value);
-	}
-}
+
+// void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
+// 	CHECK_CAN_EMIT(symbol);
+// 	Symbol *param = NULL;
+// 	char * label = symbol->kindPtr.ProcKind->label;	
+
+//  	emitStmt(STMT_LEN, "");
+//  	emitComment("Start procedure invocation:");
+ 	
+// 	//  Foreach parameter, push onto stack 
+//         for (int i = params->nElements; i > 0 ; i--) {
+//         	param = getElementAt(params, i - 1);
+
+// 		if ( param->kind == CONST_KIND ) {
+// 			emitPushAnonConstValue(param);	
+// 		}
+// 		else {
+// 			emitPushSymbolValue(param);	
+// 		}                
+//         }
+ 
+// 	emitStmt(STMT_LEN, "GOTO %s", label);
+// }

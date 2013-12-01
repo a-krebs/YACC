@@ -75,10 +75,12 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isPreDefFunc(s)) {
+		emitFuncInvok(s, argv);
 		return isValidPreDefFuncInvocation(s, argv);
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
+		emitFuncInvok(s, argv);
 		return getTypeSym(s);
 	}
 
