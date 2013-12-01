@@ -8,6 +8,7 @@
 #include "Error.h"
 #include "Globals.h"
 #include "Hash.h"
+#include "Emit.h"
 #include "PreDef.h"
 #include "Type.h"
 #include "SymbolAll.h"
@@ -50,7 +51,7 @@ void procInvok(char *id, struct ElementArray *ea) {
 		isValidProcInvocation(s, ea);
 	}
 
-	emitProcInvok(id);
+	emitProcInvok(s, ea);
 }
 
 
@@ -108,7 +109,8 @@ struct ElementArray *createArgList(Symbol *arg) {
 	}
 	ea = newElementArray();
 	growElementArray(ea);
-	appendElement(ea, getTypeSym(arg));	
+	appendElement(ea, arg);	
+
 	return ea;
 }
 
