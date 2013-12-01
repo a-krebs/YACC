@@ -166,17 +166,13 @@ static void forkAndRun(char *ascFileName)
 int main( int argc, char *argv[] )
 {
 	int fileGenerated = -1;
-	int argsParsedSuccess = 0;
 	FILE *fp = NULL;
 
 	/* initialize global args struct */
 	memset(&givenArgs, 0, sizeof(struct args));
 
 	/* parse the given arguments */
-	parseInputs(argc, argv, &givenArgs);
-
-	/* check that parsing was success */
-	if (argsParsedSuccess != 0) {
+	if (parseInputs(argc, argv, &givenArgs) != 0) {
 		fprintf(stderr, "Argument parsing failed.\n");
 		return EXIT_FAILURE;
 	}
