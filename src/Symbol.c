@@ -521,3 +521,12 @@ void setParamOffset(Symbol *s, struct ElementArray *params)
 			 * display register in the call frame */
 	s->offset = offset;		
 }
+
+
+// void setParamOffset(Symbol *param, int i) {
+// 	if (param == NULL) {
+// 		return;
+// 	}
+
+// 	param->offset = (2 + i) * -1;
+// }

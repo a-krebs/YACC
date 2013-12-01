@@ -17,7 +17,8 @@
  */
 void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
  	CHECK_CAN_EMIT(symbol);
- 	emitComment("");
+ 	emitStmt(STMT_LEN, "");
+ 	emitStmt(STMT_LEN, "");
 
  	char *label = createProcOrFunctionLabel(symbol);
  	
@@ -31,7 +32,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
 	}
 
  	/* Emit procedure label */
- 	emitStmt(STMT_LEN, symbol->name); 
+ 	emitStmt(STMT_LEN, label); 
 }
 
 
@@ -80,8 +81,7 @@ void emitEndFunc() {
  * Returns: void
  */
 void emitProcOrFuncEndCommon(char *msg) {
-	CHECK_CAN_EMIT(1);
-	char *emptyStr = "";		
+	CHECK_CAN_EMIT(1);		
 
 	/* Determine how many levels on the stack we need to adjust by */
 	int adjustCount = getAdjustCounter() * -1;	
@@ -94,8 +94,8 @@ void emitProcOrFuncEndCommon(char *msg) {
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 
 	emitComment(msg);
-	emitStmt(STMT_LEN, emptyStr);
-	emitStmt(STMT_LEN, emptyStr);	
+	emitStmt(STMT_LEN, "");
+	emitStmt(STMT_LEN, "");	
 }
 
 
@@ -131,3 +131,80 @@ char *createProcOrFunctionLabel(Symbol *symbol) {
 
         return name;
 }
+
+
+/*
+ * Emit code to invoce procedure
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
+	CHECK_CAN_EMIT(symbol);
+	char * label = symbol->kindPtr.ProcKind->label;	
+
+ 	emitStmt(STMT_LEN, "");
+ 	emitComment("Start procedure invocation '%s':", symbol->name);
+ 	
+ 	emitProcOrFuncInvokCommon(symbol, params, label);
+}
+
+
+/*
+ * Emit code to invoce function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
+	CHECK_CAN_EMIT(symbol);
+	char * label = symbol->kindPtr.FuncKind->label;	
+	Symbol *param = NULL;
+
+ 	emitStmt(STMT_LEN, "");
+ 	emitComment("Start function invocation '%s':", symbol->name);	
+
+ 	for (int i = params->nElements; i > 0 ; i--) {
+ 		param = getElementAt(params, i - 1);
+
+ 		if ( param->kind == CONST_KIND ) {
+ 			emitComment("NOT READY FOR CONST");	
+ 			emitStmt(STMT_LEN, "ADJUST -1");
+ 		}
+ 	}
+
+	emitStmt(STMT_LEN, "CONSTI 0");
+
+ 	emitProcOrFuncInvokCommon(symbol, params, label);
+}
+
+
+
+/*
+ * Common code to emit functions and procedures invocation
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcOrFuncInvokCommon(Symbol *symbol, 
+	struct ElementArray *params, char *label) 
+{
+	Symbol *param = NULL;
+
+	for (int i = params->nElements; i > 0 ; i--) {
+        	param = getElementAt(params, i - 1);
+
+		if ( param->kind == CONST_KIND ) {
+			emitPushAnonConstValue(param);	
+		}
+		else {
+			emitPushSymbolValue(param);	
+		}                
+        }
+ 
+	emitStmt(STMT_LEN, "GOTO %s", label);
+}
+

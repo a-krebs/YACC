@@ -16,11 +16,13 @@
 #include "../Kind.h"
 #include "../StmtLL.h"
 #include "../SymbolAPI.h"
+ #include "../SymbolAll.h"
 #include "../Type.h"
 #include "../ElementArray.h"
 #include "../Hash.h"
 
 #include "EmitUtils.h"
+#include "EmitExprs.h"
 
 extern int doNotEmit;
 
@@ -80,5 +82,37 @@ void emitProcOrFuncEndCommon(char *mgs);
  * Returns: generated label
  */
 char *createProcOrFunctionLabel(Symbol *symbol);
+
+
+/*
+ * Emit code to invoce procedure
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcInvok(Symbol *symbol, struct ElementArray *params);
+
+
+/*
+ * Emit code to invoce function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitFuncInvok(Symbol *symbol, struct ElementArray *params);
+
+
+/*
+ * Common code to emit functions and procedures invocation
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcOrFuncInvokCommon(Symbol *symbol, 
+	struct ElementArray *params, char *label);
+
 
 #endif
