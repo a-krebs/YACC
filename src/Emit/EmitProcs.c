@@ -31,7 +31,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
 	}
 
  	/* Emit procedure label */
- 	emitStmt(STMT_LEN, symbol->name); 
+ 	emitStmt(STMT_LEN, label); 
 }
 
 
@@ -130,4 +130,21 @@ char *createProcOrFunctionLabel(Symbol *symbol) {
         free(tempName);
 
         return name;
+}
+
+
+/*
+ * Emit code to end invoce procedure
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcInvok(char *id) {
+	Symbol *symbol = getGlobalSymbol(symbolTable, id);
+	CHECK_CAN_EMIT(symbol);
+
+	printf("LABEL: %s\n", symbol->kindPtr.ProcKind->label);
+
+
 }

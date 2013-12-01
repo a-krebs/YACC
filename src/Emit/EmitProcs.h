@@ -81,4 +81,14 @@ void emitProcOrFuncEndCommon(char *mgs);
  */
 char *createProcOrFunctionLabel(Symbol *symbol);
 
+
+/*
+ * Emit code to end invoce procedure
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcInvok(char *id);
+
 #endif

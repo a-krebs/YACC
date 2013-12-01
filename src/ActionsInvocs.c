@@ -49,6 +49,8 @@ void procInvok(char *id, struct ElementArray *ea) {
 		// this prints errors, so call it but ignore return value
 		isValidProcInvocation(s, ea);
 	}
+
+	emitProcInvok(id);
 }
 
 
