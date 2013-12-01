@@ -413,7 +413,7 @@ void emitPushStringLiteralValue(Symbol *s)
 	emitComment("We now push the values in the string constant ");
 	emitComment("onto the stack.");
 
-	for (i = 0; i < strlen; i++) {
+	for (i = strlen; i >= 0; i++) {
 		emitStmt(STMT_LEN, "CONSTI %d", *(str + i)); 
 	}
 
@@ -425,7 +425,13 @@ void emitPushStringLiteralValue(Symbol *s)
 	emitStmt(STMT_LEN, "CALL 0, __store_string_values");
 
 	emitComment("On return, we leave the allocated address on the stack");
-	emitStmt(STMT_LEN, "ADJUST -%d", strlen);
+	emitStmt(STMT_LEN, "ADJUST -%d", strlen + 1);
+	
+	emitComment("Now we change the address we save such that elements");
+	emitComment("appear in increasing order from this address so it is");
+	emitComment("as if they were on the stack (for compatability reasons)");
+	emitStmt(STMT_LEN, "CONSTI -%d", strlen - 1);
+	emitStmt(STMT_LEN, "ADDI");
 }
 
 

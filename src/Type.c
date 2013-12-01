@@ -10,7 +10,7 @@
 
 #include "Type.h"
 #include "Hash.h"
-
+#include "SymbolArray.h"
 
 //////////////////////////////////////////////////////////////////////////
 /*
@@ -182,7 +182,8 @@ isSimpleType(type_t type)
 
 /*
  * Check if two type symbols represent compatible string types. (i.e.,
- * 	both strings of the same length)
+ * 	one or both is/are an array of chars and the other or both is/are
+ *	a string literal and both are of the same length)
  * 
  * Parameters:
  * 	s1, s2: symbols of kind TYPE_KIND for compatibility check
@@ -203,13 +204,24 @@ int areCompatibleStrings(Symbol *s1, Symbol *s2)
 	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) {
 		return 0;
 	}
-	if (!(getKindPtrForTypeKind(s1)->type == STRING_T) ||
-	    !(getKindPtrForTypeKind(s2)->type == STRING_T)) {
-		return 0;
-	}
 
-	l1 = getKindPtrForTypeKind(s1)->typePtr.String->strlen;
-	l2 = getKindPtrForTypeKind(s2)->typePtr.String->strlen;
+	if ( (getType(s2) != STRING_T) && (getType(s2) != ARRAY_T) ) return 0;
+
+	if ( (getType(s1) == ARRAY_T) && 
+	    (getType(getArrayBaseSym(s1)) != CHAR_T) ) {
+		return 0;
+	} 
+
+	if ( (getType(s2) == ARRAY_T) && 
+	    (getType(getArrayBaseSym(s2)) != CHAR_T) ) {
+		return 0;
+	} 
+
+	if (getType(s1) == STRING_T) l1 = getTypePtr(s1)->String->strlen;
+	else l1 = s1->size;
+	if (getType(s2) == STRING_T) l2 = getTypePtr(s2)->String->strlen;
+	else l2 = s2->size;
+
 
 	if ( l1 == l2 ) {
 		return 1;
@@ -246,8 +258,12 @@ int areOpCompatible(Symbol *s1, Symbol *s2)
 	s1_t = s1->kindPtr.TypeKind->type;
 	s2_t = s2->kindPtr.TypeKind->type;
 
-	/* If one is a string, then both need to be strings to be compatible */
-	if (s1_t == STRING_T) 
+	/*
+	 * If one of the types is a string or an array, we only have operation
+	 * compatibility (with regard to relation operators) if the array is
+	 * an array of chars of the same size as the other operator.
+ 	 */
+	if ( (s1_t == STRING_T) || (s1_t == ARRAY_T) ) 
 	    return areCompatibleStrings(s1, s2);
 
 	/* 
