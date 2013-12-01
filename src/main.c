@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <wait.h>
+
 #include "ProgList.h"
 #include "args.h"
 #include "Hash.h"
@@ -18,6 +20,7 @@
 #endif
 
 #define FILE_MODE "r"
+#define ASC_FEXE_NAME "asc"
 
 extern FILE *yyin;
 /* global program arguments struct */
@@ -129,6 +132,28 @@ int parseInputs(int argc, char **argv, struct args* argStruct)
 }
 
 
+/* 
+ * Fork and run ASC interpreter.
+ */
+static void forkAndRun(char *ascFileName)
+{
+	int status = 0;
+	pid_t pid;
+	pid = fork();
+	if (pid == 0) {
+		if (execlp(ASC_FEXE_NAME, ascFileName) == -1) {
+			exit(EXIT_FAILURE);
+		}
+	} else {
+		waitpid(pid, &status, 0);
+		if (!WIFEXITED(status)) {
+			err(EXIT_FAILURE, "ASC interpreter returned with "
+			    "error status.");
+		}
+	}
+}
+
+
 /*
  * Main entry point for the Team YACC PAL compiler.
  */
@@ -193,6 +218,11 @@ int main( int argc, char *argv[] )
 	/* close file input file*/
 	if (fclose(fp) != 0) {
 		err(EXIT_FAILURE, "File IO error.");
+	}
+
+	/* if emitting went OK, call the ASC interpreter */
+	if (fileGenerated == 0) {
+		forkAndRun(givenArgs.ascFile);
 	}
 
 	/*
