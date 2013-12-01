@@ -174,19 +174,9 @@ int initializePreDefConstants() {
 Symbol *createNewBoolConst(char *name, int val) {
 	Symbol *symbol = NULL;
 
-	symbol = calloc(1, sizeof(Symbol));
-	if (!symbol) {
-		err(1, "Failed to allocate memory for new const symbol!");
-		exit(EXIT_FAILURE);
-	}
-	setSymbolName(symbol, name);
-	symbol->kind = CONST_KIND;
-	allocateKindPtr(symbol);
-
+	symbol = createConstSymbol(name);
 	setInnerTypeSymbol(symbol, getPreDefBool(preDefTypeSymbols));
-
 	symbol->kindPtr.ConstKind->value.Boolean.value = val;
-	symbol->lvl = getCurrentLexLevel(symbolTable);
 
 	return symbol;
 }
@@ -194,19 +184,9 @@ Symbol *createNewBoolConst(char *name, int val) {
 Symbol *createNewIntConst(char *name, int val) {
 	Symbol *symbol = NULL;
 
-	symbol = calloc(1, sizeof(Symbol));
-	if (!symbol) {
-		err(1, "Failed to allocate memory for new const symbol!");
-		exit(EXIT_FAILURE);
-	}
-	setSymbolName(symbol, name);
-	symbol->kind = CONST_KIND;
-	allocateKindPtr(symbol);
-
+	symbol = createConstSymbol(name);
 	setInnerTypeSymbol(symbol, getPreDefInt(preDefTypeSymbols));
-
 	symbol->kindPtr.ConstKind->value.Integer.value = val;
-	symbol->lvl = getCurrentLexLevel(symbolTable);
 
 	return symbol;
 }
