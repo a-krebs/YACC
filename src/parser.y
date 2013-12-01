@@ -457,8 +457,7 @@ parm_list
 
 parm
 : expr
-	{ // TODO can we use the same action as for function decl?
-	  $<elemarray>$ = createArgList($<proxy>1); }
+	{ $<elemarray>$ = createArgList($<proxy>1); }
 ;
 
 while_expr
