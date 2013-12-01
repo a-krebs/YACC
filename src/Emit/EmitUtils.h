@@ -126,7 +126,7 @@ void destroyLabelStack(struct labelStack **stack);
  *		level: display (lexical level)
  * 
  */ 
-void emitPushVarValueCommon(Symbol *s, int offset, int level);
+//void emitPushVarValueCommon(Symbol *s, int offset, int level);
 
 
 /*  
@@ -139,7 +139,7 @@ void emitPushVarValueCommon(Symbol *s, int offset, int level);
  *		s : the symbol whose value is to be placed on top of the stack
  * 
  */ 
-void emitPushParmVarValue(Symbol *s, int offset, int level);
+//void emitPushParmVarValue(Symbol *s, int offset, int level);
 
 
 /*
