@@ -141,7 +141,8 @@ static void forkAndRun(char *ascFileName)
 	pid_t pid;
 	pid = fork();
 	if (pid == 0) {
-		if (execlp(ASC_FEXE_NAME, ascFileName) == -1) {
+		/* pass ASC_FEXE_NAME once for file, once for argv[0] */
+		if (execlp(ASC_FEXE_NAME, ASC_FEXE_NAME, ascFileName) == -1) {
 			exit(EXIT_FAILURE);
 		}
 	} else {
