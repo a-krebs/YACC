@@ -240,6 +240,7 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
 
 
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
+	ProxySymbol *ps = NULL; 
 
 	if ((!x) || (!y)) return NULL;	
 	
@@ -248,42 +249,56 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	 * with regard to insuring the propogation of a compile time
 	 * known funciton.
 	 */
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), EQUAL, getTypeSym((Symbol *)y)));
 
-	/* Else, we have two CONST_KIND symbols.  We must evaluate */
-
-	return NULL;
+	if (ps) emitEqualsOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
+
+	if (ps) emitInequalityOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
+
+	if (ps) emitLTEOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), LESS, getTypeSym((Symbol *)y)));
+
+	if (ps) emitLTOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), GREATER_OR_EQUAL, getTypeSym((Symbol *)y)));
+
+	if (ps) emitGTEOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), GREATER, getTypeSym((Symbol *)y)));
+
+	if (ps) emitGTOp(x, y);
+	return ps;
 }
 
 
@@ -337,14 +352,20 @@ ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), DIVIDE, getTypeSym((Symbol *)y)));
+
+	if (ps) emitDivision(x, y);
+	return ps; 
+
 }
 
-
 ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), DIV, getTypeSym((Symbol *)y)));
+
+	if (ps) emitDivision(x, y);
+	return ps;
 }
 
 
@@ -353,7 +374,6 @@ ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
 	    (Symbol *) x), MOD, getTypeSym((Symbol *)y)));
 	
 	if (ps) emitMod(x, y);
-
 	return ps;
 }
 

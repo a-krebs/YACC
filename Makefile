@@ -19,7 +19,7 @@ OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o
 OBJS+=		$(BIN)/ActionsStructStat.o $(BIN)/ActionsTypes.o 
 OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
-OBJS+=		$(BIN)/EmitExprs.o
+OBJS+=		$(BIN)/EmitExprs.o $(BIN)/EmitRelational.o
 OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o 
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
@@ -140,35 +140,9 @@ $(BIN)/Kind.o: $(SRC)/Kind.c $(SRC)/Kind.h $(SRC)/Definitions.h
 
 $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 	$(COMPILE)
-
-$(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
-	$(COMPILE)
-
-$(BIN)/EmitArithmetic.o: $(EMIT)/EmitArithmetic.c $(EMIT)/EmitArithmetic.h
-	$(COMPILE)
-
-$(BIN)/EmitExprs.o: $(EMIT)/EmitExprs.c $(EMIT)/EmitExprs.h
-	$(COMPILE) 
-
-$(BIN)/EmitDecls.o: $(EMIT)/EmitDecls.c $(EMIT)/EmitDecls.h
-	$(COMPILE)
-
-$(BIN)/EmitUtils.o: $(EMIT)/EmitUtils.c $(EMIT)/EmitUtils.h
-	$(COMPILE)
-
-$(BIN)/EmitStructStat.o: $(EMIT)/EmitStructStat.c $(EMIT)/EmitStructStat.h
-	$(COMPILE)
-
-$(BIN)/EmitProcs.o: $(EMIT)/EmitProcs.c $(EMIT)/EmitProcs.h
-	$(COMPILE)	
-
-$(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
-	$(COMPILE)
-
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
-include SymbolModules.mk
 
 $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
@@ -183,6 +157,10 @@ $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 	$(COMPILE)	
 
 include ActionModules.mk
+
+include EmitModules.mk
+
+include SymbolModules.mk
 
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	

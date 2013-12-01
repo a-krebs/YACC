@@ -9,8 +9,9 @@
 #include "Emit/EmitArithmetic.h"
 #include "Emit/EmitDecls.h"
 #include "Emit/EmitExprs.h"
-#include "EmitUtils.h"
-#include "EmitStructStat.h"
 #include "EmitProcs.h"
+#include "EmitRelational.h"
+#include "EmitStructStat.h"
+#include "EmitUtils.h"
 
 #endif

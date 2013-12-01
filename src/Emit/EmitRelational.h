@@ -9,11 +9,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//#include "parser.tab.h"
 #include "EmitExprs.h"
 #include "EmitUtils.h"
 #include "../Type.h"
 
+#define INTEGER_OPERATION 0
+#define REAL_OPERATION 1
+#define STRUCTURED_OPERATION 2
 
-void emitRelationalPrep(Symbol *, Symbol *);
+void emitEqualsOp(Symbol *, Symbol *);
+void emitInequalityOp(Symbol *, Symbol *);
+void emitLTEOp(Symbol *, Symbol *);
+void emitLTOp(Symbol *, Symbol *);
+void emitGTEOp(Symbol *, Symbol *);
+void emitGTOp(Symbol *, Symbol *);
 
 #endif
