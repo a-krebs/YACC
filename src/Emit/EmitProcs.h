@@ -47,7 +47,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea);
  * 	
  * Returns: void
  */
-void emitEndProc();
+void emitEndProc(Symbol *symbol);
 
 
 /*
@@ -57,7 +57,7 @@ void emitEndProc();
  * 	
  * Returns: void
  */
-void emitEndFunc() ;
+void emitEndFunc(Symbol *symbol) ;
 
 
 /*
@@ -68,7 +68,7 @@ void emitEndFunc() ;
  * 	
  * Returns: void
  */
-void emitProcOrFuncEndCommon(char *mgs);
+void emitProcOrFuncEndCommon(Symbol *symbol, char *msg);
 
 
 /*
@@ -113,6 +113,9 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params);
  */
 void emitProcOrFuncInvokCommon(Symbol *symbol, 
 	struct ElementArray *params, char *label);
+
+
+int getSizeOfParams(Symbol *procOrFuncSymbol);
 
 
 #endif

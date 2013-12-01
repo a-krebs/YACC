@@ -171,10 +171,10 @@ void exitProcOrFuncDecl(Symbol *symbol) {
 
 	if (symbol != NULL) {
 		if (symbol->kind == PROC_KIND) {	
-		 	emitEndProc();
+		 	emitEndProc(symbol);
 		}
 		else if (symbol->kind == FUNC_KIND)  {
-		 	emitEndFunc();
+		 	emitEndFunc(symbol);
 		}
 	}
 
