@@ -34,7 +34,7 @@ int emitToFile(char *fileName);
 /*
  * Emit the pre-defined ASC functions.
  */
-void emitPreDefs();
+void emitPreDefCode();
 
 
 /*

@@ -31,7 +31,7 @@ int emitToFile(char *fileName) {
 	 * append pre-defined ASC code here, so that it's at the bottom
 	 * of the file
 	 */
-	emitPreDefs();
+	emitPreDefCode();
 
 	/* write the emitted code to file */
 	writeStmtLL(ascfp, stmts);
@@ -48,7 +48,7 @@ int emitToFile(char *fileName) {
 /*
  * Emit the pre-defined ASC functions.
  */
-void emitPreDefs() {
+void emitPreDefCode() {
 	emitStmt(STMT_LEN, "");
 	emitStmt(STMT_LEN, "");
 	emitStmt(STMT_LEN, "");
@@ -79,4 +79,5 @@ void emitInit() {
 	/* emit pre-defined constants */
 	// TODO	
 }
+
 
