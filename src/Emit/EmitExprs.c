@@ -136,7 +136,7 @@ void emitPushAnonConstValue(Symbol *s)
 		    getConstVal(s)->Integer.value);
 		break;
 	case STRING_T:
-		//TODO implement this special case
+		emitPushStringLiteralValue(s);
 		break;
 	default:
 		// Should not be reached 
@@ -413,7 +413,7 @@ void emitPushStringLiteralValue(Symbol *s)
 	emitComment("We now push the values in the string constant ");
 	emitComment("onto the stack.");
 
-	for (i = strlen; i >= 0; i++) {
+	for (i = strlen-1; i >= 0; i--) {
 		emitStmt(STMT_LEN, "CONSTI %d", *(str + i)); 
 	}
 

@@ -78,6 +78,7 @@ ProxySymbol *proxyCharLiteral(struct String s) {
  * 	a pointer to the hash symbol with kind CONST_KIND
  */
 Symbol *proxyStringLiteral(struct String s) {
+
 	Symbol *typeSym = NULL;
 	ProxySymbol *proxy = NULL;
 
