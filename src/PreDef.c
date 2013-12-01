@@ -158,14 +158,14 @@ int initializePreDefFunc() {
 int initializePreDefConstants() {
 	Symbol *symbol = NULL;
 
-	symbol = createNewBoolConst("true", 1);
+	symbol = createNewBoolConst(TRUE_KEY, 1);
 	addToSymbolTable(symbolTable, symbol);
 
-	symbol = createNewBoolConst("false", 0);
+	symbol = createNewBoolConst(FALSE_KEY, 0);
 	addToSymbolTable(symbolTable, symbol);
 
 	// TODO set max in value
-	symbol = createNewIntConst("maxint", 0);
+	symbol = createNewIntConst(MAXINT_KEY, 0);
 	addToSymbolTable(symbolTable, symbol);
 
 	return 0;

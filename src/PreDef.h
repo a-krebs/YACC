@@ -20,6 +20,11 @@
 #define REAL_KEY "real"
 #define STRING_KEY "string"
 
+//pre-defined constants:
+#define TRUE_KEY "true"
+#define FALSE_KEY "false"
+#define MAXINT_KEY "maxint"
+
 //pre-defined procedures:
 #define WRITE "write"
 #define WRITELN "writeln"
