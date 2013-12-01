@@ -14,6 +14,7 @@
 #include "SymbolAll.h"
 #include "Utils.h"
 #include "ActionsAll.h"
+#include "Kind.h"
 
 #ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
@@ -270,11 +271,13 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	
 	} else if ((x->kind == CONST_KIND) && (y->kind == CONST_KIND)) {
 		ps = (ProxySymbol *)createConstSymbol(NULL);
-		ps->kindPtr.ConstKind->typeSym = sym_t;
+		//ps->kindPtr.ConstKind->typeSym = sym_t;
+		setInnerTypeSymbol(ps,sym_t);
 		
 	} else {
 		ps = (ProxySymbol *)createVarSymbol(NULL);
-		ps->kindPtr.ConstKind->typeSym = sym_t;
+		//ps->kindPtr.ConstKind->typeSym = sym_t;
+		setInnerTypeSymbol(ps,sym_t);
 	} 
 
 	return ps;
@@ -283,299 +286,136 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 ProxySymbol *calculate
 	(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	
+	
+}
 
-	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {
-			
-		if (opToken == EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value ==
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == NOT_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value !=
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == LESS_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value <=
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == LESS) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value <
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == GREATER_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value >=
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == GREATER) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value >
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == PLUS) { 
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Integer.value + 
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == MINUS) {
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Integer.value - 
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == OR) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value || 
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == MULTIPLY) {
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Integer.value * 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == DIVIDE) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			(double)x->kindPtr.ConstKind->value.Integer.value / 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == DIV) {
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Integer.value / 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == MOD) {
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Integer.value % 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == AND) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value && 
-			y->kindPtr.ConstKind->value.Integer.value; }
+double
+calcSum(ProxySymbol *x, ProxySymbol *y){
+	return (double)(*getConstVal(x)) + (double)(*getConstVal(y));
+}
+
+
+double
+calcSub(ProxySymbol *x, ProxySymbol *y){
+	return (double)(*getConstVal(x)) - (double)(*getConstVal(y));
+}
+
+
+double
+calcDivide(ProxySymbol *x, ProxySymbol *y){
+	return (double)(*getConstVal(x)) / (double)(*getConstVal(y));
+}
+
+
+int
+calcDiv(ProxySymbol *x, ProxySymbol *y){
+	int val = (double)(*getConstVal(x)) / (double)(*getConstVal(y));
+	return val;	
+}
+
+
+double
+calcMult(ProxySymbol *x, ProxySymbol *y){
+	return (double)(*getConstVal(x)) * (double)(*getConstVal(y));
+}
+
+
+double
+calcMod(ProxySymbol *x, ProxySymbol *y){
+	return (double)(*getConstVal(x)) % (double)(*getConstVal(y));
+}
+
+
+int
+doAnd(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) && (*getConstVal(y));
+}
+
+int
+doOr(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) || (*getConstVal(y));
+}
+
+
+int
+doGt(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) > (*getConstVal(y));
+}
+
+
+int
+doGtOrEq(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) >= (*getConstVal(y));
+}
+
+
+int
+doLess(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) < (*getConstVal(y));
+}
+
+
+int
+doLessOrEq(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) <= (*getConstVal(y));
+}
+
+
+int
+doNotEq(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) != (*getConstVal(y));
+}
+
+
+int
+doEq(ProxySymbol *x, ProxySymbol *y){
+	return (*getConstVal(x)) == (*getConstVal(y));
+}
+
+
+int
+doUnaryNot(ProxySymbol *y) {
+	return !(*getConstVal(y));
+}
+
+
+int
+doUnaryPlus(ProxySymbol *y) {
+	return (*getConstVal(y));
+}
+
+
+int
+doUnaryMinus(ProxySymbol *y) {
+	return 0-(*getConstVal(y));
+}
+
+
+int
+eqStrCmp(ProxySymbol *x, ProxySymbol *y){
+	int i;
+	char *str1 = (char *)getConstVal(x);
+	char *str2 = (char *)getConstVal(y);
 	
-	} else if ((getType(x) == REAL_T) && (getType(y) == INTEGER_T)) {
-	
-		if (opToken == EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value ==
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == NOT_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value !=
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == LESS_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value <=
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == LESS) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value <
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == GREATER_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value >=
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == GREATER) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value >
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == PLUS) { 
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value + 
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == MINUS) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value - 
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == OR) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value || 
-			y->kindPtr.ConstKind->value.Integer.value; }
-			
-		if (opToken == MULTIPLY) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value * 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == DIVIDE) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			(double)x->kindPtr.ConstKind->value.Real.value / 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == DIV) {
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Real.value / 
-			y->kindPtr.ConstKind->value.Integer.value; }
-		
-		if (opToken == MOD) {
-			/*TODO
-			Error Report
-			*/ }
-		
-		if (opToken == AND) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value && 
-			y->kindPtr.ConstKind->value.Integer.value; }
-	
-	} else if ((getType(x) == INTEGER_T) && (getType(y) == REAL_T)) {
-	
-		if (opToken == EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value ==
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == NOT_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value !=
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == LESS_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value <=
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == LESS) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value <
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == GREATER_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value >=
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == GREATER) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value >
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == PLUS) { 
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Integer.value + 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == MINUS) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Integer.value - 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == OR) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value || 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == MULTIPLY) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Integer.value * 
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == DIVIDE) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			(double)x->kindPtr.ConstKind->value.Integer.value / 
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == DIV) {
-			ps->kindPtr.ConstKind->value.Integer.value =
-			x->kindPtr.ConstKind->value.Integer.value / 
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == MOD) {
-			/*TODO
-			Error Report
-			*/ }
-		
-		if (opToken == AND) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Integer.value && 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-	} else if ((getType(x) == REAL_T) && (getType(y) == REAL_T)) {
-	
-		if (opToken == EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value ==
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == NOT_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value !=
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == LESS_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value <=
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == LESS) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value <
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == GREATER_OR_EQUAL) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value >=
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == GREATER) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value >
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == PLUS) { 
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value + 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == MINUS) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value - 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == OR) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value || 
-			y->kindPtr.ConstKind->value.Real.value; }
-			
-		if (opToken == MULTIPLY) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value * 
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == DIVIDE) {
-			ps->kindPtr.ConstKind->value.Real.value =
-			x->kindPtr.ConstKind->value.Real.value / 
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == DIV) {
-			ps->kindPtr.ConstKind->value.Integer.value = 
-			x->kindPtr.ConstKind->value.Real.value / 
-			y->kindPtr.ConstKind->value.Real.value; }
-		
-		if (opToken == MOD) {
-			/*TODO
-			Error Report
-			*/ }
-		
-		if (opToken == AND) {
-			ps->kindPtr.ConstKind->value.Boolean.value =
-			x->kindPtr.ConstKind->value.Real.value && 
-			y->kindPtr.ConstKind->value.Real.value; }
-	
+	if (strlen(str1) == strlen(str2)) {
+		if (strncmp(str1,str2,strlen(str2))==0) {
+				return 1;
+		}
 	}
-	
-	return ps;
-	
+}
+
+int
+doLessStrCmp(ProxySymbol *x, ProxySymbol *y){
+
+
+
+}
+
+int
+doGtStrCmp(ProxySymbol *x, ProxySymbol *y){
+
+
+
 }
 
 
