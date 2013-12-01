@@ -71,35 +71,5 @@ void emitInit() {
 	emitComment("May the Force be ever in your favour, Mr. Potter.");
 	emitComment("CMPUT 415 - Fall 2013");
 	emitBlankLine();
-
-	/* emit pre-defined constants */
-	emitPreDefConsts();
 }
 
-
-/*
- * Emit pre-defined constant declarations.
- */
-void emitPreDefConsts() {
-	Symbol *s = NULL;
-
-	emitBlankLine();
-	emitComment("#######################################################");
-	emitBlankLine();
-	emitComment("Pre-defined constants to follow:");
-	emitBlankLine();
-	emitComment("#######################################################");
-	emitBlankLine();
-
-	s = getGlobalSymbol(symbolTable, TRUE_KEY);
-	if (!s) err(EXIT_FAILURE, "Pre-def constant not in symbol table");
-	emitConstDecl(s);
-	
-	s = getGlobalSymbol(symbolTable, FALSE_KEY);
-	if (!s) err(EXIT_FAILURE, "Pre-def constant not in symbol table");
-	emitConstDecl(s);
-
-	s = getGlobalSymbol(symbolTable, MAXINT_KEY);
-	if (!s) err(EXIT_FAILURE, "Pre-def constant not in symbol table");
-	emitConstDecl(s);
-}

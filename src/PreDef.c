@@ -3,6 +3,15 @@
 #include "Kind.h"
 #include "SymbolAll.h"
 #include "Hash.h"
+#include "Emit.h"
+
+/*
+ * This module implements creation functions and accessor functions for
+ * pre-defined PAL constants, functions, procedures, and types.
+ *
+ * It is safe to emit code in this module by calling the various emit*()
+ * functions.
+ */
 
 Symbol *getPreDefBool(struct preDefTypeSymbols *preDefTypeSymbols) {
 	return preDefTypeSymbols->boolean;
@@ -158,15 +167,29 @@ int initializePreDefFunc() {
 int initializePreDefConstants() {
 	Symbol *symbol = NULL;
 
+	emitBlankLine();
+	emitComment("#######################################################");
+	emitBlankLine();
+	emitComment("Pre-defined constants to follow");
+	emitBlankLine();
+	emitComment("#######################################################");
+	emitBlankLine();
+	
 	symbol = createNewBoolConst(TRUE_KEY, 1);
 	addToSymbolTable(symbolTable, symbol);
+	setSymbolOffset(symbol, symbolTable);
+	emitConstDecl(symbol);
 
 	symbol = createNewBoolConst(FALSE_KEY, 0);
 	addToSymbolTable(symbolTable, symbol);
-
+	setSymbolOffset(symbol, symbolTable);
+	emitConstDecl(symbol);
+	
 	// TODO set max in value
 	symbol = createNewIntConst(MAXINT_KEY, 0);
 	addToSymbolTable(symbolTable, symbol);
+	setSymbolOffset(symbol, symbolTable);
+	emitConstDecl(symbol);
 
 	return 0;
 }

@@ -17,6 +17,11 @@ int initialize() {
 		exit(EXIT_FAILURE);
 	}
 
+	/* prep global StmtLL */
+	stmts = NULL;
+	/* emit some comments and stuff */
+	emitInit();
+
 	initializePreDefProc();
 	initializePreDefFunc();
 	initializePreDefConstants();
@@ -32,9 +37,6 @@ int initialize() {
 	/* user defined procedures and functions stuff */
 	procOrFuncStack = newLabelStack();
 
-	/* emit pre-defined functions to StmtLL */
-	stmts = NULL;
-	emitInit();
 
 	return 0;
 }

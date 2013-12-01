@@ -47,10 +47,4 @@ void emitPreDefCode();
 void emitInit();
 
 
-/*
- * Emit pre-defined constant declarations.
- */
-void emitPreDefConsts();
-
-
 #endif
