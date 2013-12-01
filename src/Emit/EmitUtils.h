@@ -49,7 +49,18 @@ struct labelStack {
 
 char *getAscFileName(char *);
 
-void allocStmt(char **, size_t);
+
+/* 
+ * Concatenate the given prefix, s, and suffix, and append the resulting
+ * string to the given StmtLL.
+ * Parameters:
+ * 	ll: a double pointer to the StmtLL to which to append
+ * 	prefix: string to prefix to s
+ * 	s: string
+ * 	suffix: string to postfix to s
+ */
+void emitStr(StmtLL **ll, char *prefix, char *s, char *suffix);
+
 void emitComment(char *, ...);
 void emitStmt(int len, char *, ...);
 void emitLabel(int len, char*, ...);

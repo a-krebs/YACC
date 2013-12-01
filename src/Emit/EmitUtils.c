@@ -19,26 +19,48 @@ char *getAscFileName(char *palFileName)
  	strncpy(ascFileName + len - 5, ".asc", 4); 
 
  	return ascFileName;
- } 
-
-
-
-
-/*
- * Allocates memory for a statement of the given size and sets the given
- * character pointer to point to the allocated memory.  Performs error checking
- * such that it does not have to be done in every statement emitting function.
- * Parameters
- *		stmt: the address of a pointer to which we would like to
- *		    assign the address of the allocated memory
- *		len: the amount of memory to allocate
- */
-void allocStmt(char **stmt, size_t len)
-{
-	*stmt = calloc(len, sizeof(char));
-	if (!(*stmt)) err(1, "Failed to allocate memory for asc statement.");
 }
 
+
+/* 
+ * Concatenate the given prefix, s, and suffix, and append the resulting
+ * string to the given StmtLL.
+ * Parameters:
+ * 	ll: the StmtLL to which to append
+ * 	prefix: string to prefix to s
+ * 	s: string
+ * 	suffix: string to postfix to s
+ */
+void emitStr(StmtLL **ll, char *prefix, char *s, char *suffix) {
+	char *stmt = NULL;
+	int prefixLen = 0;
+	int sLen = 0;
+	int suffixLen = 0;
+	int stmtLen = 0;
+
+	prefixLen = strlen(prefix);
+	sLen = strlen(s);
+	suffixLen = strlen(suffix);
+
+	stmtLen = prefixLen + sLen + suffixLen;
+
+	/* allocate for statment. +1 for null-termination */
+	stmt = calloc(stmtLen + 1, sizeof(char));
+	if (!(stmt)) err(EXIT_FAILURE,
+	    "Failed to allocate memory for asc statement.");
+
+	/* copy prefix into stmt */
+	strncpy(stmt, prefix, prefixLen);
+
+	/* copy s into stmt */
+	strncpy(stmt + prefixLen, s, sLen);
+
+	/* copy suffix into stmt */
+	strncpy(stmt + prefixLen + sLen, suffix, suffixLen);
+
+	/* append to given StmtLL */
+	appendStmt(ll, stmt);
+}
 
 /*
  * Produces asc comment from the given string and appends it to list of
@@ -50,32 +72,15 @@ void emitComment(char *s, ...)
 {
 	static char cmt[MAX_COMMENT_LEN];
 	va_list args;
-	size_t len = 0;
-	char *comment = NULL; 
 
-	memset(cmt, '\0', MAX_COMMENT_LEN);
+	memset(cmt, 0, MAX_COMMENT_LEN);
 
+	/* create a formatted string from args */
 	va_start(args, s);
 	vsnprintf(cmt, MAX_COMMENT_LEN - 1, s, args);
 	va_end(args);
 
-	cmt[MAX_COMMENT_LEN - 1] = '\0';
-
-	/* + 6 for '\t', '\t', '#', ' ', '\n', and safety '\0' */
-	len = strlen(cmt) + 6;
-	allocStmt(&comment, len);
-	
-	/* Turn string s into a asc comment */
-	comment[0] = '\t';
-	comment[1] = '\t';
-	comment[2] = '#';
-	comment[3] = ' ';
-	strncat(comment + 4, cmt, len - 6); 
-	comment[len - 2] = '\n';
-	comment[len - 1] = '\0';
-
-	/* Append comment to list of statements */
-	appendStmt(&stmts, comment);
+	emitStr(&stmts, "\t\t# ", cmt, "\n");
 }
 
 
@@ -90,29 +95,16 @@ void emitComment(char *s, ...)
 void emitStmt(int len, char *s, ...)
 {
 	va_list args;
-	char *stmt = NULL, *formattedStr = NULL;
+	char *stmt = NULL;
 
-	allocStmt(&formattedStr, len);
+	stmt = calloc(len + 1, sizeof(char));
 
 	/* Create formatted string from args */
 	va_start(args, s);
-	vsnprintf(formattedStr, len - 1, s, args);	
+	vsnprintf(stmt, len, s, args);	
 	va_end(args);
 
-	/* we add 4 to make room for '\t', '\t', '\n', '\0' */
-	len = strlen(formattedStr) + 4;
-
-	allocStmt(&stmt, len);
-	
-	/* Turn formatted string into ASC statement */
-	stmt[0] = '\t';
-	stmt[1] = '\t';
-	strncat(stmt + 2, formattedStr, len - 4);
-	stmt[len - 2] = '\n';
-	stmt[len - 1] = '\0';
-
-	free(formattedStr);
-	appendStmt(&stmts, stmt);
+	emitStr(&stmts, "\t\t", stmt, "\n");
 }
 
  
@@ -127,27 +119,16 @@ void emitStmt(int len, char *s, ...)
 void emitLabel(int len, char *s, ...)
 {
 	va_list args;
-	char *stmt = NULL, *formattedStr = NULL;
+	char *stmt = NULL;
 
-	allocStmt(&formattedStr, len);
+	stmt = calloc(len + 1, sizeof(char));
 
 	/* Create formatted string from args */
 	va_start(args, s);
-	vsnprintf(formattedStr, len - 1, s, args);	
+	vsnprintf(stmt, len, s, args);	
 	va_end(args);
 
-	/* we add 2 to make room for '\n', '\0' */
-	len = strlen(formattedStr) + 2;
-
-	allocStmt(&stmt, len);
-	
-	/* Turn formatted string into ASC statement */
-	strncat(stmt, formattedStr, len);
-	stmt[len - 2] = '\n';
-	stmt[len - 1] = '\0';
-
-	free(formattedStr);
-	appendStmt(&stmts, stmt);
+	emitStr(&stmts, "", stmt, "\n");	
 }
 
 
