@@ -220,8 +220,11 @@ int main( int argc, char *argv[] )
 		err(EXIT_FAILURE, "File IO error.");
 	}
 
-	/* if emitting went OK, call the ASC interpreter */
-	if (fileGenerated == 0) {
+	/* 
+	 * if emitting went OK, call the ASC interpreter
+	 * unless c flag is set (IE c != 0)
+	 */
+	if ((givenArgs.c == 0) && (fileGenerated == 0)) {
 		forkAndRun(givenArgs.ascFile);
 	}
 
