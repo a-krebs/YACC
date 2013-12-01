@@ -50,16 +50,11 @@ int emitToFile(char *fileName) {
  */
 void emitPreDefCode() {
 	emitBlankLine();
-	emitBlankLine();
-	emitBlankLine();
-	emitBlankLine();
-	emitBlankLine();
 	emitComment("#######################################################");
 	emitBlankLine();
 	emitComment("Pre-defined ASC functions to follow");
 	emitBlankLine();
 	emitComment("#######################################################");
-	emitBlankLine();
 	emitBlankLine();
 
 	/* call to generated function in PreDefAsc.c */
