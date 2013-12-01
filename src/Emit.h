@@ -12,6 +12,7 @@
 #include "EmitProcs.h"
 #include "EmitRelational.h"
 #include "EmitStructStat.h"
+#include "EmitToFile.h"
 #include "EmitUtils.h"
 
 #endif

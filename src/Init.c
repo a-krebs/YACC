@@ -1,5 +1,6 @@
 #include "Init.h"
-#include "EmitUtils.h"
+
+extern StmtLL *stmts;
 
 int initialize() {
 	/* symbol table */
@@ -31,6 +32,10 @@ int initialize() {
 	/* user defined procedures and functions stuff */
 	procOrFuncStack = newLabelStack();
 
+	/* emit pre-defined functions to StmtLL */
+	stmts = NULL;
+	emitInit();
+
 	return 0;
 }
 
@@ -45,6 +50,9 @@ int deInitialize() {
 
 	/* user defined procedures and functions stuff */
 	destroyLabelStack(&procOrFuncStack);	
+	
+	/* Linked List of emitted code */
+	freeStmtLL(stmts);
 
 	return 0;
 }
