@@ -142,14 +142,16 @@ static void forkAndRun(char *ascFileName)
 	pid = fork();
 	if (pid == 0) {
 		/* pass ASC_FEXE_NAME once for file, once for argv[0] */
-		if (execlp(ASC_FEXE_NAME, ASC_FEXE_NAME, ascFileName) == -1) {
-			exit(EXIT_FAILURE);
-		}
+		execlp(ASC_FEXE_NAME, ASC_FEXE_NAME, ascFileName);
+		/* execlp only returns on error */
+		exit(EXIT_FAILURE);
 	} else {
 		waitpid(pid, &status, 0);
-		if (!WIFEXITED(status)) {
-			err(EXIT_FAILURE, "ASC interpreter returned with "
-			    "error status.");
+		if ((WIFEXITED(status))
+		    && (WEXITSTATUS(status) != EXIT_SUCCESS)) {
+			fprintf(stderr,"Failed to launch ASC interpreter, or "
+			    "ASC interpreter returned with error status.\n");
+			exit(EXIT_FAILURE);
 		}
 	}
 }
