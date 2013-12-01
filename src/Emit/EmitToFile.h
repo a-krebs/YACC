@@ -11,8 +11,11 @@
 #include <string.h>
 
 #include "StmtLL.h"
-#include "EmitUtils.h"
+#include "Emit.h"
 #include "PreDefAsc.h"
+#include "PreDef.h"
+#include "Hash.h"
+#include "Globals.h"
 
 #define USER_PROG_START_LABEL "MAIN"
 
@@ -42,6 +45,12 @@ void emitPreDefCode();
  * input PAL. This includes predefined funcs and procs, constants, etc.
  */
 void emitInit();
+
+
+/*
+ * Emit pre-defined constant declarations.
+ */
+void emitPreDefConsts();
 
 
 #endif
