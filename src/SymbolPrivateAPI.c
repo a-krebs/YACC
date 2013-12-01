@@ -111,10 +111,12 @@ void setSymbolSize(Symbol *s)
 	if (!getTypeSym(s)) return;
 	switch (s->kind) {
 	case CONST_KIND:
+		/* fall through */
 	case VAR_KIND:
 		s->size = getTypeSym(s)->size;
 		break;
 	case PROC_KIND:
+		/* fall through */
 	case FUNC_KIND:
 		/* Procs and Func symbols have no size */
 		s->size = -1;
