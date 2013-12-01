@@ -232,8 +232,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
 
- 	/* Need to do this backs so parameters are in expected place on stact.
- 	   i.e. First parameter at -3, second at -4, ect */
+ 	//TODO fix this, this should be done for both proc and func
  	for (int i = params->nElements; i > 0 ; i--) {
  		param = getElementAt(params, i - 1);
 
@@ -243,6 +242,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  		}
  	}
 
+ 	//make room for return value
 	emitStmt(STMT_LEN, "CONSTI 0");
 
  	emitProcOrFuncInvokCommon(symbol, params, label);
@@ -262,6 +262,8 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 {
 	Symbol *param = NULL;
 
+ 	/* Need to do this backwardss so parameters are in expected place on stack.
+ 	   i.e. First parameter at -3, second at -4, ect */
 	for (int i = params->nElements; i > 0 ; i--) {
         	param = getElementAt(params, i - 1);
 
