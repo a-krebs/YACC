@@ -6,6 +6,8 @@
 #define EMITEXPRS_H
 #include "EmitUtils.h"
 
+#define NO_OP -1
+
 void emitArrayElementLocation(Symbol *, Symbol *);
 void emitAssignmentOp(Symbol *, Symbol *);
 void emitPushVarAddress(Symbol *);

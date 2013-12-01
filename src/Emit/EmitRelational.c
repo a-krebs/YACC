@@ -73,9 +73,7 @@ static void emitRelationalOperandValue(Symbol *x)
 
 	} else if (x->kind == CONST_KIND) {
 
-		/* If x is an anonymous constant value, we have already placed
-		 * its value onto the stack.  Else, we need to push x's value */
-		if (x->name) emitPushSymbolValue(x);
+		emitPushSymbolValue(x);
 	
 	} else if (x->kind != TYPE_KIND) {
 		/* If we are being passed a type kind, then x is the type symbol
@@ -101,6 +99,14 @@ static void emitRelationalPrep(Symbol *x, Symbol *y, int *opType)
 
 	emitRelationalOperandValue(x);
 	emitRelationalOperandValue(y);
+
+	if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ) {
+		/* Both LHS and RHS operand consts => we have evaluated the
+		 * expr at the semantic level */
+		*opType = NO_OP;
+		return;
+	}
+
 	if (isSimpleType(getType(x))) 
 	    emitRelationalSimpleTypeConversion(x, y, opType);
 	else *opType = STRUCTURED_OPERATION;
@@ -122,7 +128,14 @@ void emitEqualsOp(Symbol *x, Symbol *y)
 		emitComment("string-style types (array of chars or string");
 		emitComment("literal.  We call a pre-defined function to do the"
 		    "operation");
-		// TODO: implement this case	
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_eq_op");
+		emitComment("__do_str_eq_op overwrote our first param, so");
+		emitComment("only adjust -2");
+		emitStmt(STMT_LEN, "ADJUST -2");	
+		break;
+	case NO_OP:
+		/* Nothing to do */
 		break;
 	}
 }
@@ -144,6 +157,9 @@ void emitInequalityOp(Symbol *x, Symbol *y)
 	case STRUCTURED_OPERATION:
 		//TODO: implement this case 
 		break;
+	case NO_OP:
+		/* Nothing to do */
+		break;
 	}
 }
 
@@ -163,6 +179,9 @@ void emitLTOp(Symbol *x, Symbol *y) {
 		break;
 	case STRUCTURED_OPERATION:
 		//TODO: implement this case
+		break;
+	case NO_OP:
+		/* Nothing to do */
 		break;
 	}
 }
@@ -188,6 +207,9 @@ void emitLTEOp(Symbol *x, Symbol *y)
 	case STRUCTURED_OPERATION:
 		//TODO implement this case
 		break;
+	case NO_OP:
+		/* Nothing to do */
+		break;
 	}
 }
 
@@ -208,6 +230,9 @@ void emitGTOp(Symbol *x, Symbol *y) {
 		break;
 	case STRUCTURED_OPERATION:
 		//TODO: implement this case
+		break;
+	case NO_OP:
+		/* Nothing to do */
 		break;
 	}
 }
@@ -233,6 +258,9 @@ void emitGTEOp(Symbol *x, Symbol *y)
 		break;
 	case STRUCTURED_OPERATION:
 		//TODO implement this case
+		break;
+	case NO_OP:
+		/* Nothing to do */
 		break;
 	}
 }

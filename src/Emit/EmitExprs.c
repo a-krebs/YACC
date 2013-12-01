@@ -108,12 +108,18 @@ void emitPushConstValue(Symbol *s)
 	} else {
 		/* It is an anonymous const value, so its value is already
 		 * on the stack and we do nothing */
+		//TODO: the times they are a-changin'
+		emitComment("Pushing anonymous constant value of type %s",
+		    typeToString(getType(s)));
+		emitPushAnonConstValue(s);	
 	}
 
 }
 
 void emitPushAnonConstValue(Symbol *s)
 {
+	CHECK_CAN_EMIT(s);
+
 	switch (getType(s)) {
 	case BOOLEAN_T:
 		emitStmt(STMT_LEN, "CONSTI %d", 
@@ -139,7 +145,6 @@ void emitPushAnonConstValue(Symbol *s)
 		emitPushStringLiteralValue(s);
 		break;
 	default:
-		// Should not be reached 
 		break;
 	}		
 }
@@ -198,9 +203,11 @@ void emitPushVarValue(Symbol *s)
  	
 	switch (getType(s)) {
 	case ARRAY_T:
-		/* s is an array and a var kind <=> it is the sole value on
-		 * the RHS of an assignment operation.  This is handled
- 		 * elsewhere. */
+		if (!isByReference(s)) { 
+	 		emitStmt(STMT_LEN, "PUSHA %d[%d]", s->offset, s->lvl);	 
+	 	} else { 
+ 			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl); 
+		}
 		break;
 	case BOOLEAN_T:
 	case CHAR_T:
@@ -312,7 +319,6 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	 * When we enter this function, it is the case that the address of
 	 * the variable x appears below the value of the symbol y on the stack.
 	 */
-
 	if (getType(x) == ARRAY_T || getType(x) == RECORD_T) {
 		/* We are doing an array assignment.  Let's let the specialist
 		 * handle this one. */
@@ -334,20 +340,16 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl);
 	}
 
-	if ((y->kind == CONST_KIND) && (y->name != NULL) ) {
-		emitComment("RHS of assignment operation is a single, name "
-		    "constant value.");
-		emitComment("So, we push its value now as it was not pushed "
-		    "before.");
-		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl); 
+	if ( (y->kind == CONST_KIND) ) {
+		emitComment("RHS of assignment operation is a const, so its "
+		    "value was not");
+		emitComment("pushed before.  So, we push it now.");
+		emitPushSymbolValue(y);	
 	}
 
 	emitComment("Assigning a value to %s", x->name);
 
 	switch (getType(x)) {
-	case ARRAY_T:
-		//TODO implement this case -- will have to make call to a 
-		// a function that will be hand written
 	case BOOLEAN_T:
 	case CHAR_T:
 	case INTEGER_T:
