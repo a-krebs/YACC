@@ -16,11 +16,13 @@
 #include "../Kind.h"
 #include "../StmtLL.h"
 #include "../SymbolAPI.h"
+ #include "../SymbolAll.h"
 #include "../Type.h"
 #include "../ElementArray.h"
 #include "../Hash.h"
 
 #include "EmitUtils.h"
+#include "EmitExprs.h"
 
 extern int doNotEmit;
 
@@ -45,7 +47,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea);
  * 	
  * Returns: void
  */
-void emitEndProc();
+void emitEndProc(Symbol *symbol);
 
 
 /*
@@ -55,7 +57,7 @@ void emitEndProc();
  * 	
  * Returns: void
  */
-void emitEndFunc() ;
+void emitEndFunc(Symbol *symbol) ;
 
 
 /*
@@ -66,7 +68,7 @@ void emitEndFunc() ;
  * 	
  * Returns: void
  */
-void emitProcOrFuncEndCommon(char *mgs);
+void emitProcOrFuncEndCommon(Symbol *symbol, char *msg);
 
 
 /*
@@ -80,5 +82,47 @@ void emitProcOrFuncEndCommon(char *mgs);
  * Returns: generated label
  */
 char *createProcOrFunctionLabel(Symbol *symbol);
+
+
+/*
+ * Emit code to invoce procedure
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcInvok(Symbol *symbol, struct ElementArray *params);
+
+
+/*
+ * Emit code to invoce function
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitFuncInvok(Symbol *symbol, struct ElementArray *params);
+
+
+/*
+ * Common code to emit functions and procedures invocation
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitProcOrFuncInvokCommon(Symbol *symbol, 
+	struct ElementArray *params, char *label);
+
+
+/*
+ * Determines the size of a parameter list
+ *
+ * Parameters: 	symbol: pointer to function or procedure symbol
+ * 	
+ * Returns: size of list
+ */
+int getSizeOfParams(Symbol *procOrFuncSymbol);
+
 
 #endif

@@ -8,6 +8,7 @@
 #include "Error.h"
 #include "Globals.h"
 #include "Hash.h"
+#include "Emit.h"
 #include "PreDef.h"
 #include "Type.h"
 #include "SymbolAll.h"
@@ -49,6 +50,8 @@ void procInvok(char *id, struct ElementArray *ea) {
 		// this prints errors, so call it but ignore return value
 		isValidProcInvocation(s, ea);
 	}
+
+	emitProcInvok(s, ea);
 }
 
 
@@ -72,10 +75,12 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isPreDefFunc(s)) {
+		emitFuncInvok(s, argv);
 		return isValidPreDefFuncInvocation(s, argv);
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
+		emitFuncInvok(s, argv);
 		return getTypeSym(s);
 	}
 
@@ -106,7 +111,8 @@ struct ElementArray *createArgList(Symbol *arg) {
 	}
 	ea = newElementArray();
 	growElementArray(ea);
-	appendElement(ea, getTypeSym(arg));	
+	appendElement(ea, arg);	
+
 	return ea;
 }
 
