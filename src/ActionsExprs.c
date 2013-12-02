@@ -24,6 +24,7 @@
 #endif
 
 /*For error reporting:*/
+
 extern int yylineno;
 extern int colno;
 static char *errMsg;
@@ -424,139 +425,246 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	}
 }
 
-/*
+void
+constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
+
+	double doubleVal;
+	int intVal;
+	
+	if (getType(x)==INTEGER_T && getType(y)==INTEGER_T) {
+		 
+	} else if ( getType(x) == INTEGER_T && getType(y)==REAL_T){
+	
+	
+	} else if ( getType(x) == REAL_T && getType(y)==REAL_T){
+	
+	
+	} else if ( getType(x) == STRING_T && getType(y) == STRING_T){
+	
+	
+	} else if ( getType(x) == BOOLEAN_T && getType(y) == BOOLEAN_T){
+	
+	
+	} else if ( getType(x) == CHAR_T && getType(y) == CHAR_T ) {
+	
+	
+	} else if ( x == NULL && getType(y) == REAL_T ) {
+		
+		= (double)doUnaryPlusOp(y);
+		= (double)doUnaryMinusOp(y);
+		
+	} else if ( x == NULL && getType(y) == INTEGER_T ){
+		
+		= (int)doUnaryPlusOp(y);
+		= (int)doUnaryMinusOp(y);
+
+	} else if (x == NULL && getType(y) == BOOLEAN_T ){
+		doUnaryNegOp(y);
+	}
+}
+
+
 double
 calcSum(ProxySymbol *x, ProxySymbol *y){
-	return (double)(*getConstVal(x)) + (double)(*getConstVal(y));
+	return (double)(getSimpleConstVal(x)) + 
+	(double)(getSimpleConstVal(y));
 }
 
 
 double
 calcSub(ProxySymbol *x, ProxySymbol *y){
-	return (double)(*getConstVal(x)) - (double)(*getConstVal(y));
+	return (double)(getSimpleConstVal(x)) - 
+	(double)(getSimpleConstVal(y));
 }
 
 
 double
 calcDivide(ProxySymbol *x, ProxySymbol *y){
-	return (double)(*getConstVal(x)) / (double)(*getConstVal(y));
+	return (double)(getSimpleConstVal(x)) / 
+	(double)(getSimpleConstVal(y));
 }
 
 
 int
 calcDiv(ProxySymbol *x, ProxySymbol *y){
-	int val = (double)(*getConstVal(x)) / (double)(*getConstVal(y));
+	int val = (double)(getSimpleConstVal(x)) / 
+	(double)(getSimpleConstVal(y));
+	
 	return val;	
 }
 
 
 double
 calcMult(ProxySymbol *x, ProxySymbol *y){
-	return (double)(*getConstVal(x)) * (double)(*getConstVal(y));
+	return (double)(getSimpleConstVal(x)) * 
+	(double)(getSimpleConstVal(y));
 }
 
 
 double
 calcMod(ProxySymbol *x, ProxySymbol *y){
-	return (double)(*getConstVal(x)) % (double)(*getConstVal(y));
+	return (double)(getSimpleConstVal(x)) % 
+	(double)(getSimpleConstVal(y));
 }
 
 
 int
-doAnd(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) && (*getConstVal(y));
+doAndOp(ProxySymbol *x, ProxySymbol *y){
+	return (int)(getSimpleConstVal(x)) && 
+	(int)(getSimpleConstVal(y));
 }
 
 int
-doOr(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) || (*getConstVal(y));
-}
+doOrOp(ProxySymbol *x, ProxySymbol *y){
+	return (int)(getSimpleConstVal(x)) || 
+	(int)(getSimpleConstVal(y));
 
-
-int
-doGt(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) > (*getConstVal(y));
 }
 
 
 int
-doGtOrEq(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) >= (*getConstVal(y));
+doGtCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) > 
+	    (double)(getSimpleConstVal(y));
+}
+
+int
+doGtOrEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) >= 
+	     (double)(getSimpleConstVal(y));
+
 }
 
 
 int
-doLess(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) < (*getConstVal(y));
+
+doLessCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) < 
+	    (double)(getSimpleConstVal(y));
+}
+
+
+
+doLessOrEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) <= 
+	    (double)(getSimpleConstVal(y));
+
+}
+
+
+
+doNotEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) != 
+	    (double)(getSimpleConstVal(y));
 }
 
 
 int
-doLessOrEq(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) <= (*getConstVal(y));
+doEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) == 
+	    (double)(getSimpleConstVal(y));
+
+}
+
+doUnaryNotOp(ProxySymbol *y) {
+	return !(int)(getSimpleConstVal(y));
 }
 
 
-int
-doNotEq(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) != (*getConstVal(y));
+double
+doUnaryPlusOp(ProxySymbol *y) {
+	return (double)(getSimpleConstVal(y));
 }
 
 
-int
-doEq(ProxySymbol *x, ProxySymbol *y){
-	return (*getConstVal(x)) == (*getConstVal(y));
+double
+doUnaryMinusOp(ProxySymbol *y) {
+	return 0-(double)(getSimpleConstVal(y));
 }
 
 
+/*
+ *	Check whether the two given strings are equal char by char
+ * 
+ *	Parameters: ProxySymbol: x a symbol of string constant 
+ *				ProxySymbol; y a symbol of string constant 
+ *
+ *	Returns:	1:	two given strings are equal 
+ *				0:  two given strings are not equal
+ *
+ */
 int
-doUnaryNot(ProxySymbol *y) {
-	return !(*getConstVal(y));
-}
-
-
-int
-doUnaryPlus(ProxySymbol *y) {
-	return (*getConstVal(y));
-}
-
-
-int
-doUnaryMinus(ProxySymbol *y) {
-	return 0-(*getConstVal(y));
-}
-
-
-int
-eqStrCmp(ProxySymbol *x, ProxySymbol *y){
+doStrEqCmp(ProxySymbol *x, ProxySymbol *y){
 	int i;
-	char *str1 = (char *)getConstVal(x);
-	char *str2 = (char *)getConstVal(y);
+	int len = (int)getConstVal(x)->String.strlen;
+	char *str1 = (char *)getConstVal(x)->String.str;
+	char *str2 = (char *)getConstVal(y)->String.str;
 	
-	if (strlen(str1) == strlen(str2)) {
-		if (strncmp(str1,str2,strlen(str2))==0) {
+	
+	for (i = 0; i < len ; i++ ) {
+		if(str1[i] != str2[i]){
+			return 0;
+		}	
+	}
+	
+	return 1;
+}
+
+
+/*
+ *	Compare whether one string is less than another char by char
+ * 
+ *	Parameters: ProxySymbol: x a symbol of string constant 
+ *				ProxySymbol; y a symbol of string constant 
+ *
+ *	Returns:	1:	x < y
+ *				0:	x !< y
+ *
+ */
+int
+doStrLessCmp(ProxySymbol *x, ProxySymbol *y){
+	int i;
+	int len = (int)getConstVal(x)->String.strlen;
+	char *str1 = (char *)getConstVal(x)->String.str;
+	char *str2 = (char *)getConstVal(y)->String.str;
+	
+	for (i = 0; i < len-1 ; i++ ) {
+		if( ( str1[i] == str2[i] ) && ( str1[i+1] < str2[i+1] ) ){
 				return 1;
 		}
 	}
+	return 0;
 }
 
-int
-doLessStrCmp(ProxySymbol *x, ProxySymbol *y){
-
-
-
-}
-
-int
-doGtStrCmp(ProxySymbol *x, ProxySymbol *y){
-
-
-
-}
-*/
 
 /*
- * Check that the given types are compatible when using the given
+ *	Compare whether one string is greater than another char by char
+ * 
+ *	Parameters: ProxySymbol: x a symbol of string constant 
+ *				ProxySymbol; y a symbol of string constant 
+ *
+ *	Returns:	1:	x > y
+ *				0:	x !> y
+ *
+ */
+int
+doStrGtCmp(ProxySymbol *x, ProxySymbol *y){
+	int i;
+	int len = (int)getConstVal(x)->String.strlen;
+	char *str1 = (char *)getConstVal(x)->String.str;
+	char *str2 = (char *)getConstVal(y)->String.str;
+	
+	for (i = 0; i < len-1 ; i++ ) {
+		if( ( str1[i] == str2[i] ) && ( str1[i+1] > str2[i+1] ) ){
+				return 1;
+		}
+	}
+	return 0;
+}
+
+
+/*
+ * Compare that the given types are compatible when using the given
  * operator.
  *
  * Parameters:  typeSymbol1: a symobol of type TYPE
