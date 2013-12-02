@@ -124,13 +124,13 @@ void emitEqualsOp(Symbol *x, Symbol *y)
 		emitStmt(STMT_LEN, "EQR");
 		break;
 	case STRUCTURED_OPERATION:
-		emitComment("We are comparing the equality of two structured");
-		emitComment("string-style types (array of chars or string");
-		emitComment("literal.  We call a pre-defined function to do the"
-		    "operation");
+		emitComment("We are performing 'eq' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation ");
 		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
 		emitStmt(STMT_LEN, "CALL 0, __do_str_eq_op");
-		emitComment("__do_str_eq_op overwrote our first param, so");
+		emitComment("__do_str_eq_op overwrote our first param, so we");
 		emitComment("only adjust -2");
 		emitStmt(STMT_LEN, "ADJUST -2");	
 		break;
@@ -155,7 +155,20 @@ void emitInequalityOp(Symbol *x, Symbol *y)
 		emitStmt(STMT_LEN, "NOT");
 		break;
 	case STRUCTURED_OPERATION:
-		//TODO: implement this case 
+	
+		emitComment("We are performing 'eq' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the "
+		    "operation");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_eq_op");
+
+		emitComment("__do_str_lt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");	
+
 		break;
 	case NO_OP:
 		/* Nothing to do */
@@ -178,7 +191,20 @@ void emitLTOp(Symbol *x, Symbol *y) {
 		emitStmt(STMT_LEN, "LTR");
 		break;
 	case STRUCTURED_OPERATION:
-		//TODO: implement this case
+	
+		emitComment("We are performing 'eq' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation ");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_lt_op");
+
+		emitComment("__do_str_lt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");	
+
 		break;
 	case NO_OP:
 		/* Nothing to do */
@@ -205,7 +231,23 @@ void emitLTEOp(Symbol *x, Symbol *y)
 		emitStmt(STMT_LEN, "NOT");
 		break;
 	case STRUCTURED_OPERATION:
-		//TODO implement this case
+		
+		emitComment("We are performing 'LTE' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation");
+		emitComment("We perform x > y operation, then negate the "
+		    "result");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_gt_op");
+
+		emitComment("__do_str_gt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");
+		emitStmt(STMT_LEN, "NOT");	
+
 		break;
 	case NO_OP:
 		/* Nothing to do */
@@ -229,7 +271,20 @@ void emitGTOp(Symbol *x, Symbol *y) {
 		emitStmt(STMT_LEN, "LTR");
 		break;
 	case STRUCTURED_OPERATION:
-		//TODO: implement this case
+		
+		emitComment("We are performing 'gt' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_gt_op");
+
+		emitComment("__do_str_gt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");
+
 		break;
 	case NO_OP:
 		/* Nothing to do */
@@ -257,7 +312,22 @@ void emitGTEOp(Symbol *x, Symbol *y)
 		emitStmt(STMT_LEN, "NOT");
 		break;
 	case STRUCTURED_OPERATION:
-		//TODO implement this case
+		
+		emitComment("We are performing 'gte' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation");
+		emitComment("We perform x < y operation, then negate the "
+		    "result");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_lt_op");
+
+		emitComment("__do_str_lt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");
+		emitStmt(STMT_LEN, "NOT");	
 		break;
 	case NO_OP:
 		/* Nothing to do */
