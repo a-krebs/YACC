@@ -36,6 +36,8 @@ int initialize() {
 
 	/* user defined procedures and functions stuff */
 	procOrFuncStack = newLabelStack();
+	/* labels for main proc and func bodies */
+	mainLabelStack = newLabelStack();
 
 
 	return 0;

@@ -176,6 +176,7 @@ var_decl_part
 : VAR var_decl_list semicolon_or_error
 	{ exitVarDeclPart(); }
 |
+	{ exitVarDeclPart(); }
 ;
 
 var_decl_list

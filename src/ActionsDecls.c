@@ -32,9 +32,13 @@ static char *errMsg;
  * Perform actions necessary once all declarations are finished.
  */
 void exitDeclPart(void) {
-	emitStmt(STMT_LEN, "");
-	emitComment("User-defined program follows:");
-	emitLabel(STMT_LEN, USER_PROG_START_LABEL);
+	emitBlankLine();
+	emitComment("Start of program, functions, or procedure:");
+	emitLabel(STMT_LEN, "%s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+
+	/* done with label, so pop */
+	popLabels(mainLabelStack);
 }
 
 
@@ -132,11 +136,14 @@ void doTypeDecl(char *id, Symbol *type) {
  * Perform actions necessary when exiting variable dec section.
  */
 void exitVarDeclPart(void) {
-	emitStmt(STMT_LEN, "");
-	emitComment("End of var decls, jump to start of user-defined program");
-	emitStr(&stmts, "\t\tGOTO ", USER_PROG_START_LABEL, "\n");
-	emitStmt(STMT_LEN, "");
-	emitComment("Procedure and Function decls to follow");
+	/* reserve label for the next main */
+	reserveLabels(mainLabelStack, 1);
+
+	emitBlankLine();
+	emitComment("End of var decls, jump over any other proc or func decls");
+	emitStmt(STMT_LEN, "GOTO %s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+	emitBlankLine();
 }
 
 
