@@ -185,8 +185,7 @@ int initializePreDefConstants() {
 	setSymbolOffset(symbol, symbolTable);
 	emitConstDecl(symbol);
 	
-	// TODO set max in value
-	symbol = createNewIntConst(MAXINT_KEY, 0);
+	symbol = createNewIntConst(MAXINT_KEY, ASC_MAX_INT);
 	addToSymbolTable(symbolTable, symbol);
 	setSymbolOffset(symbol, symbolTable);
 	emitConstDecl(symbol);

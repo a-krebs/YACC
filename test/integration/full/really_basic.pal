@@ -3,5 +3,5 @@ program realEasy(in, out);
 var
 	a : integer;
 begin
-	a := 2
+	a := maxint
 end.

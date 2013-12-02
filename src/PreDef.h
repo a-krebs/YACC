@@ -24,6 +24,7 @@
 #define TRUE_KEY "true"
 #define FALSE_KEY "false"
 #define MAXINT_KEY "maxint"
+#define ASC_MAX_INT 2147483647
 
 //pre-defined procedures:
 #define WRITE "write"
