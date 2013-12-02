@@ -70,6 +70,45 @@ ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *unaryNotOp(ProxySymbol *y);
+/*
+ * perform calculation based on given opToken
+ */
+void constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y);
+
+double calcSum(ProxySymbol *x, ProxySymbol *y);
+double calcSub(ProxySymbol *x, ProxySymbol *y);
+double calcDivide(ProxySymbol *x, ProxySymbol *y);
+int calcDiv(ProxySymbol *x, ProxySymbol *y);
+double calcMult(ProxySymbol *x, ProxySymbol *y);
+double calcMod(ProxySymbol *x, ProxySymbol *y);
+
+int doAndOp(ProxySymbol *x, ProxySymbol *y);
+int doOrOp(ProxySymbol *x, ProxySymbol *y);
+/*
+ * simple constant comparison functions are the following
+ */
+int doGtCmp(ProxySymbol *x, ProxySymbol *y);
+int doGtOrEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doLessCmp(ProxySymbol *x, ProxySymbol *y);
+int doLessOrEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doNotEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doUnaryNotOp(ProxySymbol *y);
+/*
+ * three unary operation functions are the following
+ */
+
+double doUnaryPlusOp(ProxySymbol *y);
+double doUnaryMinusOp(ProxySymbol *y);
+/*
+ * String comparison functions are the following
+ */
+int doStrEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doStrLessCmp(ProxySymbol *x, ProxySymbol *y);
+int doStrGtCmp(ProxySymbol *x, ProxySymbol *y);
+
+
+
 
 ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y);
 
