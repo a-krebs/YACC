@@ -275,6 +275,30 @@ void emitArray(Symbol *arg, Symbol *param) {
 
 
 /*
+ * Emit code to emit array symbol
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+// void emitRecord(Symbol *arg, Symbol *param) {
+// 	int offset = arg->offset;	
+
+// 	if ( isByReference(param) ) {
+//  		emitStmt(STMT_LEN, "PUSH %d[%d]", param->offset, param->lvl); 
+//  		emitStmt(STMT_LEN, "PUSHI");	
+//  		return;		
+// 	}
+
+// 	//elese go throught each element in array and push onto stack
+// 	for (int i = 0; i < arg->size; ++i){
+// 		offset = arg->offset + i;
+// 		emitStmt(STMT_LEN, "PUSH %d[%d]", offset, arg->lvl); 
+// 	}
+// }
+
+
+/*
  * Gets the ElementArray for the paramters for a fucntion or
  * procedure symbol
  *
@@ -323,6 +347,9 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			if (getType(arg) == ARRAY_T) {
 				emitArray(arg, param);
 			}
+			else if (getType(arg) == RECORD_T) {
+				emitArray(arg, param);
+			}			
 			else {
 				emitPushSymbolValue(arg);		
 			}			
