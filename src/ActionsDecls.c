@@ -140,9 +140,19 @@ void exitVarDeclPart(void) {
 	reserveLabels(mainLabelStack, 1);
 
 	emitBlankLine();
-	emitComment("End of var decls, jump over any other proc or func decls");
-	emitStmt(STMT_LEN, "GOTO %s_%d",
-	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+	if (inMainDecls != 0) {
+		emitComment("End of main var decls, call MAIN");
+		emitStmt(STMT_LEN, "CALL 1, %s_%d",
+		    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+		/* clear flag */
+		inMainDecls = 0;
+	} else {
+		emitComment("End of var decls, jump over any other proc or "
+		    "func decls");
+		emitStmt(STMT_LEN, "GOTO %s_%d",
+		    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+	}
+
 	emitBlankLine();
 }
 
