@@ -414,22 +414,27 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	 * If x and y are both constants (or y is constant and operator is
 	 * unary) return a new ProxySymbol of kind CONST_KIND
 	 */
-	if ( ((x == NULL) && (y->kind == CONST_KIND )) 
-	    || ((x->kind == CONST_KIND) && (y->kind == CONST_KIND)) ) {
+	if ( (x == NULL) && (y->kind == CONST_KIND )){
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
 		// TODO actually set values
 		constCalc(ps, x, opToken, y);
 		return ps;
-	} else {
+	}else if ((x->kind == CONST_KIND) && (y->kind == CONST_KIND)){
+		ps = (ProxySymbol *)createConstSymbol(NULL);
+		setInnerTypeSymbol(ps, typeSym);
+		// TODO actually set values
+		constCalc(ps, x, opToken, y);
+		return ps;
+	}else{
 		return typeSym;
 	}
+	
 }
 
 void
 constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 
-	double doubleVal;
 	int intVal;
 	
 	switch (opToken) {
@@ -441,6 +446,7 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 		} else {
 			setSimpleConstVal(ps, (double)doEqCmp(x,y));
 		}
+		break;
 		
 	case NOT_EQUAL:	
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
@@ -448,15 +454,17 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 		} else {
 			setSimpleConstVal(ps, (double)doNotEqCmp(x,y));
 		}
+		break;
 		
 	case LESS_OR_EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 			/* x str is less or equal y str */
 			intVal = (doStrLessCmp(x,y) || doStrEqCmp(x,y));
-			setSimpleConstVal(ps,(double)inVal);
+			setSimpleConstVal(ps,(double)intVal);
 		} else {
 			setSimpleConstVal(ps, (double)doLessOrEqCmp(x,y));
 		}
+		break;
 		
 	case LESS:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
@@ -464,15 +472,17 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 		} else {
 			setSimpleConstVal(ps,(double)doLessCmp(x,y));
 		}
+		break;
 		
 	case GREATER_OR_EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 			/* x str is greater or equal y str */
 			intVal = (doStrGtCmp(x,y) || doStrEqCmp(x,y));
-			setSimpleConstVal(ps,(double)inVal);	
+			setSimpleConstVal(ps,(double)intVal);	
 		} else {
 			setSimpleConstVal(ps,(double)doGtOrEqCmp(x,y));
 		}
+		break;
 		
 	case GREATER:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
@@ -480,24 +490,33 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 		} else {
 			setSimpleConstVal(ps,(double)doGtCmp(x,y));
 		}
+		break;
 		
 	case MULTIPLY:
 		setSimpleConstVal(ps, (double)calcMult(x,y));
+		break;
 		
 	case DIVIDE:
 		setSimpleConstVal(ps, (double)calcDivide(x,y));
+		break;
 		
 	case DIV:
 		setSimpleConstVal(ps, (double)calcDiv(x,y));
+		break;
 		
 	case MOD:
-		setSimpleConstVal(ps, (double)calcMod(x,y));
+		if((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)){
+			setSimpleConstVal(ps, (double)calcMod(x,y));
+		}
+		break;
 		
 	case AND:
 		setSimpleConstVal(ps, (double)doAndOp(x,y));
+		break;
 		
 	case OR:
 		setSimpleConstVal(ps, (double)doOrOp(x,y));
+		break;
 		
 	case PLUS:
 		if ( x == NULL ){
@@ -505,8 +524,9 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 			setSimpleConstVal(ps, (double)doUnaryPlusOp(y));
 		}else{
 			/* addition */
-			setSimpleConstVal(ps, (double)calcSum(y));
+			setSimpleConstVal(ps, (double)calcSum(x,y));
 		}
+		break;
 		
 	case MINUS:
 		if ( x == NULL ){
@@ -516,12 +536,17 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 			/* subtraction */
 			setSimpleConstVal(ps, (double)calcSub(x,y));
 		}
+		break;
 		
 	case NOT:
 		if ( x == NULL) {
 			/* x is supposed to be NULL if this is a unary op */
-			setSimpleConstVal(ps, (double)doUnaryNegOp(y));
+			setSimpleConstVal(ps, (double)doUnaryNotOp(y));
 		}
+		break;
+		
+	default:
+		err(1,"");
 	}
 }
 
@@ -565,8 +590,8 @@ calcMult(ProxySymbol *x, ProxySymbol *y){
 
 double
 calcMod(ProxySymbol *x, ProxySymbol *y){
-	return (double)(getSimpleConstVal(x)) % 
-	(double)(getSimpleConstVal(y));
+	return (int)(getSimpleConstVal(x)) % 
+	(int)(getSimpleConstVal(y));
 }
 
 
@@ -600,27 +625,24 @@ doGtOrEqCmp(ProxySymbol *x, ProxySymbol *y){
 
 
 int
-
 doLessCmp(ProxySymbol *x, ProxySymbol *y){
 	return (double)(getSimpleConstVal(x)) < 
 	    (double)(getSimpleConstVal(y));
 }
 
 
-
+int
 doLessOrEqCmp(ProxySymbol *x, ProxySymbol *y){
 	return (double)(getSimpleConstVal(x)) <= 
 	    (double)(getSimpleConstVal(y));
 
 }
 
-
-
+int
 doNotEqCmp(ProxySymbol *x, ProxySymbol *y){
 	return (double)(getSimpleConstVal(x)) != 
 	    (double)(getSimpleConstVal(y));
 }
-
 
 int
 doEqCmp(ProxySymbol *x, ProxySymbol *y){
@@ -629,6 +651,7 @@ doEqCmp(ProxySymbol *x, ProxySymbol *y){
 
 }
 
+int
 doUnaryNotOp(ProxySymbol *y) {
 	return !(int)(getSimpleConstVal(y));
 }

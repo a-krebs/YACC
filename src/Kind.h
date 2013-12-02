@@ -90,7 +90,7 @@ double getSimpleConstVal(Symbol *);
  * 
  * Return: pointer to AnonConstVal
  */
-void setSimpleConstVal(Symbol *s);
+void setSimpleConstVal(Symbol *, double);
 
 /*
  * Makes a copy of the given AnonConstVal based on type -- used when

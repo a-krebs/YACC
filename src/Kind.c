@@ -200,7 +200,7 @@ getSimpleConstVal(Symbol *s)
 		return (double)(getConstVal(s)->Real.value);
 
 	default:
-    /* SHOULD NOT BE REACHED */
+    	/* SHOULD NOT BE REACHED */
 	return 0;
 	}
 }
@@ -215,28 +215,36 @@ getSimpleConstVal(Symbol *s)
  *		val : the result of calculation.	
  */
 void
-setSimpleConstVal(Symbol *s,double val){
-	if (!s) return 0;
+setSimpleConstVal(Symbol *s, double val){
+	if (!s) {
+		err(1, "Can't set value to the symbol due to NULL pointer");
+		exit(1);
+	}
 	
 	switch (getType(s)) {
   
 	case BOOLEAN_T:
 		getConstVal(s)->Boolean.value = (int)val;
-    
+    	break;
+    	
 	case CHAR_T:
 		getConstVal(s)->Char.value = (char)val;
-
+		break;
+		
 	case INTEGER_T:
 		getConstVal(s)->Integer.value = (int)val;
-
+		break;
 	case SCALARINT_T:
 		getConstVal(s)->Integer.value = (int)val;
-
+		break;
 	case REAL_T:
 		getConstVal(s)->Integer.value = (double)val;
-
+		break;
+		
 	default:
-    /* SHOULD NOT BE REACHED */
+		err(1,"This type of value can't be set to the symbol %s", typeToString(getType(s)));
+		exit(1);
+    	/* SHOULD NOT BE REACHED */
 	}
 }
 

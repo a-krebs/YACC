@@ -73,7 +73,7 @@ ProxySymbol *unaryNotOp(ProxySymbol *y);
 /*
  * perform calculation based on given opToken
  */
-ProxySymbol *constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y);
+void constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y);
 
 double calcSum(ProxySymbol *x, ProxySymbol *y);
 double calcSub(ProxySymbol *x, ProxySymbol *y);
@@ -93,7 +93,7 @@ int doLessCmp(ProxySymbol *x, ProxySymbol *y);
 int doLessOrEqCmp(ProxySymbol *x, ProxySymbol *y);
 int doNotEqCmp(ProxySymbol *x, ProxySymbol *y);
 int doEqCmp(ProxySymbol *x, ProxySymbol *y);
-int doUnaryNegOp(ProxySymbol *y);
+int doUnaryNotOp(ProxySymbol *y);
 /*
  * three unary operation functions are the following
  */
