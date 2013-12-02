@@ -10,7 +10,8 @@
 
 #include "Type.h"
 #include "Hash.h"
-
+#include "Kind.h"
+#include "SymbolArray.h"
 
 //////////////////////////////////////////////////////////////////////////
 /*
@@ -26,6 +27,10 @@ type_t
 getType(Symbol *s)
 {
 	if (!s) return VOID_T;
+
+	/* Handle special case of the program head */
+	//if (!s->kindPtr.FuncKind->typeSym) return VOID_T;
+
 
 	switch (s->kind) {
 	case CONST_KIND:
@@ -178,7 +183,8 @@ isSimpleType(type_t type)
 
 /*
  * Check if two type symbols represent compatible string types. (i.e.,
- * 	both strings of the same length)
+ * 	one or both is/are an array of chars and the other or both is/are
+ *	a string literal and both are of the same length)
  * 
  * Parameters:
  * 	s1, s2: symbols of kind TYPE_KIND for compatibility check
@@ -199,13 +205,24 @@ int areCompatibleStrings(Symbol *s1, Symbol *s2)
 	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) {
 		return 0;
 	}
-	if (!(getKindPtrForTypeKind(s1)->type == STRING_T) ||
-	    !(getKindPtrForTypeKind(s2)->type == STRING_T)) {
-		return 0;
-	}
 
-	l1 = getKindPtrForTypeKind(s1)->typePtr.String->strlen;
-	l2 = getKindPtrForTypeKind(s2)->typePtr.String->strlen;
+	if ( (getType(s2) != STRING_T) && (getType(s2) != ARRAY_T) ) return 0;
+
+	if ( (getType(s1) == ARRAY_T) && 
+	    (getType(getArrayBaseSym(s1)) != CHAR_T) ) {
+		return 0;
+	} 
+
+	if ( (getType(s2) == ARRAY_T) && 
+	    (getType(getArrayBaseSym(s2)) != CHAR_T) ) {
+		return 0;
+	} 
+
+	if (getType(s1) == STRING_T) l1 = getTypePtr(s1)->String->strlen;
+	else l1 = s1->size;
+	if (getType(s2) == STRING_T) l2 = getTypePtr(s2)->String->strlen;
+	else l2 = s2->size;
+
 
 	if ( l1 == l2 ) {
 		return 1;
@@ -242,8 +259,12 @@ int areOpCompatible(Symbol *s1, Symbol *s2)
 	s1_t = s1->kindPtr.TypeKind->type;
 	s2_t = s2->kindPtr.TypeKind->type;
 
-	/* If one is a string, then both need to be strings to be compatible */
-	if (s1_t == STRING_T) 
+	/*
+	 * If one of the types is a string or an array, we only have operation
+	 * compatibility (with regard to relation operators) if the array is
+	 * an array of chars of the same size as the other operator.
+ 	 */
+	if ( (s1_t == STRING_T) || (s1_t == ARRAY_T) ) 
 	    return areCompatibleStrings(s1, s2);
 
 	/* 
@@ -558,8 +579,9 @@ int calculateSymbolSize(Symbol *s)
 	case REAL_T:		/* basic pre-defined types have size == 1 */
 	case SCALARINT_T:	/* a scalar int is just an int */
 	case STRING_T:		/* string stored as pointer to heap */
-	case RECORD_T:		/* record stored as pointer to heap */
 		return 1;
+	case RECORD_T:
+		return 0;
 	case SCALAR_T:
 		return calculateScalarSize(s);
 	case SUBRANGE_T:
@@ -586,8 +608,24 @@ int calculateSymbolSize(Symbol *s)
 int calculateArraySize(Symbol *s)
 {
 	struct Array *array = getTypePtr(s)->Array;
-	return ( (calculateSymbolSize(array->baseTypeSym)) *
-	    (calculateSymbolSize(array->indexTypeSym)) );		
+	int baseTypeSize = 0;
+
+	/* Need to consider special case of array of records or scalars,in 
+	 * this case, calculateSymbolSize() will not return correct results. */
+	if (getType(array->baseTypeSym) == RECORD_T) {
+
+		baseTypeSize = array->baseTypeSym->size;
+
+	} else if(getType(array->baseTypeSym) == SCALAR_T) {
+
+		baseTypeSize = 1;
+
+
+	} else baseTypeSize = calculateSymbolSize(array->baseTypeSym);
+	
+
+	
+	return ( (baseTypeSize) * (calculateSymbolSize(array->indexTypeSym)) );		
 }
 
 /*
@@ -599,6 +637,7 @@ int calculateArraySize(Symbol *s)
  * Return:
  *		the size of the scalar list symbol in ASC memory units (as an
  * 		    integer)
+ * TODO: probably dead code
  */
 int calculateScalarSize(Symbol *s)
 {
@@ -710,4 +749,26 @@ int isRealIntBool(type_t type) {
 	}
 
 	return 0;
+}
+
+/* 
+ * Given that the symbol s is an array of chars or a string literal, returns
+ * the length of the array/string.
+ * Parameters
+ *		s : the symbol (an array of chars or string literal) whose
+ *		    length is to be returned
+ */
+int getStrSymLen(Symbol *s)
+{
+	switch (getType(s)) {
+	case ARRAY_T:
+		return s->size;
+	case STRING_T:
+		return getConstVal(s)->String.strlen;
+	default:
+		/* Should not be reached */
+		fprintf(stderr, "Trying to get strlen of symbol which is not "
+		    "a string literal or an array of chars.\n");
+		exit(1);
+	}
 }

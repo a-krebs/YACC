@@ -16,9 +16,13 @@ OBJS+=		$(BIN)/SymbolInvoc.o  $(BIN)/SymbolPrivateAPI.o
 OBJS+=		$(BIN)/SymbolProxy.o
 OBJS+=		$(BIN)/ActionsConsts.o $(BIN)/ActionsDecls.o 
 OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o 
-OBJS+=		$(BIN)/ActionsLoops.o $(BIN)/ActionsTypes.o 
+OBJS+=		$(BIN)/ActionsStructStat.o $(BIN)/ActionsTypes.o 
 OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
+OBJS+=		$(BIN)/EmitExprs.o $(BIN)/EmitRelational.o
+OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o 
+OBJS+=		$(BIN)/EmitToFile.o
+OBJS+=		$(BIN)/PreDefAsc.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -29,7 +33,9 @@ LEX_FILTER=	$(BIN)/parser.tab.o
 # Root source directory
 SRC=		src
 # Directory for asc code emission modules (Emit*.c files)
-EMIT=		Emit
+EMIT=		$(SRC)/Emit
+# Directory for pre-defined asc code
+ASC=		$(SRC)/asc
 # Directory to store compiled binaries
 BIN=		bin
 # Location of test source files
@@ -52,6 +58,7 @@ TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(BIN)/testingUtils.o
+TESTOBJS1+=	$(BIN)/testEmitUtils.o
 TESTOBJS1+=	$(BIN)/testPreDef.o $(BIN)/testPreDefAsc.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
@@ -62,7 +69,7 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
-CFLAGS+=	-Wall -std=c99
+CFLAGS+=	-Wall -std=c99 -I$(SRC) -I$(EMIT)
 # exclude these flags from compiles involving Bison/Flex
 FLEXBISONFLAGEXCLUDES= -Wall -std=c99
 
@@ -108,7 +115,7 @@ lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
 
 # Build test executable
-test: CFLAGS+= -g -Isrc/ -DTESTBUILD -D_POSIX_C_SOURCE=200809L
+test: CFLAGS+= -g -I$(SRC) -DTESTBUILD -D_POSIX_C_SOURCE=200809L
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)
@@ -141,22 +148,9 @@ $(BIN)/Utils.o: $(SRC)/Utils.c $(SRC)/Utils.h $(SRC)/parser.tab.c
 $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 	$(COMPILE)
 
-$(BIN)/EmitArithmetic.o: $(SRC)/$(EMIT)/EmitArithmetic.c $(SRC)/$(EMIT)/EmitArithmetic.h
-	$(COMPILE)
-
-$(BIN)/EmitDecls.o: $(SRC)/$(EMIT)/EmitDecls.c $(SRC)/$(EMIT)/EmitDecls.h
-	$(COMPILE)
-
-$(BIN)/EmitUtils.o: $(SRC)/$(EMIT)/EmitUtils.c $(SRC)/$(EMIT)/EmitUtils.h
-	$(COMPILE)
-
-$(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
-	$(COMPILE)
-
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
-include SymbolModules.mk
 
 $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
@@ -172,11 +166,17 @@ $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 
 include ActionModules.mk
 
+include EmitModules.mk
+
+include SymbolModules.mk
+
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	
 
 $(BIN)/Init.o: $(SRC)/Init.c $(SRC)/Init.h 
 	$(COMPILE)		
+
+include PreDefAsc.mk
 
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
@@ -220,6 +220,9 @@ $(BIN)/testPreDef.o: $(TEST)/testPreDef.c $(TEST)/testPreDef.h
 $(BIN)/testPreDefAsc.o: $(TEST)/testPreDefAsc.c $(TEST)/testPreDefAsc.h
 	$(COMPILE)
 
+$(BIN)/testEmitUtils.o: $(TEST)/testEmitUtils.c $(TEST)/testEmitUtils.h
+	$(COMPILE)
+
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
 	$(BISONFLEXCOMPILE)
 
@@ -253,6 +256,9 @@ clean:
 	-rm -f $(BISONREPORT)
 	-rm -f $(SRC)/generated_parser.y
 	-rm -f $(SRC)/generated_tokenTestParser.y
+	-rm -f $(ASC)/__PreDefAsc.__asc
+	-rm -f $(ASC)/__PreDefAsc.__c
+	-rm -f $(SRC)/PreDefAsc.c
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
 	-rm -f 0.pal 1.pal 2.pal 3.pal 4.pal
@@ -323,4 +329,4 @@ full_tests_:
 clean_lst:
 	find . -name "*.lst" -delete
 
-include Checkpoint2.mk
+include Checkpoint3.mk

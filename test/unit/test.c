@@ -11,6 +11,7 @@
 #include "testActions.h"
 #include "testUtils.h"
 #include "testPreDef.h"
+#include "testEmitUtils.h"
 
 /* Include ASC tests */
 #include "testPreDefAsc.h"
@@ -65,6 +66,7 @@ char *test_all() {
 	mu_run_suite(test_all_Actions);
 	mu_run_suite(test_all_Utils);
 	mu_run_suite(test_all_PreDef);
+	mu_run_suite(test_all_EmitUtils);
 	return NULL;
 }
 
@@ -76,6 +78,7 @@ testAsc()
 	testAbs();
 	testChr();
 	testCos();
+	testDoArrayAssignment();
 	testExp();
 	testLn();
 	testPred();

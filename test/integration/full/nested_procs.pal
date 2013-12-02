@@ -1,0 +1,20 @@
+{}
+program test(input, output);
+var
+	i,d ,e, w : integer;
+
+procedure pad( a : integer; b : integer );
+	procedure foo( a : integer; b : integer );
+	var
+		c : integer;
+	begin
+	end;
+begin
+end;
+
+begin
+	i := 5;
+	pad(i, 10)
+end.
+
+

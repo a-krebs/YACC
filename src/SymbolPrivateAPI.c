@@ -65,12 +65,14 @@ Symbol *createSymbol(
 
 	// set symbol independent values
 	setSymbolName(symbol, id);
+	
 
 	symbol->kind = kind;
 	allocateKindPtr(symbol);
 
 	symbol->lvl = getCurrentLexLevel(table);
 	symbol->typeOriginator = typeOriginator;
+	symbol->isRecordHead = 0;
 	symbol->next = NULL;
 
 	return symbol;
@@ -109,17 +111,23 @@ void setSymbolSize(Symbol *s)
 	if (!getTypeSym(s)) return;
 	switch (s->kind) {
 	case CONST_KIND:
+		/* fall through */
 	case VAR_KIND:
 		s->size = getTypeSym(s)->size;
 		break;
 	case PROC_KIND:
+		/* fall through */
 	case FUNC_KIND:
 		/* Procs and Func symbols have no size */
 		s->size = -1;
 		break;
 	case TYPE_KIND:
-		s->size = calculateSymbolSize(s);
+	{
+		/* We do not set the size for record types as at this point
+		 * we have lost the information we need to do so correctly */
+		if (getType(s) != RECORD_T) s->size = calculateSymbolSize(s);
 		break;
+	}
 	default:
 		/* NOT REACHED */
 		break;  

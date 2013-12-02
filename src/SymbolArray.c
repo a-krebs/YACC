@@ -42,6 +42,7 @@ struct Error *e;
 Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 	Symbol *arrayTypeSym = NULL;
 	Symbol *indexTypeSym = NULL;
+	Symbol *returnTypeSym = NULL;
 	Symbol *arg = indices;
 	int typeErr = 0;
 
@@ -100,8 +101,11 @@ Symbol *isValidArrayAccess(ProxySymbol *var, ProxySymbol *indices) {
 		recordError("Illegal array access -- too many indices.",
 		    yylineno, colno, SEMANTIC);
 		return NULL;
-	} 
-	return arrayTypeSym;
+	}
+
+	returnTypeSym = newProxySymFromSym(arrayTypeSym);
+	returnTypeSym->isAddress = 1;
+	return returnTypeSym;
 }
 
 
@@ -152,6 +156,63 @@ Symbol *getArrayBaseSym(Symbol *s)
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
 	return getTypePtr(s)->Array->baseTypeSym;
+
+}
+
+/*
+ * Returns the length of the given array symbol.
+ * Parameters
+ *		s : a symbol with type == ARRAY_T whose length is to be
+ *		    calculated
+ */
+int getArrayLength(Symbol *s)
+{
+	return (getArrayHighIndexValue(s) - getArrayLowIndexValue(s));
+}
+
+/*
+ * Returns the upper bound on the index value of the given array symbol.
+ * Parameters
+ *		arrayType : a symbol with type == ARRAY_T whose index upper
+ *		    upper bound is to be calculated
+ */
+int getArrayHighIndexValue(Symbol *arrayType)
+{
+	Symbol *indexType = NULL;
+
+	indexType = getTypePtr(arrayType)->Array->indexTypeSym;
+
+	if (getType(indexType) == SUBRANGE_T) {
+		return getTypePtr(indexType)->Subrange->high;
+	} else return ((getTypePtr(indexType)->Scalar->consts->nElements) - 1);
+}
+
+/*
+ * Returns the lower  bound on the index value of the given array symbol.
+ * Parameters
+ *		arrayType : a symbol with type == ARRAY_T whose index upper
+ *		    lower bound is to be calculated
+ */
+int getArrayLowIndexValue(Symbol *arrayType)
+{
+	Symbol *indexType = NULL;
+	if (!arrayType) {
+		fprintf(stderr, "Trying to get low index value of a NULL symbol"
+		    ".\n");
+		exit(1);
+	}
+
+	if (getType(arrayType) != ARRAY_T) {
+		fprintf(stderr, "Trying to low index value of a symbol which is"
+		    " not an array\n");
+		exit(1);
+	}
+
+	indexType = getTypePtr(arrayType)->Array->indexTypeSym;
+
+	if (getType(indexType) == SUBRANGE_T) {
+		return getTypePtr(indexType)->Subrange->low;
+	} else return 0;	/* else, indexed by scalar list, low val = 0 */ 
 
 }
 

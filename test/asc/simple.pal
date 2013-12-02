@@ -1,0 +1,14 @@
+program test(input, output);
+var
+	i,d ,e, w : integer;
+
+procedure pad( a : integer; b : integer );
+begin
+end;
+
+begin
+	i := 5;
+	pad(i, 10)
+end.
+
+

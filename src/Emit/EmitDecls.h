@@ -26,8 +26,8 @@ extern int doNotEmit;
 void emitConstDecl(Symbol *);
 void emitIntConstDecl(Symbol *, int);
 void emitRealConstDecl(Symbol *, float);
+void emitStringConstDecl(Symbol *);
 
 /* Variable declaration emission function */
 void emitVarDecl(Symbol *);
-
 #endif

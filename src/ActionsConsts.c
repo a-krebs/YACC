@@ -9,6 +9,7 @@
 #include "Globals.h"
 #include "Hash.h"
 #include "PreDef.h"
+#include "Emit.h"
 #include "Type.h"
 #include "SymbolAll.h"
 #include "Utils.h"
@@ -33,8 +34,12 @@
  */
 ProxySymbol *proxyIntLiteral(int value) {
 	Symbol *integerType = getPreDefInt(preDefTypeSymbols);
+	Symbol *newConstProxy = NULL;
 	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, &value, integerType); 
+	newConstProxy =  newConstProxySym(NULL, &value, integerType);
+
+//	emitPushAnonConstValue(newConstProxy);
+	return newConstProxy; 
 }
 	
 	
@@ -44,17 +49,22 @@ ProxySymbol *proxyIntLiteral(int value) {
  */
 ProxySymbol *proxyRealLiteral(double value) {
 	Symbol *realType = getPreDefReal(preDefTypeSymbols);
+	Symbol *newConstProxy = NULL;
 	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, &value, realType);
+	newConstProxy =  newConstProxySym(NULL, &value, realType);
+//	emitPushAnonConstValue(newConstProxy);
+	return newConstProxy;
 }
 
 
 ProxySymbol *proxyCharLiteral(struct String s) {
 	Symbol *charType = getPreDefChar(preDefTypeSymbols);
-	/* anonymous, so NULL id */
-	return newConstProxySym(NULL, s.str, charType);
-}
+	Symbol *newConstProxy = NULL;
 
+	newConstProxy = newConstProxySym(NULL, s.str, charType);
+//	emitPushAnonConstValue(newConstProxy);
+	return newConstProxy;
+}
 
 /*
  * Make a new anonymous symbol with the given string.
@@ -68,6 +78,7 @@ ProxySymbol *proxyCharLiteral(struct String s) {
  * 	a pointer to the hash symbol with kind CONST_KIND
  */
 Symbol *proxyStringLiteral(struct String s) {
+
 	Symbol *typeSym = NULL;
 	ProxySymbol *proxy = NULL;
 
@@ -80,5 +91,8 @@ Symbol *proxyStringLiteral(struct String s) {
 	/* add the type to the symbol table */
 	addToSymbolTable(symbolTable, typeSym);
 
+//	emitPushAnonConstValue(proxy);
+
 	return proxy;
 }
+

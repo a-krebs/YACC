@@ -4,6 +4,7 @@ int testAbs();
 int testArctan();
 int testChr();
 int testCos();
+int testDoArrayAssignment();
 int testExp();
 int testLn();
 int testPred();

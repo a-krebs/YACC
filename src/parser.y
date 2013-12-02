@@ -10,6 +10,7 @@
 #include "args.h"
 #include "SymbolAll.h"
 #include "ActionsAll.h"
+#include "Utils.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -62,12 +63,9 @@ program_head
 	  inDecl = 1; }
 ;
 
-// no | here since this is a list
 decls
-: const_decl_part
-  type_decl_part
-  var_decl_part
-  proc_decl_part
+: const_decl_part type_decl_part var_decl_part proc_decl_part
+  	{ exitDeclPart(); }
 | error
 ;
 
@@ -178,6 +176,7 @@ var_decl_part
 : VAR var_decl_list semicolon_or_error
 	{ exitVarDeclPart(); }
 |
+	{ exitVarDeclPart(); }
 ;
 
 var_decl_list
@@ -204,30 +203,40 @@ proc_decl_list
 
 proc_decl
 : proc_heading decls compound_stat semicolon_or_error
-	{ exitProcOrFuncDecl(); }
+	{ exitProcOrFuncDecl($<symbol>1); }
 | proc_heading semicolon_or_error
-	{ exitProcOrFuncDecl(); }
+	{ exitProcOrFuncDecl($<symbol>1); }
 ;
 
 proc_heading
-: PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
-| FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
-| FUNCTION ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, NULL); }
+: PROCEDURE proc_heading_proc
+	{ $<symbol>$ = $<symbol>2; } 
+| FUNCTION proc_heading_func
+	{ $<symbol>$ = $<symbol>2; } 
+;
 
-| PROCEDURE ID semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
+proc_heading_proc
+: ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterProcDecl($<id>1, $<elemarray>2); }
+| ID semicolon_or_error
+	{ $<symbol>$ = enterProcDecl($<id>1, NULL);
 	  yyerrok; }
-| FUNCTION ID semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
-	  yyerrok; }
-| PROCEDURE semicolon_or_error
-	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
-| FUNCTION semicolon_or_error
+| semicolon_or_error
 	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
 ;
+
+proc_heading_func
+: ID_or_err f_parm_decl COLON simple_type semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>1, $<elemarray>2, $<symbol>4); }
+| ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>1, $<elemarray>2, NULL); }
+| ID semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
+	  yyerrok; }
+| semicolon_or_error
+	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
+;
+
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
@@ -275,10 +284,19 @@ stat
 ;
 
 simple_stat
-: var ASSIGN expr
-	{ assignOp($<proxy>1, $<proxy>3); }
+: assigned_var ASSIGN expr
+	{ assignOp($<symbol>1, $<proxy>3); }
 | proc_invok
 | compound_stat
+;
+
+assigned_var
+: ID_or_err 
+	{ $<symbol>$ = variableAssignmentLookup($<id>1); }
+| var PERIOD ID_or_err 
+	{ $<symbol>$ = recordFieldAssignmentLookup($<proxy>1, $<id>3); }
+| subscripted_var RS_BRACKET 
+	{ $<symbol>$ = (Symbol *) $<proxy>1; }
 ;
 
 var
@@ -291,7 +309,6 @@ var
 | subscripted_var RS_BRACKET
 	{ $<proxy>$ = $<proxy>1; }
 ;
-
 
 subscripted_var
 : var LS_BRACKET subscripted_var_index_list
@@ -438,30 +455,71 @@ parm_list
 
 parm
 : expr
-	{ // TODO can we use the same action as for function decl?
-	  $<elemarray>$ = createArgList($<proxy>1); }
+	{ $<elemarray>$ = createArgList($<proxy>1); }
+;
+
+while_expr
+: expr
+	{ whileLoopCondCheck($<proxy>1); }
 ;
 
 struct_stat
-: IF expr THEN matched_stat ELSE stat
-| IF expr THEN stat
-| WHILE expr DO stat
+: if_part error then_matched_stat_part else_stat_part
+| if_part then_matched_stat_part else_stat_part
+| if_part then_stat_part
+| WHILE while_expr do_loop_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+do_loop_stat
+: DO stat
+	{ gotoLoopTop(); }
 ;
 
 matched_stat
 : simple_stat
-| IF expr THEN matched_stat ELSE matched_stat
-| WHILE expr DO matched_stat
+| if_part error then_matched_stat_part else_matched_stat_part
+| if_part then_matched_stat_part else_matched_stat_part
+| WHILE while_expr do_loop_matched_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+do_loop_matched_stat
+: DO matched_stat
+	{ gotoLoopTop(); }
+;
+
+if_part
+: IF expr
+	{ ifPart($<proxy>2); }
+;
+
+then_stat_part
+: THEN stat
+	{ thenStatPart(); }
+;
+
+then_matched_stat_part
+: THEN matched_stat
+	{ thenMatchedStatPart(); }
+;
+
+else_stat_part
+: ELSE stat
+	{ elseStatPart(); }
+;
+
+else_matched_stat_part
+: ELSE matched_stat
+	{ elseStatPart(); }
 ;
 
 comma_or_error

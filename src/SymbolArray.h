@@ -36,6 +36,11 @@ getArrayTerminalTypeSym(Symbol *s);
 Symbol *
 getArrayBaseSym(Symbol *s);
 
-
+int
+getArrayLength(Symbol *);
+int
+getArrayHighIndexValue(Symbol *);
+int
+getArrayLowIndexValue(Symbol *s);
 
 #endif

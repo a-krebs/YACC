@@ -29,6 +29,20 @@ static char *errMsg;
 
 
 /*
+ * Perform actions necessary once all declarations are finished.
+ */
+void exitDeclPart(void) {
+	emitBlankLine();
+	emitComment("Start of program, functions, or procedure:");
+	emitLabel(STMT_LEN, "%s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+
+	/* done with label, so pop */
+	popLabels(mainLabelStack);
+}
+
+
+/*
  * Capture program header definitions of input and output arguments.
  *
  * Arguments may be null if program contains errors.
@@ -67,10 +81,8 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 		addToSymbolTable(symbolTable, s);
 		/* Consts have a value and thus need an offset, so we set it */
 		setSymbolOffset(s, symbolTable);
+		emitConstDecl(s);
 	}
-	
-	/* Hey, everything went well.  Let's EMIT SOME COOOODE BAYBAY. */
-	emitConstDecl(s);
 }
 
 
@@ -124,7 +136,14 @@ void doTypeDecl(char *id, Symbol *type) {
  * Perform actions necessary when exiting variable dec section.
  */
 void exitVarDeclPart(void) {
-	// nothing to do here
+	/* reserve label for the next main */
+	reserveLabels(mainLabelStack, 1);
+
+	emitBlankLine();
+	emitComment("End of var decls, jump over any other proc or func decls");
+	emitStmt(STMT_LEN, "GOTO %s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+	emitBlankLine();
 }
 
 
@@ -146,11 +165,15 @@ Symbol *doVarDecl(char *id, Symbol *type) {
 	s = newVariableSym(id, type);
 	if (s) {
 		addToSymbolTable(symbolTable, s);
+		
 		/* Set the variables offset */
 		setSymbolOffset(s, symbolTable);
+		emitVarDecl(s);
+
+		/* If var is being declared to be a record type, then we know that
+		 * it is the record head and set the appropriate flag */
+		if (getType(type) == RECORD_T) s->isRecordHead = 1;
 	}
-	
-	emitVarDecl(s);
 
 	return type;
 }
@@ -161,11 +184,21 @@ Symbol *doVarDecl(char *id, Symbol *type) {
  *
  * This is a good time to pop lexical level.
  */
-void exitProcOrFuncDecl(void) {
+void exitProcOrFuncDecl(Symbol *symbol) {
 #if DEBUG
 	printf("Popping lex level at line %d, from %d to %d\n", yylineno,
 	    getCurrentLexLevel(symbolTable), getCurrentLexLevel(symbolTable)-1);
 #endif
+
+	if (symbol != NULL) {
+		if (symbol->kind == PROC_KIND) {	
+		 	emitEndProc(symbol);
+		}
+		else if (symbol->kind == FUNC_KIND)  {
+		 	emitEndFunc(symbol);
+		}
+	}
+
 	popLexLevel(symbolTable);
 }
 
@@ -186,7 +219,7 @@ void exitProcOrFuncDecl(void) {
 Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	Symbol *var = NULL;
-
+	
 	if (!id) {
 		/*Increament lex level to true to continue normally*/
 		incrementLexLevel(symbolTable);
@@ -243,6 +276,8 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 			recordError(errMsg, yylineno, colno, SEMANTIC);
 		}	
 	}
+
+	emitProcOrFuncDecl(s, ea);
 
 	return s;
 }
@@ -301,6 +336,9 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 			setParamOffset(var, ea);
 		}		
 	}
+
+	emitProcOrFuncDecl(s, ea);
+
 	return s;
 }
 

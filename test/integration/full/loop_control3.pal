@@ -1,0 +1,14 @@
+{}
+program test(in, out);
+begin
+	// with exits
+	while (1=1) do
+	begin
+		while (1=1) do
+			while (1=1) do
+				begin
+					exit;
+				end;
+		continue;
+	end;
+end.

@@ -52,7 +52,7 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
+		if (!areSameType(getTypeSym(passedParam), getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name,
@@ -99,7 +99,7 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < params->nElements; i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(passedParam, getTypeSym(expectedParam))) {
+		if (!areSameType(getTypeSym(passedParam), getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name, i,
@@ -166,13 +166,6 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	int i, nArgs, valid = 1;
 
 	nArgs = ea->nElements;
-
-	if (!nArgs) {
-		errMsg = customErrorString("Procedure %s cannot be "
-		    "called without any arguments.", s->name);
-		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return 0;
-	}
 
 	// TODO use is isElementArraySimple() to do type checking?
 	for (i = 0; i < nArgs; i++) {

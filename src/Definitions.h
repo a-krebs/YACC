@@ -106,7 +106,7 @@ struct Char {
 struct Function {
 	struct ParamArray *params;
 	struct Symbol  *returnTypeSym;
-
+	char *label;
 };
 
 /* integer constant */
@@ -118,6 +118,7 @@ struct Integer {
 /* procedure type */
 struct Procedure {
 	struct ParamArray *params;
+	char *label;
 };
 
 /* real constant */
@@ -186,10 +187,12 @@ struct ConstantKind {
 struct FunctionKind {
 	struct Symbol *typeSym;
 	struct ElementArray *params;
+	char *label;
 };
 
 struct ProcedureKind {
 	struct ElementArray *params;
+	char *label;
 };
 
 struct TypeKind {
@@ -220,6 +223,10 @@ struct Symbol {
 			 * display register) at which the variable appears */
 	int size;	/* the ASC memory units this symbol occupies in the
 			 * stack */
+	int isAddress; 	/* indicates that the value corresponding to the symbol 
+			 * that resides on the stack is an address */
+	int isRecordHead;/* flag indicating whether or not the symbol is the
+			  * "outmost" record in a record definition */
 	struct Symbol *next;	
 };
 

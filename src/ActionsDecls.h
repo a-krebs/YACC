@@ -2,6 +2,12 @@
 #define ACTION_DECLS_H
 
 /*
+ * Perform actions necessary once all declarations are finished.
+ */
+void exitDeclPart(void);
+
+	
+/*
  * Capture program header definitions of input and output arguments.
  *
  * Arguments may be null if program contains errors.
@@ -59,8 +65,7 @@ Symbol *doVarDecl(char *id, Symbol *type);
  *
  * This is a good time to pop lexical level.
  */
-void exitProcOrFuncDecl(void);
-
+void exitProcOrFuncDecl(Symbol *symbol);
 
 /*
  * Declare a new procedure with given arguments and perform anything
@@ -116,5 +121,8 @@ Symbol *createNewParm(char *id, Symbol *type);
  * Return a pointer to the new parameter.
  */
 Symbol *createNewVarParm(char *id, Symbol *type);
+
+
+
 
 #endif

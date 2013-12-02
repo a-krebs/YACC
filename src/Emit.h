@@ -8,6 +8,11 @@
 
 #include "Emit/EmitArithmetic.h"
 #include "Emit/EmitDecls.h"
-#include "Emit/EmitUtils.h"
+#include "Emit/EmitExprs.h"
+#include "EmitProcs.h"
+#include "EmitRelational.h"
+#include "EmitStructStat.h"
+#include "EmitToFile.h"
+#include "EmitUtils.h"
 
 #endif

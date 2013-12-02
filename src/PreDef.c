@@ -3,6 +3,15 @@
 #include "Kind.h"
 #include "SymbolAll.h"
 #include "Hash.h"
+#include "Emit.h"
+
+/*
+ * This module implements creation functions and accessor functions for
+ * pre-defined PAL constants, functions, procedures, and types.
+ *
+ * It is safe to emit code in this module by calling the various emit*()
+ * functions.
+ */
 
 Symbol *getPreDefBool(struct preDefTypeSymbols *preDefTypeSymbols) {
 	return preDefTypeSymbols->boolean;
@@ -158,15 +167,28 @@ int initializePreDefFunc() {
 int initializePreDefConstants() {
 	Symbol *symbol = NULL;
 
-	symbol = createNewBoolConst("true", 1);
+	emitBlankLine();
+	emitComment("#######################################################");
+	emitBlankLine();
+	emitComment("Pre-defined constants to follow");
+	emitBlankLine();
+	emitComment("#######################################################");
+	emitBlankLine();
+	
+	symbol = createNewBoolConst(TRUE_KEY, 1);
 	addToSymbolTable(symbolTable, symbol);
+	setSymbolOffset(symbol, symbolTable);
+	emitConstDecl(symbol);
 
-	symbol = createNewBoolConst("false", 0);
+	symbol = createNewBoolConst(FALSE_KEY, 0);
 	addToSymbolTable(symbolTable, symbol);
-
-	// TODO set max in value
-	symbol = createNewIntConst("maxint", 0);
+	setSymbolOffset(symbol, symbolTable);
+	emitConstDecl(symbol);
+	
+	symbol = createNewIntConst(MAXINT_KEY, ASC_MAX_INT);
 	addToSymbolTable(symbolTable, symbol);
+	setSymbolOffset(symbol, symbolTable);
+	emitConstDecl(symbol);
 
 	return 0;
 }
@@ -174,19 +196,9 @@ int initializePreDefConstants() {
 Symbol *createNewBoolConst(char *name, int val) {
 	Symbol *symbol = NULL;
 
-	symbol = calloc(1, sizeof(Symbol));
-	if (!symbol) {
-		err(1, "Failed to allocate memory for new const symbol!");
-		exit(EXIT_FAILURE);
-	}
-	setSymbolName(symbol, name);
-	symbol->kind = CONST_KIND;
-	allocateKindPtr(symbol);
-
+	symbol = createConstSymbol(name);
 	setInnerTypeSymbol(symbol, getPreDefBool(preDefTypeSymbols));
-
 	symbol->kindPtr.ConstKind->value.Boolean.value = val;
-	symbol->lvl = getCurrentLexLevel(symbolTable);
 
 	return symbol;
 }
@@ -194,19 +206,9 @@ Symbol *createNewBoolConst(char *name, int val) {
 Symbol *createNewIntConst(char *name, int val) {
 	Symbol *symbol = NULL;
 
-	symbol = calloc(1, sizeof(Symbol));
-	if (!symbol) {
-		err(1, "Failed to allocate memory for new const symbol!");
-		exit(EXIT_FAILURE);
-	}
-	setSymbolName(symbol, name);
-	symbol->kind = CONST_KIND;
-	allocateKindPtr(symbol);
-
+	symbol = createConstSymbol(name);
 	setInnerTypeSymbol(symbol, getPreDefInt(preDefTypeSymbols));
-
 	symbol->kindPtr.ConstKind->value.Integer.value = val;
-	symbol->lvl = getCurrentLexLevel(symbolTable);
 
 	return symbol;
 }

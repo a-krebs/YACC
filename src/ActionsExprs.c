@@ -30,20 +30,91 @@ static char *errMsg;
 
 
 /*
- * Perform assignment of x to y.
+ * Action which performs semantic analyis and code generation with the
+ * aim of assigned the symbol x the value of the proxysymbol y.
+ * Parameters
+ *		x : the symbol which is assigned a value
+ *		y : the proxysymbol of the value to assign to x
  */
-void assignOp(ProxySymbol *x, ProxySymbol *y) {
+void assignOp(Symbol *x, ProxySymbol *y) {
 	if (!(x) || !(y)) return;
 
 	if ( x->kind == CONST_KIND ) {
-		errMsg = customErrorString("The identifier %s is a constant and cannot be re-assigned a "
-			"value.", x->name);
+		errMsg = customErrorString("The identifier %s is a constant "
+		    " and cannot be re-assigned a value.", x->name);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	} 
 
-	isAssignmentCompat(getTypeSym(x), getTypeSym(y));
+	if (isAssignmentCompat(getTypeSym(x), getTypeSym(y))) {
+		emitAssignmentOp(x, y);
+	}
+
 }
 
+/*
+ * 
+ */
+Symbol * variableAssignmentLookup(char *id)
+{
+	Symbol *s = NULL;
+	s = getGlobalSymbol(symbolTable, id);
+	if (!s) {
+		notDefinedError(id);
+		return NULL;
+	}
+	emitComment("Pushing address of %s in preparation for assignment.",
+	    s->name);
+	emitPushVarAddress(s);
+	return s;
+}
+
+/*
+ *
+ *
+ */
+Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
+{
+	Symbol *s = NULL;
+	struct Record *r = NULL;
+
+	if ((!p) || (!id)) return NULL;
+
+	s = getTypeSym(p);
+	if (getType(s) != RECORD_T) {
+		errMsg = customErrorString("Cannot get field %s from %s. "
+		    "Identifier %s is not a record.", id, p->name, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+	
+	r = s->kindPtr.TypeKind->typePtr.Record;
+
+	s = getGlobalSymbol(r->hash, id);
+	if (!s) {
+		errMsg = customErrorString("Field %s does not exist in %s.",
+		    id, p->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return NULL;
+	}
+
+	emitComment("Pushing address of %s in preparation for assignment.",
+	    s->name);
+	emitPushRecordFieldAddress(p, s);
+	return newProxySymFromSym(s);
+}
+
+/*
+ * Calls the function to change the address resultant from the indexing
+ * operations into a value (in asc).
+ * TODO: determine if this action is still needed  
+ * Parameters
+ *		ps : the type resultant from the indexing operation, it
+ *		    is simply passed up the chain.
+ */
+ProxySymbol *pushArrayIndexValue(ProxySymbol *ps)
+{
+	return ps;
+}
 
 ProxySymbol *hashLookupToProxy(char *id) {
 	Symbol *s = NULL;
@@ -52,12 +123,16 @@ ProxySymbol *hashLookupToProxy(char *id) {
 		notDefinedError(id);
 		return NULL;
 	}
+	
 	return newProxySymFromSym(s);	
 }
 
-
 /*
- * id1 == name of record, id3 == name of field we are trying to access
+ * Creates a new proxy symbol dependent on the field in the record type p
+ * which was accessed.
+ * Parameters
+ *		p : the record to which the field id belongs
+ *		id : the id of the field that is to be accessed
  */
 ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 	Symbol *s = NULL;
@@ -82,6 +157,8 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
+
+	emitPushRecordFieldAddress(p, s);
 	return newProxySymFromSym(s);
 }
 
@@ -89,13 +166,25 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 /*
  * Access an array given the list of indexes.
  *
- * Return a ProxySymbol of the expected type.
+ * Return a ProxySymbol of kind VAR_KIND of the expected type.
  */
 ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
+
+	ProxySymbol *accessResultType = NULL;
+
 	/* Record specific errors in isValidArrayAccess */
 	if ((!indices) || (!var)) return NULL;	
-	return isValidArrayAccess((Symbol *) var, indices);
+	accessResultType = isValidArrayAccess((Symbol *) var, indices);
 
+	
+	/* It's in here that we have to set the offsets of these proxy symbols
+	 * such that the final symbol (e.g., the cumulative, non-array type
+	 * symbol resultant from all the indexing)
+	 */
+	if (accessResultType) {
+			emitArrayElementLocation(var, indices);
+	}
+	return accessResultType;
 }
 
 
@@ -112,12 +201,9 @@ ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
  * Return a pointer to a concatenated list.
  */
 ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
+	
 	Symbol *tmp;
-	/*
-	 * b/c we are parsing right to left, make list2 the head of the
-	 * linked list of proxy symbols
- 	 * TODO: confirm this with Aaron
-	 */
+
 	if ((!list1) && (!list2)) {
 		return NULL;
 	}
@@ -127,10 +213,17 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
 	if (!list2) {
 		return list1;
 	}
+
+	/*
+	 * Each time we call the function, list1 is the head of the list
+	 * of symbols that we have already created and list2 is the new symbol
+	 * to be appended to the end.  Thus, we iterate through the elements
+	 * of list1 to the last and append list2 to the end of the linked list
+	 * which starts at list1.
+	 */
 	tmp = list1;
 	while (tmp->next != NULL) tmp = tmp->next;
 	tmp->next = list2;
-
 	return list1;
 }
 
@@ -148,6 +241,7 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
 
 
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
+	ProxySymbol *ps = NULL; 
 
 	if ((!x) || (!y)) return NULL;	
 	
@@ -156,98 +250,127 @@ ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	 * with regard to insuring the propogation of a compile time
 	 * known funciton.
 	 */
-	return exprsOp(x, EQUAL ,y);
+	ps = exprsOp(x, EQUAL ,y);
 
-	/* Else, we have two CONST_KIND symbols.  We must evaluate */
-
-	return NULL;
+	if (ps) emitEqualsOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, NOT_EQUAL ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, NOT_EQUAL ,y);
+	if (ps) emitInequalityOp(x, y);
+	return ps;
 }
 
 
-ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {    
-	return exprsOp(x, LESS_OR_EQUAL ,y);
+ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, LESS_OR_EQUAL ,y);
+	if (ps) emitLTEOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, LESS ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, LESS ,y);
+	if (ps) emitLTOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, GREATER_OR_EQUAL ,y);
+	ProxySymbol *ps = NULL; 
+	ps exprsOp(x, GREATER_OR_EQUAL ,y);
+	if (ps) emitGTEOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, GREATER ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, GREATER ,y);
+	if (ps) emitGTOp(x, y);
+	return ps;
 }
 
 
 ProxySymbol *unaryPlusOp(ProxySymbol *y) {
+	// TODO emit
 	return exprsOp(NULL, PLUS, y);
 }
 
 
 ProxySymbol *unaryMinusOp(ProxySymbol *y) {
+	// TODO emit
 	return exprsOp(NULL, MINUS ,y);
 }
 
 
 ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
-
-	ProxySymbol *ps = exprsOp(x, PLUS ,y);
-			  
-	if (ps) {
-		emitAddition( (Symbol *) x, (Symbol *) y);
-		return ps;
-	} else {
-		return NULL;
-	}
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, PLUS ,y);			  
+	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);
+	return ps;
 }
 
 
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, MINUS ,y);
+	ProxySymbol *ps = NULL; 
+	ps exprsOp(x, MINUS ,y);
+	if (ps) emitSubtraction(x, y);
+	return ps;
 }
 
 
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
+	// TODO emit
 	return exprsOp(x, OR ,y);
 }
 
 
 ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, MULTIPLY ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, MULTIPLY ,y);
+	if (ps) emitMultiplication(x, y);
+	return ps;
 }
 
 
 ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, DIVIDE ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, DIVIDE ,y);
+	if (ps) emitDivision(x, y);
+	return ps; 
 }
 
 
 ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, DIV ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, DIV ,y);
+	if (ps) emitDivision(x, y);
+	return ps;
 }
 
 
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
-	return exprsOp(x, MOD ,y);
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, MOD ,y);
+	if (ps) emitMod(x, y);
+	return ps;
 }
 
 
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
+	// TODO emit
 	return exprsOp(x, AND ,y);
 }
 
 
 ProxySymbol *unaryNotOp(ProxySymbol *y) {
+	// TODO emit
 	return exprsOp(NULL, NOT ,y);
 }
 
