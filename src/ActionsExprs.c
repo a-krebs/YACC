@@ -419,6 +419,7 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
 		// TODO actually set values
+		constCalc(ps, x, opToken, y);
 		return ps;
 	} else {
 		return typeSym;
@@ -435,42 +436,47 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	
 	case EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-			//doStrEqCmp(ProxySymbol *x, ProxySymbol *y);
+		
+			setSimpleConstVal(ps,(double)doStrEqCmp(x,y));
 		} else {
 			setSimpleConstVal(ps, (double)doEqCmp(x,y));
 		}
 		
 	case NOT_EQUAL:	
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-			//doStrEqCmp(ProxySymbol *x, ProxySymbol *y);
+			setSimpleConstVal(ps,(double)!doStrEqCmp(x,y));
 		} else {
 			setSimpleConstVal(ps, (double)doNotEqCmp(x,y));
 		}
 		
 	case LESS_OR_EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-		
+			/* x str is less or equal y str */
+			intVal = (doStrLessCmp(x,y) || doStrEqCmp(x,y));
+			setSimpleConstVal(ps,(double)inVal);
 		} else {
 			setSimpleConstVal(ps, (double)doLessOrEqCmp(x,y));
 		}
 		
 	case LESS:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-		
+			setSimpleConstVal(ps,(double)doStrLessCmp(x,y));
 		} else {
 			setSimpleConstVal(ps,(double)doLessCmp(x,y));
 		}
 		
 	case GREATER_OR_EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-		
+			/* x str is greater or equal y str */
+			intVal = (doStrGtCmp(x,y) || doStrEqCmp(x,y));
+			setSimpleConstVal(ps,(double)inVal);	
 		} else {
 			setSimpleConstVal(ps,(double)doGtOrEqCmp(x,y));
 		}
 		
 	case GREATER:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-		
+			setSimpleConstVal(ps,(double)doStrGtCmp(x,y));
 		} else {
 			setSimpleConstVal(ps,(double)doGtCmp(x,y));
 		}
