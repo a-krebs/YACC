@@ -267,7 +267,7 @@ paramToVar(Symbol *param)
 	Symbol *typeSym = getTypeSym(param);
 	s = newVariableSym(param->name, typeSym);
 	if (!s) return NULL;
-	if (isByReference(param)) s->kindPtr.ParamKind->byRef = 1;
+	if (isByReference(param)) s->kindPtr.VarKind->byRef = 1;
 	return s;
 }
 

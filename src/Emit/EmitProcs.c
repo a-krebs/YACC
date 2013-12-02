@@ -118,6 +118,7 @@ int getSizeOfParams(Symbol *procOrFuncSymbol) {
 			|| type == CHAR_T 
 			|| type == INTEGER_T
 			|| type == REAL_T
+			|| type == SCALARINT_T
 			//include array because only want base
 			|| type == ARRAY_T ) 
 		{
@@ -249,6 +250,51 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 }
 
 
+/*
+ * Emit code to emit array symbol
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitArray(Symbol *arg, Symbol *param) {
+	int offset = arg->offset;	
+
+	if ( isByReference(param) ) {
+ 		emitStmt(STMT_LEN, "PUSH %d[%d]", param->offset, param->lvl); 
+ 		emitStmt(STMT_LEN, "PUSHI");	
+ 		return;		
+	}
+
+	//elese go throught each element in array and push onto stack
+	for (int i = 0; i < arg->size; ++i){
+		offset = arg->offset + i;
+		emitStmt(STMT_LEN, "PUSH %d[%d]", offset, arg->lvl); 
+	}
+}
+
+
+/*
+ * Gets the ElementArray for the paramters for a fucntion or
+ * procedure symbol
+ *
+ * Parameters: procOrFuncSymbol: symbol to func/proc
+ * 	
+ * Returns: ElementArray of paramters
+ */
+struct ElementArray *getProcOrFuncParams(Symbol *procOrFuncSymbol) {
+	struct ElementArray *params = NULL;
+
+	if (procOrFuncSymbol->kind == PROC_KIND) {	
+ 		params = procOrFuncSymbol->kindPtr.ProcKind->params;
+	}
+	else if (procOrFuncSymbol->kind == FUNC_KIND)  {
+		params = procOrFuncSymbol->kindPtr.FuncKind->params;
+	}
+
+	return params;
+}
+
 
 /*
  * Common code to emit functions and procedures invocation
@@ -258,23 +304,33 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  * Returns: void
  */
 void emitProcOrFuncInvokCommon(Symbol *symbol, 
-	struct ElementArray *params, char *label) 
+	struct ElementArray *args, char *label) 
 {
+	struct ElementArray *params = getProcOrFuncParams(symbol);
+	Symbol *arg = NULL;
 	Symbol *param = NULL;
 
  	/* Need to do this backwardss so parameters are in expected place on stack.
  	   i.e. First parameter at -3, second at -4, ect */
-	for (int i = params->nElements; i > 0 ; i--) {
+	for (int i = args->nElements; i > 0 ; i--) {
+        	arg = getElementAt(args, i - 1);
         	param = getElementAt(params, i - 1);
 
-		if ( param->kind == CONST_KIND ) {
-			emitPushAnonConstValue(param);	
+		if ( arg->kind == CONST_KIND ) {
+			emitPushAnonConstValue(arg);	
 		}
 		else {
-			emitPushSymbolValue(param);	
+			if (getType(arg) == ARRAY_T) {
+				emitArray(arg, param);
+			}
+			else {
+				emitPushSymbolValue(arg);		
+			}			
 		}                
         }
  
 	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
 }
+
+
 

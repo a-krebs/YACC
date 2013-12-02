@@ -125,4 +125,26 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 int getSizeOfParams(Symbol *procOrFuncSymbol);
 
 
+/*
+ * Emit code to emit array symbol
+ *
+ * Parameters: void.
+ * 	
+ * Returns: void
+ */
+void emitArray(Symbol *arg, Symbol *param);
+
+
+/*
+ * Gets the ElementArray for the paramters for a fucntion or
+ * procedure symbol
+ *
+ * Parameters: procOrFuncSymbol: symbol to func/proc
+ * 	
+ * Returns: ElementArray of paramters
+ */
+struct ElementArray *getProcOrFuncParams(Symbol *procOrFuncSymbol);
+
+
+
 #endif

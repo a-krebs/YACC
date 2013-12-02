@@ -1,14 +1,27 @@
 program test(input, output);
+type
+	a = array [1..10] of integer;
+
+	Books = record
+	   title: char;
+	   boo: char;
+	   bookid: integer
+	end;
+
+	DayOfWeek = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+
 var
 	i,d ,e, w : integer;
 
-procedure pad( a : integer; b : integer );
+{procedure pad( a : integer; b : integer ; c: integer );
+begin
+end;}
+
+procedure pad( arr: DayOfWeek );
 begin
 end;
 
 begin
 	i := 5;
-	pad(i, 10)
 end.
-
 
