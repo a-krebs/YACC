@@ -23,6 +23,9 @@ $(BIN)/EmitRelational.o: $(EMIT)/EmitRelational.c $(EMIT)/EmitRelational.h
 $(BIN)/EmitToFile.o: $(EMIT)/EmitToFile.c $(EMIT)/EmitToFile.h
 	$(COMPILE)
 
+$(BIN)/EmitLogical.o: $(EMIT)/EmitLogical.c $(EMIT)/EmitLogical.h
+	$(COMPILE)
+
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
 	$(COMPILE)
 
