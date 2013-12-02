@@ -74,6 +74,8 @@ void allocationErrorCheck(void *);
  */
 AnonConstVal *getConstVal(Symbol *);
 
+double getSimpleConstVal(Symbol *);
+
 /*
  * Makes a copy of the given AnonConstVal based on type -- used when
  * creating a const symbol from a proxy symbol.

@@ -170,6 +170,44 @@ getConstVal(Symbol *s)
 }
 
 /*
+ * Acquire the actual value of an anonymous constant symbol which is of a 
+ * simple type.
+ * WARNING: to be used only in calculating expressions resultant from
+ * constant symbols.
+ * Parameters
+ *    s : the const kind symbol whose value is to be returned
+ */
+
+double
+getSimpleConstVal(Symbol *s)
+{
+	if (!s) return 0;
+	
+	switch (getType(s)) {
+  
+	case BOOLEAN_T:
+		return (double)(getConstVal(s)->Boolean.value);
+    
+	case CHAR_T:
+		return (double)(getConstVal(s)->Char.value);
+
+	case INTEGER_T:
+		return (double)(getConstVal(s)->Integer.value);
+
+	case SCALARINT_T:
+		return (double)(getConstVal(s)->Integer.value);
+
+	case REAL_T:
+		return (double)(getConstVal(s)->Real.value);
+
+	default:
+    /* SHOULD NOT BE REACHED */
+	return 0;
+  }
+}
+
+
+/*
  * Makes a copy of the given AnonConstVal based on type -- used when
  * creating a const symbol from a proxy symbol.
  * 
