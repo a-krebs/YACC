@@ -431,35 +431,91 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	double doubleVal;
 	int intVal;
 	
-	if (getType(x)==INTEGER_T && getType(y)==INTEGER_T) {
-		 
-	} else if ( getType(x) == INTEGER_T && getType(y)==REAL_T){
+	switch (opToken) {
 	
-	
-	} else if ( getType(x) == REAL_T && getType(y)==REAL_T){
-	
-	
-	} else if ( getType(x) == STRING_T && getType(y) == STRING_T){
-	
-	
-	} else if ( getType(x) == BOOLEAN_T && getType(y) == BOOLEAN_T){
-	
-	
-	} else if ( getType(x) == CHAR_T && getType(y) == CHAR_T ) {
-	
-	
-	} else if ( x == NULL && getType(y) == REAL_T ) {
+	case EQUAL:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			//doStrEqCmp(ProxySymbol *x, ProxySymbol *y);
+		} else {
+			setSimpleConstVal(ps, (double)doEqCmp(x,y));
+		}
 		
-		= (double)doUnaryPlusOp(y);
-		= (double)doUnaryMinusOp(y);
+	case NOT_EQUAL:	
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			//doStrEqCmp(ProxySymbol *x, ProxySymbol *y);
+		} else {
+			setSimpleConstVal(ps, (double)doNotEqCmp(x,y));
+		}
 		
-	} else if ( x == NULL && getType(y) == INTEGER_T ){
+	case LESS_OR_EQUAL:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 		
-		= (int)doUnaryPlusOp(y);
-		= (int)doUnaryMinusOp(y);
-
-	} else if (x == NULL && getType(y) == BOOLEAN_T ){
-		doUnaryNegOp(y);
+		} else {
+			setSimpleConstVal(ps, (double)doLessOrEqCmp(x,y));
+		}
+		
+	case LESS:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+		
+		} else {
+			setSimpleConstVal(ps,(double)doLessCmp(x,y));
+		}
+		
+	case GREATER_OR_EQUAL:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+		
+		} else {
+			setSimpleConstVal(ps,(double)doGtOrEqCmp(x,y));
+		}
+		
+	case GREATER:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+		
+		} else {
+			setSimpleConstVal(ps,(double)doGtCmp(x,y));
+		}
+		
+	case MULTIPLY:
+		setSimpleConstVal(ps, (double)calcMult(x,y));
+		
+	case DIVIDE:
+		setSimpleConstVal(ps, (double)calcDivide(x,y));
+		
+	case DIV:
+		setSimpleConstVal(ps, (double)calcDiv(x,y));
+		
+	case MOD:
+		setSimpleConstVal(ps, (double)calcMod(x,y));
+		
+	case AND:
+		setSimpleConstVal(ps, (double)doAndOp(x,y));
+		
+	case OR:
+		setSimpleConstVal(ps, (double)doOrOp(x,y));
+		
+	case PLUS:
+		if ( x == NULL ){
+			/* x is supposed to be NULL if this is a unary op */
+			setSimpleConstVal(ps, (double)doUnaryPlusOp(y));
+		}else{
+			/* addition */
+			setSimpleConstVal(ps, (double)calcSum(y));
+		}
+		
+	case MINUS:
+		if ( x == NULL ){
+			/* x is supposed to be NULL if this is a unary op */
+			setSimpleConstVal(ps, (double)doUnaryMinusOp(y));
+		}else{
+			/* subtraction */
+			setSimpleConstVal(ps, (double)calcSub(x,y));
+		}
+		
+	case NOT:
+		if ( x == NULL) {
+			/* x is supposed to be NULL if this is a unary op */
+			setSimpleConstVal(ps, (double)doUnaryNegOp(y));
+		}
 	}
 }
 
@@ -513,6 +569,7 @@ doAndOp(ProxySymbol *x, ProxySymbol *y){
 	return (int)(getSimpleConstVal(x)) && 
 	(int)(getSimpleConstVal(y));
 }
+
 
 int
 doOrOp(ProxySymbol *x, ProxySymbol *y){

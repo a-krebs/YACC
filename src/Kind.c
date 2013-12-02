@@ -177,7 +177,6 @@ getConstVal(Symbol *s)
  * Parameters
  *    s : the const kind symbol whose value is to be returned
  */
-
 double
 getSimpleConstVal(Symbol *s)
 {
@@ -203,9 +202,43 @@ getSimpleConstVal(Symbol *s)
 	default:
     /* SHOULD NOT BE REACHED */
 	return 0;
-  }
+	}
 }
 
+/*
+ * Assigning the actual value of an anonymous constant symbol which is of a 
+ * simple type.
+ * WARNING: to be used only in calculating expressions resultant from
+ * constant symbols.
+ * Parameters
+ *		s : the const kind symbol whose value is to be returned
+ *		val : the result of calculation.	
+ */
+void
+setSimpleConstVal(Symbol *s,double val){
+	if (!s) return 0;
+	
+	switch (getType(s)) {
+  
+	case BOOLEAN_T:
+		getConstVal(s)->Boolean.value = (int)val;
+    
+	case CHAR_T:
+		getConstVal(s)->Char.value = (char)val;
+
+	case INTEGER_T:
+		getConstVal(s)->Integer.value = (int)val;
+
+	case SCALARINT_T:
+		getConstVal(s)->Integer.value = (int)val;
+
+	case REAL_T:
+		getConstVal(s)->Integer.value = (double)val;
+
+	default:
+    /* SHOULD NOT BE REACHED */
+	}
+}
 
 /*
  * Makes a copy of the given AnonConstVal based on type -- used when
