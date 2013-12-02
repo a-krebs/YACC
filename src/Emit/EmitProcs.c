@@ -118,6 +118,7 @@ int getSizeOfParams(Symbol *procOrFuncSymbol) {
 			|| type == CHAR_T 
 			|| type == INTEGER_T
 			|| type == REAL_T
+			|| type == SCALARINT_T
 			//include array because only want base
 			|| type == ARRAY_T ) 
 		{
@@ -271,7 +272,12 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			emitPushAnonConstValue(param);	
 		}
 		else {
-			emitPushSymbolValue(param);	
+			if (getType(param) == ARRAY_T) {
+				emitPushVarAddress(param);
+			}
+			else {
+				emitPushSymbolValue(param);		
+			}			
 		}                
         }
  
