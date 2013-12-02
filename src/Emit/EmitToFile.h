@@ -11,8 +11,11 @@
 #include <string.h>
 
 #include "StmtLL.h"
-#include "EmitUtils.h"
+#include "Emit.h"
 #include "PreDefAsc.h"
+#include "PreDef.h"
+#include "Hash.h"
+#include "Globals.h"
 
 #define USER_PROG_START_LABEL "MAIN"
 
@@ -34,7 +37,7 @@ int emitToFile(char *fileName);
 /*
  * Emit the pre-defined ASC functions.
  */
-void emitPreDefs();
+void emitPreDefCode();
 
 
 /*
