@@ -137,7 +137,7 @@ void emitPushAnonConstValue(Symbol *s)
 		    getConstVal(s)->Integer.value);
 		break;
 	case REAL_T:
-		emitStmt(STMT_LEN, "CONSTI %f",
+		emitStmt(STMT_LEN, "CONSTR %f",
 		    getConstVal(s)->Real.value);
 		break;
 	case SCALARINT_T:

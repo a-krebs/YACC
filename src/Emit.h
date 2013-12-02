@@ -15,5 +15,6 @@
 #include "Emit/EmitStructStat.h"
 #include "Emit/EmitToFile.h"
 #include "Emit/EmitUtils.h"
+#include "Emit/EmitUnary.h"
 
 #endif

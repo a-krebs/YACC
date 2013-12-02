@@ -16,11 +16,7 @@
 
 #define BOOLEAN_OPERATION 1
 
-void emitEqualsOp(Symbol *, Symbol *);
-void emitInequalityOp(Symbol *, Symbol *);
-void emitLTEOp(Symbol *, Symbol *);
-void emitLTOp(Symbol *, Symbol *);
-void emitGTEOp(Symbol *, Symbol *);
-void emitGTOp(Symbol *, Symbol *);
+void emitAnd(Symbol *, Symbol *);
+void emitOr(Symbol *, Symbol *);
 
 #endif

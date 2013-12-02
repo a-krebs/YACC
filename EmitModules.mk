@@ -26,6 +26,9 @@ $(BIN)/EmitToFile.o: $(EMIT)/EmitToFile.c $(EMIT)/EmitToFile.h
 $(BIN)/EmitLogical.o: $(EMIT)/EmitLogical.c $(EMIT)/EmitLogical.h
 	$(COMPILE)
 
+$(BIN)/EmitUnary.o: $(EMIT)/EmitUnary.c $(EMIT)/EmitUnary.h
+	$(COMPILE)
+
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h
 	$(COMPILE)
 

@@ -20,7 +20,7 @@ OBJS+=		$(BIN)/ActionsStructStat.o $(BIN)/ActionsTypes.o
 OBJS+=		$(BIN)/StmtLL.o
 OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
 OBJS+=		$(BIN)/EmitExprs.o $(BIN)/EmitRelational.o $(BIN)/EmitLogical.o
-OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o 
+OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o $(BIN)/EmitUnary.o 
 OBJS+=		$(BIN)/EmitToFile.o
 OBJS+=		$(BIN)/PreDefAsc.o
 

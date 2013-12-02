@@ -336,8 +336,12 @@ ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps =  newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), OR, getTypeSym((Symbol *)y)));
+
+	if (ps) emitOr(x, y);
+
+	return ps;
 }
 
 
@@ -379,14 +383,20 @@ ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(getTypeSym(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
 	    (Symbol *) x), AND, getTypeSym((Symbol *)y)));
+
+	if (ps) emitAnd(x, y);
+	return ps;
 }
 
 
 ProxySymbol *unaryNotOp(ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(
+	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(
 	    NULL, NOT, getTypeSym((Symbol *)y)));
+
+	if (ps) ;
+	return ps;
 }
 
 
