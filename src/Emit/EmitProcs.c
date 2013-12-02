@@ -251,13 +251,13 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 
 
 /*
- * Emit code to emit array symbol
+ * Emit code to emit structure type symbols: arrays, records, emuns
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-void emitArray(Symbol *arg, Symbol *param) {
+void emitStructuredType(Symbol *arg, Symbol *param) {
 	int offset = arg->offset;	
 
 	if ( isByReference(param) ) {
@@ -272,30 +272,6 @@ void emitArray(Symbol *arg, Symbol *param) {
 		emitStmt(STMT_LEN, "PUSH %d[%d]", offset, arg->lvl); 
 	}
 }
-
-
-/*
- * Emit code to emit array symbol
- *
- * Parameters: void.
- * 	
- * Returns: void
- */
-// void emitRecord(Symbol *arg, Symbol *param) {
-// 	int offset = arg->offset;	
-
-// 	if ( isByReference(param) ) {
-//  		emitStmt(STMT_LEN, "PUSH %d[%d]", param->offset, param->lvl); 
-//  		emitStmt(STMT_LEN, "PUSHI");	
-//  		return;		
-// 	}
-
-// 	//elese go throught each element in array and push onto stack
-// 	for (int i = 0; i < arg->size; ++i){
-// 		offset = arg->offset + i;
-// 		emitStmt(STMT_LEN, "PUSH %d[%d]", offset, arg->lvl); 
-// 	}
-// }
 
 
 /*
@@ -344,12 +320,11 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			emitPushAnonConstValue(arg);	
 		}
 		else {
-			if (getType(arg) == ARRAY_T) {
-				emitArray(arg, param);
+			if ( getType(arg) == ARRAY_T
+				|| getType(arg) == RECORD_T ) 
+			{
+				emitStructuredType(arg, param);
 			}
-			else if (getType(arg) == RECORD_T) {
-				emitArray(arg, param);
-			}			
 			else {
 				emitPushSymbolValue(arg);		
 			}			
