@@ -234,14 +234,14 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  	emitComment("Start function invocation '%s':", symbol->name);	
 
  	//TODO fix this, this should be done for both proc and func
- 	for (int i = params->nElements; i > 0 ; i--) {
- 		param = getElementAt(params, i - 1);
+ 	// for (int i = params->nElements; i > 0 ; i--) {
+ 	// 	param = getElementAt(params, i - 1);
 
- 		if ( param->kind == CONST_KIND ) {
- 			emitComment("NOT READY FOR CONST");	
- 			emitStmt(STMT_LEN, "ADJUST -1");
- 		}
- 	}
+ 	// 	if ( param->kind == CONST_KIND ) {
+ 	// 		emitComment("NOT READY FOR CONST");	
+ 	// 		emitStmt(STMT_LEN, "ADJUST -1");
+ 	// 	}
+ 	// }
 
  	//make room for return value
 	emitStmt(STMT_LEN, "CONSTI 0");
@@ -310,11 +310,16 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	Symbol *arg = NULL;
 	Symbol *param = NULL;
 
+	int num = args->nElements;
+	printf("%d\n", num);
+
  	/* Need to do this backwardss so parameters are in expected place on stack.
  	   i.e. First parameter at -3, second at -4, ect */
 	for (int i = args->nElements; i > 0 ; i--) {
         	arg = getElementAt(args, i - 1);
-        	param = getElementAt(params, i - 1);
+        	if ( arg == NULL ) {
+			continue;
+		}
 
 		if ( arg->kind == CONST_KIND ) {
 			emitPushAnonConstValue(arg);	
@@ -323,6 +328,10 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			if ( getType(arg) == ARRAY_T
 				|| getType(arg) == RECORD_T ) 
 			{
+				if (params == NULL) {
+					continue;
+				}
+				param = getElementAt(params, i - 1);
 				emitStructuredType(arg, param);
 			}
 			else {
