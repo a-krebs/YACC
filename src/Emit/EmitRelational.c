@@ -10,6 +10,11 @@ lational operations.
 static void emitRelationalOperandValue(Symbol *);
 static void emitRelationalPrep(Symbol *, Symbol *, int *);
 static void emitRelationalSimpleTypeConversion(Symbol *, Symbol *, int *);	
+static void emitBackdoorGTOp(Symbol *, Symbol *, int);
+static void emitBackdoorLTOp(Symbol *, Symbol *, int);
+static void emitBackdoorGTEOp(Symbol *, Symbol *, int);
+static void emitBackdoorLTEOp(Symbol *, Symbol *, int);
+
 
 /*
  * Performs conversion of the given simple types as necessary in order to
@@ -183,6 +188,19 @@ void emitLTOp(Symbol *x, Symbol *y) {
 	int opType;
 	emitRelationalPrep(x, y, &opType);
 
+	/* DA HACK:
+	 * If the RHS operand is a type and the LHS operand is not, then the
+	 * value of the RHS operand exists on the stack but the value of
+	 * the LHS operand does not.  The value of LHS operand will be pushed
+	 * on top of the RHS operator, which will produce incorrect results
+	 * as the '<' operator is non-commutative.  To get the correct result
+	 * from the operation, we change the operator to a '>'
+	 */
+	if ( (x->kind != TYPE_KIND) && (y->kind == TYPE_KIND) ) {
+		emitBackdoorGTOp(x, y, opType);
+		return;
+	}
+
 	switch (opType) {
 	case INTEGER_OPERATION:
 		emitStmt(STMT_LEN, "LTI");
@@ -220,6 +238,19 @@ void emitLTEOp(Symbol *x, Symbol *y)
 	int opType;
 	emitRelationalPrep(x, y, &opType);
 
+	/*
+	 * If the RHS operand is a type and the LHS operand is not, then the
+	 * value of the RHS operand exists on the stack but the value of
+	 * the LHS operand does not.  The value of LHS operand will be pushed
+	 * on top of the RHS operator, which will produce incorrect results
+	 * as the '<=' operator is non-commutative.  To get the correct result
+	 * from the operation, we change the operator to a '>='
+	 */
+	if ( (x->kind != TYPE_KIND) && (y->kind == TYPE_KIND) ) {
+		emitBackdoorGTEOp(x, y, opType);
+		return;
+	}
+	
 	switch(opType) {
 	/* x <= y <=> NOT(x > y) */
 	case INTEGER_OPERATION:
@@ -255,7 +286,6 @@ void emitLTEOp(Symbol *x, Symbol *y)
 	}
 }
 
-
 /*
  * Emits asc code to perform x > y operation.
  */
@@ -263,12 +293,114 @@ void emitGTOp(Symbol *x, Symbol *y) {
 	int opType;
 	emitRelationalPrep(x, y, &opType);
 
+	/* 
+	 * If the RHS operand is a type and the LHS operand is not, then the
+	 * value of the RHS operand exists on the stack but the value of
+	 * the LHS operand does not.  The value of LHS operand will be pushed
+	 * on top of the RHS operator, which will produce incorrect results
+	 * as the '>' operator is non-commutative.  To get the correct result
+	 * from the operation, we change the operator to a '<'.
+	 */
+	if ( (x->kind != TYPE_KIND) && (y->kind == TYPE_KIND) ) {
+		emitBackdoorLTOp(x, y, opType);
+		return;
+	}
+
 	switch (opType) {
 	case INTEGER_OPERATION:
+		emitStmt(STMT_LEN, "GTI");
+		break;
+	case REAL_OPERATION:
+		emitStmt(STMT_LEN, "GTR");
+		break;
+	case STRUCTURED_OPERATION:
+		
+		emitComment("We are performing 'gt' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_gt_op");
+
+		emitComment("__do_str_gt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");
+break;
+	case NO_OP:
+		/* Nothing to do */
+		break;
+	}
+}
+
+
+/*
+ * Emits asc code to perform x >= y operation.
+ */
+void emitGTEOp(Symbol *x, Symbol *y)
+{
+	int opType;
+	emitRelationalPrep(x, y, &opType);
+
+	/* 
+	 * If the RHS operand is a type and the LHS operand is not, then the
+	 * value of the RHS operand exists on the stack but the value of
+	 * the LHS operand does not.  The value of LHS operand will be pushed
+	 * on top of the RHS operator, which will produce incorrect results
+	 * as the '<=' operator is non-commutative.  To get the correct result
+	 * from the operation, we change the operator to a '<='.
+	 */
+	if ( (x->kind != TYPE_KIND) && (y->kind == TYPE_KIND) ) {
+		emitBackdoorLTEOp(x, y, opType);
+		return;
+	}
+
+	switch(opType) {
+	/* x >= y <=> NOT(x < y) */
+	case INTEGER_OPERATION:
 		emitStmt(STMT_LEN, "LTI");
+		emitStmt(STMT_LEN, "NOT");
 		break;
 	case REAL_OPERATION:
 		emitStmt(STMT_LEN, "LTR");
+		emitStmt(STMT_LEN, "NOT");
+		break;
+	case STRUCTURED_OPERATION:
+		
+		emitComment("We are performing 'gte' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation");
+		emitComment("We perform x < y operation, then negate the "
+		    "result");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_lt_op");
+
+		emitComment("__do_str_lt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");
+		emitStmt(STMT_LEN, "NOT");	
+		break;
+	case NO_OP:
+		/* Nothing to do */
+		break;
+	}
+}
+
+/*
+ * Forgive me, Father.  For I have sinned.
+ */
+static void emitBackdoorGTOp(Symbol *x, Symbol *y, int opType)
+{
+	switch (opType) {
+	case INTEGER_OPERATION:
+		emitStmt(STMT_LEN, "GTI");
+		break;
+	case REAL_OPERATION:
+		emitStmt(STMT_LEN, "GTR");
 		break;
 	case STRUCTURED_OPERATION:
 		
@@ -290,17 +422,83 @@ void emitGTOp(Symbol *x, Symbol *y) {
 		/* Nothing to do */
 		break;
 	}
+	
+} 
+
+static void emitBackdoorLTOp(Symbol *x, Symbol *y, int opType)
+{
+	switch (opType) {
+	case INTEGER_OPERATION:
+		emitStmt(STMT_LEN, "LTI");
+		break;
+	case REAL_OPERATION:
+		emitStmt(STMT_LEN, "LTR");
+		break;
+	case STRUCTURED_OPERATION:
+	
+		emitComment("We are performing 'eq' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation ");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_lt_op");
+
+		emitComment("__do_str_lt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");	
+
+		break;
+	case NO_OP:
+		/* Nothing to do */
+		break;
+	}
 }
 
 
-/*
- * Emits asc code to perform x >= y operation.
- */
-void emitGTEOp(Symbol *x, Symbol *y)
+static void emitBackdoorLTEOp(Symbol *x, Symbol *y, int opType)
 {
-	int opType;
-	emitRelationalPrep(x, y, &opType);
+	switch(opType) {
+	/* x <= y <=> NOT(x > y) */
+	case INTEGER_OPERATION:
+		emitStmt(STMT_LEN, "GTI");
+		emitStmt(STMT_LEN, "NOT");
+		break;
+	case REAL_OPERATION:
+		emitStmt(STMT_LEN, "GTR");
+		emitStmt(STMT_LEN, "NOT");
+		break;
+	case STRUCTURED_OPERATION:
+		
+		emitComment("We are performing 'LTE' op on two structured " 
+		    "types");
+		emitComment("We call a pre-defined function to do the"
+		    "operation");
+		emitComment("We perform x > y operation, then negate the "
+		    "result");
+		
+		emitStmt(STMT_LEN, "PUSH %d", getStrSymLen(x));
+		emitStmt(STMT_LEN, "CALL 0, __do_str_gt_op");
 
+		emitComment("__do_str_gt_op overwrote our first param, so we");
+		emitComment("only adjust -2");
+
+		emitStmt(STMT_LEN, "ADJUST -2");
+		emitStmt(STMT_LEN, "NOT");	
+
+		break;
+	case NO_OP:
+		/* Nothing to do */
+		break;
+	}
+}
+
+/*
+ *
+ */
+static void emitBackdoorGTEOp(Symbol *x, Symbol *y, int opType)
+{
 	switch(opType) {
 	/* x >= y <=> NOT(x < y) */
 	case INTEGER_OPERATION:
