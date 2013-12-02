@@ -67,6 +67,13 @@ void emitComment(char *, ...);
 void emitStmt(int len, char *, ...);
 void emitLabel(int len, char*, ...);
 
+
+/*
+ * Emits a blank line.
+ */
+void emitBlankLine();
+
+	
 /*
  * Reserve n labels.
  *

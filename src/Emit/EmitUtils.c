@@ -107,6 +107,14 @@ void emitStmt(int len, char *s, ...)
 	emitStr(&stmts, "\t\t", stmt, "\n");
 }
 
+
+/*
+ * Emits a blank line.
+ */
+void emitBlankLine() {
+	emitStr(&stmts, "", "", "\n");
+}
+
  
 /*  
  * Constructs the asc statement necessary to push the value of the variable 
