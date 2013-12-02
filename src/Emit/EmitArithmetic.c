@@ -167,9 +167,10 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 		 * to replace it with the value of x */
 		emitPushAddressValue(x);
 	} else if (x->kind == CONST_KIND) {
+
 		/* If x is an anonymous constant value, we have already placed
 		 * its value onto the stack.  Else, we need to push x's value */
-		if (x->name) emitPushSymbolValue(x);
+		emitPushSymbolValue(x);
 	}
 	  else if (x->kind != TYPE_KIND){
 		emitPushSymbolValue(x);

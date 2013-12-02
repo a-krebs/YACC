@@ -113,6 +113,17 @@ struct ElementArray *createArgList(Symbol *arg) {
 	growElementArray(ea);
 	appendElement(ea, arg);	
 
+	if (arg->kind == TYPE_KIND) {
+		/* if arg is a type kind, then it was resultant from an 
+		 * expression and so its value needs to be placed on 
+		 * the stack */
+		//TODO: potentially this is not enough, should make 
+		// function called pushArgValue() where you handle all the
+		// the cases and whether or not it is by value or by 
+		// ref and everything
+		emitPushSymbolValue(arg);
+	}	
+
 	return ea;
 }
 
