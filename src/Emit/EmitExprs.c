@@ -24,6 +24,8 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	arrayType = getTypeSym(arrayBase);
 
 	while (indices) {
+		/* Note that the calculation below handles the case of
+		 * negatives indices and indices of mixed sign */
 		emitComment("Pushing index_val - index_lowerbound_val for");
 		emitComment("location calculation.");
 		emitPushSymbolValue(indices);
