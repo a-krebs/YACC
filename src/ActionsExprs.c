@@ -240,18 +240,15 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
 }
 
 
+/*******************************************************************************
+ *
+ * 		Expression operator functions follow
+ *
+ ******************************************************************************/
+
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = NULL; 
-
-	if ((!x) || (!y)) return NULL;	
-	
-	/* 
-	 * If x or y is not a constant, we have no responsibility
-	 * with regard to insuring the propogation of a compile time
-	 * known funciton.
-	 */
 	ps = exprsOp(x, EQUAL ,y);
-
 	if (ps) emitEqualsOp(x, y);
 	return ps;
 }
@@ -283,7 +280,7 @@ ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
 
 ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = NULL; 
-	ps exprsOp(x, GREATER_OR_EQUAL ,y);
+	ps = exprsOp(x, GREATER_OR_EQUAL ,y);
 	if (ps) emitGTEOp(x, y);
 	return ps;
 }
@@ -298,14 +295,18 @@ ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *unaryPlusOp(ProxySymbol *y) {
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(NULL, PLUS, y);
 	// TODO emit
-	return exprsOp(NULL, PLUS, y);
+	return ps;
 }
 
 
 ProxySymbol *unaryMinusOp(ProxySymbol *y) {
+	ProxySymbol *ps = NULL;
+	ps = exprsOp(NULL, MINUS ,y);
 	// TODO emit
-	return exprsOp(NULL, MINUS ,y);
+	return ps;
 }
 
 
@@ -319,15 +320,17 @@ ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
 
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = NULL; 
-	ps exprsOp(x, MINUS ,y);
+	ps = exprsOp(x, MINUS ,y);
 	if (ps) emitSubtraction(x, y);
 	return ps;
 }
 
 
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, OR ,y);
 	// TODO emit
-	return exprsOp(x, OR ,y);
+	return ps;
 }
 
 
@@ -356,7 +359,7 @@ ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = NULL; 
+	ProxySymbol *ps = NULL;
 	ps = exprsOp(x, MOD ,y);
 	if (ps) emitMod(x, y);
 	return ps;
@@ -364,54 +367,64 @@ ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
 
 
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
+	ProxySymbol *ps = NULL;
+	ps = exprsOp(x, AND ,y);
 	// TODO emit
-	return exprsOp(x, AND ,y);
+	return ps;
 }
 
 
 ProxySymbol *unaryNotOp(ProxySymbol *y) {
-	// TODO emit
-	return exprsOp(NULL, NOT ,y);
-}
-
-
-ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
-
 	ProxySymbol *ps = NULL;
- 	
-	Symbol *sym_t = assertOpCompat(getTypeSym(
-	    (Symbol *) x), opToken, getTypeSym((Symbol *)y));
-	    
-	if (sym_t == NULL) {
-		return NULL;
-	}
-	
-	if ((x == NULL) || (y == NULL)){
-		/*
-		 * Add unary operation later
-		 */
-		return y;
-	
-	} else if ((x->kind == CONST_KIND) && (y->kind == CONST_KIND)) {
-		ps = (ProxySymbol *)createConstSymbol(NULL);
-		//ps->kindPtr.ConstKind->typeSym = sym_t;
-		setInnerTypeSymbol(ps,sym_t);
-		
-	} else {
-		ps = (ProxySymbol *)createVarSymbol(NULL);
-		//ps->kindPtr.ConstKind->typeSym = sym_t;
-		setInnerTypeSymbol(ps,sym_t);
-	} 
-
+	ps = exprsOp(NULL, NOT ,y);
+	// TODO emit
 	return ps;
 }
 
-ProxySymbol *calculate
-	(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
+/*
+ * Perform the operator action on the two operands.
+ * 
+ * Parameters:
+ * 	x: left-hand operand. Can be NULl for unary operators
+ * 	y: right-hand operand.
+ * 	opToken: operator token
+ * Retuns:
+ * 	A ProxySymbol of kind CONST_KIND if x and y are both constants,
+ * 	a ProxySymbol of kind TYPE_KIND if one of x or y is not constant,
+ * 	or NULL if the operands are not operator combatible.
+ */
+ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
+	ProxySymbol *ps = NULL;
+	Symbol *typeSym = NULL;
+
+	/* 
+	 * Get the type resulting from performing opToken on the two
+	 * operands
+	 */
+	typeSym = assertOpCompat(
+	    getTypeSym((Symbol *) x),
+	    opToken,
+	    getTypeSym((Symbol *)y));
 	
+	/* if assertOpCompat returned NULL, operands are not compatible. */
+	if (typeSym == NULL) return NULL;
 	
+	/* 
+	 * If x and y are both constants (or y is constant and operator is
+	 * unary) return a new ProxySymbol of kind CONST_KIND
+	 */
+	if ( ((x == NULL) && (y->kind == CONST_KIND )) 
+	    || ((x->kind == CONST_KIND) && (y->kind == CONST_KIND)) ) {
+		ps = (ProxySymbol *)createConstSymbol(NULL);
+		setInnerTypeSymbol(ps, typeSym);
+		// TODO actually set values
+		return ps;
+	} else {
+		return typeSym;
+	}
 }
 
+/*
 double
 calcSum(ProxySymbol *x, ProxySymbol *y){
 	return (double)(*getConstVal(x)) + (double)(*getConstVal(y));
@@ -540,7 +553,7 @@ doGtStrCmp(ProxySymbol *x, ProxySymbol *y){
 
 
 }
-
+*/
 
 /*
  * Check that the given types are compatible when using the given
