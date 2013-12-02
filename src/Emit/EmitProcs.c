@@ -251,13 +251,13 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 
 
 /*
- * Emit code to emit array symbol
+ * Emit code to emit structure type symbols: arrays, records, emuns
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-void emitArray(Symbol *arg, Symbol *param) {
+void emitStructuredType(Symbol *arg, Symbol *param) {
 	int offset = arg->offset;	
 
 	if ( isByReference(param) ) {
@@ -320,8 +320,10 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			emitPushAnonConstValue(arg);	
 		}
 		else {
-			if (getType(arg) == ARRAY_T) {
-				emitArray(arg, param);
+			if ( getType(arg) == ARRAY_T
+				|| getType(arg) == RECORD_T ) 
+			{
+				emitStructuredType(arg, param);
 			}
 			else {
 				emitPushSymbolValue(arg);		

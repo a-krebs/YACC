@@ -1,6 +1,6 @@
 program test(input, output);
 type
-	a = array [1..10] of integer;
+	//a = array [1..10] of integer;
 
 	Books = record
 	   title: char;
@@ -8,20 +8,25 @@ type
 	   bookid: integer
 	end;
 
-	DayOfWeek = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+	//DayOfWeek = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
 
 var
-	i,d ,e, w : integer;
+	//i,d ,e, w : integer;
+	//i : integer;
+	//r : real;
+	r : Books;
 
-{procedure pad( a : integer; b : integer ; c: integer );
-begin
-end;}
-
-procedure pad( arr: DayOfWeek );
+procedure pad( arr: Books );
 begin
 end;
 
 begin
-	i := 5;
+	r.bookid := 4;
+	r.boo := 'r';
+	r.title := 's';
+	//pad(r);
+	//i := 22;
+	//r := 44.3;
+	pad(r);
 end.
 
