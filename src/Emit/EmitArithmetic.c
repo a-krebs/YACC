@@ -155,6 +155,13 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
 
+
+	if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ) {
+		/* Both operands are constants => expr evaluated at the
+		 * semantic level */
+		*result = NO_OP;
+	}
+
 	if (x->isAddress) {
 		/* the value for x on top of the stack is an address, we need
 		 * to replace it with the value of x */
@@ -167,6 +174,8 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	  else if (x->kind != TYPE_KIND){
 		emitPushSymbolValue(x);
 	}
+
+
 	if (y->isAddress) {
 		/* the value for x on top of the stack is an address, we need
 		 * to replace it with the value of x */
@@ -236,8 +245,10 @@ void genericArithConstruct(Symbol *x, Symbol *y, char *opName,
 	if ( result == ARITHMETIC_RESULT_INTEGER) {
 		emitStmt(STMT_LEN, ascIntName);
 	}
-	else {
+	else if (result == ARITHMETIC_RESULT_REAL) {
 		emitStmt(STMT_LEN, ascRealName);
+	} else {
+		/* Two constant operands, nothing to do */
 	}
 }	
 

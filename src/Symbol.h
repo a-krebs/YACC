@@ -185,4 +185,6 @@ void setSymbolOffset(Symbol *, struct hash *);
  */
 void setParamOffset(Symbol *, struct ElementArray *);
 
+
+int getStrSymLen(Symbol *);
 #endif

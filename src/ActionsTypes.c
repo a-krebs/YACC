@@ -215,9 +215,6 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	if (!(lower) || !(upper)) return NULL;
 	s = newSubrangeSym((Symbol *) lower, (Symbol *) upper);
 	
-	/* When we get here, we have evaluated two const expressions
-	 * whose values we do not need.  We kick them off the stack */
-	emitStmt(STMT_LEN, "ADJUST -2");
 	return s;
 }
 

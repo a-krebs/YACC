@@ -10,6 +10,7 @@
 
 #include "Type.h"
 #include "Hash.h"
+#include "Kind.h"
 #include "SymbolArray.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -748,4 +749,26 @@ int isRealIntBool(type_t type) {
 	}
 
 	return 0;
+}
+
+/* 
+ * Given that the symbol s is an array of chars or a string literal, returns
+ * the length of the array/string.
+ * Parameters
+ *		s : the symbol (an array of chars or string literal) whose
+ *		    length is to be returned
+ */
+int getStrSymLen(Symbol *s)
+{
+	switch (getType(s)) {
+	case ARRAY_T:
+		return s->size;
+	case STRING_T:
+		return getConstVal(s)->String.strlen;
+	default:
+		/* Should not be reached */
+		fprintf(stderr, "Trying to get strlen of symbol which is not "
+		    "a string literal or an array of chars.\n");
+		exit(1);
+	}
 }

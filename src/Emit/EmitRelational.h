@@ -12,6 +12,7 @@
 //#include "parser.tab.h"
 #include "EmitExprs.h"
 #include "EmitUtils.h"
+#include "../Symbol.h"
 #include "../Type.h"
 
 #define INTEGER_OPERATION 0
