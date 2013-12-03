@@ -3,6 +3,11 @@
  * perform logical operations.
  */
 
+/*
+ * TODO: NO_OP cases are resultant from a previous and now incorrect design
+ * for this module.  These cases are no longer reached and should be removed.
+ */
+
 #include "EmitLogical.h"
 
 static void emitLogicalPrep(Symbol *, Symbol *, int *);

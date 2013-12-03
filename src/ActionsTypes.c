@@ -214,7 +214,12 @@ Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
 	Symbol *s = NULL;
 	if (!(lower) || !(upper)) return NULL;
 	s = newSubrangeSym((Symbol *) lower, (Symbol *) upper);
-	
+
+	emitComment("In parsing the low and high index of a subrange type for");
+	emitComment("an array declaration, we have left two useless expressions"
+	    " on the stack.");
+	emitStmt(STMT_LEN, "ADJUST -2");
+
 	return s;
 }
 

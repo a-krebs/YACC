@@ -155,38 +155,21 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
 
-
-	if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ) {
-		/* Both operands are constants => expr evaluated at the
-		 * semantic level */
-		*result = NO_OP;
-	}
-
 	if (x->isAddress) {
-		/* the value for x on top of the stack is an address, we need
-		 * to replace it with the value of x */
+		/* The value currently on top of the stack is an address, we 
+		 * need to replace it with the value referenced by &x */
 		emitPushAddressValue(x);
-	} else if (x->kind == CONST_KIND) {
-
-		/* If x is an anonymous constant value, we have already placed
-		 * its value onto the stack.  Else, we need to push x's value */
+	} else if (x->kind != TYPE_KIND){
 		emitPushSymbolValue(x);
 	}
-	  else if (x->kind != TYPE_KIND){
-		emitPushSymbolValue(x);
-	}
-
 
 	if (y->isAddress) {
-		/* the value for x on top of the stack is an address, we need
-		 * to replace it with the value of x */
+		/* The value currently on top of the stack is an address, we
+		 * need to replace it with the value referenced by &y */
 		emitStmt(STMT_LEN, "ADJUST -1");
 		emitPushAddressValue(y);
 		emitStmt(STMT_LEN, "ADJUST +1");
-	} else if (y->kind == CONST_KIND) {
-		/* If y is an anonymous constant value, we have already placed
-		 * its value onto the stack.  Else, we need to push y's value */
-		if (y->name) emitPushSymbolValue(y);
+
 	} else if (y->kind != TYPE_KIND){
 
 		emitPushSymbolValue(y);

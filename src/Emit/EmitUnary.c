@@ -12,8 +12,7 @@ static void emitUnaryPrep(Symbol *x, int *opType)
 	/* If x is a const, then its value has been calculated and propogated
  	 * in the semantic analysis portion of the compiler */
 	if (x->kind == CONST_KIND) {
-		/* Do nothing */
-		*opType = NO_OP;
+		emitPushSymbolValue(x);
 		return;
 	}
 
