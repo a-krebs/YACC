@@ -311,7 +311,6 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	Symbol *param = NULL;
 
 	int num = args->nElements;
-	printf("%d\n", num);
 
  	/* Need to do this backwardss so parameters are in expected place on stack.
  	   i.e. First parameter at -3, second at -4, ect */
