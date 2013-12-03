@@ -110,6 +110,9 @@ debug_hash: CFLAGS+= -g -DHASHDEBUG
 debug_hash: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug_hash: $(EXE)
 
+asc_simple: CFLAGS+= -g -DASC_SIMPLE
+asc_simple: $(EXE)
+
 # Build main using tokenTestParser.y to analyze lexical tokens
 lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
