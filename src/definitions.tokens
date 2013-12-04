@@ -5,10 +5,11 @@
       char *id;
       double real;
       int integer;
-	struct ElementArray *elemarray;
+      struct ElementArray *elemarray;
       Symbol *symbol;
       ProxySymbol *proxy;
-	void * voidtype;
+      void * voidtype;
+      struct treeNode *node;
 }
 
 /* id */
