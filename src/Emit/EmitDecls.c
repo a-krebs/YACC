@@ -48,6 +48,7 @@ void emitConstDecl(Symbol *s)
 		emitRealConstDecl(s, getConstVal(s)->Real.value);
 		break;
 	case STRING_T:
+		emitStringConstDecl(s);
 		break;
 	default:
 		/* Should not be reached */
@@ -72,6 +73,15 @@ void emitIntConstDecl(Symbol *s, int value)
 	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);
 }
 
+/*
+ * Creates asc statement necessary to make room on the stack for the given
+ * real constant and stores the value of the constant in the location
+ * allocated.
+ * Parameters:
+ *		s : the real constant symbol whose value is to be stored
+ *		value : the real value of the constant symbol s 
+ *
+ */
 void emitRealConstDecl(Symbol *s, float value)
 {
 	emitComment("Push const val = %f on stack, pop it into place.", value);
@@ -80,4 +90,10 @@ void emitRealConstDecl(Symbol *s, float value)
 }
 
 
+void emitStringConstDecl(Symbol *s)
+{
+	emitComment("Creating named string const decl %s", s->name);
+	emitPushAnonConstValue(s);
+	emitStmt(STMT_LEN, "POP %d[%d]", s->offset, s->lvl);
+}
 

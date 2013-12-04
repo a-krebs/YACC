@@ -330,7 +330,7 @@ ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = NULL; 
 	ps = exprsOp(x, OR ,y);
-	// TODO emit
+	if (ps) emitOr(x, y);
 	return ps;
 }
 
@@ -370,7 +370,7 @@ ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = NULL;
 	ps = exprsOp(x, AND ,y);
-	// TODO emit
+	if (ps) emitAnd(x, y);
 	return ps;
 }
 

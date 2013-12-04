@@ -31,7 +31,9 @@ int emitToFile(char *fileName) {
 	 * append pre-defined ASC code here, so that it's at the bottom
 	 * of the file
 	 */
+#ifndef ASC_SIMPLE
 	emitPreDefCode();
+#endif
 
 	/* write the emitted code to file */
 	writeStmtLL(ascfp, stmts);

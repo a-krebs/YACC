@@ -1,5 +1,6 @@
 #include "EmitExprs.h"
 
+extern int yylineno;
 
 /*
  * Given a list of indices and a base of array, this function emits the asc code
@@ -13,6 +14,8 @@
  *		indices : linked list of symbols of indices we are using to
  * 		    index the array
  */
+
+
 void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 {
 	Symbol *arrayType = NULL;
@@ -21,6 +24,8 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	arrayType = getTypeSym(arrayBase);
 
 	while (indices) {
+		/* Note that the calculation below handles the case of
+		 * negatives indices and indices of mixed sign */
 		emitComment("Pushing index_val - index_lowerbound_val for");
 		emitComment("location calculation.");
 		emitPushSymbolValue(indices);
@@ -77,10 +82,10 @@ void emitPushSymbolValue(Symbol *s)
 		break;
 	default:
 		/* Should not be reached */
-		fprintf(stderr, "Trying to push value of a symbol which is not"
-		    "of kind CONST_KIND or VAR_KIND. %s\n", s->name);
-		exit(1);
+		break;
 	}
+
+	
 }
 
 /*
@@ -134,7 +139,7 @@ void emitPushAnonConstValue(Symbol *s)
 		    getConstVal(s)->Integer.value);
 		break;
 	case REAL_T:
-		emitStmt(STMT_LEN, "CONSTI %f",
+		emitStmt(STMT_LEN, "CONSTR %f",
 		    getConstVal(s)->Real.value);
 		break;
 	case SCALARINT_T:

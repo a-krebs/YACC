@@ -5,8 +5,6 @@
 
 #include "EmitProcs.h"
 
-// printf("SIZE OF PARAMS: %d\n", getSizeOfParams(symbol));
-
 
 /*
  * Emit code to push procedure/function call onto the the stack.
@@ -228,20 +226,20 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 	CHECK_CAN_EMIT(symbol);
 	char * label = symbol->kindPtr.FuncKind->label;	
-	Symbol *param = NULL;
+	//Symbol *param = NULL;
 
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
 
- 	//TODO fix this, this should be done for both proc and func
- 	for (int i = params->nElements; i > 0 ; i--) {
- 		param = getElementAt(params, i - 1);
+ 	//TODO remove this if not needed. If needed it needs fixin'
+ 	// for (int i = params->nElements; i > 0 ; i--) {
+ 	// 	param = getElementAt(params, i - 1);
 
- 		if ( param->kind == CONST_KIND ) {
- 			emitComment("NOT READY FOR CONST");	
- 			emitStmt(STMT_LEN, "ADJUST -1");
- 		}
- 	}
+ 	// 	if ( param->kind == CONST_KIND ) {
+ 	// 		emitComment("NOT READY FOR CONST");	
+ 	// 		emitStmt(STMT_LEN, "ADJUST -1");
+ 	// 	}
+ 	// }
 
  	//make room for return value
 	emitStmt(STMT_LEN, "CONSTI 0");
@@ -251,13 +249,13 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 
 
 /*
- * Emit code to emit array symbol
+ * Emit code to emit structure type symbols: arrays, records, emuns
  *
  * Parameters: void.
  * 	
  * Returns: void
  */
-void emitArray(Symbol *arg, Symbol *param) {
+void emitStructuredType(Symbol *arg, Symbol *param) {
 	int offset = arg->offset;	
 
 	if ( isByReference(param) ) {
@@ -314,14 +312,22 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
  	   i.e. First parameter at -3, second at -4, ect */
 	for (int i = args->nElements; i > 0 ; i--) {
         	arg = getElementAt(args, i - 1);
-        	param = getElementAt(params, i - 1);
+        	if ( arg == NULL ) {
+			continue;
+		}
 
 		if ( arg->kind == CONST_KIND ) {
 			emitPushAnonConstValue(arg);	
 		}
 		else {
-			if (getType(arg) == ARRAY_T) {
-				emitArray(arg, param);
+			if ( getType(arg) == ARRAY_T
+				|| getType(arg) == RECORD_T ) 
+			{
+				if (params == NULL) {
+					continue;
+				}
+				param = getElementAt(params, i - 1);
+				emitStructuredType(arg, param);
 			}
 			else {
 				emitPushSymbolValue(arg);		

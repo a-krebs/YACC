@@ -214,7 +214,7 @@ int main( int argc, char *argv[] )
 		 * compiler.
 		 */
 		fprintf(stdout, "Did not generate .asc file, as the "
-		    "given .pal file contains errors.");
+		    "given .pal file contains errors.\n");
 	}
 
 	/* close file input file*/

@@ -132,7 +132,7 @@ int getSizeOfParams(Symbol *procOrFuncSymbol);
  * 	
  * Returns: void
  */
-void emitArray(Symbol *arg, Symbol *param);
+void emitStructuredType(Symbol *arg, Symbol *param);
 
 
 /*

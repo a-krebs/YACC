@@ -9,10 +9,12 @@
 #include "Emit/EmitArithmetic.h"
 #include "Emit/EmitDecls.h"
 #include "Emit/EmitExprs.h"
-#include "EmitProcs.h"
-#include "EmitRelational.h"
-#include "EmitStructStat.h"
-#include "EmitToFile.h"
-#include "EmitUtils.h"
+#include "Emit/EmitLogical.h"
+#include "Emit/EmitProcs.h"
+#include "Emit/EmitRelational.h"
+#include "Emit/EmitStructStat.h"
+#include "Emit/EmitToFile.h"
+#include "Emit/EmitUtils.h"
+#include "Emit/EmitUnary.h"
 
 #endif
