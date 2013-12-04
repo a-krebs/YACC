@@ -15,6 +15,8 @@
 #include "Utils.h"
 #include "ActionsAll.h"
 #include "Kind.h"
+#include "Tree.h"
+
 
 #ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
@@ -295,43 +297,56 @@ ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-ProxySymbol *unaryPlusOp(ProxySymbol *y) {
+struct treeNode *unaryPlusOp(struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(NULL, PLUS, y);
+	ps = exprsOp(NULL, PLUS, y->symbol);
+	
+	struct treeNode *node = createTreeNode(ps, PLUS, NULL, y);
 	// TODO emit
-	return ps;
+
+	return node;
 }
 
-
-ProxySymbol *unaryMinusOp(ProxySymbol *y) {
+struct treeNode *unaryMinusOp(struct treeNode  *y) {
 	ProxySymbol *ps = NULL;
-	ps = exprsOp(NULL, MINUS ,y);
+	ps = exprsOp(NULL, MINUS ,y->symbol);
+	struct treeNode *node = createTreeNode(ps, MINUS, NULL, y);
+
 	// TODO emit
-	return ps;
+	return node;
 }
 
 
-ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *plusOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, PLUS ,y);			  
-	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);
-	return ps;
+	ps = exprsOp(x->symbol, PLUS ,y->symbol);			  
+	//if (ps) emitAddition( (Symbol *) x, (Symbol *) y);
+
+	struct treeNode *node = createTreeNode(ps, PLUS, x, y);	
+
+	return node;
 }
 
 
-ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *minusOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, MINUS ,y);
-	if (ps) emitSubtraction(x, y);
-	return ps;
+	ps = exprsOp(x->symbol, MINUS ,y->symbol);
+	//if (ps) emitSubtraction(x, y);
+
+	struct treeNode *node = createTreeNode(ps, MINUS, x, y);	
+	
+	return node;
 }
 
 
-ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *orOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, OR ,y);
-	if (ps) emitOr(x, y);
-	return ps;
+	ps = exprsOp(x->symbol, OR, y->symbol);
+	//if (ps) emitOr(x, y);
+
+	struct treeNode *node = createTreeNode(ps, OR, x, y);	
+
+	return node;
 }
 
 

@@ -3,8 +3,9 @@
 #include <string.h>
 #include <err.h>
 
-#include "Tree.h"
 #include "Definitions.h"
+#include "Tree.h"
+
 
 
 /*
@@ -60,7 +61,7 @@ struct treeNode *createLeafNode(Symbol *symbol)
 {
 	struct treeNode *node = NULL;
 
-	node = createNodeCommon(symbol, 0, NULL, NULL);
+	node = createNodeCommon(symbol, NO_OPT, NULL, NULL);
 
 	return node;
 }

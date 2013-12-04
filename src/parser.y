@@ -11,6 +11,7 @@
 #include "SymbolAll.h"
 #include "ActionsAll.h"
 #include "Utils.h"
+#include "Tree.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -346,17 +347,17 @@ expr
 
 simple_expr
 : term
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | PLUS term
-	{ $<proxy>$ = unaryPlusOp($<proxy>2); }
+	{ $<node>$ = unaryPlusOp($<node>2); }
 | MINUS term
-	{ $<proxy>$ = unaryMinusOp($<proxy>2); }
+	{ $<node>$ = unaryMinusOp($<node>2); }
 | simple_expr PLUS term
-	{ $<proxy>$ = plusOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = plusOp($<node>1, $<node>3); }
 | simple_expr MINUS term
-	{ $<proxy>$ = minusOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = minusOp($<node>1, $<node>3); }
 | simple_expr OR term
-	{ $<proxy>$ = orOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = orOp($<node>1, $<node>3); }
 ;
 
 term
