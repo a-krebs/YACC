@@ -422,6 +422,7 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
 		constCalc(ps, x, opToken, y);
+		setConstResultFlag(ps);
 		return ps;
 	} else {
 		return typeSym;

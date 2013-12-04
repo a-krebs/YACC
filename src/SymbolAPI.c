@@ -112,7 +112,31 @@ void freeProxySymbol(ProxySymbol *p) {
 	free(p);
 }
 
+/*
+ * Checks whehter the given CONST_KIND symbol is a result of 
+ * constant calculation or not.
+ *
+ * Parameters:
+ *		ProxySymbol *s: MUST BE a CONST_KIND symbol !!!
+ *	
+ * Returns:  1: It is a result of const calculation.
+ *			0: It is not.
+ */
+int isConstResultSym(ProxySymbol *s){
+	assertKindPtr(s->kindPtr.ConstKind);
+	return s->kindPtr.ConstKind->constResultFlag;
+}
 
+/* 
+ * set the constResult flag to 1 
+ * 
+ * Parameters:
+ *		ProxySymbol *s: MUST BE a CONST_KIND symbol !!!
+ */
+void setConstResultFlag(ProxySymbol *s){
+	assertKindPtr(s->kindPtr.ConstKind);
+	s->kindPtr.ConstKind->constResultFlag = 1; 
+}
 /*
  * Returns a pointer to the Symbol of TYPE_KIND defining the type for the
  * given CONST_KIND, FUNC_KIND, PROC_KIND, or VAR_KIND symbol.
