@@ -5,8 +5,6 @@
 
 #include "EmitProcs.h"
 
-// printf("SIZE OF PARAMS: %d\n", getSizeOfParams(symbol));
-
 
 /*
  * Emit code to push procedure/function call onto the the stack.
@@ -228,12 +226,12 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 	CHECK_CAN_EMIT(symbol);
 	char * label = symbol->kindPtr.FuncKind->label;	
-	Symbol *param = NULL;
+	//Symbol *param = NULL;
 
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
 
- 	//TODO fix this, this should be done for both proc and func
+ 	//TODO remove this if not needed. If needed it needs fixin'
  	// for (int i = params->nElements; i > 0 ; i--) {
  	// 	param = getElementAt(params, i - 1);
 
@@ -309,8 +307,6 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	struct ElementArray *params = getProcOrFuncParams(symbol);
 	Symbol *arg = NULL;
 	Symbol *param = NULL;
-
-	int num = args->nElements;
 
  	/* Need to do this backwardss so parameters are in expected place on stack.
  	   i.e. First parameter at -3, second at -4, ect */
