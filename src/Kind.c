@@ -242,9 +242,10 @@ setSimpleConstVal(Symbol *s, double val){
 		break;
 		
 	default:
-		err(1,"This type of value can't be set to the symbol %s", typeToString(getType(s)));
-		exit(1);
-    	/* SHOULD NOT BE REACHED */
+    		/* SHOULD NOT BE REACHED */
+		err(EXIT_FAILURE,
+		    "This type of value can't be set to the symbol %s",
+		    typeToString(getType(s)));
 	}
 }
 
