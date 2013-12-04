@@ -1,13 +1,12 @@
-{22,19,53,156}
+{21,52}
 {
 	Cmput 415 - Team YACC
 	Tests general ability to properly parse function definitions, 
 	array defintions, loops and other flow control statements.
 
 	Errors:	- attempt to declare array bounds using anonymous scalar type
-		  on line 22
-		- define a procedure as having a return type, line 53
-		- extra parenthesis on line 156
+		  on line 21
+		- define a procedure as having a return type, line 52
 
 
 	Code skeleton cribbed from:
@@ -153,7 +152,7 @@ begin
       //(* HERE IS THAT PROCEDURE *)
       //(* When I put it here, the loop becomes endless *)
       //(* and I have to close the console (and lose all unsaved data) *)
-      Line((kar(204), kar(205), kar(203), kar(185));
+      //Line((kar(204), kar(205), kar(203), kar(185));
 
     end;
 

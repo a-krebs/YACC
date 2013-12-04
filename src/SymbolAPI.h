@@ -103,9 +103,27 @@ getSubrangeBaseTypeSym(Symbol *sr);
  */
 int isByReference(Symbol *);
 
+/*
+ * Checks whehter the given CONST_KIND symbol is a result of 
+ * constant calculation or not.
+ *
+ * Parameters:
+ *		ProxySymbol *s: MUST BE a CONST_KIND symbol !!!
+ *	
+ * Returns:  1: It is a result of const calculation.
+ *			0: It is not.
+ */
+int isConstResultSym(ProxySymbol *);
+
+/* 
+ * set the constResult flag to 1 
+ * 
+ * Parameters:
+ *		ProxySymbol *s: MUST BE a CONST_KIND symbol !!!
+ */
+void setConstResultFlag(ProxySymbol *);
 
 void freeProxySymbol(ProxySymbol *p);
-
 
 /*
  * Adds the given symbol to the symbol table supplied.
