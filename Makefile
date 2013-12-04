@@ -23,6 +23,7 @@ OBJS+=		$(BIN)/EmitExprs.o $(BIN)/EmitRelational.o $(BIN)/EmitLogical.o
 OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o $(BIN)/EmitUnary.o 
 OBJS+=		$(BIN)/EmitToFile.o
 OBJS+=		$(BIN)/PreDefAsc.o
+OBJS+=		$(BIN)/Tree.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -165,6 +166,9 @@ $(BIN)/StmtLL.o: $(SRC)/StmtLL.c $(SRC)/StmtLL.h
 	$(COMPILE)
 
 $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
+	$(COMPILE)	
+
+$(BIN)/Tree.o: $(SRC)/Tree.c $(SRC)/Tree.h
 	$(COMPILE)	
 
 include ActionModules.mk
