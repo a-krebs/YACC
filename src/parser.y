@@ -362,19 +362,19 @@ simple_expr
 
 term
 : factor
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | term MULTIPLY factor
-	{ $<proxy>$ = multOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = multOp($<node>1, $<node>3); }
 | term DIVIDE factor
-	{ $<proxy>$ = divideOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = divideOp($<node>1, $<node>3); }
 | term DIV factor
-	{ $<proxy>$ = divOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = divOp($<node>1, $<node>3); }
 | term MOD factor
-	{ $<proxy>$ = modOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = modOp($<node>1, $<node>3); }
 | term AND factor
-	{ $<proxy>$ = andOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = andOp($<node>1, $<node>3); }
 | error
-	{ $<proxy>$ = NULL; }
+	{ $<node>$ = createLeafNode(NULL); }
 ;
 
 factor

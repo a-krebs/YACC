@@ -64,11 +64,11 @@ struct treeNode *unaryMinusOp(struct treeNode *y);
 struct treeNode *plusOp(struct treeNode *x, struct treeNode *y);
 struct treeNode *minusOp(struct treeNode *x, struct treeNode *y);
 struct treeNode *orOp(struct treeNode *x, struct treeNode *y);
-ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y);
+struct treeNode *multOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *divideOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *divOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *modOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *andOp(struct treeNode *x, struct treeNode *y);
 struct treeNode *unaryNotOp(struct treeNode *y);
 /*
  * perform calculation based on given opToken
