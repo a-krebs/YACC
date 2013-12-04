@@ -63,8 +63,8 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 }
 
 /*
- * Emits the asc code necessary to push the value of the given symbol which is 
- * of kind VAR_KIND to top of the stack.
+ * Emits the asc code necessary to push the value of the given symbol to top of
+ * the stack.
  * Parameters
  * 		s : the symbol of kind VAR_KIND whose value is to be pushed
  *		     onto the stack
@@ -80,9 +80,23 @@ void emitPushSymbolValue(Symbol *s)
 	case VAR_KIND:
 		emitPushVarValue(s);
 		break;
+	case TYPE_KIND:
+		if (s->isAddress) {
+			/* 
+			 * If s is an address, then its value is on the
+			 * top of the stack and is resultant from some 
+			 * indexing/record dereference operation
+			 */
+			emitStmt(STMT_LEN, "PUSHI");
+		} else {
+			/* Else we don't want to push its value */
+		}	
+		break;
 	default:
 		/* Should not be reached */
-		break;
+		fprintf(stderr, "Trying to push value of a symbol which cannot "
+		    "possibly have a value.  Yylineno sez %d\n", yylineno);
+		exit(1);
 	}
 
 	
