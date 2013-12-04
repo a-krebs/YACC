@@ -238,7 +238,7 @@ setSimpleConstVal(Symbol *s, double val){
 		getConstVal(s)->Integer.value = (int)val;
 		break;
 	case REAL_T:
-		getConstVal(s)->Integer.value = (double)val;
+		getConstVal(s)->Real.value = (double)val;
 		break;
 		
 	default:
