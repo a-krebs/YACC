@@ -145,16 +145,18 @@ char *test_constCalc() {
 	mu_assert("constCalc MINUS failing",
 	    getConstVal(res)->Integer.value == -100);
 	
-	xType->kindPtr.TypeKind->type = REAL_T;
-	yType->kindPtr.TypeKind->type = INTEGER_T;
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = REAL_T;
 	resType->kindPtr.TypeKind->type = REAL_T;
 	
 	getConstVal(x)->Integer.value = 0;
-	getConstVal(y)->Integer.value = 100.10;
+	getConstVal(y)->Real.value = 100.10;
 	
 	constCalc(res, NULL, MINUS, y);
+	printf("res: %f\n", getConstVal(res)->Real.value);
 	mu_assert("constCalc MINUS failing",
-	    getConstVal(res)->Integer.value == -100.10);
+	    getConstVal(res)->Real.value == -100.10);
+
 	return NULL;
 }
 

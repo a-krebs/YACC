@@ -668,7 +668,7 @@ doUnaryPlusOp(ProxySymbol *y) {
 
 double
 doUnaryMinusOp(ProxySymbol *y) {
-	return 0-(double)(getSimpleConstVal(y));
+	return 0.0-(double)(getSimpleConstVal(y));
 }
 
 
