@@ -153,7 +153,6 @@ char *test_constCalc() {
 	getConstVal(y)->Real.value = 100.10;
 	
 	constCalc(res, NULL, MINUS, y);
-	printf("res: %f\n", getConstVal(res)->Real.value);
 	mu_assert("constCalc MINUS failing",
 	    getConstVal(res)->Real.value == -100.10);
 
