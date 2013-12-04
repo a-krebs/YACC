@@ -64,11 +64,11 @@ ProxySymbol *unaryMinusOp(ProxySymbol *y);
 ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y);
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y);
+struct treeNode *multOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *divideOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *divOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *modOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *andOp(struct treeNode *x, struct treeNode *y);
 ProxySymbol *unaryNotOp(ProxySymbol *y);
 /*
  * perform calculation based on given opToken

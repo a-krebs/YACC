@@ -335,11 +335,11 @@ ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-struct treeNode *multOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *multOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
 	struct treeNode *node = NULL;
 	
-	ps = exprsOp(x, MULTIPLY ,y);
+	ps = exprsOp(x->symbol, MULTIPLY ,y->symbol);
 	node = createTreeNode(ps, MULTIPLY, x, y);
 
 	//if (ps) emitMultiplication(x, y);
@@ -347,11 +347,11 @@ struct treeNode *multOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-struct treeNode *divideOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *divideOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
 	struct treeNode *node = NULL;
 	
-	ps = exprsOp(x, DIVIDE ,y);
+	ps = exprsOp(x->symbol, DIVIDE ,y->symbol);
 	node = createTreeNode(ps, DIVIDE, x, y);
 	
 	//if (ps) emitDivision(x, y);
@@ -359,11 +359,11 @@ struct treeNode *divideOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-struct treeNode *divOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *divOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
 	struct treeNode *node = NULL;
 
-	ps = exprsOp(x, DIV ,y);
+	ps = exprsOp(x->symbol, DIV ,y->symbol);
 	node = createTreeNode(ps, DIV, x, y);
 
 	//if (ps) emitDivision(x, y);
@@ -371,11 +371,11 @@ struct treeNode *divOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-struct treeNode *modOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *modOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL;
 	struct treeNode *node = NULL;
 	
-	ps = exprsOp(x, MOD ,y);
+	ps = exprsOp(x->symbol, MOD ,y->symbol);
 	node = createTreeNode(ps, MOD, x, y);
 	
 	//if (ps) emitMod(x, y);
@@ -383,11 +383,11 @@ struct treeNode *modOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-struct treeNode *andOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *andOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL;
 	struct treeNode *node = NULL;
 	
-	ps = exprsOp(x, AND ,y);
+	ps = exprsOp(x->symbol, AND ,y->symbol);
 	node = createTreeNode(ps, AND, x, y);
 	
 	//if (ps) emitAnd(x, y);
