@@ -66,7 +66,7 @@ ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 	int *intResult;
 	char *charResult;
 	struct String *stringResult;
-
+	
 	/* id can be NULL, this makes the constant anonymous */
 	if ((result == NULL) || (typeSym == NULL)) {
 		err(EXIT_FAILURE, "Passed NULL arguments to newConstProxySym");
@@ -78,11 +78,14 @@ ProxySymbol *newConstProxySym(char *id, void * result, Symbol *typeSym)
 		    "symbol!");
 	}
 	
+	
 	/* set the new symbol's type */
 	// TODO, this should point back to a pre-defined type, and we should
 	// enforce that the given typeSym is a pre-defined type
 	setInnerTypeSymbol(constSym, typeSym);
-
+	
+	/* set the constant result flag to 0 * by default */
+	constSym->kindPtr.ConstKind->constResultFlag = 0;
 	/* 
 	 * The memory for Boolean.value, Char.value, etc is allocated
 	 * when the symbol is created.
