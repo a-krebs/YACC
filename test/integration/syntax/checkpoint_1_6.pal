@@ -1,11 +1,11 @@
-{22,53}
+{21,53}
 {
 	Cmput 415 - Team YACC
 	Tests general ability to properly parse function definitions, 
 	array defintions, loops and other flow control statements.
 
 	Errors:	- attempt to declare array bounds using anonymous scalar type
-		  on line 22
+		  on line 21
 		- define a procedure as having a return type, line 53
 
 
