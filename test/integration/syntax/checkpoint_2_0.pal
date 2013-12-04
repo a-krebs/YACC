@@ -1,8 +1,7 @@
-{8,11,15}
+{8,11}
 {===============================================================================
 	line 8: expect error: no program name
 	line 11: expect error: constant declearation should not use function
-	line 15: expect error: array range shouldn't be real
 ===============================================================================}
 
 program (input,output);	{expect error: no program name}
