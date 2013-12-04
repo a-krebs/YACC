@@ -1,7 +1,6 @@
-{13,21,28, 31}
+{13,21,28}
 {
 	Team YACC Checkpoint 2 Test 6 (check array)
-
 	line 13: low and high index are in different type.(error 1)
 	line 21: c is incompatiable arg for procedure test().(error 2)
 	line 28: d is undefined in procedure test(error 3)
@@ -28,6 +27,6 @@ begin
 	test(a,d); {error 3 }
 end;	
 begin
-	realArray[1]:=38218333;
+	realArray[1]:=38218333; // reals and int are assignment compatible
 end.
 
