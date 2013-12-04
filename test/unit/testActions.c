@@ -156,6 +156,32 @@ char *test_constCalc() {
 	mu_assert("constCalc MINUS failing",
 	    getConstVal(res)->Real.value == -100.10);
 
+	/* test unary plus */
+
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = INTEGER_T;
+	
+	getConstVal(x)->Integer.value = 0;
+	getConstVal(y)->Integer.value = -100;
+	
+	constCalc(res, NULL, PLUS, y);
+	/* unary plus is identity, so sign shouldn't change */
+	mu_assert("constCalc PLUS failing",
+	    getConstVal(res)->Integer.value == -100);
+	
+	xType->kindPtr.TypeKind->type = REAL_T;
+	yType->kindPtr.TypeKind->type = REAL_T;
+	resType->kindPtr.TypeKind->type = REAL_T;
+	
+	getConstVal(x)->Real.value = 0;
+	getConstVal(y)->Real.value = -100.998;
+	
+	constCalc(res, NULL, PLUS, y);
+	/* unary plus is identity, so sign shouldn't change */
+	mu_assert("constCalc PLUS failing",
+	    getConstVal(res)->Real.value == -100.998);
+
 	return NULL;
 }
 

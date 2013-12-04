@@ -662,6 +662,7 @@ doUnaryNotOp(ProxySymbol *y) {
 
 double
 doUnaryPlusOp(ProxySymbol *y) {
+	/* unary plus is identity operation, so sign shouldn't change */
 	return (double)(getSimpleConstVal(y));
 }
 
