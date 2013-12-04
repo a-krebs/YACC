@@ -248,17 +248,55 @@ void emitPushVarValue(Symbol *s)
 }
 
 /*
+ * Places the values of the given symbol which is of var_kind and a structured
+ * type onto the stack.  
+ * ONLY TO BE CALLED ON VARIABLES WHICH ARE NOT PASS BY REFERENCE.
+ * Parameters
+ *		s : the variable symbol which is of a structured type and
+ * 		    which has not been passed by reference whose values
+ *		    we would like to push onto the stack
+ */
+void emitPushStructuredVarValue(Symbol *s)
+{
+	int i;
+	CHECK_CAN_EMIT(s);
+	for (i = 0; i < s->size; i++) {
+		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset + i,
+		    s->lvl); 
+	}
+}
+
+/*
  * Given that the address of some value is currently on top of
  * the stack, the function emits the asc code necessary to replace this
- * addres with the actual value of the element.
+ * addres with the actual value of the element (including arrays and records
+ * in which case the entire array is pushed onto the stack)
  */
 void emitPushAddressValue(Symbol *s)
 {
+	int i;
 	CHECK_CAN_EMIT(s);
 
 	switch (getType(s)) {
 	case ARRAY_T:
-		/* We never push an entire array of values onto the stack */
+	case RECORD_T:
+		for (i = 1; i < s->size; i++) {
+			emitComment("Array/Record %s location %d below on stack"
+			", need to push corresponding value", i-1);
+			if (i < s->size) {
+				emitStmt(STMT_LEN, "DUP");
+				emitStmt(STMT_LEN, "ADJUST -1");
+			}
+
+			emitStmt(STMT_LEN, "PUSHI");
+
+			if (i < s->size) {
+				emitComment("Set up next iteration.");
+				emitStmt(STMT_LEN, "ADJUST 1");
+				emitStmt(STMT_LEN, "CONSTI 1");
+				emitStmt(STMT_LEN, "ADDI");
+			}
+		}	
 		break;
 	case BOOLEAN_T:
 	case CHAR_T:
