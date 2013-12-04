@@ -53,12 +53,12 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2);
 ProxySymbol *createArrayIndexList(ProxySymbol *exp);
 
 
-ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y);
-ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y);
+struct treeNode *eqOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *notEqOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *lessOrEqOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *lessOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *gtOrEqOp(struct treeNode *x, struct treeNode *y);
+struct treeNode *gtOp(struct treeNode *x, struct treeNode *y);
 struct treeNode *unaryPlusOp(struct treeNode *y);
 struct treeNode *unaryMinusOp(struct treeNode *y);
 struct treeNode *plusOp(struct treeNode *x, struct treeNode *y);

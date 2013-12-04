@@ -334,19 +334,19 @@ expr
 
 expr_node
 : simple_expr
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | expr_node EQUAL simple_expr
-	{ $<proxy>$ = eqOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = eqOp($<node>1, $<node>3); }
 | expr_node NOT_EQUAL simple_expr
-	{ $<proxy>$ = notEqOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = notEqOp($<node>1, $<node>3); }
 | expr_node LESS_OR_EQUAL simple_expr
-	{ $<proxy>$ = lessOrEqOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = lessOrEqOp($<node>1, $<node>3); }
 | expr_node LESS simple_expr
-	{ $<proxy>$ = lessOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = lessOp($<node>1, $<node>3); }
 | expr_node GREATER_OR_EQUAL simple_expr
-	{ $<proxy>$ = gtOrEqOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = gtOrEqOp($<node>1, $<node>3); }
 | expr_node GREATER simple_expr
-	{ $<proxy>$ = gtOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = gtOp($<node>1, $<node>3); }
 ;
 
 simple_expr
