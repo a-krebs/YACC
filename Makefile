@@ -307,7 +307,7 @@ semantic_tests:
 	@make -s semantic_tests_
 
 semantic_tests_:
-	@echo "CHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
+	@echo "\nCHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
 	@-cd test && python testRunner.py -x -i -d ./integration/semantic
 	@echo "\nSEMANTIC TESTS:"
 	@-cd test && python testRunner.py -c -d ./integration/semantic
@@ -317,7 +317,7 @@ asc_tests:
 	@make -s asc_tests_
 
 asc_tests_:
-	@echo "ASC TESTS:"
+	@echo "\nASC TESTS:"
 	@-cd test && python testRunner.py -a -d ./integration/asc
 
 full_tests:
