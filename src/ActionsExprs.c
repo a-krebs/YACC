@@ -418,7 +418,6 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	if ( (x == NULL) && (y->kind == CONST_KIND )){
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
-		// TODO actually set values
 		constCalc(ps, x, opToken, y);
 		return ps;
 	} else if( (x == NULL) && (y->kind != CONST_KIND ) ){
@@ -429,7 +428,6 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 		// TODO actually set values
 		constCalc(ps, x, opToken, y);
 		
-		printf("NUM : %lf",(double)getSimpleConstVal(ps));
 		return ps;
 	}else{
 		return typeSym;
@@ -551,7 +549,7 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 		break;
 		
 	default:
-		err(1,"");
+		err(EXIT_FAILURE,"Unknown operator passed to constCalc");
 	}
 }
 
