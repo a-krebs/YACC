@@ -375,12 +375,16 @@ ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
 }
 
 
-ProxySymbol *unaryNotOp(ProxySymbol *y) {
+struct treeNode *unaryNotOp(struct treeNode *y) {
 	ProxySymbol *ps = NULL;
 	ps = exprsOp(NULL, NOT ,y);
 	// TODO emit
-	return ps;
+
+	struct treeNode *node = createTreeNode(ps, NOT, NULL, y);
+
+	return node;
 }
+
 
 /*
  * Perform the operator action on the two operands.

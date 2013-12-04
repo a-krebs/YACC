@@ -378,15 +378,15 @@ term
 
 factor
 : var
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | unsigned_const
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | L_PAREN expr R_PAREN_or_error
-	{ $<proxy>$ = $<proxy>2; }
+	{ $<node>$ = createLeafNode($<proxy>2); }
 | func_invok
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | NOT factor
-	{ $<proxy>$ = unaryNotOp($<proxy>2); }
+	{ $<node>$ = unaryNotOp($<node>2); }
 ;
 
 R_PAREN_or_error
