@@ -415,24 +415,17 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	 * unary) return a new ProxySymbol of kind CONST_KIND
 	 */
 	 
-	if ( (x == NULL) && (y->kind == CONST_KIND )){
+	if (
+	    ((x == NULL) && (y->kind == CONST_KIND ))
+	    || ((x->kind == CONST_KIND) && (y->kind == CONST_KIND))
+	   ) {
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
 		constCalc(ps, x, opToken, y);
 		return ps;
-	} else if( (x == NULL) && (y->kind != CONST_KIND ) ){
-		return typeSym;
-	} else if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ){
-		ps = (ProxySymbol *)createConstSymbol(NULL);
-		setInnerTypeSymbol(ps, typeSym);
-		// TODO actually set values
-		constCalc(ps, x, opToken, y);
-		
-		return ps;
-	}else{
+	} else {
 		return typeSym;
 	}
-	
 }
 
 void
