@@ -12,6 +12,7 @@
 #include "testActions.h"
 #include "testSymbol.h"	/* for setUpTypeSymbol() */
 #include "ActionsAll.h"
+#include "SymbolAPI.h"
 
 char *test_assertOpCompat() {
 	Symbol *type1 = setUpTypeSymbol();
@@ -35,7 +36,13 @@ char *test_assertOpCompat() {
 	return NULL;
 }
 
+/* test constCal for constant expressions */
+char *test_constCalc() {
+	return NULL;
+}
+
 char *test_all_Actions() {
 	mu_run_test(test_assertOpCompat);
+	mu_run_test(test_constCalc);
 	return NULL;
 }
