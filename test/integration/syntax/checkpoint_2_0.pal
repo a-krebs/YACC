@@ -1,6 +1,6 @@
-{8,11}
+{7,11}
 {===============================================================================
-	line 8: expect error: no program name
+	line 7: expect error: no program name
 	line 11: expect error: constant declearation should not use function
 ===============================================================================}
 
