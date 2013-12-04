@@ -1,4 +1,4 @@
-{21,53}
+{21,52}
 {
 	Cmput 415 - Team YACC
 	Tests general ability to properly parse function definitions, 
@@ -6,7 +6,7 @@
 
 	Errors:	- attempt to declare array bounds using anonymous scalar type
 		  on line 21
-		- define a procedure as having a return type, line 53
+		- define a procedure as having a return type, line 52
 
 
 	Code skeleton cribbed from:
