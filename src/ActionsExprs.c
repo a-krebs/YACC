@@ -370,7 +370,7 @@ struct treeNode *divideOp(struct treeNode *x, struct treeNode *y) {
 	node = createTreeNode(ps, DIVIDE, x, y);
 	
 	//if (ps) emitDivision(x, y);
-	return ps; 
+	return node; 
 }
 
 
@@ -382,7 +382,7 @@ struct treeNode *divOp(struct treeNode *x, struct treeNode *y) {
 	node = createTreeNode(ps, DIV, x, y);
 
 	//if (ps) emitDivision(x, y);
-	return ps;
+	return node;
 }
 
 
@@ -394,7 +394,7 @@ struct treeNode *modOp(struct treeNode *x, struct treeNode *y) {
 	node = createTreeNode(ps, MOD, x, y);
 	
 	//if (ps) emitMod(x, y);
-	return ps;
+	return node;
 }
 
 
@@ -406,7 +406,7 @@ struct treeNode *andOp(struct treeNode *x, struct treeNode *y) {
 	node = createTreeNode(ps, AND, x, y);
 	
 	//if (ps) emitAnd(x, y);
-	return ps;
+	return node;
 }
 
 
@@ -414,7 +414,7 @@ struct treeNode *unaryNotOp(struct treeNode *y) {
 	ProxySymbol *ps = NULL;
 	struct treeNode *node = NULL;
 	
-	ps = exprsOp(NULL, NOT ,y);
+	ps = exprsOp(NULL, NOT ,y->symbol);
 	node = createTreeNode(ps, NOT, NULL, y);
 
 	// TODO emit
