@@ -96,6 +96,17 @@ char *test_constCalc() {
 	mu_assert("constKind EQUAL failing",
 	    getConstVal(res)->Integer.value == 0);
 
+	xType->kindPtr.TypeKind->type = BOOLEAN_T;
+	yType->kindPtr.TypeKind->type = BOOLEAN_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Boolean.value = 0;
+	getConstVal(y)->Boolean.value = 1;
+	
+	constCalc(res, x, OR, y);
+	mu_assert("constKind EQUAL failing",
+	    getConstVal(res)->Boolean.value == 1);
+	
 	return NULL;
 }
 
