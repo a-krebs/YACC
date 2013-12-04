@@ -13,6 +13,8 @@
 #include "testSymbol.h"	/* for setUpTypeSymbol() */
 #include "ActionsAll.h"
 #include "SymbolAPI.h"
+#include "tokens.h" /* for test token definitions */
+#include "Type.h"
 
 char *test_assertOpCompat() {
 	Symbol *type1 = setUpTypeSymbol();
@@ -38,6 +40,62 @@ char *test_assertOpCompat() {
 
 /* test constCal for constant expressions */
 char *test_constCalc() {
+	Symbol *x = NULL;
+	Symbol *y = NULL;
+	Symbol *res = NULL;
+
+	Symbol *xType = NULL;
+	Symbol *yType = NULL;
+	Symbol *resType = NULL;
+
+	xType = createTypeSymbol(NULL, 0);
+	yType = createTypeSymbol(NULL, 0);
+	resType = createTypeSymbol(NULL, 0);
+	
+	x = createConstSymbol(NULL);
+	setInnerTypeSymbol(x,xType);
+	
+	y = createConstSymbol(NULL);
+	setInnerTypeSymbol(y,yType);
+	
+	res = createConstSymbol(NULL);
+	setInnerTypeSymbol(res,resType);
+
+	/* end of prep stuff  */
+	
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Integer.value = 10;
+	getConstVal(y)->Integer.value = 22;
+
+	constCalc(res, x, EQUAL, y);
+	mu_assert("constKind EQUAL failing",
+	    getConstVal(res)->Boolean.value == 0);
+
+	yType->kindPtr.TypeKind->type = REAL_T;
+	constCalc(res, x, EQUAL, y);
+	mu_assert("constKind EQUAL failing",
+	    getConstVal(res)->Boolean.value == 0);
+
+	getConstVal(y)->Real.value = 10;
+	constCalc(res, x, EQUAL, y);
+	mu_assert("constKind EQUAL failing",
+	    getConstVal(res)->Boolean.value == 1);
+
+
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Integer.value = 10;
+	getConstVal(y)->Integer.value = 22;
+
+	constCalc(res, x, DIV, y);
+	mu_assert("constKind EQUAL failing",
+	    getConstVal(res)->Integer.value == 0);
+
 	return NULL;
 }
 
