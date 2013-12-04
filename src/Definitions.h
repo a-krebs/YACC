@@ -180,6 +180,8 @@ typedef union kind_union {
 } Kind;
 
 struct ConstantKind {
+	int constResultFlag;	
+	/* flag indicated if the constant is a result of constant calculation */
 	struct Symbol *typeSym;
 	AnonConstVal value;		
 };
