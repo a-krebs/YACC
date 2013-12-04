@@ -414,11 +414,18 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	 * If x and y are both constants (or y is constant and operator is
 	 * unary) return a new ProxySymbol of kind CONST_KIND
 	 */
-	 
-	if (
-	    ((x == NULL) && (y->kind == CONST_KIND ))
-	    || ((x->kind == CONST_KIND) && (y->kind == CONST_KIND))
-	   ) {
+	/* need this nest of IFs to check avoid dereferencing x->kind if
+	 * x is null ....
+	 */
+	if ( (x == NULL) && (y->kind == CONST_KIND )){
+		ps = (ProxySymbol *)createConstSymbol(NULL);
+		setInnerTypeSymbol(ps, typeSym);
+		constCalc(ps, x, opToken, y);
+		setConstResultFlag(ps);
+		return ps;
+	} else if( (x == NULL) && (y->kind != CONST_KIND ) ){
+		return typeSym;
+	} else if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ){
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
 		constCalc(ps, x, opToken, y);
