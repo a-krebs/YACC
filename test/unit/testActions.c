@@ -63,6 +63,8 @@ char *test_constCalc() {
 
 	/* end of prep stuff  */
 	
+	/* test EQUAL */
+
 	xType->kindPtr.TypeKind->type = INTEGER_T;
 	yType->kindPtr.TypeKind->type = INTEGER_T;
 	resType->kindPtr.TypeKind->type = BOOLEAN_T;
@@ -71,19 +73,20 @@ char *test_constCalc() {
 	getConstVal(y)->Integer.value = 22;
 
 	constCalc(res, x, EQUAL, y);
-	mu_assert("constKind EQUAL failing",
+	mu_assert("constCalc EQUAL failing",
 	    getConstVal(res)->Boolean.value == 0);
 
 	yType->kindPtr.TypeKind->type = REAL_T;
 	constCalc(res, x, EQUAL, y);
-	mu_assert("constKind EQUAL failing",
+	mu_assert("constCalc EQUAL failing",
 	    getConstVal(res)->Boolean.value == 0);
 
 	getConstVal(y)->Real.value = 10;
 	constCalc(res, x, EQUAL, y);
-	mu_assert("constKind EQUAL failing",
+	mu_assert("constCalc EQUAL failing",
 	    getConstVal(res)->Boolean.value == 1);
 
+	/* test DIV */
 
 	xType->kindPtr.TypeKind->type = INTEGER_T;
 	yType->kindPtr.TypeKind->type = INTEGER_T;
@@ -93,8 +96,10 @@ char *test_constCalc() {
 	getConstVal(y)->Integer.value = 22;
 
 	constCalc(res, x, DIV, y);
-	mu_assert("constKind EQUAL failing",
+	mu_assert("constCalc DIV failing",
 	    getConstVal(res)->Integer.value == 0);
+
+	/* test OR */
 
 	xType->kindPtr.TypeKind->type = BOOLEAN_T;
 	yType->kindPtr.TypeKind->type = BOOLEAN_T;
@@ -104,8 +109,41 @@ char *test_constCalc() {
 	getConstVal(y)->Boolean.value = 1;
 	
 	constCalc(res, x, OR, y);
-	mu_assert("constKind EQUAL failing",
+	mu_assert("constCalc OR failing",
 	    getConstVal(res)->Boolean.value == 1);
+	
+	/* test unary NOT */
+
+	xType->kindPtr.TypeKind->type = BOOLEAN_T;
+	yType->kindPtr.TypeKind->type = BOOLEAN_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Boolean.value = 0;
+	getConstVal(y)->Boolean.value = 1;
+	
+	constCalc(res, NULL, NOT, y);
+	mu_assert("constCalc NOT failing",
+	    getConstVal(res)->Boolean.value == 0);
+	
+	getConstVal(x)->Boolean.value = 0;
+	getConstVal(y)->Boolean.value = 0;
+	
+	constCalc(res, NULL, NOT, y);
+	mu_assert("constCalc NOT failing",
+	    getConstVal(res)->Boolean.value == 1);
+
+	/* test unary minus */
+
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = INTEGER_T;
+	
+	getConstVal(x)->Integer.value = 0;
+	getConstVal(y)->Integer.value = 100;
+	
+	constCalc(res, NULL, MINUS, y);
+	mu_assert("constCalc NOT failing",
+	    getConstVal(res)->Integer.value == -100);
 	
 	return NULL;
 }
