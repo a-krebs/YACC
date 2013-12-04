@@ -14,6 +14,7 @@
 #include "SymbolAll.h"
 #include "Utils.h"
 #include "ActionsAll.h"
+#include "Kind.h"
 
 #ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
@@ -23,6 +24,7 @@
 #endif
 
 /*For error reporting:*/
+
 extern int yylineno;
 extern int colno;
 static char *errMsg;
@@ -239,169 +241,519 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
 }
 
 
+/*******************************************************************************
+ *
+ * 		Expression operator functions follow
+ *
+ ******************************************************************************/
+
 ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
 	ProxySymbol *ps = NULL; 
-
-	if ((!x) || (!y)) return NULL;	
-	
-	/* 
-	 * If x or y is not a constant, we have no responsibility
-	 * with regard to insuring the propogation of a compile time
-	 * known funciton.
-	 */
-	ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), EQUAL, getTypeSym((Symbol *)y)));
-
+	ps = exprsOp(x, EQUAL ,y);
 	if (ps) emitEqualsOp(x, y);
 	return ps;
 }
 
 
 ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, NOT_EQUAL ,y);
 	if (ps) emitInequalityOp(x, y);
 	return ps;
 }
 
 
 ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), NOT_EQUAL, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, LESS_OR_EQUAL ,y);
 	if (ps) emitLTEOp(x, y);
 	return ps;
 }
 
 
 ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), LESS, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, LESS ,y);
 	if (ps) emitLTOp(x, y);
 	return ps;
 }
 
 
 ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), GREATER_OR_EQUAL, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, GREATER_OR_EQUAL ,y);
 	if (ps) emitGTEOp(x, y);
 	return ps;
 }
 
 
 ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), GREATER, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, GREATER ,y);
 	if (ps) emitGTOp(x, y);
 	return ps;
 }
 
 
 ProxySymbol *unaryPlusOp(ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(
-	    NULL, PLUS, getTypeSym((Symbol *)y)));
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(NULL, PLUS, y);
+	// TODO emit
 	return ps;
 }
 
 
 ProxySymbol *unaryMinusOp(ProxySymbol *y) {
-	return newProxySymFromSym(assertOpCompat(
-	   NULL, MINUS, getTypeSym((Symbol *)y)));
+	ProxySymbol *ps = NULL;
+	ps = exprsOp(NULL, MINUS ,y);
+	// TODO emit
+	return ps;
 }
 
 
 ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), PLUS, getTypeSym((Symbol *)y)));
-
-	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);	
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, PLUS ,y);			  
+	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);
 	return ps;
 }
 
 
 ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps =  newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), MINUS, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, MINUS ,y);
 	if (ps) emitSubtraction(x, y);
-
 	return ps;
 }
 
 
 ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps =  newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), OR, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, OR ,y);
 	if (ps) emitOr(x, y);
-
 	return ps;
 }
 
 
 ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), MULTIPLY, getTypeSym((Symbol *)y)));
-	
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, MULTIPLY ,y);
 	if (ps) emitMultiplication(x, y);
-
 	return ps;
 }
 
 
 ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), DIVIDE, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, DIVIDE ,y);
 	if (ps) emitDivision(x, y);
 	return ps; 
-
 }
 
-ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), DIV, getTypeSym((Symbol *)y)));
 
+ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
+	ProxySymbol *ps = NULL; 
+	ps = exprsOp(x, DIV ,y);
 	if (ps) emitDivision(x, y);
 	return ps;
 }
 
 
 ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps =  newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), MOD, getTypeSym((Symbol *)y)));
-	
+	ProxySymbol *ps = NULL;
+	ps = exprsOp(x, MOD ,y);
 	if (ps) emitMod(x, y);
 	return ps;
 }
 
 
 ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(getTypeSym(
-	    (Symbol *) x), AND, getTypeSym((Symbol *)y)));
-
+	ProxySymbol *ps = NULL;
+	ps = exprsOp(x, AND ,y);
 	if (ps) emitAnd(x, y);
 	return ps;
 }
 
 
 ProxySymbol *unaryNotOp(ProxySymbol *y) {
-	ProxySymbol *ps = newProxySymFromSym(assertOpCompat(
-	    NULL, NOT, getTypeSym((Symbol *)y)));
-
-	if (ps) ;
+	ProxySymbol *ps = NULL;
+	ps = exprsOp(NULL, NOT ,y);
+	// TODO emit
 	return ps;
+}
+
+/*
+ * Perform the operator action on the two operands.
+ * 
+ * Parameters:
+ * 	x: left-hand operand. Can be NULl for unary operators
+ * 	y: right-hand operand.
+ * 	opToken: operator token
+ * Retuns:
+ * 	A ProxySymbol of kind CONST_KIND if x and y are both constants,
+ * 	a ProxySymbol of kind TYPE_KIND if one of x or y is not constant,
+ * 	or NULL if the operands are not operator combatible.
+ */
+ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
+	ProxySymbol *ps = NULL;
+	Symbol *typeSym = NULL;
+
+	/* 
+	 * Get the type resulting from performing opToken on the two
+	 * operands
+	 */
+	typeSym = assertOpCompat(
+	    getTypeSym((Symbol *) x),
+	    opToken,
+	    getTypeSym((Symbol *)y));
+	
+	/* if assertOpCompat returned NULL, operands are not compatible. */
+	if (typeSym == NULL) return NULL;
+	
+	/* 
+	 * If x and y are both constants (or y is constant and operator is
+	 * unary) return a new ProxySymbol of kind CONST_KIND
+	 */
+	 
+	if ( (x == NULL) && (y->kind == CONST_KIND )){
+		ps = (ProxySymbol *)createConstSymbol(NULL);
+		setInnerTypeSymbol(ps, typeSym);
+		constCalc(ps, x, opToken, y);
+		return ps;
+	} else if( (x == NULL) && (y->kind != CONST_KIND ) ){
+		return typeSym;
+	} else if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ){
+		ps = (ProxySymbol *)createConstSymbol(NULL);
+		setInnerTypeSymbol(ps, typeSym);
+		// TODO actually set values
+		constCalc(ps, x, opToken, y);
+		
+		return ps;
+	}else{
+		return typeSym;
+	}
+	
+}
+
+void
+constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
+
+	int intVal;
+	
+	switch (opToken) {
+	
+	case EQUAL:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+		
+			setSimpleConstVal(ps,(double)doStrEqCmp(x,y));
+		} else {
+			setSimpleConstVal(ps, (double)doEqCmp(x,y));
+		}
+		break;
+		
+	case NOT_EQUAL:	
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			setSimpleConstVal(ps,(double)!doStrEqCmp(x,y));
+		} else {
+			setSimpleConstVal(ps, (double)doNotEqCmp(x,y));
+		}
+		break;
+		
+	case LESS_OR_EQUAL:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			/* x str is less or equal y str */
+			intVal = (doStrLessCmp(x,y) || doStrEqCmp(x,y));
+			setSimpleConstVal(ps,(double)intVal);
+		} else {
+			setSimpleConstVal(ps, (double)doLessOrEqCmp(x,y));
+		}
+		break;
+		
+	case LESS:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			setSimpleConstVal(ps,(double)doStrLessCmp(x,y));
+		} else {
+			setSimpleConstVal(ps,(double)doLessCmp(x,y));
+		}
+		break;
+		
+	case GREATER_OR_EQUAL:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			/* x str is greater or equal y str */
+			intVal = (doStrGtCmp(x,y) || doStrEqCmp(x,y));
+			setSimpleConstVal(ps,(double)intVal);	
+		} else {
+			setSimpleConstVal(ps,(double)doGtOrEqCmp(x,y));
+		}
+		break;
+		
+	case GREATER:
+		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
+			setSimpleConstVal(ps,(double)doStrGtCmp(x,y));
+		} else {
+			setSimpleConstVal(ps,(double)doGtCmp(x,y));
+		}
+		break;
+		
+	case MULTIPLY:
+		setSimpleConstVal(ps, (double)calcMult(x,y));
+		break;
+		
+	case DIVIDE:
+		setSimpleConstVal(ps, (double)calcDivide(x,y));
+		break;
+		
+	case DIV:
+		setSimpleConstVal(ps, (double)calcDiv(x,y));
+		break;
+		
+	case MOD:
+		if((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)){
+			setSimpleConstVal(ps, (double)calcMod(x,y));
+		}
+		break;
+		
+	case AND:
+		setSimpleConstVal(ps, (double)doAndOp(x,y));
+		break;
+		
+	case OR:
+		setSimpleConstVal(ps, (double)doOrOp(x,y));
+		break;
+		
+	case PLUS:
+		if ( x == NULL ){
+			/* x is supposed to be NULL if this is a unary op */
+			setSimpleConstVal(ps, (double)doUnaryPlusOp(y));
+		}else{
+			/* addition */
+			setSimpleConstVal(ps, (double)calcSum(x,y));
+		}
+		break;
+		
+	case MINUS:
+		if ( x == NULL ){
+			/* x is supposed to be NULL if this is a unary op */
+			setSimpleConstVal(ps, (double)doUnaryMinusOp(y));
+		}else{
+			/* subtraction */
+			setSimpleConstVal(ps, (double)calcSub(x,y));
+		}
+		break;
+		
+	case NOT:
+		if ( x == NULL) {
+			/* x is supposed to be NULL if this is a unary op */
+			setSimpleConstVal(ps, (double)doUnaryNotOp(y));
+		}
+		break;
+		
+	default:
+		err(EXIT_FAILURE,"Unknown operator passed to constCalc");
+	}
+}
+
+
+double
+calcSum(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) + 
+	(double)(getSimpleConstVal(y));
+}
+
+
+double
+calcSub(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) - 
+	(double)(getSimpleConstVal(y));
+}
+
+
+double
+calcDivide(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) / 
+	(double)(getSimpleConstVal(y));
+}
+
+
+int
+calcDiv(ProxySymbol *x, ProxySymbol *y){
+	int val = (double)(getSimpleConstVal(x)) / 
+	(double)(getSimpleConstVal(y));
+	
+	return val;	
+}
+
+
+double
+calcMult(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) * 
+	(double)(getSimpleConstVal(y));
+}
+
+
+double
+calcMod(ProxySymbol *x, ProxySymbol *y){
+	return (int)(getSimpleConstVal(x)) % 
+	(int)(getSimpleConstVal(y));
+}
+
+
+int
+doAndOp(ProxySymbol *x, ProxySymbol *y){
+	return (int)(getSimpleConstVal(x)) && 
+	(int)(getSimpleConstVal(y));
+}
+
+
+int
+doOrOp(ProxySymbol *x, ProxySymbol *y){
+	return (int)(getSimpleConstVal(x)) || 
+	(int)(getSimpleConstVal(y));
+
+}
+
+
+int
+doGtCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) > 
+	    (double)(getSimpleConstVal(y));
+}
+
+int
+doGtOrEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) >= 
+	     (double)(getSimpleConstVal(y));
+
+}
+
+
+int
+doLessCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) < 
+	    (double)(getSimpleConstVal(y));
+}
+
+
+int
+doLessOrEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) <= 
+	    (double)(getSimpleConstVal(y));
+
+}
+
+int
+doNotEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) != 
+	    (double)(getSimpleConstVal(y));
+}
+
+int
+doEqCmp(ProxySymbol *x, ProxySymbol *y){
+	return (double)(getSimpleConstVal(x)) == 
+	    (double)(getSimpleConstVal(y));
+
+}
+
+int
+doUnaryNotOp(ProxySymbol *y) {
+	return !(int)(getSimpleConstVal(y));
+}
+
+
+double
+doUnaryPlusOp(ProxySymbol *y) {
+	return (double)(getSimpleConstVal(y));
+}
+
+
+double
+doUnaryMinusOp(ProxySymbol *y) {
+	return 0-(double)(getSimpleConstVal(y));
 }
 
 
 /*
- * Check that the given types are compatible when using the given
+ *	Check whether the two given strings are equal char by char
+ * 
+ *	Parameters: ProxySymbol: x a symbol of string constant 
+ *				ProxySymbol; y a symbol of string constant 
+ *
+ *	Returns:	1:	two given strings are equal 
+ *				0:  two given strings are not equal
+ *
+ */
+int
+doStrEqCmp(ProxySymbol *x, ProxySymbol *y){
+	int i;
+	int len = (int)getConstVal(x)->String.strlen;
+	char *str1 = (char *)getConstVal(x)->String.str;
+	char *str2 = (char *)getConstVal(y)->String.str;
+	
+	
+	for (i = 0; i < len ; i++ ) {
+		if(str1[i] != str2[i]){
+			return 0;
+		}	
+	}
+	
+	return 1;
+}
+
+
+/*
+ *	Compare whether one string is less than another char by char
+ * 
+ *	Parameters: ProxySymbol: x a symbol of string constant 
+ *				ProxySymbol; y a symbol of string constant 
+ *
+ *	Returns:	1:	x < y
+ *				0:	x !< y
+ *
+ */
+int
+doStrLessCmp(ProxySymbol *x, ProxySymbol *y){
+	int i;
+	int len = (int)getConstVal(x)->String.strlen;
+	char *str1 = (char *)getConstVal(x)->String.str;
+	char *str2 = (char *)getConstVal(y)->String.str;
+	
+	for (i = 0; i < len-1 ; i++ ) {
+		if( ( str1[i] == str2[i] ) && ( str1[i+1] < str2[i+1] ) ){
+				return 1;
+		}
+	}
+	return 0;
+}
+
+
+/*
+ *	Compare whether one string is greater than another char by char
+ * 
+ *	Parameters: ProxySymbol: x a symbol of string constant 
+ *				ProxySymbol; y a symbol of string constant 
+ *
+ *	Returns:	1:	x > y
+ *				0:	x !> y
+ *
+ */
+int
+doStrGtCmp(ProxySymbol *x, ProxySymbol *y){
+	int i;
+	int len = (int)getConstVal(x)->String.strlen;
+	char *str1 = (char *)getConstVal(x)->String.str;
+	char *str2 = (char *)getConstVal(y)->String.str;
+	
+	for (i = 0; i < len-1 ; i++ ) {
+		if( ( str1[i] == str2[i] ) && ( str1[i+1] > str2[i+1] ) ){
+				return 1;
+		}
+	}
+	return 0;
+}
+
+
+/*
+ * Compare that the given types are compatible when using the given
  * operator.
  *
  * Parameters:  typeSymbol1: a symobol of type TYPE

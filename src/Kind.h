@@ -73,6 +73,24 @@ void allocationErrorCheck(void *);
  * Return: pointer to AnonConstVal
  */
 AnonConstVal *getConstVal(Symbol *);
+/*
+ * Acquire the actual value of an anonymous constant symbol which is of a 
+ * simple type.
+ *
+ * Parameter: pointer to symbol
+ * 
+ * Return: pointer to AnonConstVal
+ */
+double getSimpleConstVal(Symbol *);
+/*
+ * Assigning the actual value of an anonymous constant symbol which is of a 
+ * simple type.
+ *
+ * Parameter: pointer to symbol
+ * 
+ * Return: pointer to AnonConstVal
+ */
+void setSimpleConstVal(Symbol *, double);
 
 /*
  * Makes a copy of the given AnonConstVal based on type -- used when
