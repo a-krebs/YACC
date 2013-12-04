@@ -414,6 +414,7 @@ ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y){
 	 * If x and y are both constants (or y is constant and operator is
 	 * unary) return a new ProxySymbol of kind CONST_KIND
 	 */
+	 
 	if ( (x == NULL) && (y->kind == CONST_KIND )){
 		ps = (ProxySymbol *)createConstSymbol(NULL);
 		setInnerTypeSymbol(ps, typeSym);
