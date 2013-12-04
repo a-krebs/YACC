@@ -12,6 +12,7 @@
 #include "testUtils.h"
 #include "testPreDef.h"
 #include "testEmitUtils.h"
+#include "testTree.h"
 
 /* Include ASC tests */
 #include "testPreDefAsc.h"
@@ -67,6 +68,7 @@ char *test_all() {
 	mu_run_suite(test_all_Utils);
 	mu_run_suite(test_all_PreDef);
 	mu_run_suite(test_all_EmitUtils);
+	mu_run_suite(test_all_Tree);
 	return NULL;
 }
 

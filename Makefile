@@ -55,6 +55,7 @@ LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testHash.o
+TESTOBJS1+=	$(BIN)/testTree.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
@@ -213,6 +214,9 @@ $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 	$(COMPILE)
 
 $(BIN)/testHash.o: $(TEST)/testHash.c $(TEST)/testHash.h
+	$(COMPILE)	
+
+$(BIN)/testTree.o: $(TEST)/testTree.c $(TEST)/testTree.h
 	$(COMPILE)		
 
 $(BIN)/testActions.o: $(TEST)/testActions.c $(TEST)/testActions.h
