@@ -329,19 +329,23 @@ subscripted_var_index
 ;
 
 expr
+: expr_node
+;
+
+expr_node
 : simple_expr
 	{ $<proxy>$ = $<proxy>1; }
-| expr EQUAL simple_expr
+| expr_node EQUAL simple_expr
 	{ $<proxy>$ = eqOp($<proxy>1, $<proxy>3); }
-| expr NOT_EQUAL simple_expr
+| expr_node NOT_EQUAL simple_expr
 	{ $<proxy>$ = notEqOp($<proxy>1, $<proxy>3); }
-| expr LESS_OR_EQUAL simple_expr
+| expr_node LESS_OR_EQUAL simple_expr
 	{ $<proxy>$ = lessOrEqOp($<proxy>1, $<proxy>3); }
-| expr LESS simple_expr
+| expr_node LESS simple_expr
 	{ $<proxy>$ = lessOp($<proxy>1, $<proxy>3); }
-| expr GREATER_OR_EQUAL simple_expr
+| expr_node GREATER_OR_EQUAL simple_expr
 	{ $<proxy>$ = gtOrEqOp($<proxy>1, $<proxy>3); }
-| expr GREATER simple_expr
+| expr_node GREATER simple_expr
 	{ $<proxy>$ = gtOp($<proxy>1, $<proxy>3); }
 ;
 
