@@ -297,37 +297,38 @@ assigned_var
 : ID_or_err 
 	{ $<symbol>$ = variableAssignmentLookup($<id>1); }
 | var PERIOD ID_or_err 
-	{ $<symbol>$ = recordFieldAssignmentLookup($<proxy>1, $<id>3); }
+	{ $<symbol>$ = recordFieldAssignmentLookup($<node>1, $<id>3); }
 | subscripted_var RS_BRACKET 
-	{ $<symbol>$ = (Symbol *) $<proxy>1; }
+	{ /* for assignments i can just walk the tree right away */
+	  $<symbol>$ = $<node>1->symbol;  }
 ;
 
 var
 : decl_ID_or_err
-	{ $<proxy>$ = hashLookupToProxy($<id>1); }
+	{ $<node>$ = hashLookupToProxy($<id>1); }
 | ID_or_err
-	{ $<proxy>$ = hashLookupToProxy($<id>1); }
+	{ $<node>$ = hashLookupToProxy($<id>1); }
 | var PERIOD ID_or_err
-	{ $<proxy>$ = recordAccessToProxy($<proxy>1, $<id>3 ); }
+	{ $<node>$ = recordAccessToProxy(($<node>1), $<id>3 ); }
 | subscripted_var RS_BRACKET
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 ;
 
 subscripted_var
 : var LS_BRACKET subscripted_var_index_list
-	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
+	{ $<node>$ = arrayIndexAccess($<node>1, $<node>3);  }
 ;
 
 subscripted_var_index_list
 : subscripted_var_index
-	{ $<proxy>$ = $<proxy>1;  }
+	{ $<node>$ = $<node>1;  }
 | subscripted_var_index_list comma_or_error subscripted_var_index
-	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
+	{ $<node>$ = concatArrayIndexList($<node>1, $<node>3); }
 ;
 
 subscripted_var_index
-: expr
-	{ $<proxy>$ = createArrayIndexList($<proxy>1); }
+: expr_node
+	{ $<node>$ = createArrayIndexList($<node>1); }
 ;
 
 expr
@@ -386,7 +387,7 @@ term
 
 factor
 : var
-	{ $<node>$ = createLeafNode($<proxy>1); }
+	{ $<node>$ = $<node>1; }
 | unsigned_const
 	{ $<node>$ = createLeafNode($<proxy>1); }
 | L_PAREN expr R_PAREN_or_error
