@@ -27,6 +27,7 @@
 extern int doNotEmit;
 
 
+void emitPushParamValue(Symbol *, int);
 /*
  * Emit code to push local procedure/function parameters onto the
  * the stack.

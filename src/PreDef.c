@@ -168,11 +168,11 @@ int initializePreDefConstants() {
 	Symbol *symbol = NULL;
 
 	emitBlankLine();
-	emitComment("#######################################################");
+	emitSepLine();
 	emitBlankLine();
 	emitComment("Pre-defined constants to follow");
 	emitBlankLine();
-	emitComment("#######################################################");
+	emitSepLine();
 	emitBlankLine();
 	
 	symbol = createNewBoolConst(TRUE_KEY, 1);

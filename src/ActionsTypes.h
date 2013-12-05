@@ -71,12 +71,12 @@ Symbol *assertArrIndexType(Symbol *index_type);
 
 
 /*
- * Create a new subrange type. The arguments are proxy symbols that should
- * constain constant values for the range bounds.
+ * Create a new subrange type. The arguments are expression nodes that should
+ * contain constant values for the range bounds.
  *
  * Return a pointer to the new subrange type.
  */
-Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper);
+Symbol *createRangeType(struct treeNode *lower, struct treeNode *upper);
 
 
 /*

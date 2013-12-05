@@ -183,7 +183,8 @@ Symbol *getTypeSym(Symbol *s) {
 int isByReference(Symbol *s)
 {
 	if (!s) return 0;
-	if (s->kind == PARAM_KIND) return s->kindPtr.ParamKind->byRef;
+	
+	if ((s->kind == PARAM_KIND)) return s->kindPtr.ParamKind->byRef;
 	if (s->kind == VAR_KIND) return s->kindPtr.VarKind->byRef;
 	return 0;
 }

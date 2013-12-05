@@ -63,8 +63,8 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 }
 
 /*
- * Emits the asc code necessary to push the value of the given symbol which is 
- * of kind VAR_KIND to top of the stack.
+ * Emits the asc code necessary to push the value of the given symbol to top of
+ * the stack.
  * Parameters
  * 		s : the symbol of kind VAR_KIND whose value is to be pushed
  *		     onto the stack
@@ -80,9 +80,23 @@ void emitPushSymbolValue(Symbol *s)
 	case VAR_KIND:
 		emitPushVarValue(s);
 		break;
+	case TYPE_KIND:
+		if (s->isAddress) {
+			/* 
+			 * If s is an address, then its value is on the
+			 * top of the stack and is resultant from some 
+			 * indexing/record dereference operation
+			 */
+			emitStmt(STMT_LEN, "PUSHI");
+		} else {
+			/* Else we don't want to push its value */
+		}	
+		break;
 	default:
 		/* Should not be reached */
-		break;
+		fprintf(stderr, "Trying to push value of a symbol which cannot "
+		    "possibly have a value.  Yylineno sez %d\n", yylineno);
+		exit(1);
 	}
 
 	
@@ -248,17 +262,57 @@ void emitPushVarValue(Symbol *s)
 }
 
 /*
+ * Places the values of the given symbol which is of var_kind and a structured
+ * type onto the stack.  
+ * ONLY TO BE CALLED ON VARIABLES WHICH ARE NOT PASS BY REFERENCE.
+ * Parameters
+ *		s : the variable symbol which is of a structured type and
+ * 		    which has not been passed by reference whose values
+ *		    we would like to push onto the stack
+ */
+void emitPushStructuredVarValue(Symbol *s)
+{
+	int i;
+	CHECK_CAN_EMIT(s);
+	emitComment("Pushing values of array %s onto stack", s->name);
+	for (i = 0; i < s->size; i++) {
+		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset + i,
+		    s->lvl); 
+	}
+}
+
+/*
  * Given that the address of some value is currently on top of
  * the stack, the function emits the asc code necessary to replace this
- * addres with the actual value of the element.
+ * addres with the actual value of the element (including arrays and records
+ * in which case the entire array is pushed onto the stack)
  */
 void emitPushAddressValue(Symbol *s)
 {
+	int i;
 	CHECK_CAN_EMIT(s);
 
 	switch (getType(s)) {
 	case ARRAY_T:
-		/* We never push an entire array of values onto the stack */
+	case RECORD_T:
+		for (i = 1; i < s->size; i++) {
+			emitComment("Array/Record %s location %d below on "
+			"stack", s->name, i - 1);
+			emitComment("need to push corresponding value");
+			if (i < s->size) {
+				emitStmt(STMT_LEN, "DUP");
+				emitStmt(STMT_LEN, "ADJUST -1");
+			}
+
+			emitStmt(STMT_LEN, "PUSHI");
+
+			if (i < s->size) {
+				emitComment("Set up next iteration.");
+				emitStmt(STMT_LEN, "ADJUST 1");
+				emitStmt(STMT_LEN, "CONSTI 1");
+				emitStmt(STMT_LEN, "ADDI");
+			}
+		}	
 		break;
 	case BOOLEAN_T:
 	case CHAR_T:

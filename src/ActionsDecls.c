@@ -27,7 +27,6 @@ extern int yylineno;
 extern int colno;
 static char *errMsg;
 
-
 /*
  * Perform actions necessary once all declarations are finished.
  */
@@ -48,6 +47,28 @@ void exitDeclPart(void) {
  * Arguments may be null if program contains errors.
  */
 void doProgramDecl(char *prog_name, char *in_name, char *out_name) {
+	/* 
+	 * All user-program declarations should happen at lex level 1
+	 * so we have to CALL before getting to them
+	 */
+	reserveLabels(mainLabelStack, 1);
+	
+	emitBlankLine();
+	emitSepLine();
+	emitBlankLine();
+	emitComment("Start of user program");
+	emitBlankLine();
+	emitSepLine();
+	emitBlankLine();
+		
+	emitComment("End of pre-def, call MAIN");
+	emitStmt(STMT_LEN, "CALL 1, %s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+	emitLabel(STMT_LEN, "%s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
+	popLabels(mainLabelStack);
+	
+	/* and of course increment on the symbol table as well */
 	incrementLexLevel(symbolTable);
 }
 
@@ -140,19 +161,9 @@ void exitVarDeclPart(void) {
 	reserveLabels(mainLabelStack, 1);
 
 	emitBlankLine();
-	if (inMainDecls != 0) {
-		emitComment("End of main var decls, call MAIN");
-		emitStmt(STMT_LEN, "CALL 1, %s_%d",
-		    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
-		/* clear flag */
-		inMainDecls = 0;
-	} else {
-		emitComment("End of var decls, jump over any other proc or "
-		    "func decls");
-		emitStmt(STMT_LEN, "GOTO %s_%d",
-		    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
-	}
-
+	emitComment("End of var decls, jump over any other proc or func decls");
+	emitStmt(STMT_LEN, "GOTO %s_%d",
+	    USER_PROG_START_LABEL, peekLabelStackTop(mainLabelStack));
 	emitBlankLine();
 }
 

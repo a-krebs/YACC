@@ -1,5 +1,8 @@
 {}
 program realEasy(in, out);
+const
+	one = 1;
+	minint = -(maxint);
 var
 	a : integer;
 begin

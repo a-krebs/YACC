@@ -15,6 +15,8 @@
 #include "Utils.h"
 #include "ActionsAll.h"
 #include "Kind.h"
+#include "Tree.h"
+
 
 #ifndef TESTBUILD
 #include "parser.tab.h"	/* token definitions used in operator compat checks */
@@ -131,7 +133,7 @@ ProxySymbol *hashLookupToProxy(char *id) {
 /*
  * Creates a new proxy symbol dependent on the field in the record type p
  * which was accessed.
- * Parameters
+ * Parameterscall
  *		p : the record to which the field id belongs
  *		id : the id of the field that is to be accessed
  */
@@ -247,140 +249,205 @@ ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
  *
  ******************************************************************************/
 
-ProxySymbol *eqOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *eqOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, EQUAL ,y);
-	if (ps) emitEqualsOp(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(x->symbol, EQUAL ,y->symbol);
+	node = createTreeNode(ps, EQUAL, x, y);
+	
+	//if (ps) emitEqualsOp(x, y);
+	return node;
 }
 
 
-ProxySymbol *notEqOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *notEqOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, NOT_EQUAL ,y);
-	if (ps) emitInequalityOp(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(x->symbol, NOT_EQUAL ,y->symbol);
+	node = createTreeNode(ps, NOT_EQUAL, x, y);
+	
+	//if (ps) emitInequalityOp(x, y);
+	return node;
 }
 
 
-ProxySymbol *lessOrEqOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *lessOrEqOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, LESS_OR_EQUAL ,y);
-	if (ps) emitLTEOp(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+
+	ps = exprsOp(x->symbol, LESS_OR_EQUAL ,y->symbol);
+	node = createTreeNode(ps, LESS_OR_EQUAL, x, y);
+	
+	//if (ps) emitLTEOp(x, y);
+	return node;
 }
 
 
-ProxySymbol *lessOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *lessOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, LESS ,y);
-	if (ps) emitLTOp(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+
+	ps = exprsOp(x->symbol, LESS ,y->symbol);
+	node = createTreeNode(ps, LESS, x, y);
+	
+	//if (ps) emitLTOp(x, y);
+	return node;
 }
 
 
-ProxySymbol *gtOrEqOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *gtOrEqOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, GREATER_OR_EQUAL ,y);
-	if (ps) emitGTEOp(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+
+	ps = exprsOp(x->symbol, GREATER_OR_EQUAL, y->symbol);
+	node = createTreeNode(ps, GREATER_OR_EQUAL, x, y);
+	
+	//if (ps) emitGTEOp(x, y);
+	return node;
 }
 
 
-ProxySymbol *gtOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *gtOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, GREATER ,y);
-	if (ps) emitGTOp(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+
+	ps = exprsOp(x->symbol, GREATER, y->symbol);
+	node = createTreeNode(ps, GREATER, x, y);
+	
+	//if (ps) emitGTOp(x, y);
+	return node;
 }
 
 
-ProxySymbol *unaryPlusOp(ProxySymbol *y) {
+struct treeNode *unaryPlusOp(struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(NULL, PLUS, y);
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(NULL, PLUS, y->symbol);
+	node = createTreeNode(ps, PLUS, createLeafNode(NULL), y);
 	// TODO emit
-	return ps;
+
+	return node;
 }
 
-
-ProxySymbol *unaryMinusOp(ProxySymbol *y) {
+struct treeNode *unaryMinusOp(struct treeNode  *y) {
 	ProxySymbol *ps = NULL;
-	ps = exprsOp(NULL, MINUS ,y);
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(NULL, MINUS ,y->symbol);
+	node = createTreeNode(ps, MINUS, createLeafNode(NULL), y);
+
 	// TODO emit
-	return ps;
+	return node;
 }
 
 
-ProxySymbol *plusOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *plusOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, PLUS ,y);			  
-	if (ps) emitAddition( (Symbol *) x, (Symbol *) y);
-	return ps;
+	ps = exprsOp(x->symbol, PLUS ,y->symbol);			  
+	//if (ps) emitAddition( (Symbol *) x, (Symbol *) y);
+
+	struct treeNode *node = createTreeNode(ps, PLUS, x, y);	
+
+	return node;
 }
 
 
-ProxySymbol *minusOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *minusOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, MINUS ,y);
-	if (ps) emitSubtraction(x, y);
-	return ps;
+	ps = exprsOp(x->symbol, MINUS ,y->symbol);
+	//if (ps) emitSubtraction(x, y);
+
+	struct treeNode *node = createTreeNode(ps, MINUS, x, y);	
+	
+	return node;
 }
 
 
-ProxySymbol *orOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *orOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, OR ,y);
-	if (ps) emitOr(x, y);
-	return ps;
+	ps = exprsOp(x->symbol, OR, y->symbol);
+	//if (ps) emitOr(x, y);
+
+	struct treeNode *node = createTreeNode(ps, OR, x, y);	
+
+	return node;
 }
 
 
-ProxySymbol *multOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *multOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, MULTIPLY ,y);
-	if (ps) emitMultiplication(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(x->symbol, MULTIPLY ,y->symbol);
+	node = createTreeNode(ps, MULTIPLY, x, y);
+
+	//if (ps) emitMultiplication(x, y);
+	return node;
 }
 
 
-ProxySymbol *divideOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *divideOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, DIVIDE ,y);
-	if (ps) emitDivision(x, y);
-	return ps; 
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(x->symbol, DIVIDE ,y->symbol);
+	node = createTreeNode(ps, DIVIDE, x, y);
+	
+	//if (ps) emitDivision(x, y);
+	return node; 
 }
 
 
-ProxySymbol *divOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *divOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(x, DIV ,y);
-	if (ps) emitDivision(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+
+	ps = exprsOp(x->symbol, DIV ,y->symbol);
+	node = createTreeNode(ps, DIV, x, y);
+
+	//if (ps) emitDivision(x, y);
+	return node;
 }
 
 
-ProxySymbol *modOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *modOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL;
-	ps = exprsOp(x, MOD ,y);
-	if (ps) emitMod(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(x->symbol, MOD ,y->symbol);
+	node = createTreeNode(ps, MOD, x, y);
+	
+	//if (ps) emitMod(x, y);
+	return node;
 }
 
 
-ProxySymbol *andOp(ProxySymbol *x, ProxySymbol *y) {
+struct treeNode *andOp(struct treeNode *x, struct treeNode *y) {
 	ProxySymbol *ps = NULL;
-	ps = exprsOp(x, AND ,y);
-	if (ps) emitAnd(x, y);
-	return ps;
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(x->symbol, AND ,y->symbol);
+	node = createTreeNode(ps, AND, x, y);
+	
+	//if (ps) emitAnd(x, y);
+	return node;
 }
 
 
-ProxySymbol *unaryNotOp(ProxySymbol *y) {
+struct treeNode *unaryNotOp(struct treeNode *y) {
 	ProxySymbol *ps = NULL;
-	ps = exprsOp(NULL, NOT ,y);
+	struct treeNode *node = NULL;
+	
+	ps = exprsOp(NULL, NOT ,y->symbol);
+	node = createTreeNode(ps, NOT, createLeafNode(NULL), y);
+
 	// TODO emit
-	return ps;
+	return node;
 }
+
 
 /*
  * Perform the operator action on the two operands.

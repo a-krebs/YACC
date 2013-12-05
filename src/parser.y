@@ -11,6 +11,7 @@
 #include "SymbolAll.h"
 #include "ActionsAll.h"
 #include "Utils.h"
+#include "Tree.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -19,6 +20,7 @@ extern int yyleng;
 extern int yyerrok;
 extern char *yytext;
 extern int colno;
+
 
 /* 
  * Flag to set if we're in constant declaration.
@@ -71,11 +73,12 @@ decls
 
 const_decl_part
 : CONST const_decl_list semicolon_or_error
-	{ exitConstDeclPart(); 
+	{ exitConstDeclPart();
 	  inDecl = 0;
 	}
 |
-	{ inDecl = 0; }
+	{ exitConstDeclPart();
+	  inDecl = 0; }
 ;
 
 const_decl_list
@@ -156,8 +159,8 @@ array_type_decl
 array_type
 : simple_type
 	{ $<symbol>$ = assertArrIndexType($<symbol>1); }
-| expr RANGE expr
-	{ $<symbol>$ = createRangeType($<proxy>1, $<proxy>3); }
+| expr_node RANGE expr_node
+	{ $<symbol>$ = createRangeType($<node>1, $<node>3); }
 ;
 
 field_list
@@ -328,65 +331,70 @@ subscripted_var_index
 ;
 
 expr
+: expr_node
+	{ $<proxy>$ = (ProxySymbol*)postOrderWalk($<node>1); }
+;
+
+expr_node
 : simple_expr
-	{ $<proxy>$ = $<proxy>1; }
-| expr EQUAL simple_expr
-	{ $<proxy>$ = eqOp($<proxy>1, $<proxy>3); }
-| expr NOT_EQUAL simple_expr
-	{ $<proxy>$ = notEqOp($<proxy>1, $<proxy>3); }
-| expr LESS_OR_EQUAL simple_expr
-	{ $<proxy>$ = lessOrEqOp($<proxy>1, $<proxy>3); }
-| expr LESS simple_expr
-	{ $<proxy>$ = lessOp($<proxy>1, $<proxy>3); }
-| expr GREATER_OR_EQUAL simple_expr
-	{ $<proxy>$ = gtOrEqOp($<proxy>1, $<proxy>3); }
-| expr GREATER simple_expr
-	{ $<proxy>$ = gtOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = $<node>1; }
+| expr_node EQUAL simple_expr
+	{ $<node>$ = eqOp($<node>1, $<node>3); }
+| expr_node NOT_EQUAL simple_expr
+	{ $<node>$ = notEqOp($<node>1, $<node>3); }
+| expr_node LESS_OR_EQUAL simple_expr
+	{ $<node>$ = lessOrEqOp($<node>1, $<node>3); }
+| expr_node LESS simple_expr
+	{ $<node>$ = lessOp($<node>1, $<node>3); }
+| expr_node GREATER_OR_EQUAL simple_expr
+	{ $<node>$ = gtOrEqOp($<node>1, $<node>3); }
+| expr_node GREATER simple_expr
+	{ $<node>$ = gtOp($<node>1, $<node>3); }
 ;
 
 simple_expr
 : term
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | PLUS term
-	{ $<proxy>$ = unaryPlusOp($<proxy>2); }
+	{ $<node>$ = unaryPlusOp($<node>2); }
 | MINUS term
-	{ $<proxy>$ = unaryMinusOp($<proxy>2); }
+	{ $<node>$ = unaryMinusOp($<node>2); }
 | simple_expr PLUS term
-	{ $<proxy>$ = plusOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = plusOp($<node>1, $<node>3); }
 | simple_expr MINUS term
-	{ $<proxy>$ = minusOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = minusOp($<node>1, $<node>3); }
 | simple_expr OR term
-	{ $<proxy>$ = orOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = orOp($<node>1, $<node>3); }
 ;
 
 term
 : factor
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | term MULTIPLY factor
-	{ $<proxy>$ = multOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = multOp($<node>1, $<node>3); }
 | term DIVIDE factor
-	{ $<proxy>$ = divideOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = divideOp($<node>1, $<node>3); }
 | term DIV factor
-	{ $<proxy>$ = divOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = divOp($<node>1, $<node>3); }
 | term MOD factor
-	{ $<proxy>$ = modOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = modOp($<node>1, $<node>3); }
 | term AND factor
-	{ $<proxy>$ = andOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = andOp($<node>1, $<node>3); }
 | error
-	{ $<proxy>$ = NULL; }
+	{ $<node>$ = createLeafNode(NULL); }
 ;
 
 factor
 : var
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | unsigned_const
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | L_PAREN expr R_PAREN_or_error
-	{ $<proxy>$ = $<proxy>2; }
+	{ $<node>$ = createLeafNode($<proxy>2); }
 | func_invok
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | NOT factor
-	{ $<proxy>$ = unaryNotOp($<proxy>2); }
+	{ $<node>$ = unaryNotOp($<node>2); }
 ;
 
 R_PAREN_or_error
@@ -545,7 +553,7 @@ decl_ID_or_err
 : DECL_ID UNREC decl_ID_or_err
 	{ $<id>$ = $<id>1; }
 | DECL_ID
-	{ $<id>$ = $<id>1; }
+	{  $<id>$ = $<id>1;}
 ;
 
 %%

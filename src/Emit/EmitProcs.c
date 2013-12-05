@@ -4,7 +4,7 @@
  */
 
 #include "EmitProcs.h"
-
+#include "EmitExprs.h"
 
 /*
  * Emit code to push procedure/function call onto the the stack.
@@ -308,9 +308,7 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	Symbol *arg = NULL;
 	Symbol *param = NULL;
 
- 	/* Need to do this backwardss so parameters are in expected place on stack.
- 	   i.e. First parameter at -3, second at -4, ect */
-	for (int i = args->nElements; i > 0 ; i--) {
+/*	for (int i = args->nElements; i > 0 ; i--) {
         	arg = getElementAt(args, i - 1);
         	if ( arg == NULL ) {
 			continue;
@@ -334,9 +332,89 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			}			
 		}                
         }
- 
+*/ 
 	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
 }
 
 
 
+
+/*
+ * Given a Symbol which is to be placed onto the stack in preparation
+ * for a call to a function, determines if that Symbol's value already
+ * exists on the stack or if it needs to be pushed (in which case it does so).
+ * Parameters
+ *		s : the symbol being passed to a procedure/function whose
+ *		    value needs to be placed on the stack.
+ */
+
+void emitPushParamValue(Symbol *s, int byRef)
+{
+	if (!byRef) {
+		/* The variable is being passed by value, so its value needs
+		 * to be placed on the stack. */
+
+		/* s is a constant */ 
+		if (s->kind == CONST_KIND) {
+			if (!isConstResultSym(s)) {
+				emitPushSymbolValue(s);
+			} 
+		/* Else, s is result of expression and value already
+		 * on the stack */
+			return;
+		}
+
+		/* s is a variable, so its value is not on the stack.
+		 * This case is simply -- we simply push its value */
+		if (s->kind == VAR_KIND) {
+			if ( (getType(s) == ARRAY_T) || (getType(s) ==
+			    RECORD_T) ) {
+			emitPushStructuredVarValue(s);
+			} else {
+				emitPushSymbolValue(s);
+			}
+			return;
+		}
+
+		/* We got to here, meaning s must be a type_kind symbol */
+
+		/* 
+		 * If the symbol of type_kind and one of the following holds:
+		 * (i) 		its address flag is set
+		 * (ii)		it is an array type
+		 * (iii) 	it a record type
+		 * then necessarily we have that the value on top of the stack
+		 * is an address.  We need to convert this address into a value
+		 * (or array of values) as appropriate.
+		 */
+		if ( (s->isAddress) || getType(s) == ARRAY_T || getType(s) ==
+		    (RECORD_T) ) {
+			emitPushAddressValue(s);	
+		}
+
+		/* 
+		 * Else, it is a type symbol which is resultant from an
+ 		 * expression that did not leave an address on the stack.
+ 		 * Thus, we have nothing to do
+		 */
+	} else {
+		emitComment("got here");
+		/* 
+		 * Else, the variable is being passed by reference.  And we 
+		 * only want to push the address of the variable onto the
+		 * stack
+		 */
+		if (s->kind == CONST_KIND) {
+			/* THIS SHOULD NOT HAPPEN : cannot pass const by ref  */
+		}
+
+		/* s is a variable, so its value is not on the stack.  In this
+		 * case we simply push its address */
+		if (s->kind == VAR_KIND) {
+			emitPushVarAddress(s);
+		}
+
+		/* else s is a type_kind, in which case its resultant from some
+		 * expression and its value is already on the stack */
+	}
+}
