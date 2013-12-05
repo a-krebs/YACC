@@ -104,8 +104,11 @@ Symbol *postOrderWalk(struct treeNode *node) {
 
 	if (node->left == NULL) {
 		return node->symbol;
-	}
-	else {
+	} else if (node->opToken == RECORD_ACCESS) {
+		y = postOrderWalk(node->left);
+		emitBabyTree(NULL, node->opToken, y);
+		return node->symbol;
+	} else {
 		x = postOrderWalk(node->left);
 		y = postOrderWalk(node->right);
 		emitBabyTree(x, node->opToken, y);
@@ -203,4 +206,12 @@ struct treeNode *createLeafNode(Symbol *symbol) {
 	node = createNodeCommon(symbol, NO_OPT, NULL, NULL);
 
 	return node;
+}
+
+struct treeNode * createRecordNode(Symbol *s, struct treeNode *child) {
+	struct treeNode *node = NULL;
+
+	node = createNodeCommon(s, RECORD_ACCESS, child, NULL);
+	node->left->parent = node;
+	return node; 
 }
