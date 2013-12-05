@@ -1,4 +1,4 @@
-{15}
+{17}
 {	
 	
 	line 15: assign a char to an integer array
@@ -14,7 +14,7 @@ var
 procedure test(a:integer; c:intArray);
 begin
 	c[0]:=a;
-	c[1]:=b;
+	c[1]:=b;	//error
 end;	
 begin
 	test(a,c);

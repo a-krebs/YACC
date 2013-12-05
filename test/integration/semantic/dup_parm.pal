@@ -1,4 +1,4 @@
-{7}
+{3}
 program test(input,output);
 procedure proc(a:integer;a:integer);
 begin
