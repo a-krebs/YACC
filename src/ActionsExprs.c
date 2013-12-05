@@ -323,9 +323,10 @@ struct treeNode *gtOp(struct treeNode *x, struct treeNode *y) {
 
 struct treeNode *unaryPlusOp(struct treeNode *y) {
 	ProxySymbol *ps = NULL; 
-	ps = exprsOp(NULL, PLUS, y->symbol);
+	struct treeNode *node = NULL;
 	
-	struct treeNode *node = createTreeNode(ps, PLUS, NULL, y);
+	ps = exprsOp(NULL, PLUS, y->symbol);
+	node = createTreeNode(ps, PLUS, createLeafNode(NULL), y);
 	// TODO emit
 
 	return node;
@@ -333,8 +334,10 @@ struct treeNode *unaryPlusOp(struct treeNode *y) {
 
 struct treeNode *unaryMinusOp(struct treeNode  *y) {
 	ProxySymbol *ps = NULL;
+	struct treeNode *node = NULL;
+	
 	ps = exprsOp(NULL, MINUS ,y->symbol);
-	struct treeNode *node = createTreeNode(ps, MINUS, NULL, y);
+	node = createTreeNode(ps, MINUS, createLeafNode(NULL), y);
 
 	// TODO emit
 	return node;
@@ -439,7 +442,7 @@ struct treeNode *unaryNotOp(struct treeNode *y) {
 	struct treeNode *node = NULL;
 	
 	ps = exprsOp(NULL, NOT ,y->symbol);
-	node = createTreeNode(ps, NOT, NULL, y);
+	node = createTreeNode(ps, NOT, createLeafNode(NULL), y);
 
 	// TODO emit
 	return node;

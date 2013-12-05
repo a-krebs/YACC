@@ -12,6 +12,8 @@ struct treeNode {
 };
 
 
+Symbol *postOrderWalk(struct treeNode *node);
+
 struct treeNode *allocateTreeNode();
 
 struct treeNode *createNodeCommon(Symbol *symbol, int opToken, 

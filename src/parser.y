@@ -331,7 +331,7 @@ subscripted_var_index
 
 expr
 : expr_node
-	{ $<proxy>$ = postOrderWalk($<node>1); }
+	{ $<proxy>$ = (ProxySymbol*)postOrderWalk($<node>1); }
 ;
 
 expr_node
