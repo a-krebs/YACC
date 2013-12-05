@@ -15,8 +15,6 @@
 #endif
 
 
-
-
 /*
  * Emits code to result the expression contained in the baby tree
  * i.e. tree with root and one left and one right node
@@ -94,6 +92,7 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 		} else if (y) {
 			emitFuncInvok(y, y->kindPtr.FuncKind->params);
 		}
+		break;
 	}
 	default:
 		break; 

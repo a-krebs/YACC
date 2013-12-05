@@ -65,6 +65,7 @@ void procInvok(char *id, struct ElementArray *ea) {
  * Return a treeNode struct. 
  */
 struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
+	struct treeNode *funcNode;
 	Symbol *s = NULL, *newNodeSym;
 	s = getGlobalSymbol(symbolTable, id);
 	
@@ -83,12 +84,14 @@ struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
-		newNodeSym = newFuncSym(s->lvl, NULL, getTypeSym(s), argv);
-		return createLeafNode(newNodeSym);	
+		newNodeSym = newFuncSym(s->lvl, s->name, getTypeSym(s), argv);
+		newNodeSym->kindPtr.FuncKind->label = s->kindPtr.FuncKind->label;
+		funcNode = createLeafNode(newNodeSym);
+		funcNode->opToken = FUNCTION_INVOCATION;
+		return funcNode;	
 	}
 
 	return createLeafNode(NULL);
-
 }
 
 
