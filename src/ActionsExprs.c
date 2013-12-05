@@ -48,7 +48,7 @@ void assignOp(Symbol *x, ProxySymbol *y) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	} 
 
-	if (isAssignmentCompat(getTypeSym(x), getTypeSym(y))) {
+	if (isAssignmentCompat(x, y)) {
 		emitAssignmentOp(x, y);
 	}
 
@@ -949,12 +949,17 @@ Symbol *assertOpCompat(
  * Boolean function to determine if two symbols are assignment
  * compatible
  *
- * Parameters:  type1: type symbole to compare
- *		type2: type symbole to compare
+ * Parameters:  x: symbol to compare
+ *		y: symbol to compare
  *
  * Returns: 1 if both symbols are compatible. 0 otherwise
  */
-int isAssignmentCompat(Symbol * type1, Symbol * type2) {
+int isAssignmentCompat(Symbol *x, Symbol *y) {
+	Symbol *type1, *type2;
+	
+	type1 = getTypeSym(x);
+	type2 = getTypeSym(y);
+	
 	if (areSameType(type1, type2)) {
 		return 1;
 	} else if (areCompatibleStrings(type1, type2)) {
@@ -962,8 +967,9 @@ int isAssignmentCompat(Symbol * type1, Symbol * type2) {
 	} else if ((getType(type1) == REAL_T) && 
 	    (getType(type2) == INTEGER_T)) {
 		return 1;
-	}
-
+	} else if (isConstInScalar(y,type1)) {
+		return 1;
+	} 
 	errMsg = customErrorString("The type %s cannot be assigned a value"
 	    " of type %s", typeToString(getType(type1)), 
 	    typeToString(getType(type2)));

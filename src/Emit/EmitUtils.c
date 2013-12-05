@@ -115,6 +115,14 @@ void emitBlankLine() {
 	emitStr(&stmts, "", "", "\n");
 }
 
+
+/*
+ * Emit a seperator line.
+ */
+void emitSepLine() {
+	emitComment("#######################################################");
+}
+
  
 /*  
  * Constructs the asc statement necessary to push the value of the variable 

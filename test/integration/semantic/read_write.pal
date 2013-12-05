@@ -1,0 +1,21 @@
+{13, 14,16,17, 18}
+program io(input,output);
+type 
+	int = integer;
+	real = integer;
+	haha = array[1..10]of integer;
+var	
+	a : int;
+	b : real;
+	c : haha;
+	d : boolean;
+begin
+	writeln(a,b,c,'bla bla and bla'); {error 1 :variable c is not in ordinal type}
+	writeln(c); {error 1 :variable c is not in ordinal type}
+	writeln();
+	writeln(a,c,c,c,c); {error 1 :variable c is not in ordinal type}
+	writeln(unDefinedArgHAHA,a); {error 2 :undefined arg1 }
+	writeln(writeln(a));
+	{erro 3 :passing a function to writeln as a parameter}
+	
+end.

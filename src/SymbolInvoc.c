@@ -171,6 +171,9 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < nArgs; i++) {
 		param = getElementAt(ea, i);
 		type = getType(param);
+		if (type == ARRAY_T) {
+			type = getType(getArrayBaseSym(param));
+		}
 		if ( (type != CHAR_T) && (type != INTEGER_T) &&
 		    (type != REAL_T) && (type != STRING_T) ) {
 			errMsg = customErrorString("Invalid argument "

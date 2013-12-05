@@ -1,4 +1,4 @@
-{10}
+{11}
 {
     Test record definitions
 }
@@ -7,7 +7,7 @@ type
 	test = record
 		a : integer;
 		b : integer;
-		a : integer		// error rename not allowed
+		a : integer		// error rename not allowed, will appear on line 11 b/c no semi-colon
 	end;
 begin
 end.

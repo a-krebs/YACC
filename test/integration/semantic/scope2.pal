@@ -50,7 +50,7 @@ function scope1() : integer;
 		f := 2;		// error, out of scope
 		g := 2;		// error, out of scope
 		h := 2;		// error, out of scope
-		d := 'string?';
+		d := 'string?loi';  
 	end;
 begin
 	a := 1;

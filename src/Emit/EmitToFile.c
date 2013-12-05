@@ -52,11 +52,11 @@ int emitToFile(char *fileName) {
  */
 void emitPreDefCode() {
 	emitBlankLine();
-	emitComment("#######################################################");
+	emitSepLine();
 	emitBlankLine();
 	emitComment("Pre-defined ASC functions to follow");
 	emitBlankLine();
-	emitComment("#######################################################");
+	emitSepLine();
 	emitBlankLine();
 
 	/* call to generated function in PreDefAsc.c */
