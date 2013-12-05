@@ -216,10 +216,10 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 
  	emitStmt(STMT_LEN, "");
  	emitComment("Start procedure invocation '%s':", symbol->name);
- 	
+	emitComment("Make room for return value");
+	emitStmt(STMT_LEN, "CONSTI 0"); 	
  	emitProcOrFuncInvokCommon(symbol, params, label);
 
-	emitProcOrFuncEndCommon(symbol,"hello"); 
 }
 
 
