@@ -70,8 +70,11 @@ Symbol *createArrayTypeSymbol(
 Symbol *createScalarListTypeSymbol(
     char *id, int typeOriginator, struct ElementArray *scalars)
 {
+	int i = 0;
 	Symbol *symbol = NULL;
+	Symbol *tmpConstSym = NULL;
 	struct TypeKind *kindPtr = NULL;
+
 	if (scalars == NULL) {
 		err(EXIT_FAILURE, "Trying to make a new scalar list type "
 		    "with empty list. This should be caught further up in "
@@ -85,6 +88,13 @@ Symbol *createScalarListTypeSymbol(
 	kindPtr->type = SCALAR_T;
 	kindPtr->typePtr.Scalar = newScalar(scalars);
 
+	/* now set all scalar list members to be the same type */
+	for (i = 0; i < scalars->nElements; i++) {
+		tmpConstSym = getElementAt(scalars, i);
+		if (tmpConstSym == NULL) continue;
+
+		setInnerTypeSymbol(tmpConstSym, symbol);
+	}
 	return symbol;
 }
 
