@@ -3,6 +3,7 @@
  * procedures and functions.
  */
 
+#include "Tree.h"
 #include "EmitProcs.h"
 #include "EmitExprs.h"
 
@@ -83,6 +84,7 @@ void emitEndFunc(Symbol *symbol) {
  * 	
  * Returns: size of list
  */
+// TODO: make this function work correctly
 int getSizeOfParams(Symbol *procOrFuncSymbol) {
 	struct ElementArray *params = NULL;
 	Symbol *param = NULL;
@@ -230,6 +232,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
+	
 
  	//TODO remove this if not needed. If needed it needs fixin'
  	// for (int i = params->nElements; i > 0 ; i--) {
@@ -249,7 +252,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 
 
 /*
- * Emit code to emit structure type symbols: arrays, records, emuns
+ * Emit code to emit structure type symbols: arrays, records
  *
  * Parameters: void.
  * 	
@@ -305,34 +308,29 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	struct ElementArray *args, char *label) 
 {
 	struct ElementArray *params = getProcOrFuncParams(symbol);
+	struct treeNode *argNode = NULL;
 	Symbol *arg = NULL;
 	Symbol *param = NULL;
+	int i;
 
-/*	for (int i = args->nElements; i > 0 ; i--) {
-        	arg = getElementAt(args, i - 1);
-        	if ( arg == NULL ) {
-			continue;
-		}
+	for (i = args->nElements; i > 0 ; i--) {
 
-		if ( arg->kind == CONST_KIND ) {
-			emitPushAnonConstValue(arg);	
-		}
-		else {
-			if ( getType(arg) == ARRAY_T
-				|| getType(arg) == RECORD_T ) 
-			{
-				if (params == NULL) {
-					continue;
-				}
-				param = getElementAt(params, i - 1);
-				emitStructuredType(arg, param);
-			}
-			else {
-				emitPushSymbolValue(arg);		
-			}			
-		}                
-        }
-*/ 
+		/* Get parameter symbol from the proc/func's kindPtr */
+		param = getElementAt(params, i-1);
+
+		/* Get the argument symbol from the parsed expression nodes */
+		argNode = getElementAt(args, i-1);
+
+		if (!argNode) return;
+	
+		arg = argNode->symbol;
+
+		if (!(arg) || !(param)) return;
+
+		/* Push the value of expression */
+		postOrderWalk(argNode);	
+		emitPushParamValue(arg, isByReference(param)); 
+	}
 	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
 }
 
