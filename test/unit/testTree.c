@@ -144,7 +144,7 @@ char *test_createLeafNode() {
 		node != NULL);
 
 	mu_assert("Unexpected value for opToken",
-		node->opToken == 0);	
+		node->opToken == -1);	
 
 	mu_assert("Unexpected value for left",
 		node->left == NULL);
