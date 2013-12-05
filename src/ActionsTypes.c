@@ -10,6 +10,7 @@
 #include "Hash.h"
 #include "PreDef.h"
 #include "Emit.h"
+#include "Tree.h"
 #include "Type.h"
 #include "SymbolAll.h"
 #include "Utils.h"
@@ -210,15 +211,18 @@ Symbol *assertArrIndexType(Symbol *index_type) {
  *
  * Return a pointer to the new subrange type.
  */
-Symbol *createRangeType(ProxySymbol *lower, ProxySymbol *upper) {
+Symbol *createRangeType(struct treeNode *lower, struct treeNode *upper) {
 	Symbol *s = NULL;
 	if (!(lower) || !(upper)) return NULL;
-	s = newSubrangeSym((Symbol *) lower, (Symbol *) upper);
+	if (!(lower->symbol) || !(upper->symbol)) return NULL;
+	if ( (lower->symbol->kind != CONST_KIND) || (upper->symbol->kind 
+	    != CONST_KIND)) {
+		recordError("Cannot define array indices using non-constant "
+		"expressions.", yylineno, colno, SEMANTIC);
+	}
+	s = newSubrangeSym(lower->symbol, upper->symbol);
 
-	emitComment("In parsing the low and high index of a subrange type for");
-	emitComment("an array declaration, we have left two useless expressions"
-	    " on the stack.");
-	emitStmt(STMT_LEN, "ADJUST -2");
+	
 
 	return s;
 }
