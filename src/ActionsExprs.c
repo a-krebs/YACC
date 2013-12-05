@@ -133,7 +133,7 @@ ProxySymbol *hashLookupToProxy(char *id) {
 /*
  * Creates a new proxy symbol dependent on the field in the record type p
  * which was accessed.
- * Parameters
+ * Parameterscall
  *		p : the record to which the field id belongs
  *		id : the id of the field that is to be accessed
  */
@@ -266,7 +266,7 @@ struct treeNode *notEqOp(struct treeNode *x, struct treeNode *y) {
 	struct treeNode *node = NULL;
 	
 	ps = exprsOp(x->symbol, NOT_EQUAL ,y->symbol);
-	node = createTreeNode(ps, DIVIDE, x, y);
+	node = createTreeNode(ps, NOT_EQUAL, x, y);
 	
 	//if (ps) emitInequalityOp(x, y);
 	return node;
@@ -278,7 +278,7 @@ struct treeNode *lessOrEqOp(struct treeNode *x, struct treeNode *y) {
 	struct treeNode *node = NULL;
 
 	ps = exprsOp(x->symbol, LESS_OR_EQUAL ,y->symbol);
-	node = createTreeNode(ps, DIVIDE, x, y);
+	node = createTreeNode(ps, LESS_OR_EQUAL, x, y);
 	
 	//if (ps) emitLTEOp(x, y);
 	return node;
@@ -290,7 +290,7 @@ struct treeNode *lessOp(struct treeNode *x, struct treeNode *y) {
 	struct treeNode *node = NULL;
 
 	ps = exprsOp(x->symbol, LESS ,y->symbol);
-	node = createTreeNode(ps, DIVIDE, x, y);
+	node = createTreeNode(ps, LESS, x, y);
 	
 	//if (ps) emitLTOp(x, y);
 	return node;
@@ -302,7 +302,7 @@ struct treeNode *gtOrEqOp(struct treeNode *x, struct treeNode *y) {
 	struct treeNode *node = NULL;
 
 	ps = exprsOp(x->symbol, GREATER_OR_EQUAL, y->symbol);
-	node = createTreeNode(ps, DIVIDE, x, y);
+	node = createTreeNode(ps, GREATER_OR_EQUAL, x, y);
 	
 	//if (ps) emitGTEOp(x, y);
 	return node;
@@ -314,7 +314,7 @@ struct treeNode *gtOp(struct treeNode *x, struct treeNode *y) {
 	struct treeNode *node = NULL;
 
 	ps = exprsOp(x->symbol, GREATER, y->symbol);
-	node = createTreeNode(ps, DIVIDE, x, y);
+	node = createTreeNode(ps, GREATER, x, y);
 	
 	//if (ps) emitGTOp(x, y);
 	return node;

@@ -5,7 +5,16 @@
 
 #include "Definitions.h"
 #include "Tree.h"
+#include "Emit.h"
 
+
+
+#ifndef TESTBUILD
+#include "parser.tab.h"	/* token definitions used in operator compat checks */
+#endif
+#ifdef TESTBUILD
+#include "tokens.h"
+#endif
 
 
 /*
@@ -15,6 +24,33 @@
 
 */
 
+
+void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
+
+	switch (opToken) {
+		case PLUS:
+			emitAddition( (Symbol *) x, (Symbol *) y);
+			break;
+		default:
+			printf("FUCK MY LIFE\n");
+	}
+}
+
+
+Symbol *postOrderWalk(struct treeNode *node) {
+	Symbol *x = NULL;
+	Symbol *y = NULL;
+
+	if (node->left == NULL) {
+		return node->symbol;
+	}
+	else {
+		x = postOrderWalk(node->left);
+		y = postOrderWalk(node->right);
+		emitBabyTree(x, node->opToken, y);
+		return node->symbol;
+	}
+}		
 
 
 struct treeNode *allocateTreeNode() {
