@@ -6,7 +6,7 @@ CMPUT 415 Compiler Project
 Installation
 ----
 
-To build, use `make`. The `pal` executable with be located at `bin/pal`.
+To build, use `make`. The `pal` executable will be located at `bin/pal`.
 
 To build the unit testing executable, use `make test`, which will produce
 the test executable at `bin/test`.
@@ -42,7 +42,10 @@ Documentation is in `docs/` as a `documentation.PDF`.
 The man page is located in the root directory with filename `pal.man`.
 
 Further unit tests are located in `test/unit/' and more pal test cases are
-int `test/integration/syntax/`. There are also '.tokens' files in that directory
+int `test/integration/syntax/`, `test/integration/semantic/` and
+`test/integration/full`. There are also '.tokens' files in these directories
 which contain test output for the lex tester (see Installation for how to build
 this).
+Some automated ASC code generation tests are included as well, in
+`test/asc/`
 
