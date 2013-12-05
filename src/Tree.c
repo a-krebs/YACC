@@ -30,6 +30,7 @@
  */
 void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 
+	CHECK_CAN_EMIT(1);
 	switch (opToken) {
 	case EQUAL:
 		emitEqualsOp(x, y);
