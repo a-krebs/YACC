@@ -84,6 +84,9 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 	case ARRAY_INDEX:
 		emitArrayElementLocation(x, y);
 		break;
+	case RECORD_ACCESS:
+		emitPushRecordFieldAddress(x, y);
+		break;
 	default:
 		// Probably need case for array index operation
 		// and records...
@@ -108,8 +111,9 @@ Symbol *postOrderWalk(struct treeNode *node) {
 	if (node->left == NULL) {
 		return node->symbol;
 	} else if (node->opToken == RECORD_ACCESS) {
-		y = postOrderWalk(node->left);
-		emitBabyTree(NULL, node->opToken, y);
+		x = postOrderWalk(node->left);
+		emitBabyTree(x, node->opToken, node->symbol);
+		printf("HEY WE're %s stuff!\n", x->name);
 		return node->symbol;
 	} else {
 		x = postOrderWalk(node->left);

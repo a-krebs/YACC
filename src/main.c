@@ -213,6 +213,7 @@ int main( int argc, char *argv[] )
 		 * Print to standard output, as this is not an error in our
 		 * compiler.
 		 */
+		fflush(stderr);
 		fprintf(stdout, "Did not generate .asc file, as the "
 		    "given .pal file contains errors.\n");
 	}

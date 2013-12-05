@@ -170,8 +170,6 @@ struct treeNode *recordAccessToProxy(struct treeNode *node, char *id) {
 
 	
 	return createRecordNode(s, node);
-	//emitPushRecordFieldAddress(p, s);
-	//return newProxySymFromSym(s);
 }
 
 
