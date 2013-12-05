@@ -162,7 +162,7 @@ int
 isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
-	type_t type;
+	type_t type,arrayBaseType;
 	int i, nArgs, valid = 1;
 
 	nArgs = ea->nElements;
@@ -172,7 +172,10 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 		param = getElementAt(ea, i);
 		type = getType(param);
 		if (type == ARRAY_T) {
-			type = getType(getArrayBaseSym(param));
+			arrayBaseType = getType(getArrayBaseSym(param));
+			if(arrayBaseType == CHAR_T){
+				type = arrayBaseType;
+			}
 		}
 		if ( (type != CHAR_T) && (type != INTEGER_T) &&
 		    (type != REAL_T) && (type != STRING_T) ) {
