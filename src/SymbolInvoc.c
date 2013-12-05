@@ -6,6 +6,7 @@
 #include "ElementArray.h"
 #include "Error.h"
 #include "ErrorLL.h"
+#include "Tree.h"
 #include "Type.h"
 #include "Hash.h"
 #include "PreDef.h"
@@ -49,10 +50,13 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 		return 0;	
 	}
 
+	// TODO: should'nt call to is areSameType below be a call to
+	// are assignment compatible? 
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
-		passedParam = (Symbol *) getElementAt(ea, i);
+		passedParam = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(getTypeSym(passedParam), getTypeSym(expectedParam))) {
+		if (!areSameType(getTypeSym(passedParam), 
+		    getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name,
@@ -95,11 +99,13 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 		return NULL;	
 	}
 
-
+	// TODO: should'nt call to is areSameType below be a call to
+	// are assignment compatible? 
 	for (i = 0; i < params->nElements; i++) {
-		passedParam = (Symbol *) getElementAt(ea, i);
+		passedParam = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(getTypeSym(passedParam), getTypeSym(expectedParam))) {
+		if (!areSameType(getTypeSym(passedParam), 
+		    getTypeSym(expectedParam))) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name, i,
@@ -169,7 +175,7 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 
 	// TODO use is isElementArraySimple() to do type checking?
 	for (i = 0; i < nArgs; i++) {
-		param = getElementAt(ea, i);
+		param = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		type = getType(param);
 		if (type == ARRAY_T) {
 			arrayBaseType = getType(getArrayBaseSym(param));
@@ -190,7 +196,7 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	return 1;
 }
 
-
+/* ea is an array of nodes now */
 ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
@@ -208,7 +214,7 @@ ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 		return 0;
 	}
 	
-	param = getElementAt(ea, i);
+	param = ((struct treeNode *)getElementAt(ea, i))->symbol;
 	type = getType(param);
 	
 	if (typeIsInValidArgs(s, type)) {

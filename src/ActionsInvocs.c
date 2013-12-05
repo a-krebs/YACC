@@ -83,8 +83,7 @@ struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
-		newNodeSym = newProxySymFromSym(s);
-		newNodeSym->kindPtr.FuncKind->params = argv;
+		newNodeSym = newFuncSym(s->lvl, NULL, getTypeSym(s), argv);
 		return createLeafNode(newNodeSym);	
 	}
 
