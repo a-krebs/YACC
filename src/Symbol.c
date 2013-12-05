@@ -443,22 +443,22 @@ Symbol *newStringTypeSym(int strlen) {
  * scalar list.
  */
 int
-isConstInScalar(Symbol *constSym, Symbol *scalarSym)
+isConstInScalar(Symbol *constSym, Symbol *scalarSymType)
 {
 	struct ElementArray *consts = NULL;
 	Symbol *c = NULL;
 	int i;
-	if (!(constSym) || !(scalarSym)) return 0;
+	if (!(constSym) || !(scalarSymType)) return 0;
 	if ((getType(constSym) != INTEGER_T) ||
-	    (getType(scalarSym) != SCALAR_T) ||
+	    (getType(scalarSymType) != SCALAR_T) ||
 	    (constSym->kind != CONST_KIND) ||
-	    (scalarSym->kind != TYPE_KIND)) {
+	    (scalarSymType->kind != TYPE_KIND)) {
 		return 0;
 	} 
 
 	if (!constSym->name) return 0;
 
-	consts = getTypePtr(scalarSym)->Scalar->consts;
+	consts = getTypePtr(scalarSymType)->Scalar->consts;
 
 	for(i = 0; i < consts->nElements; i++) {
 		c = (Symbol *) getElementAt(consts, i);

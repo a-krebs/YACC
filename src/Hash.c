@@ -697,6 +697,7 @@ void dumpHash(struct hash *hash) {
                                 for (; symbol != NULL; symbol = symbol->next) {
                                         printf("\t\t\tName: %s\n", symbol->name);
                                         printf("\t\t\tLex Level: %d\n", symbol->lvl);
+                                        printf("\t\t\tKind: %d\n", symbol->kind);
                                         if( symbol->kind == TYPE_KIND ) {
                                             printf("\t\t\tType: %s\n", typeToString(getType(symbol)));
                                         }
