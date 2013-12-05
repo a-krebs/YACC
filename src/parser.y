@@ -299,8 +299,7 @@ assigned_var
 | var PERIOD ID_or_err 
 	{ $<symbol>$ = recordFieldAssignmentLookup($<node>1, $<id>3); }
 | subscripted_var RS_BRACKET 
-	{ /* for assignments i can just walk the tree right away */
-	  $<symbol>$ = $<node>1->symbol;  }
+	{ $<symbol>$ = pushArrayIndexValue($<node>1);}
 ;
 
 var

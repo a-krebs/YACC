@@ -10,7 +10,7 @@ void assignOp(ProxySymbol *x, ProxySymbol *y);
 
 Symbol *variableAssignmentLookup(char *);
 Symbol *recordFieldAssignmentLookup(struct treeNode *, char *);
-Symbol *pushArrayIndexValue(ProxySymbol *);
+Symbol *pushArrayIndexValue(struct treeNode *);
 struct treeNode *hashLookupToProxy(char *id);
 
 
