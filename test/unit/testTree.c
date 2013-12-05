@@ -12,6 +12,7 @@
 #include "testTree.h"
 #include "Tree.h"
 #include "Definitions.h"
+#include "SymbolAll.h"
 
 
 // mu_assert("",
@@ -26,8 +27,6 @@ char *test_tree() {
 	Symbol *symbol2 = createConstSymbol("test2");
 	Symbol *symbol3 = createConstSymbol("test3");
 	Symbol *symbol4 = createConstSymbol("test1");
-	Symbol *symbol5 = createConstSymbol("test2");
-	Symbol *symbol6 = createConstSymbol("test3");
 
 	struct treeNode *left = createLeafNode(symbol2);	
 	struct treeNode *right = createLeafNode(symbol3);
