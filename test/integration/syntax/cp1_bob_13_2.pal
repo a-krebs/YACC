@@ -1,0 +1,35 @@
+{17, 28}
+{
+*************************************************************************
+*
+* Error file: 7.pal
+*
+* Error: In this program, there exists three errors. 
+*
+*        1) program bisonerr3 (input,); < Missing an output file >
+*
+*	 2) c:=Procedure(b,b,);      < Missing an argument in procedure call > 
+*
+*
+*************************************************************************
+}
+
+program bisonerr3 (input,);	// missing the output file
+
+{ this is a comment 
+  also comments .}
+
+var x:integer;
+
+begin
+
+x:= 1 + 3 ;
+
+c:=Procedure(b,b,);   		// missing an argument
+
+x := x + 2;
+
+
+x:=2; 
+
+end.
