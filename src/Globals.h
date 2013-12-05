@@ -21,10 +21,4 @@ struct labelStack *loopLabelStack;	/* for while loops */
 struct labelStack *procOrFuncStack;
 struct labelStack *mainLabelStack;
 
-/* 
- * flag to say we're in the main program decls section. Used to
- * CALL main program body rather than GOTOing, so that display registers
- * are set properly
- */
-int inMainDecls;
 #endif

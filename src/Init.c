@@ -17,9 +17,6 @@ int initialize() {
 		exit(EXIT_FAILURE);
 	}
 
-	/* at start, we're in the main program declarations section */
-	inMainDecls = 1;
-
 	/* prep global StmtLL */
 	stmts = NULL;
 	/* emit some comments and stuff */
