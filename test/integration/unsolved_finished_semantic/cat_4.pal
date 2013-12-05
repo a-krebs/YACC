@@ -1,0 +1,113 @@
+{ 109,110,111 }
+{
+    Semantic errors about relational compatibilities
+    
+    See the Pal specification.
+    Error's 
+    108-110 are errors 
+}
+program SemRelationalCompatibilities(input, output);
+const
+    ci1 = 1;
+    ci2 = 2;
+    cb1 = true;
+    cb2 = false;
+    cc1 = '1';
+    cc2 = '2';
+    cr1 = 1.0;
+    cr2 = 2.0;
+    cstr7 = '1234567';
+    cstr2 = '12';
+type
+    ti = integer;
+    tb = Boolean;
+    tc = char;
+    tr = real;
+    tea = (foo, bar, baz);
+    teb = (R, G, B);
+    string = array[1..7] of char;
+    str7 = array[1..7] of char;
+    str3 = array[1..3] of char;
+    chr7 = array[0..6] of char;
+    int7 = array[1..7] of integer;
+var
+    vi1 : integer;
+    vi2 : ti;
+    vr1 : real;
+    vr2 : tr;
+    vb1 : Boolean;
+    vb2 : tb;
+    vc1 : char;
+    vc2 : tc;
+    vea1 : tea;
+    vea2 : tea;
+    veb  : teb;
+    vstr7a : string;
+    vstr7b : str7;
+    vstr3 : str3;
+    vchr7 : chr7;
+    vint7 : int7;
+begin
+    { Valid operations }
+    vea1 := foo;
+    vea2 := bar;
+    vb1 := foo  =  vea1;
+    vb1 := vea2 <> bar;
+    vb1 := baz  <  foo;
+    vb1 := bar  >  vea2;
+    vb1 := vea1 <= baz;
+    vb1 := vea2 >= vea1;
+    vi1 :=  1;
+    vi2 := -2;
+    vb1 := ci1 =  vi1;
+    vb1 := vi2 <>   2;
+    vb1 :=  -1 <  ci2;
+    vb1 := ci2 >  vi2;
+    vb1 := vi1 <=  -3;
+    vb1 :=   5 >= ci1;
+    vb1 := true;
+    vb2 := false;
+    vb1 := cb1  =  vb1;
+    vb1 := vb2  <> false;
+    vb1 := true <  cb2;
+    vb1 := cb2  >  vb2;
+    vb1 := vb1  <= not(1=1);
+    vb1 := (1<1)>= cb1;
+    vc1 := 'a';
+    vc2 := 'b';
+    vb1 := cc1 =  vc1;
+    vb1 := vc2 <> '!';
+    vb1 := '$' <  cc2;
+    vb1 := cc2 >  vc2;
+    vb1 := vc1 <= '.';
+    vb1 := '=' >= cc1;
+    vr1 :=  1.0;
+    vr2 := -2.0;
+    vb1 := cr1 =  vr1;
+    vb1 := vr2 <> 2.0;
+    vb1 := -1.0<  cr2;
+    vb1 := cr2 >  vr2;
+    vb1 := vr1 <=-3.0;
+    vb1 := 5.0 >= cr1;
+    vstr7a := '7654321';
+    vstr7b := cstr7;
+    vb1 := cstr7    =  vstr7a;
+    vb1 := vstr7b   <> 'abcdefg';
+    vb1 := '123defg'<  cstr7;
+    vb1 := cstr7    >  vstr7b;
+    vb1 := vstr7a   <= vstr7b;
+    vb1 := cstr7    >= cstr7;
+    vb1 := cr1 =  vi1;
+    vb1 := vi2 <> 2.0;
+    vb1 := -1  <  cr2;
+    vb1 := ci2 >  vr2;
+    vb1 := vr1 <=  -3;
+    vb1 := 5.0 >= ci1;
+    vstr3 := '321';
+    veb := R;
+    { Invalid operations }
+    vb1 := vchr7 <> vchr7; { Invalid: chr7 does not start at 1 }
+    vb1 := cstr2  =  vstr7a;   { Invalid: sizes are different }
+    vb1 := 'A'   =  G;      { Invalid: not compatible }
+end.
+{ vim: set ft=pascal: }

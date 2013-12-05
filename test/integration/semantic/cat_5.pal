@@ -1,0 +1,46 @@
+{42,43,44}
+{
+    Semantic errors about arithmetic compatibilities
+    
+    See the Pal specification.
+    Errors on 41-43 
+
+}
+program SemArithmeticCompatibilities(input, output);
+const
+    ci1 = 1;
+    ci2 = 2;
+    cr1 = 1.0;
+    cr2 = 2.0;
+type
+    ti = integer;
+    tr = real;
+var
+    vi1 : integer;
+    vi2 : ti;
+    vr1 : real;
+    vr2 : tr;
+begin
+    { Valid operations }
+    vi1 := +(1);
+    vi2 := -(-2);
+    vi1 := (ci1 + vi2) * 3;
+    vi2 := vi1 - (+1 + ci2);
+    vr1 := +(1.0);
+    vr2 := -(-2.0);
+    vr1 := (cr1 + vr2) * 3.0;
+    vr2 := vr1 - (+1.0 + cr2);
+    vi1 := (ci1 mod vi2) div 3;
+    vi2 := vi1 mod (-3 div ci2);
+    vr1 := 3 / 2;
+    vr1 := 3.0 / 2.0;
+    vr1 := (ci1 + vr2) * 3;
+    vr2 := vi1 - (+1.0 + ci2);
+    vr1 := (1.0 / vi2) - vi1;
+    vr2 := ci2 * (+2 / cr2);
+    { Invalid operations }
+    vi2 := cr1 mod ci2;  { Invalid: cr1 is not integer }
+    vi1 := 3 / 2; { Invalid: 3 / 2 is real }
+    vi2 := vi1 - (+1.0 + ci2); { Invalid: int - (real + int) is real }
+end.
+{ vim: set ft=pascal: }
