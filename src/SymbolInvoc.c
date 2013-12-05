@@ -327,7 +327,7 @@ int typeIsInValidArgs(Symbol *s, type_t type) {
 	    (strcmp(name, TRUNC) == 0) ||
 	    (strcmp(name, ROUND) == 0)
 	){
-		if (type == REAL_T) return 1;
+		if (type == REAL_T || type == INTEGER_T) return 1;
 	} else if (
 	    (strcmp(name, CHR) == 0) ||
 	    (strcmp(name, ODD) == 0)

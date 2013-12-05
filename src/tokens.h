@@ -1,5 +1,8 @@
 #ifndef TOKENS_H
 #define TOKENS_H
+
+/* this file should only be used for testing. */
+
 enum {
 	ID,
 	DECL_ID,
