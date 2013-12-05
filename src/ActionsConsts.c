@@ -38,8 +38,8 @@ ProxySymbol *proxyIntLiteral(long int value) {
 
 	/* check that value is within range before casting it to int */
 	if (value > ASC_MAX_INT || value < -ASC_MAX_INT) {
-		errMsg = customErrorString("%ld is out of integer range, "
-		    "which is: -%d..%d", value, ASC_MAX_INT, ASC_MAX_INT);
+		errMsg = customErrorString("%ld is larger than maxint, "
+		    "which is: %d", value, ASC_MAX_INT);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
 
