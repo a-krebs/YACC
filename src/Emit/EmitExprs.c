@@ -274,6 +274,7 @@ void emitPushStructuredVarValue(Symbol *s)
 {
 	int i;
 	CHECK_CAN_EMIT(s);
+	emitComment("Pushing values of array %s onto stack", s->name);
 	for (i = 0; i < s->size; i++) {
 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset + i,
 		    s->lvl); 
@@ -295,8 +296,9 @@ void emitPushAddressValue(Symbol *s)
 	case ARRAY_T:
 	case RECORD_T:
 		for (i = 1; i < s->size; i++) {
-			emitComment("Array/Record %s location %d below on stack"
-			", need to push corresponding value", i-1);
+			emitComment("Array/Record %s location %d below on "
+			"stack", s->name, i - 1);
+			emitComment("need to push corresponding value");
 			if (i < s->size) {
 				emitStmt(STMT_LEN, "DUP");
 				emitStmt(STMT_LEN, "ADJUST -1");

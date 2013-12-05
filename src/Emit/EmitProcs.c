@@ -4,7 +4,7 @@
  */
 
 #include "EmitProcs.h"
-
+#include "EmitExprs.h"
 
 /*
  * Emit code to push procedure/function call onto the the stack.
@@ -308,9 +308,7 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	Symbol *arg = NULL;
 	Symbol *param = NULL;
 
- 	/* Need to do this backwardss so parameters are in expected place on stack.
- 	   i.e. First parameter at -3, second at -4, ect */
-	for (int i = args->nElements; i > 0 ; i--) {
+/*	for (int i = args->nElements; i > 0 ; i--) {
         	arg = getElementAt(args, i - 1);
         	if ( arg == NULL ) {
 			continue;
@@ -334,7 +332,7 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 			}			
 		}                
         }
- 
+*/ 
 	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
 }
 
@@ -350,25 +348,32 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
  *		    value needs to be placed on the stack.
  */
 
-void emitPushParamValue(Symbol *s)
+void emitPushParamValue(Symbol *s, int byRef)
 {
-	if (!isByReference(s)) {
+	if (!byRef) {
 		/* The variable is being passed by value, so its value needs
 		 * to be placed on the stack. */
 
 		/* s is a constant */ 
 		if (s->kind == CONST_KIND) {
-			if (!s/*->isResult*/) {
+			if (!isConstResultSym(s)) {
 				emitPushSymbolValue(s);
 			} 
 		/* Else, s is result of expression and value already
 		 * on the stack */
+			return;
 		}
 
 		/* s is a variable, so its value is not on the stack.
 		 * This case is simply -- we simply push its value */
 		if (s->kind == VAR_KIND) {
-			emitPushSymbolValue(s);
+			if ( (getType(s) == ARRAY_T) || (getType(s) ==
+			    RECORD_T) ) {
+			emitPushStructuredVarValue(s);
+			} else {
+				emitPushSymbolValue(s);
+			}
+			return;
 		}
 
 		/* We got to here, meaning s must be a type_kind symbol */
@@ -393,6 +398,7 @@ void emitPushParamValue(Symbol *s)
  		 * Thus, we have nothing to do
 		 */
 	} else {
+		emitComment("got here");
 		/* 
 		 * Else, the variable is being passed by reference.  And we 
 		 * only want to push the address of the variable onto the

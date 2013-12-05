@@ -27,7 +27,6 @@ extern int yylineno;
 extern int colno;
 static char *errMsg;
 
-
 /*
  * Perform actions necessary once all declarations are finished.
  */
