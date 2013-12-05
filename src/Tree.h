@@ -6,7 +6,7 @@
 #define NO_OPT -1
 #define ARRAY_INDEX -2
 #define RECORD_ACCESS -3
-
+#define FUNCTION_INVOCATION -4
 
 struct treeNode {
 	struct Symbol *symbol;

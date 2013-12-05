@@ -27,7 +27,9 @@ bin/*
 # emacs and gedit backup stuff (yes, I edit with gedit, I'm not proud)
 *~
 *#
-
+*.pal
+*.asc
+*.lst
 # generated asc/lst files
 test/integration/full/*.asc
 test/integration/full/*.lst

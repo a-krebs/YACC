@@ -2,46 +2,12 @@
 program example( input, output );
 { program takes input/output from terminal }
 type string = array[1..7] of char;
-var x : integer;
-y : integer;
-answer : integer;
-flag : char;
-str : string;
 function gcd( a : integer; b : integer ) : integer;
 begin
-{ Note where semi-colons are legal! }
-if b = 0 then
-gcd := a
-else
-gcd := gcd( b, a mod b )
 end;
 function lcm( a : integer; b : integer ) : integer;
 begin
-if (a = 0) or (b = 0) then
-lcm := 0
-else
 lcm := (a * b) div gcd( a, b )
 end;
-begin { main-program }
-read( flag );
-{ loop until an 's' (stop) is seen - remember no EOF
-tests are possible.
-}
-while flag <> 's' do
-{ while stmnts are the only loop construct allowed }
 begin
-read( x, y );
-readln();
-if flag = 'g' then begin { 'g' flag means compute gcd }
-answer := gcd( x, y );
-str := 'Gcd of ';
-end;
-if flag = 'l' then begin { 'l' flag means compute lcm }
-answer := lcm( x, y );
-str := 'Lcm of ';
-end;
-write(str, x, ' and', y, ' is', answer);
-writeln( );
-read( flag )
-end
 end.

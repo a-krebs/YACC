@@ -15,8 +15,6 @@
 #endif
 
 
-
-
 /*
  * Emits code to result the expression contained in the baby tree
  * i.e. tree with root and one left and one right node
@@ -87,6 +85,15 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 	case RECORD_ACCESS:
 		emitPushRecordFieldAddress(x, y);
 		break;
+	case FUNCTION_INVOCATION:
+	{
+		if (x) { 
+			emitFuncInvok(x, x->kindPtr.FuncKind->params);
+		} else if (y) {
+			emitFuncInvok(y, y->kindPtr.FuncKind->params);
+		}
+		break;
+	}
 	default:
 		break; 
 	}
@@ -107,6 +114,14 @@ Symbol *postOrderWalk(struct treeNode *node) {
 	Symbol *y = NULL;
 
 	if (node->left == NULL) {
+		if (node->opToken == FUNCTION_INVOCATION) {
+			emitBabyTree(node->symbol, node->opToken, NULL);
+			// TODO: make exchange with tmp so old symbol can be free'd
+			/* We exchange the value of the func_kind symbol with its
+			 * type so that we don't have to add more special cases
+			 * to other emission function */
+			node->symbol = getTypeSym(node->symbol);
+		}
 		return node->symbol;
 	} else if (node->opToken == RECORD_ACCESS) {
 		x = postOrderWalk(node->left);
