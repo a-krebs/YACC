@@ -113,7 +113,6 @@ Symbol *postOrderWalk(struct treeNode *node) {
 	} else if (node->opToken == RECORD_ACCESS) {
 		x = postOrderWalk(node->left);
 		emitBabyTree(x, node->opToken, node->symbol);
-		printf("HEY WE're %s stuff!\n", x->name);
 		return node->symbol;
 	} else {
 		x = postOrderWalk(node->left);

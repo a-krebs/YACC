@@ -439,7 +439,6 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
  */
 void emitPushRecordFieldAddress(Symbol *record, Symbol *field)
 {
-	printf("field = %s, record = %s\n", field->name, record->name);
 	CHECK_CAN_EMIT(record);
 	CHECK_CAN_EMIT(field);
 
