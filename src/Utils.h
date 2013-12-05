@@ -12,4 +12,9 @@ void alreadyDefinedError(char *id);
 void notDefinedError(char *id);
 void symbolTableInsertFailure();
 int getStrlen(struct String s);
+/*
+ * Conform that strtod did not set errno.
+ * Set errno to 0 before calling
+ */
+void checkErrnoStrtoX();
 #endif

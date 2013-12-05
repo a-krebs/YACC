@@ -23,20 +23,32 @@
 #endif
 
 /*For error reporting:*/
-// extern int yylineno;
-// extern int colno;
-// static char *errMsg;
+extern int yylineno;
+extern int colno;
+static char *errMsg;
 
 
 /*
  * Make a new ProxySymbol with type integer and given value.
  * Return pointer to the proxy
  */
-ProxySymbol *proxyIntLiteral(int value) {
-	Symbol *integerType = getPreDefInt(preDefTypeSymbols);
+ProxySymbol *proxyIntLiteral(long int value) {
 	Symbol *newConstProxy = NULL;
-	/* anonymous, so NULL id */
-	newConstProxy =  newConstProxySym(NULL, &value, integerType);
+	int intValue = 0;
+
+	/* check that value is within range before casting it to int */
+	if (value > ASC_MAX_INT || value < -ASC_MAX_INT) {
+		errMsg = customErrorString("%ld is out of integer range, "
+		    "which is: -%d..%d", value, ASC_MAX_INT, ASC_MAX_INT);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
+
+	/* convert to int */
+	intValue = value;
+
+	/* Create symbol. Anonymous, so NULL id */
+	Symbol *integerType = getPreDefInt(preDefTypeSymbols);
+	newConstProxy =  newConstProxySym(NULL, &intValue, integerType);
 
 //	emitPushAnonConstValue(newConstProxy);
 	return newConstProxy; 
