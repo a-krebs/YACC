@@ -1,6 +1,6 @@
 #ifndef ACTION_EXPRS_H
 #define ACTION_EXPRS_H
-
+#include "Tree.h"
 
 /*
  * Perform assignment of x to y.
@@ -9,9 +9,9 @@ void assignOp(ProxySymbol *x, ProxySymbol *y);
 
 
 Symbol *variableAssignmentLookup(char *);
-Symbol *recordFieldAssignmentLookup(ProxySymbol *, char *);
-Symbol *pushArrayIndexValue(ProxySymbol *);
-ProxySymbol *hashLookupToProxy(char *id);
+Symbol *recordFieldAssignmentLookup(struct treeNode *, char *);
+Symbol *pushArrayIndexValue(struct treeNode *);
+struct treeNode *hashLookupToProxy(char *id);
 
 
 
@@ -19,7 +19,7 @@ ProxySymbol *hashLookupToProxy(char *id);
 /*
  * id1 == name of record, id3 == name of field we are trying to access
  */
-ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id);
+struct treeNode *recordAccessToProxy(struct treeNode *p, char *id);
 
 
 /*
@@ -27,22 +27,17 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id);
  *
  * Return a ProxySymbol of the expected type.
  */
-ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices);
+struct treeNode*arrayIndexAccess(struct treeNode *var, 
+    struct treeNode * indices);
 
 
-/*
- * TODO: cannot use element array to construct list of proxy syms
- * as we are never explicitly constructing a list, just creating a bunch
- * of expressions which have to be proxy symbols.  How to do this this then?
- * Da Hack: link proxy symbols resulting from expressions through the
- * symbol's *next ptr!  
- */
 /*
  * Concatenate two arrays of array indexes, maintaining order.
  *
  * Return a pointer to a concatenated list.
  */
-ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2);
+struct treeNode *concatArrayIndexList(struct treeNode *list1, 
+    struct treeNode *list2);
 
 
 /*
@@ -50,7 +45,7 @@ ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2);
  *
  * Return a pointer to the new list.
  */
-ProxySymbol *createArrayIndexList(ProxySymbol *exp);
+struct treeNode *createArrayIndexList(struct treeNode *exp);
 
 
 struct treeNode *eqOp(struct treeNode *x, struct treeNode *y);

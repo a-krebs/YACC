@@ -102,7 +102,7 @@ void emitMod(Symbol *x, Symbol *y) {
 void emitITOR(Symbol *x) {
 	CHECK_CAN_EMIT(x);
 
-	emitComment("Perform ITRO of %s %s and %s %s",
+	emitComment("Perform ITOR of %s %s and %s %s",
 	    	typeToString(getType(x)), x->name);	
 
 	if ( getType(x) == INTEGER_T) {
@@ -166,9 +166,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	if (y->isAddress) {
 		/* The value currently on top of the stack is an address, we
 		 * need to replace it with the value referenced by &y */
-		emitStmt(STMT_LEN, "ADJUST -1");
 		emitPushAddressValue(y);
-		emitStmt(STMT_LEN, "ADJUST +1");
 
 	} else if (y->kind != TYPE_KIND){
 

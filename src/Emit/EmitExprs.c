@@ -426,7 +426,6 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	default:
 		/* No other types can have values */
 		break;
-
 	}
 }
 

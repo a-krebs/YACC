@@ -155,7 +155,7 @@ Symbol *getArrayBaseSym(Symbol *s)
 {
 	if (!s) return NULL;
 	if (getType(s) != ARRAY_T) return NULL;
-	return getTypePtr(s)->Array->baseTypeSym;
+	return getTypePtr(getTypeSym((s)))->Array->baseTypeSym;
 
 }
 

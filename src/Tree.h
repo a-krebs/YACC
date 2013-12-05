@@ -1,7 +1,12 @@
 #ifndef TREE_H
 #define TREE_H
 
+#include "Emit.h"
+
 #define NO_OPT -1
+#define ARRAY_INDEX -2
+#define RECORD_ACCESS -3
+
 
 struct treeNode {
 	struct Symbol *symbol;
@@ -24,4 +29,5 @@ struct treeNode *createTreeNode(Symbol *symbol, int opToken,
 
 struct treeNode *createLeafNode(Symbol *symbol);
 
+struct treeNode *createRecordNode(Symbol *symbol, struct treeNode *child);
 #endif

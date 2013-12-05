@@ -81,9 +81,13 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 		if (x) emitNot(x);
 		else emitNot(y);
 		break;
+	case ARRAY_INDEX:
+		emitArrayElementLocation(x, y);
+		break;
+	case RECORD_ACCESS:
+		emitPushRecordFieldAddress(x, y);
+		break;
 	default:
-		// Probably need case for array index operation
-		// and records...
 		break; 
 	}
 }
@@ -104,8 +108,11 @@ Symbol *postOrderWalk(struct treeNode *node) {
 
 	if (node->left == NULL) {
 		return node->symbol;
-	}
-	else {
+	} else if (node->opToken == RECORD_ACCESS) {
+		x = postOrderWalk(node->left);
+		emitBabyTree(x, node->opToken, node->symbol);
+		return node->symbol;
+	} else {
 		x = postOrderWalk(node->left);
 		y = postOrderWalk(node->right);
 		emitBabyTree(x, node->opToken, y);
@@ -203,4 +210,12 @@ struct treeNode *createLeafNode(Symbol *symbol) {
 	node = createNodeCommon(symbol, NO_OPT, NULL, NULL);
 
 	return node;
+}
+
+struct treeNode * createRecordNode(Symbol *s, struct treeNode *child) {
+	struct treeNode *node = NULL;
+
+	node = createNodeCommon(s, RECORD_ACCESS, child, NULL);
+	node->left->parent = node;
+	return node; 
 }

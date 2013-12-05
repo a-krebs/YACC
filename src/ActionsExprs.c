@@ -75,12 +75,15 @@ Symbol * variableAssignmentLookup(char *id)
  *
  *
  */
-Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
+Symbol *recordFieldAssignmentLookup(struct treeNode *node, char *id)
 {
-	Symbol *s = NULL;
+	Symbol *s = NULL, *p;
 	struct Record *r = NULL;
 
+
+	p = node->symbol;
 	if ((!p) || (!id)) return NULL;
+	
 
 	s = getTypeSym(p);
 	if (getType(s) != RECORD_T) {
@@ -109,25 +112,24 @@ Symbol *recordFieldAssignmentLookup(Symbol *p, char *id)
 /*
  * Calls the function to change the address resultant from the indexing
  * operations into a value (in asc).
- * TODO: determine if this action is still needed  
  * Parameters
  *		ps : the type resultant from the indexing operation, it
  *		    is simply passed up the chain.
  */
-ProxySymbol *pushArrayIndexValue(ProxySymbol *ps)
+Symbol *pushArrayIndexValue(struct treeNode *node)
 {
-	return ps;
+	postOrderWalk(node);
+	return node->symbol;
 }
 
-ProxySymbol *hashLookupToProxy(char *id) {
+struct treeNode *hashLookupToProxy(char *id) {
 	Symbol *s = NULL;
 	s = getGlobalSymbol(symbolTable, id);
 	if (!s) {
 		notDefinedError(id);
-		return NULL;
+		return createLeafNode(NULL);
 	}
-	
-	return newProxySymFromSym(s);	
+	return createLeafNode(newProxySymFromSym(s));
 }
 
 /*
@@ -137,18 +139,22 @@ ProxySymbol *hashLookupToProxy(char *id) {
  *		p : the record to which the field id belongs
  *		id : the id of the field that is to be accessed
  */
-ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
-	Symbol *s = NULL;
+struct treeNode *recordAccessToProxy(struct treeNode *node, char *id) {
+	Symbol *s = NULL, *p = node->symbol;
 	struct Record *r = NULL;
 
-	if ((!p) || (!id)) return NULL;
+	if ((!p) || (!id)) { 
+		node->symbol = NULL;
+		return node;	
+	}
 
 	s = getTypeSym(p);
 	if (getType(s) != RECORD_T) {
 		errMsg = customErrorString("Cannot get field %s from %s. "
 		    "Identifier %s is not a record.", id, p->name, p->name);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return NULL;
+		node->symbol = NULL;
+		return node;	
 	}
 	
 	r = s->kindPtr.TypeKind->typePtr.Record;
@@ -158,11 +164,12 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
 		errMsg = customErrorString("Field %s does not exist in %s.",
 		    id, p->name);
 		recordError(errMsg, yylineno, colno, SEMANTIC);
-		return NULL;
+		node->symbol = NULL;
+		return node;	
 	}
 
-	emitPushRecordFieldAddress(p, s);
-	return newProxySymFromSym(s);
+	
+	return createRecordNode(s, node);
 }
 
 
@@ -171,74 +178,89 @@ ProxySymbol *recordAccessToProxy(ProxySymbol *p, char *id) {
  *
  * Return a ProxySymbol of kind VAR_KIND of the expected type.
  */
-ProxySymbol *arrayIndexAccess(ProxySymbol *var, ProxySymbol * indices) {
+struct treeNode *arrayIndexAccess(struct treeNode *arrayBase, 
+    struct treeNode * exprNodes) {
 
-	ProxySymbol *accessResultType = NULL;
+	struct treeNode *exprNode, *arrayNode, *tmpNode, *newArrayNode;
+	ProxySymbol *accessResultSym = NULL;
+
+	if ( !(arrayBase->symbol) || !(exprNodes->symbol) ) {
+		arrayBase->symbol = NULL;
+		return arrayBase;	
+	}
+
+	exprNode = exprNodes;
+	arrayNode = arrayBase;
+
+	while (exprNode != NULL) {
+		accessResultSym = isValidArrayAccess(arrayNode->symbol,
+		    exprNode->symbol);
+		if (!accessResultSym) {
+			/* Memory leak - should free tree nodes */
+			arrayBase->symbol = NULL;
+			return arrayBase;
+		}
+		tmpNode = exprNode->parent;
+		newArrayNode = createTreeNode(accessResultSym, ARRAY_INDEX,
+		    arrayNode, exprNode);
+		arrayNode = newArrayNode;
+		exprNode = tmpNode; 
+	}
+
+	/* Return the root node of the tree we just constructed such that
+	 * it can be walked later. */
+	return newArrayNode;
+
+//	ProxySymbol *accessResultType = NULL;
 
 	/* Record specific errors in isValidArrayAccess */
-	if ((!indices) || (!var)) return NULL;	
-	accessResultType = isValidArrayAccess((Symbol *) var, indices);
+//	if ((!indices) || (!var)) return NULL;	
+//	accessResultType = isValidArrayAccess((Symbol *) var, indices);
 
-	
 	/* It's in here that we have to set the offsets of these proxy symbols
 	 * such that the final symbol (e.g., the cumulative, non-array type
 	 * symbol resultant from all the indexing)
 	 */
-	if (accessResultType) {
-			emitArrayElementLocation(var, indices);
-	}
-	return accessResultType;
+//	return accessResultType;
 }
 
 
-/*
- * TODO: cannot use element array to construct list of proxy syms
- * as we are never explicitly constructing a list, just creating a bunch
- * of expressions which have to be proxy symbols.  How to do this this then?
- * Da Hack: link proxy symbols resulting from expressions through the
- * symbol's *next ptr!  
- */
 /*
  * Concatenate two arrays of array indexes, maintaining order.
  *
  * Return a pointer to a concatenated list.
  */
-ProxySymbol *concatArrayIndexList(ProxySymbol *list1, ProxySymbol *list2) {
-	
-	Symbol *tmp;
+struct treeNode *concatArrayIndexList(struct treeNode *baseNode, 
+    struct treeNode *newExprNode) {
 
-	if ((!list1) && (!list2)) {
+	struct treeNode *tmpNode;	
+
+	if ((!(baseNode->symbol)) && (!(newExprNode->symbol))) {
+		baseNode->symbol = NULL;
 		return NULL;
 	}
-	if (!list1) {
-		return list2;
+	if (!(baseNode->symbol)) {
+		return newExprNode;
 	}
-	if (!list2) {
-		return list1;
+	if (!(newExprNode->symbol)) {
+		return baseNode;
 	}
 
-	/*
-	 * Each time we call the function, list1 is the head of the list
-	 * of symbols that we have already created and list2 is the new symbol
-	 * to be appended to the end.  Thus, we iterate through the elements
-	 * of list1 to the last and append list2 to the end of the linked list
-	 * which starts at list1.
-	 */
-	tmp = list1;
-	while (tmp->next != NULL) tmp = tmp->next;
-	tmp->next = list2;
-	return list1;
+	tmpNode = baseNode;
+	while (tmpNode->parent != NULL) tmpNode = tmpNode->parent;
+	tmpNode->parent = newExprNode;
+	
+	return baseNode;
 }
 
 
 /*
- * Create a new array index list as a ProxySymbol.
+ * Create a new array index list as an expression node.
  *
  * Return a pointer to the new list.
  */
-ProxySymbol *createArrayIndexList(ProxySymbol *exp) {
-	if (!exp) return NULL;
-	exp->next = NULL;
+struct treeNode *createArrayIndexList(struct treeNode *exp) {
+	if (!exp->symbol) return exp;
 	return exp;
 }
 
@@ -945,7 +967,7 @@ int isAssignmentCompat(Symbol *x, Symbol *y) {
 		return 1;
 	} else if (isConstInScalar(y,type1)) {
 		return 1;
-	}
+	} 
 	errMsg = customErrorString("The type %s cannot be assigned a value"
 	    " of type %s", typeToString(getType(type1)), 
 	    typeToString(getType(type2)));

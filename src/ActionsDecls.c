@@ -22,6 +22,8 @@
 #include "tokens.h"
 #endif
 
+#include "Tree.h"
+
 /*For error reporting:*/
 extern int yylineno;
 extern int colno;
@@ -85,7 +87,7 @@ void exitConstDeclPart(void) {
  * Create a new constant in the symbol table.
  * Extract the value and type information from the proxy.
  */
-void doConstDecl(char *id, ProxySymbol *proxy) {
+void doConstDecl(char *id, struct treeNode *node) {
 	Symbol *s = NULL;
 	int lvl = getCurrentLexLevel(symbolTable);
 
@@ -97,7 +99,7 @@ void doConstDecl(char *id, ProxySymbol *proxy) {
 	}
 
 	/* Else we can try to make new const  and add it to symbol table */	
-	s = newConstSymFromProxy(lvl, id, proxy);		
+	s = newConstSymFromProxy(lvl, id, node->symbol);		
 	if (s) {
 		addToSymbolTable(symbolTable, s);
 		/* Consts have a value and thus need an offset, so we set it */

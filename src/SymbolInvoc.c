@@ -52,7 +52,7 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(getTypeSym(passedParam), getTypeSym(expectedParam))) {
+		if (!isAssignmentCompat(expectedParam,passedParam)) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name,
@@ -99,11 +99,11 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < params->nElements; i++) {
 		passedParam = (Symbol *) getElementAt(ea, i);
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(getTypeSym(passedParam), getTypeSym(expectedParam))) {
+		if (!isAssignmentCompat(expectedParam,passedParam)) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
-			    "argument of type %s", s->name, i,
-			    typeToString(getType(expectedParam)),
+			    "argument of type %s", s->name,
+			    typeToString(getType(expectedParam)),i,
 			    typeToString(getType(passedParam)));
 			e = recordError(errMsg, yylineno, colno, SEMANTIC);
 			return NULL;
@@ -162,7 +162,7 @@ int
 isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
-	type_t type;
+	type_t type,arrayBaseType;
 	int i, nArgs, valid = 1;
 
 	nArgs = ea->nElements;
@@ -171,6 +171,12 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < nArgs; i++) {
 		param = getElementAt(ea, i);
 		type = getType(param);
+		if (type == ARRAY_T) {
+			arrayBaseType = getType(getArrayBaseSym(param));
+			if(arrayBaseType == CHAR_T){
+				type = arrayBaseType;
+			}
+		}
 		if ( (type != CHAR_T) && (type != INTEGER_T) &&
 		    (type != REAL_T) && (type != STRING_T) ) {
 			errMsg = customErrorString("Invalid argument "
