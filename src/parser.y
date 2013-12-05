@@ -158,8 +158,8 @@ array_type_decl
 array_type
 : simple_type
 	{ $<symbol>$ = assertArrIndexType($<symbol>1); }
-| expr RANGE expr
-	{ $<symbol>$ = createRangeType($<proxy>1, $<proxy>3); }
+| expr_node RANGE expr_node
+	{ $<symbol>$ = createRangeType($<node>1, $<node>3); }
 ;
 
 field_list
