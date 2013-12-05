@@ -27,7 +27,7 @@ begin
 	b:=a;
 	b:= b + b;
 	b:= b * 2;
-	writeln(writeln(a,c));
+	writeln(writeln(a));
 	{error 3 :passing a function to writeln as a parameter}
 	b:= 321831.323;
 	b:= 1;
