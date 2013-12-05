@@ -23,6 +23,7 @@ OBJS+=		$(BIN)/EmitExprs.o $(BIN)/EmitRelational.o $(BIN)/EmitLogical.o
 OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o $(BIN)/EmitUnary.o 
 OBJS+=		$(BIN)/EmitToFile.o
 OBJS+=		$(BIN)/PreDefAsc.o
+OBJS+=		$(BIN)/Tree.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -54,6 +55,7 @@ LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testHash.o
+TESTOBJS1+=	$(BIN)/testTree.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
@@ -167,6 +169,9 @@ $(BIN)/StmtLL.o: $(SRC)/StmtLL.c $(SRC)/StmtLL.h
 $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 	$(COMPILE)	
 
+$(BIN)/Tree.o: $(SRC)/Tree.c $(SRC)/Tree.h
+	$(COMPILE)	
+
 include ActionModules.mk
 
 include EmitModules.mk
@@ -209,6 +214,9 @@ $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 	$(COMPILE)
 
 $(BIN)/testHash.o: $(TEST)/testHash.c $(TEST)/testHash.h
+	$(COMPILE)	
+
+$(BIN)/testTree.o: $(TEST)/testTree.c $(TEST)/testTree.h
 	$(COMPILE)		
 
 $(BIN)/testActions.o: $(TEST)/testActions.c $(TEST)/testActions.h
