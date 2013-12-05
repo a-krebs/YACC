@@ -945,7 +945,7 @@ int isAssignmentCompat(Symbol *x, Symbol *y) {
 		return 1;
 	} else if (isConstInScalar(y,type1)) {
 		return 1;
-	}
+	} 
 	errMsg = customErrorString("The type %s cannot be assigned a value"
 	    " of type %s", typeToString(getType(type1)), 
 	    typeToString(getType(type2)));
