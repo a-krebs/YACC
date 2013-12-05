@@ -30,7 +30,7 @@ static char *errMsg;
 /*
  * Invoke procedure with given name.
  *
- * The argument ea contains a list of arguments.
+ * The argument ea contains a list of arguments (i.e., expression nodes).
  */
 void procInvok(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
@@ -49,9 +49,11 @@ void procInvok(char *id, struct ElementArray *ea) {
 	} else {
 		// this prints errors, so call it but ignore return value
 		isValidProcInvocation(s, ea);
+		/* We can spit out proc invocations as soon as we see them as
+		 * they cannot be part of expressions */	
+		emitProcInvok(s, ea);
 	}
 
-	emitProcInvok(s, ea);
 }
 
 
@@ -60,15 +62,16 @@ void procInvok(char *id, struct ElementArray *ea) {
  *
  * The argument argv contains a list of arguments.
  *
- * Return a ProxySymbol containing the type returned.
+ * Return a treeNode struct. 
  */
-ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
-	Symbol *s = NULL;
+struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
+	struct treeNode *funcNode;
+	Symbol *s = NULL, *newNodeSym;
 	s = getGlobalSymbol(symbolTable, id);
 	
 	if (!s) {
 		notDefinedError(id);
-		return NULL;
+		return createLeafNode(NULL);
 	}
 
 	if (!argv) {
@@ -77,15 +80,20 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 
 	if (isPreDefFunc(s)) {
 		/* Needs to be handled separately */
-		return isValidPreDefFuncInvocation(s, argv);
+		return createLeafNode(isValidPreDefFuncInvocation(s, argv));
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
-		//emitFuncInvok(s, argv);
-		return getTypeSym(s);
+		newNodeSym = newFuncSym(s->lvl, s->name, getTypeSym(s), argv);
+		newNodeSym->kindPtr.FuncKind->label = 
+		    s->kindPtr.FuncKind->label;
+		newNodeSym->kindPtr.FuncKind->invocationInstance = 1;
+		funcNode = createLeafNode(newNodeSym);
+		funcNode->opToken = FUNCTION_INVOCATION;
+		return funcNode;	
 	}
 
-	return NULL;
+	return createLeafNode(NULL);
 }
 
 
@@ -94,7 +102,7 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
  *
  * Return a pointer to a ProxySymbol containing the list.
  */
-struct ElementArray *createArgList(Symbol *arg) {
+struct ElementArray *createArgList(struct treeNode *arg) {
 	struct ElementArray * ea = NULL;
 	
 	if (!arg) {
@@ -102,13 +110,17 @@ struct ElementArray *createArgList(Symbol *arg) {
 		return NULL;
 	}
 
-	if (	(arg->kind == PROC_KIND) || 
-		(arg->kind == FUNC_KIND) ||
-		(arg->kind == PARAM_KIND)
+	if (!(arg->symbol)) return NULL;
+
+	if (	(arg->symbol->kind == PROC_KIND) || 
+		((arg->symbol->kind == FUNC_KIND) && 
+		 !(arg->symbol->kindPtr.FuncKind->invocationInstance)) ||
+		(arg->symbol->kind == PARAM_KIND)
 	){
-		errMsg = customErrorString("Invaid argument type.");
+		errMsg = customErrorString("Invalid argument type.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
+
 	ea = newElementArray();
 	growElementArray(ea);
 	appendElement(ea, arg);	

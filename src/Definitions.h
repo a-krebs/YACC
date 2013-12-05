@@ -190,6 +190,9 @@ struct FunctionKind {
 	struct Symbol *typeSym;
 	struct ElementArray *params;
 	char *label;
+	int invocationInstance;	/* indicates whether this particular function
+				 * symbol is resulted from an invocation
+				 * instance */ 
 };
 
 struct ProcedureKind {

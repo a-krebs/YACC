@@ -1,6 +1,8 @@
 #ifndef ACTION_INVOCS_H
 #define ACTION_INVOCS_H
 
+#include "Tree.h"
+
 /*
  * Invoke procedure with given name.
  *
@@ -16,7 +18,7 @@ void procInvok(char *id, struct ElementArray *ea);
  *
  * Return a ProxySymbol containing the type returned.
  */
-ProxySymbol *funcInvok(char *id, struct ElementArray *argv);
+struct treeNode *funcInvok(char *id, struct ElementArray *argv);
 
 
 /*
@@ -24,7 +26,7 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv);
  *
  * Return a pointer to a ProxySymbol containing the list.
  */
-struct ElementArray *createArgList(Symbol *arg);
+struct ElementArray *createArgList(struct treeNode *arg);
 
 
 /*

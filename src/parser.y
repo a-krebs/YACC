@@ -392,7 +392,7 @@ factor
 | L_PAREN expr R_PAREN_or_error
 	{ $<node>$ = createLeafNode($<proxy>2); }
 | func_invok
-	{ $<node>$ = createLeafNode($<proxy>1); }
+	{ $<node>$ = $<node>1; }
 | NOT factor
 	{ $<node>$ = unaryNotOp($<node>2); }
 ;
@@ -434,7 +434,7 @@ func_invok
 	  $<proxy>$ = $<proxy>1; }
 | ID_or_err L_PAREN R_PAREN
 	{ /* TODO might want to explicitly use an empty arg list here */
-	  $<proxy>$ = funcInvok($<id>1, NULL); }
+	  $<node>$ = funcInvok($<id>1, NULL); }
 /*| plist_finvok error R_PAREN
 	{ $<proxy>$ = funcInvok($<id>1, NULL);
 	  yyerrok; }
@@ -451,7 +451,7 @@ plist_pinvok
 // duplicated once for functions and once for procedures
 plist_finvok
 : ID_or_err L_PAREN parm_list R_PAREN
-	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
+	{ $<node>$ = funcInvok($<id>1, $<elemarray>3); }
 /*| ID_or_err error R_PAREN */
 ;
 
@@ -462,8 +462,8 @@ parm_list
 	{ $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 
 parm
-: expr
-	{ $<elemarray>$ = createArgList($<proxy>1); }
+: expr_node
+	{ $<elemarray>$ = createArgList($<node>1); }
 ;
 
 while_expr

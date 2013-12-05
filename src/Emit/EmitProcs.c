@@ -3,6 +3,7 @@
  * procedures and functions.
  */
 
+#include "Tree.h"
 #include "EmitProcs.h"
 #include "EmitExprs.h"
 
@@ -32,7 +33,7 @@ void emitProcOrFuncDecl(Symbol *symbol, struct ElementArray *ea) {
 	}
 
  	/* Emit procedure label */
- 	emitLabel(STMT_LEN, label); 
+ 	emitLabel(STMT_LEN, label);
 }
 
 
@@ -83,6 +84,7 @@ void emitEndFunc(Symbol *symbol) {
  * 	
  * Returns: size of list
  */
+// TODO: make this function work correctly
 int getSizeOfParams(Symbol *procOrFuncSymbol) {
 	struct ElementArray *params = NULL;
 	Symbol *param = NULL;
@@ -147,20 +149,23 @@ int getSizeOfParams(Symbol *procOrFuncSymbol) {
  */
 void emitProcOrFuncEndCommon(Symbol *symbol, char *msg) {
 	CHECK_CAN_EMIT(1);		
+	int adjustCount = 0;
+	int lexLevel = 0;
 
 	/* Determine how many levels on the stack we need to adjust by */
-	int adjustCount = getSizeOfParams(symbol) * -1;	
+	adjustCount = getOffset(symbolTable) * -1;	
 
 	/* Get the lexical so we can idenity the display register */
-	int lexLevel = getCurrentLexLevel(symbolTable);	
+	lexLevel = symbol->lvl;	
 
 	/* Adjust and return */
-	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
+	emitStmt(STMT_LEN, "ADJUST %d", adjustCount - 2);
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 
 	emitComment(msg);
 	emitStmt(STMT_LEN, "");
-	emitStmt(STMT_LEN, "");	
+	emitStmt(STMT_LEN, "");
+		
 }
 
 
@@ -211,8 +216,10 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
 
  	emitStmt(STMT_LEN, "");
  	emitComment("Start procedure invocation '%s':", symbol->name);
- 	
+	emitComment("Make room for return value");
+	emitStmt(STMT_LEN, "CONSTI 0"); 	
  	emitProcOrFuncInvokCommon(symbol, params, label);
+
 }
 
 
@@ -224,32 +231,23 @@ void emitProcInvok(Symbol *symbol, struct ElementArray *params) {
  * Returns: void
  */
 void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
+	char *label;
 	CHECK_CAN_EMIT(symbol);
-	char * label = symbol->kindPtr.FuncKind->label;	
-	//Symbol *param = NULL;
-
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
+	
+	label = symbol->kindPtr.FuncKind->label;
 
- 	//TODO remove this if not needed. If needed it needs fixin'
- 	// for (int i = params->nElements; i > 0 ; i--) {
- 	// 	param = getElementAt(params, i - 1);
-
- 	// 	if ( param->kind == CONST_KIND ) {
- 	// 		emitComment("NOT READY FOR CONST");	
- 	// 		emitStmt(STMT_LEN, "ADJUST -1");
- 	// 	}
- 	// }
-
- 	//make room for return value
+	emitComment("Make room for return value.");
 	emitStmt(STMT_LEN, "CONSTI 0");
 
  	emitProcOrFuncInvokCommon(symbol, params, label);
+		
 }
 
 
 /*
- * Emit code to emit structure type symbols: arrays, records, emuns
+ * Emit code to emit structure type symbols: arrays, records
  *
  * Parameters: void.
  * 	
@@ -305,35 +303,32 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 	struct ElementArray *args, char *label) 
 {
 	struct ElementArray *params = getProcOrFuncParams(symbol);
+	struct treeNode *argNode = NULL;
 	Symbol *arg = NULL;
 	Symbol *param = NULL;
+	int i;
 
-/*	for (int i = args->nElements; i > 0 ; i--) {
-        	arg = getElementAt(args, i - 1);
-        	if ( arg == NULL ) {
-			continue;
-		}
+	for (i = args->nElements; i > 0 ; i--) {
 
-		if ( arg->kind == CONST_KIND ) {
-			emitPushAnonConstValue(arg);	
-		}
-		else {
-			if ( getType(arg) == ARRAY_T
-				|| getType(arg) == RECORD_T ) 
-			{
-				if (params == NULL) {
-					continue;
-				}
-				param = getElementAt(params, i - 1);
-				emitStructuredType(arg, param);
-			}
-			else {
-				emitPushSymbolValue(arg);		
-			}			
-		}                
-        }
-*/ 
+		/* Get parameter symbol from the proc/func's kindPtr */
+		param = getElementAt(params, i-1);
+
+		/* Get the argument symbol from the parsed expression nodes */
+		argNode = getElementAt(args, i-1);
+
+		if (!argNode) return;
+	
+		arg = argNode->symbol;
+
+		if (!(arg) || !(param)) return;
+
+		/* Push the value of expression */
+		postOrderWalk(argNode);	
+		emitPushParamValue(arg, isByReference(param)); 
+	}
 	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
+	emitStmt(STMT_LEN, "Kick params off the stack.");
+	emitStmt(STMT_LEN, "ADJUST -%d", args->nElements);
 }
 
 
@@ -347,7 +342,6 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
  *		s : the symbol being passed to a procedure/function whose
  *		    value needs to be placed on the stack.
  */
-
 void emitPushParamValue(Symbol *s, int byRef)
 {
 	if (!byRef) {
