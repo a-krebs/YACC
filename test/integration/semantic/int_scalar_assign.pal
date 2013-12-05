@@ -1,0 +1,13 @@
+{9,11,12}
+program intAssign(in, out);
+type
+    days = (Mon, Tues, Wed);
+var
+    i : integer;
+    test : days;
+begin
+    i := Mon;   // error
+    days := Tues;
+    days := 2;	// should not work, see #86
+    Wed := Mon;	// error
+end.
