@@ -954,7 +954,7 @@ Symbol *assertOpCompat(
  */
 int isAssignmentCompat(Symbol *x, Symbol *y) {
 	Symbol *type1, *type2;
-	
+
 	type1 = getTypeSym(x);
 	type2 = getTypeSym(y);
 	

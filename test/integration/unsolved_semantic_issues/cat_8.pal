@@ -1,0 +1,39 @@
+{35,36,37}
+{
+    Semantic errors about assignment compatibilities
+    
+    See the Pal specification.
+    Errors on lines 34-36 
+}
+program SemAssignmentCompatibilities(input, output);
+type
+    tsa = (foo, bar, baz);
+    tsb = (R, G, B);
+    str7 = array[1..7] of char;
+    str3 = array[1..3] of char;
+    chr7 = array[0..6] of char;
+    int7 = array[1..7] of integer;
+var
+    vi1 : integer;
+    vr1 : real;
+    vsa1 : tsa;
+    vsb  : tsb;
+    vstr7 : str7;
+    vstr3 : str3;
+    vchr7 : chr7;
+    vint7 : int7;
+    vb1 : boolean;
+begin
+    { Valid operations }
+    vi1 :=  1;
+    vr1 :=  1.0;
+    vsa1 := foo;
+    vstr3 := '123';
+    vb1 := true;
+    vr1 :=  1; { Valid: T1 is of type real and T2 is of type integer }
+    { Invalid operations }
+    vstr3 := '12';  { Invalid: sizes are different }
+    vsa1 := vsb; { Invalid: different enumerated types are compared }
+    vr1   := foo;   { Invalid: not assignment compatible }
+end.
+{ vim: set ft=pascal: }

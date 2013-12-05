@@ -3,12 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "ActionsExprs.h"
 #include "ElementArray.h"
 #include "Error.h"
 #include "ErrorLL.h"
 #include "Tree.h"
 #include "Type.h"
 #include "Hash.h"
+#include "Kind.h"
 #include "PreDef.h"
 #include "SymbolAll.h"
 
@@ -50,13 +52,10 @@ int isValidProcInvocation(Symbol *s, struct ElementArray *ea)
 		return 0;	
 	}
 
-	// TODO: should'nt call to is areSameType below be a call to
-	// are assignment compatible? 
 	for (i = 0; (i < params->nElements) && (i < ea->nElements); i++) {
 		passedParam = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(getTypeSym(passedParam), 
-		    getTypeSym(expectedParam))) {
+		if (!isAssignmentCompat(expectedParam, passedParam)) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
 			    "argument of type %s", s->name,
@@ -80,7 +79,8 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 
 	// make sure we're given a func and not a proc
 	if (s->kind != FUNC_KIND) {
-		errMsg = customErrorString("Identifier %s cannot be " 			"called as a function.", s->name);
+		errMsg = customErrorString("Identifier %s cannot be "
+ 			"called as a function.", s->name);
 		e = recordError(errMsg, yylineno, colno, SEMANTIC);
 		return 0;
 	}
@@ -104,12 +104,11 @@ isValidFuncInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < params->nElements; i++) {
 		passedParam = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		expectedParam = (Symbol *) getElementAt(params, i);
-		if (!areSameType(getTypeSym(passedParam), 
-		    getTypeSym(expectedParam))) {
+		if (!isAssignmentCompat(expectedParam,passedParam)) {
 			errMsg = customErrorString("Procedure %s expects "
 			    "argument of type %s at index %d, but got "
-			    "argument of type %s", s->name, i,
-			    typeToString(getType(expectedParam)),
+			    "argument of type %s", s->name,
+			    typeToString(getType(expectedParam)),i,
 			    typeToString(getType(passedParam)));
 			e = recordError(errMsg, yylineno, colno, SEMANTIC);
 			return NULL;

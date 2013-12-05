@@ -1,0 +1,40 @@
+{24,28,31}
+{
+    Semantic errors about arrays
+    See 6.4.3.2 Array-types and 6.4.2.4 Subrange-types
+    http://pascal-central.com/iso7185.html#6.4.3.2%20Array-types
+    http://pascal-central.com/iso7185.html#6.4.2.4%20Subrange-types
+    Errors at 23, 27, and 30 invalid array declarations 
+
+}
+program SemErrArray(input, output);
+const
+    c1 = 1;
+type
+    crew = (river, kaylee, inara, zoe); { Valid }
+var
+    v1 : integer;
+
+    foo : array[crew] of char; { Valid }
+
+    valid1a : array[integer] of integer; { Valid }
+    valid1b : array[boolean] of integer; { Valid }
+    valid1c : array[char] of integer; { Valid }
+    invalid1 : array[real] of integer; { Invalid: real is not ordinal-type. See 6.4.2.2 Required simple-types }
+    valid2a : array[-1..3] of integer; { Valid }
+    valid2b : array[false..true] of integer; { Valid }
+    valid2c : array['a'..'z'] of integer; { Valid }
+    invalid2c : array['z'..'a'] of integer; { Invalid: left must be less than or equal to right. }
+
+    valid4a : array[0..c1] of integer; { Valid }
+    invalid4a : array[0..v1] of integer; { Invalid: left and right must be constant }
+
+begin
+    valid1a[-7] := 1;
+    writeln( valid1a[-7] );
+    valid1b[false] := 2;
+    writeln( valid1b[false] );
+    valid1c['!'] := 3;
+    writeln( valid1c['!'] );
+end.
+{ vim: set ft=pascal: }

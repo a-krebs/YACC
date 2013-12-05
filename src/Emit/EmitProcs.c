@@ -151,14 +151,15 @@ void emitProcOrFuncEndCommon(Symbol *symbol, char *msg) {
 	CHECK_CAN_EMIT(1);		
 	int adjustCount = 0;
 	int lexLevel = 0;
+
 	/* Determine how many levels on the stack we need to adjust by */
-	adjustCount = getSizeOfParams(symbol) * -1;	
+	adjustCount = getOffset(symbolTable) * -1;	
 
 	/* Get the lexical so we can idenity the display register */
 	lexLevel = symbol->lvl;	
 
 	/* Adjust and return */
-	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
+	emitStmt(STMT_LEN, "ADJUST %d", adjustCount - 2);
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 
 	emitComment(msg);

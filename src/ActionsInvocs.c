@@ -85,7 +85,9 @@ struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 
 	if (isValidFuncInvocation(s, argv)) {
 		newNodeSym = newFuncSym(s->lvl, s->name, getTypeSym(s), argv);
-		newNodeSym->kindPtr.FuncKind->label = s->kindPtr.FuncKind->label;
+		newNodeSym->kindPtr.FuncKind->label = 
+		    s->kindPtr.FuncKind->label;
+		newNodeSym->kindPtr.FuncKind->invocationInstance = 1;
 		funcNode = createLeafNode(newNodeSym);
 		funcNode->opToken = FUNCTION_INVOCATION;
 		return funcNode;	
@@ -111,10 +113,11 @@ struct ElementArray *createArgList(struct treeNode *arg) {
 	if (!(arg->symbol)) return NULL;
 
 	if (	(arg->symbol->kind == PROC_KIND) || 
-		(arg->symbol->kind == FUNC_KIND) ||
+		((arg->symbol->kind == FUNC_KIND) && 
+		 !(arg->symbol->kindPtr.FuncKind->invocationInstance)) ||
 		(arg->symbol->kind == PARAM_KIND)
 	){
-		errMsg = customErrorString("Invaid argument type.");
+		errMsg = customErrorString("Invalid argument type.");
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 	}
 

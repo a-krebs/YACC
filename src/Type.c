@@ -116,8 +116,7 @@ int areSameType(Symbol *s1, Symbol *s2) {
 
 	if(s1->kindPtr.TypeKind == s2->kindPtr.TypeKind) {
 		return 1;
-	}
-	else {
+	} else {
 		return 0;
 	}
 }
