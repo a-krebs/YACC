@@ -399,7 +399,7 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl);
 	}
 
-	if ( (y->kind == CONST_KIND) ) {
+	if ( (y->kind == CONST_KIND) && !isConstResultSym(y)) {
 		emitComment("RHS of assignment operation is a const, so its "
 		    "value was not");
 		emitComment("pushed before.  So, we push it now.");
