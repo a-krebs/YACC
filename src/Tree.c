@@ -81,6 +81,9 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 		if (x) emitNot(x);
 		else emitNot(y);
 		break;
+	case ARRAY_INDEX:
+		emitArrayElementLocation(x, y);
+		break;
 	default:
 		// Probably need case for array index operation
 		// and records...

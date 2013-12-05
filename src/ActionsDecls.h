@@ -1,6 +1,7 @@
 #ifndef ACTION_DECLS_H
 #define ACTION_DECLS_H
 
+#include "Tree.h"
 /*
  * Perform actions necessary once all declarations are finished.
  */
@@ -25,7 +26,7 @@ void exitConstDeclPart(void);
  * Create a new constant in the symbol table.
  * Extract the value and type information from the proxy.
  */
-void doConstDecl(char *id, ProxySymbol *proxy);
+void doConstDecl(char *id, struct treeNode *node);
 
 
 /*

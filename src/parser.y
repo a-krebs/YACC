@@ -87,8 +87,8 @@ const_decl_list
 ;
 
 const_decl
-: decl_ID_or_err EQUAL expr
-	{ doConstDecl($<id>1, $<proxy>3); }
+: decl_ID_or_err EQUAL expr_node
+	{ doConstDecl($<id>1, $<node>3); }
 | error
 ;
 
