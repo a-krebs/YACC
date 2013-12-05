@@ -73,11 +73,12 @@ decls
 
 const_decl_part
 : CONST const_decl_list semicolon_or_error
-	{ exitConstDeclPart(); 
+	{ exitConstDeclPart();
 	  inDecl = 0;
 	}
 |
-	{ inDecl = 0; }
+	{ exitConstDeclPart();
+	  inDecl = 0; }
 ;
 
 const_decl_list
