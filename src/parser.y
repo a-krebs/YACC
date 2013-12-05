@@ -21,6 +21,7 @@ extern int yyerrok;
 extern char *yytext;
 extern int colno;
 
+
 /* 
  * Flag to set if we're in constant declaration.
  * 
@@ -551,7 +552,7 @@ decl_ID_or_err
 : DECL_ID UNREC decl_ID_or_err
 	{ $<id>$ = $<id>1; }
 | DECL_ID
-	{ $<id>$ = $<id>1; }
+	{  $<id>$ = $<id>1;}
 ;
 
 %%

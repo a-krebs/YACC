@@ -27,7 +27,6 @@ extern int yylineno;
 extern int colno;
 static char *errMsg;
 
-
 /*
  * Invoke procedure with given name.
  *
@@ -36,6 +35,7 @@ static char *errMsg;
 void procInvok(char *id, struct ElementArray *ea) {
 	Symbol *s = NULL;
 	s = getGlobalSymbol(symbolTable, id);
+
 	if (!s) {
 		notDefinedError(id);
 		return;
@@ -65,6 +65,7 @@ void procInvok(char *id, struct ElementArray *ea) {
 ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 	Symbol *s = NULL;
 	s = getGlobalSymbol(symbolTable, id);
+	
 	if (!s) {
 		notDefinedError(id);
 		return NULL;
@@ -75,12 +76,12 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isPreDefFunc(s)) {
-		emitFuncInvok(s, argv);
+		/* Needs to be handled separately */
 		return isValidPreDefFuncInvocation(s, argv);
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
-		emitFuncInvok(s, argv);
+		//emitFuncInvok(s, argv);
 		return getTypeSym(s);
 	}
 
@@ -95,13 +96,12 @@ ProxySymbol *funcInvok(char *id, struct ElementArray *argv) {
  */
 struct ElementArray *createArgList(Symbol *arg) {
 	struct ElementArray * ea = NULL;
-
+	
 	if (!arg) {
 		/* ERROR */
 		return NULL;
 	}
 
-	// check that arg is not a procedure or function
 	if (	(arg->kind == PROC_KIND) || 
 		(arg->kind == FUNC_KIND) ||
 		(arg->kind == PARAM_KIND)
@@ -112,18 +112,6 @@ struct ElementArray *createArgList(Symbol *arg) {
 	ea = newElementArray();
 	growElementArray(ea);
 	appendElement(ea, arg);	
-
-	if (arg->kind == TYPE_KIND) {
-		/* if arg is a type kind, then it was resultant from an 
-		 * expression and so its value needs to be placed on 
-		 * the stack */
-		//TODO: potentially this is not enough, should make 
-		// function called pushArgValue() where you handle all the
-		// the cases and whether or not it is by value or by 
-		// ref and everything
-		emitPushSymbolValue(arg);
-	}	
-
 	return ea;
 }
 

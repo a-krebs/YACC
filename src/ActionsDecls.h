@@ -122,7 +122,7 @@ Symbol *createNewParm(char *id, Symbol *type);
  */
 Symbol *createNewVarParm(char *id, Symbol *type);
 
-
+char *setCurrentId(char *);
 
 
 #endif

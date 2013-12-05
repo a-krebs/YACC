@@ -30,12 +30,61 @@
  */
 void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 
+	CHECK_CAN_EMIT(1);
 	switch (opToken) {
-		case PLUS:
-			emitAddition( (Symbol *) x, (Symbol *) y);
-			break;
-		default:
-			printf("FUCK MY LIFE\n");
+	case EQUAL:
+		emitEqualsOp(x, y);
+		break;
+	case NOT_EQUAL:
+		emitInequalityOp(x, y);
+		break;
+	case LESS_OR_EQUAL:
+		emitLTEOp(x, y);
+		break;
+	case LESS:
+		emitLTOp(x, y);
+		break;
+	case GREATER_OR_EQUAL:
+		emitGTEOp(x, y);
+		break;
+	case GREATER:
+		emitGTOp(x, y);
+		break;
+	case PLUS:
+	{
+		if ( (!x) || (!y) ) ; //emit unary plus
+		else emitAddition(x, y);
+		break;
+	}
+	case MINUS:
+	{
+		if ( (!x) || (!y) ) ; //emit unary minus
+		else emitSubtraction(x, y);
+		break;
+	}
+	case OR:
+		emitOr(x, y);
+		break;
+	case DIVIDE:
+		emitDivision(x, y);
+		break;
+	case DIV:
+		emitDivision(x, y);
+		break;
+	case MOD:
+		emitMod(x, y);
+		break;
+	case AND:
+		emitAnd(x, y);
+		break;
+	case NOT:
+		if (x) emitNot(x);
+		else emitNot(y);
+		break;
+	default:
+		// Probably need case for array index operation
+		// and records...
+		break; 
 	}
 }
 
