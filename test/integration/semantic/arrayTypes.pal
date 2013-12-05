@@ -1,0 +1,25 @@
+{10,11,12,16,17,21,22}
+{
+    Test array indexing
+}
+program test(input, output);
+const
+	i = 21;
+type
+	colours = (red,green,blue);
+	blues = (lightBlue,darkBlue,blue);	// error
+	blue = blues;				// error
+	list = array[1..10] of blues;		//error
+	list2 = array[2..20] of colours;	
+var
+	a : colours;				
+	b : blues;				// error
+	c : list;				// error
+	d : list2;
+	x : integer;
+begin
+	i := x;					// error
+	b := c[5];
+	d[3] := green;				
+	d[6] := d[red];
+end.
