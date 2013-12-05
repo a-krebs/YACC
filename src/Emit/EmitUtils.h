@@ -74,6 +74,12 @@ void emitLabel(int len, char*, ...);
 void emitBlankLine();
 
 	
+/* 
+ * Emit a seperator line.
+ */
+void emitSepLine();
+
+	
 /*
  * Reserve n labels.
  *
