@@ -6,7 +6,7 @@
  * Make a new ProxySymbol with type integer and given value.
  * Return pointer to the proxy
  */
-ProxySymbol *proxyIntLiteral(int value);
+ProxySymbol *proxyIntLiteral(long int value);
 
 
 /*

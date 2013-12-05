@@ -4,6 +4,7 @@
 ********************************************************************************/
 
 #include <stdlib.h>
+#include <errno.h>
 
 
 #include "Error.h"
@@ -11,6 +12,7 @@
 #include "SymbolAll.h"
 #include "Globals.h"
 #include "ActionsStructStat.h"
+#include "Utils.h"
 
 #ifndef LEXTEST_DEBUG
 #include "parser.tab.h"
@@ -111,14 +113,22 @@ comment.");
 
 [0-9]+((\.[0-9]+([E][+-]?[0-9]+)?)|([E][+-]?[0-9]+)) { 
 #ifndef LEXTEST_DEBUG
-				  yylval.real = atof(yytext); 
+				  /* clear and check errno */
+				  errno = 0;
+				  yylval.real = strtod(yytext, NULL);
+				  checkErrnoStrtoX();
+
 #endif
 				  colno += strlen(yytext);
 				  return(REAL_CONST);
 				}
 
 [0-9]+                          {
-				  yylval.integer = atoi(yytext);
+				  /* clear and check errno */
+				  errno = 0;
+				  yylval.integer = strtol(yytext, NULL, 10);
+				  checkErrnoStrtoX();
+
 #if DEBUG
 				  colno += strlen(yytext);
 #endif
