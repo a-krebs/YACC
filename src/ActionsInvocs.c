@@ -83,7 +83,8 @@ struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 
 		typeSym = isValidPreDefFuncInvocation(s, argv);
 		if (typeSym) {
-			newNodeSym = newFuncSym(0, s->name, typeSym, argv); 
+			newNodeSym = newFuncSym(0, s->name, typeSym, argv);
+			newNodeSym->lvl = 0; 
 			newNodeSym->kindPtr.FuncKind->label =
 			    s->kindPtr.FuncKind->label;
 			newNodeSym->kindPtr.FuncKind->invocationInstance = 1;

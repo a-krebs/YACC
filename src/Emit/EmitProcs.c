@@ -227,6 +227,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 
 	if (isPreDefFunc(symbol)) {
 		emitPreDefFunc(symbol, params);
+		return;
 	}
 	
 	label = symbol->kindPtr.FuncKind->label;
