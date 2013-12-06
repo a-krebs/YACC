@@ -98,7 +98,12 @@ static void pushPreDefFuncValues(Symbol *s, struct treeNode *node)
 	emitComment("Make room for return value");
 	emitStmt(STMT_LEN, "CONSTI 0");	
 	postOrderWalk(node);
-	emitPushParamValue(node->symbol, 0);
+	
+	if (node->symbol->isAddress) {
+		emitPushAddressValue(node->symbol);
+	} else {
+		emitPushParamValue(node->symbol, 0);
+	}
 }
 
 static void emitOrd(Symbol *s, struct treeNode *node)
@@ -464,17 +469,20 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 
 		postOrderWalk(node);
 		if (arg->kind == VAR_KIND) {
-			if (node->opToken == RECORD_ACCESS) {
+			if (node->opToken == RECORD_ACCESS ||
+			    node->opToken == ARRAY_INDEX) {
 				if (getType(arg) != ARRAY_T)
 					emitStmt(STMT_LEN, "PUSHI"); 
 			} else {
 				emitPushVarValue(arg);
 			}
-	
+			
 		} else if ((arg->kind == CONST_KIND) && 
 		    !isConstResultSym(arg)) {
 
 			emitPushConstValue(arg);
+		} else if (arg->isAddress == 1 && getType(arg) != ARRAY_T) {
+			emitStmt(STMT_LEN, "PUSHI");
 		}
 		switch (getType(arg)) {
 		case CHAR_T:

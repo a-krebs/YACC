@@ -1,12 +1,46 @@
 {}
-
 {
-	Team YACC Checkpoint 3 Test 6
-	Must be a correct PAL program that compiles to ASC
-
-	Describe what this program does and what parts of the compiler
-	it is supposed to test.
+	CMPUT 415 - TEAM YACC - Final Checkpoint Test 6
+	Tests the ability of the compiler to handle structured types and
+	pass by reference variables.
 }
-program test(input, output);
+
+program hello(my, man);
+type
+	bookOfColours = record
+		red : integer;
+		blue : integer;
+		green : integer;
+		magneta : integer;
+		letThePeopleBeFree : array[1..10] of char
+	end;
+	colours = (red, green, blue, orange);
+	colourArray = array[1..3] of colours;
+var
+	a : colours;
+	c : colourArray;
+	boc : bookOfColours;
+procedure bar(var a : integer);
 begin
-end.
+	a :=10;
+end;
+procedure foo(a : colours; b : colours);
+var
+	c : colours;
+begin
+	a := b;
+end;
+begin
+	bar(boc.red);
+	writeln(boc.red);
+	c[2] := a;
+	boc.red := 63;
+	boc.blue := 111;
+	while boc.red > 1 do
+	begin
+		boc.letThePeopleBeFree[1] := chr(boc.blue);
+		writeln(chr(boc.blue));
+		boc.red := boc.red - 1;
+	end;
+end. 
+ 

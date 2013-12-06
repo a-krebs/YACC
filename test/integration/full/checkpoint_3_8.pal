@@ -5,5 +5,89 @@
 	Anything-goes test. No limit on number of errors.
 }
 program test(input, output);
+const
+	one = 1;
+	minint = -(maxint);
+type
+	r = record
+		i : integer;
+		r : real
+	end;
+var
+	a : Boolean;
+	b : integer;
+	i,d ,e, w : integer;
+procedure pad( a : integer; b : integer );
+	procedure foo( a : integer; b : integer );
+	var
+		c : integer;
+	begin
+		if a < 0 then pad(a,b);
+	end;
 begin
+	foo(a,b);
+end;
+begin
+
+	// simple IF-THEN statement
+	if a then
+		b := 2;
+
+	// IF-THEN-ELSE statement
+	if a then
+		b := 3
+	else
+		b := 4;
+
+	// nested IF-THEN within IF-THEN-ELSE
+	if a then
+		// this must be a matched stat
+		begin
+			if a then b := 6
+		end
+	else
+		if a then b := 22;
+
+	// basic loop
+	while (1=1) do
+	begin
+	end;
+
+	// two nested loops
+	while (1=1) do
+	begin
+		while (1=1) do
+		begin
+		end;
+	end;
+
+	// with continues
+	while (1=1) do
+	begin
+		while (1=1) do
+			while (1=1) do
+				begin
+					continue;
+				end;
+		continue;
+		continue;
+	end;
+
+	// with exits
+	while (1=1) do
+	begin
+		while (1=1) do
+			while (1=1) do
+				begin
+					exit;
+				end;
+		continue;
+	end;
+
+	// call some functions
+	i := 5;
+	pad(i, 10);
+	i := maxint;
+	i := minint;
+	writeln(i);
 end.

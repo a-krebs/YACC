@@ -4,9 +4,75 @@
 	Team YACC Checkpoint 3 Test 7
 	Must be a correct PAL program that compiles to ASC
 
-	Describe what this program does and what parts of the compiler
-	it is supposed to test.
+	Tests records.
 }
 program test(input, output);
+type
+        Books = record
+           title: array [1..10] of char;
+           rating: char;
+           whatever: char;
+           id: integer
+        end;
+
+        MegaRecord = record
+                b: Boolean;
+                i1 : integer;
+                i2 : integer;
+                r1 : real;
+                r2 : real;
+                r: real;
+                i: integer;
+                b2: Boolean;
+                b3: Boolean;
+                a : integer;
+                c : integer;
+                d : integer;
+                x : real;
+                y : real;
+                z : real
+        end;
+
+        DayOfWeek = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+var 
+   	book : Books;
+        mega : MegaRecord;
+        c : char;
+        i : integer;
+
+        day : DayOfWeek;
+        day2 : DayOfWeek;
+
 begin
+        book.rating := 'F';
+	book.whatever := 'w';
+        book.id := 123;
+
+        writeln(book.id);
+        writeln(book.rating);
+        writeln(book.whatever);
+
+        book.rating := book.whatever;
+        writeln(book.rating);
+        writeln(book.whatever);
+
+        book.title := 'alovelystr';
+        writeln(book.title);
+
+        mega.b := true;
+        mega.i1 := 2147483646;
+        mega.i2 := 000000000;
+        mega.r1 := 0.000000;
+        mega.r2 := 2147483646.6;
+        mega.r :=  95175.36;
+        mega.i := -123456;
+        mega.b2 := true and true and true and true;
+        mega.b3 := true;
+        mega.a := 345345;
+        mega.c := 435345;
+        mega.d :=-98765;
+        mega.x := 345.567;
+        mega.y :=6456.454;
+        mega.z :=435.8900;
+
 end.

@@ -320,8 +320,8 @@ void emitProcOrFuncInvokCommon(Symbol *symbol,
 		postOrderWalk(argNode);	
 		emitPushParamValue(arg, isByReference(param)); 
 	}
-	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl, label);
-	emitStmt(STMT_LEN, "Kick params off the stack.");
+	emitStmt(STMT_LEN, "CALL %d, %s", symbol->lvl + 1, label);
+	emitComment("Kick params off the stack.");
 	emitStmt(STMT_LEN, "ADJUST -%d", args->nElements);
 }
 
@@ -386,7 +386,6 @@ void emitPushParamValue(Symbol *s, int byRef)
  		 * Thus, we have nothing to do
 		 */
 	} else {
-		emitComment("got here");
 		/* 
 		 * Else, the variable is being passed by reference.  And we 
 		 * only want to push the address of the variable onto the
@@ -399,7 +398,7 @@ void emitPushParamValue(Symbol *s, int byRef)
 		/* s is a variable, so its value is not on the stack.  In this
 		 * case we simply push its address */
 		if (s->kind == VAR_KIND) {
-			emitPushVarAddress(s);
+			if (!s->isAddress) emitPushVarAddress(s);
 		}
 
 		/* else s is a type_kind, in which case its resultant from some
