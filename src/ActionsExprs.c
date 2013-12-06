@@ -129,6 +129,13 @@ struct treeNode *hashLookupToProxy(char *id) {
 		notDefinedError(id);
 		return createLeafNode(NULL);
 	}
+
+	if (s->kind == TYPE_KIND && !(s->isAddress)) {
+		errMsg = customErrorString("%s is a type and cannot be used "
+		    "in expressions\n", s->name);
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		return createLeafNode(NULL);
+	}
 	return createLeafNode(newProxySymFromSym(s));
 }
 

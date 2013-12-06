@@ -133,10 +133,94 @@ static void emitReadln(Symbol *s, struct ElementArray *args)
 }
 static void emitWrite(Symbol *s, struct ElementArray *args)
 {
+	Symbol *arg;
+	int i;
+
+	/* No need to handle the no argument case here */
+
+	for (i = 0; i < args->nElements; i++) {
+		arg = ((struct treeNode *)getElementAt(args, i))->symbol;
 	
+		if (!arg) return;
+
+		if (arg->kind == VAR_KIND) {
+		
+			emitPushVarValue(arg);
+	
+		} else if (arg->kind == CONST_KIND) {
+
+			emitPushConstValue(s);
+
+		} else if (arg->kind == TYPE_KIND) {
+			emitComment("Walking expression tree to get correct "
+			    "value for call");
+			postOrderWalk(getElementAt(args, i));
+		}
+		switch (getType(arg)) {
+		case ARRAY_T:
+		case CHAR_T:
+		case STRING_T:
+			emitIOCall("__write_str", arg);
+			break;
+		case INTEGER_T:
+			emitIOCall("__write_int", arg);
+			break;
+		case REAL_T:
+			emitIOCall("__write_real", arg);
+			break;
+		default:
+			/* Should not be reached */
+			break;
+		}
+	}
 }
 static void emitWriteln(Symbol *s, struct ElementArray *args)
 {
+	Symbol *arg;
+	int i;
+	if (args->nElements == 0) {
+		// TODO: can I just call writeln and have it do the right
+		// thing?
+		return;
+	} 
+
+	for (i = 0; i < args->nElements; i++) {
+		arg = ((struct treeNode *)getElementAt(args, i))->symbol;
+
+		emitComment("Got %s as arg", arg->name);
+	
+		if (!arg) return;
+
+		if (arg->kind == VAR_KIND) {
+		
+			emitPushVarValue(arg);
+	
+		} else if (arg->kind == CONST_KIND) {
+
+			emitPushConstValue(s);
+
+		} else if (arg->kind == TYPE_KIND) {
+			emitComment("Walking expression tree to get correct "
+			    "value for call");
+			postOrderWalk(getElementAt(args, i));
+		}
+		switch (getType(arg)) {
+		case ARRAY_T:
+		case CHAR_T:
+		case STRING_T:
+			emitIOCall("__writeln_str", arg);
+			break;
+		case INTEGER_T:
+			emitIOCall("__writeln_int", arg);
+			break;
+		case REAL_T:
+			emitIOCall("__writeln_real", arg);
+			break;
+		default:
+			/* Should not be reached */
+			break;
+		}
+	}
 }
 
 static void emitIOCall(char *proc, Symbol *arg)

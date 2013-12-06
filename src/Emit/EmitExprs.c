@@ -125,9 +125,6 @@ void emitPushConstValue(Symbol *s)
 		emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);
 	
 	} else {
-		/* It is an anonymous const value, so its value is already
-		 * on the stack and we do nothing */
-		//TODO: the times they are a-changin'
 		emitComment("Pushing anonymous constant value of type %s",
 		    typeToString(getType(s)));
 		emitPushAnonConstValue(s);	
