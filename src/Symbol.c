@@ -485,30 +485,13 @@ Symbol *newStringTypeSym(int strlen) {
 int
 isConstInScalar(Symbol *constSym, Symbol *scalarSymType)
 {
-	struct ElementArray *consts = NULL;
-	Symbol *c = NULL;
-	int i;
 	if (!(constSym) || !(scalarSymType)) return 0;
-	if ((getType(constSym) != INTEGER_T) ||
-	    (getType(scalarSymType) != SCALAR_T) ||
-	    (constSym->kind != CONST_KIND) ||
-	    (scalarSymType->kind != TYPE_KIND)) {
+	if (getTypePtr(getTypeSym(constSym)) != getTypePtr(scalarSymType)) {
 		return 0;
-	} 
-
-	if (!constSym->name) return 0;
-
-	consts = getTypePtr(scalarSymType)->Scalar->consts;
-
-	for(i = 0; i < consts->nElements; i++) {
-		c = (Symbol *) getElementAt(consts, i);
-		if ((strcmp(c->name, constSym->name) == 0) &&
-		    (c->lvl == constSym->lvl)) {
-			return 1;	
-		}
-	}	
-	return 0;
+	}
+	return 1;
 }
+
 
 /*
  * Sets the given Symbol's offset as  appropriate and increments the offset
