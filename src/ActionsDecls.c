@@ -300,6 +300,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 		}	
 	}
 
+
 	emitProcOrFuncDecl(s, ea);
 
 	return s;
@@ -316,7 +317,7 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
  */
 Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	Symbol *s = NULL, *var = NULL;
-	int lvl = getCurrentLexLevel(symbolTable), i;
+	int lvl = getCurrentLexLevel(symbolTable), i, badParamName = 0;
 
 	s = getLocalSymbol(symbolTable, id);
 	if (s) {
@@ -354,12 +355,30 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	for (i = 0; i < ea->nElements; i++) {
 		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
-			// TODO error checking
 			addToSymbolTable(symbolTable, var);
 			setParamOffset(var, ea);
-		}		
+		}
+		if (var) {
+			if (strcmp(var->name, s->name) == 0) {
+				errMsg = customErrorString("Function %s has "
+				    "parameter with same name as function.",
+				    s->name); 
+				recordError(errMsg, yylineno, colno, SEMANTIC);
+				badParamName = 1;
+			}
+		}
 	}
 
+	/* Now push the function name as a local variable at the new
+	 * lexical level */
+	if (!badParamName) {
+		var = paramToVar(s);
+		addToSymbolTable(symbolTable, var);
+		setParamOffset(var, ea);
+	}
+
+
+	/* Let's be lazy */
 	emitProcOrFuncDecl(s, ea);
 
 	return s;
