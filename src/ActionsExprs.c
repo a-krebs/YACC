@@ -77,6 +77,7 @@ Symbol * variableAssignmentLookup(char *id)
  */
 Symbol *recordFieldAssignmentLookup(struct treeNode *node, char *id)
 {
+	struct treeNode *newNode;
 	Symbol *s = NULL, *p;
 	struct Record *r = NULL;
 
@@ -105,7 +106,8 @@ Symbol *recordFieldAssignmentLookup(struct treeNode *node, char *id)
 
 	emitComment("Pushing address of %s in preparation for assignment.",
 	    s->name);
-	emitPushRecordFieldAddress(p, s);
+	newNode = createRecordNode(s, node);
+	postOrderWalk(newNode);
 	return newProxySymFromSym(s);
 }
 

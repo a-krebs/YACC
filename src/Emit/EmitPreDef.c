@@ -316,7 +316,11 @@ static void emitRead(Symbol *s, struct ElementArray *args)
 		if (!arg) return;
 
 		if (arg->kind == VAR_KIND) {
-			emitPushVarAddress(arg);
+			if (arg->isAddress) {
+				postOrderWalk(getElementAt(args, i));
+			} else { 
+				emitPushVarAddress(arg);
+			}
 		}
 
 		if (arg->kind == TYPE_KIND) {
@@ -362,7 +366,11 @@ static void emitReadln(Symbol *s, struct ElementArray *args)
 		if (!arg) return;
 
 		if (arg->kind == VAR_KIND) {
-			emitPushVarAddress(arg);
+			if (arg->isAddress) {
+				postOrderWalk(getElementAt(args, i));
+			} else { 
+				emitPushVarAddress(arg);
+			}
 		}
 
 		if (arg->kind == TYPE_KIND) {
@@ -391,6 +399,7 @@ static void emitReadln(Symbol *s, struct ElementArray *args)
 }
 static void emitWrite(Symbol *s, struct ElementArray *args)
 {
+	struct treeNode *node;
 	Symbol *arg;
 	int i;
 
@@ -400,19 +409,23 @@ static void emitWrite(Symbol *s, struct ElementArray *args)
 		arg = ((struct treeNode *)getElementAt(args, i))->symbol;
 	
 		if (!arg) return;
+		arg = ((struct treeNode *)getElementAt(args, i))->symbol;
+		node = getElementAt(args, i);	
+		if (!arg) return;
 
+		postOrderWalk(node);
 		if (arg->kind == VAR_KIND) {
-		
-			emitPushVarValue(arg);
+			if (node->opToken == RECORD_ACCESS) {
+				if (getType(arg) != ARRAY_T)
+					emitStmt(STMT_LEN, "PUSHI"); 
+			} else {
+				emitPushVarValue(arg);
+			}
 	
-		} else if (arg->kind == CONST_KIND) {
+		} else if ((arg->kind == CONST_KIND) && 
+		    !isConstResultSym(arg)) {
 
 			emitPushConstValue(arg);
-
-		} else if (arg->kind == TYPE_KIND) {
-			emitComment("Walking expression tree to get correct "
-			    "value for call");
-			postOrderWalk(getElementAt(args, i));
 		}
 		switch (getType(arg)) {
 		case ARRAY_T:
@@ -434,6 +447,7 @@ static void emitWrite(Symbol *s, struct ElementArray *args)
 }
 static void emitWriteln(Symbol *s, struct ElementArray *args)
 {
+	struct treeNode *node;
 	Symbol *arg;
 	int i;
 	if (args->nElements == 0) {
@@ -444,21 +458,22 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 
 	for (i = 0; i < args->nElements; i++) {
 		arg = ((struct treeNode *)getElementAt(args, i))->symbol;
-
+		node = getElementAt(args, i);	
 		if (!arg) return;
 
+		postOrderWalk(node);
 		if (arg->kind == VAR_KIND) {
-		
-			emitPushVarValue(arg);
+			if (node->opToken == RECORD_ACCESS) {
+				if (getType(arg) != ARRAY_T)
+					emitStmt(STMT_LEN, "PUSHI"); 
+			} else {
+				emitPushVarValue(arg);
+			}
 	
-		} else if (arg->kind == CONST_KIND) {
+		} else if ((arg->kind == CONST_KIND) && 
+		    !isConstResultSym(arg)) {
 
 			emitPushConstValue(arg);
-
-		} else if (arg->kind == TYPE_KIND) {
-			emitComment("Walking expression tree to get correct "
-			    "value for call");
-			postOrderWalk(getElementAt(args, i));
 		}
 		switch (getType(arg)) {
 		case ARRAY_T:
