@@ -163,7 +163,7 @@ begin
 	r := x * y;
 	r := x * y * z;	
 
-	//INTEGER MOD, BECAUSE FUCK BACKING UP IN ASC
+	//INTEGER MOD
 	i := a mod d;
 	i := (a mod d) mod c;
 
