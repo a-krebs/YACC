@@ -5,7 +5,7 @@
 
 #include "EmitArithmetic.h"
 
-static void emitArithmeticPrep(Symbol *, Symbol *, int *);
+static void emitArithmeticPrep(Symbol *, Symbol *, int *, int);
 
 /*============================================================================
 					API Functions
@@ -22,7 +22,7 @@ static void emitArithmeticPrep(Symbol *, Symbol *, int *);
  * Returns: void
  */
 void emitAddition(Symbol *x, Symbol *y) {
-	genericArithConstruct(x, y, "addition", "ADDI", "ADDR");
+	genericArithConstruct(x, y, "addition", "ADDI", "ADDR", NO_OP);
 }
 
 
@@ -37,7 +37,7 @@ void emitAddition(Symbol *x, Symbol *y) {
  * Returns: void
  */
 void emitSubtraction(Symbol *x, Symbol *y) {
-	genericArithConstruct(x, y, "subtraction", "SUBI", "SUBR");
+	genericArithConstruct(x, y, "subtraction", "SUBI", "SUBR", NO_OP);
 }
 
 
@@ -52,7 +52,7 @@ void emitSubtraction(Symbol *x, Symbol *y) {
  * Returns: void
  */
 void emitMultiplication(Symbol *x, Symbol *y) {
-	genericArithConstruct(x, y, "mulitplication", "MULI", "MULR");
+	genericArithConstruct(x, y, "mulitplication", "MULI", "MULR", NO_OP);
 }
 
 
@@ -66,8 +66,8 @@ void emitMultiplication(Symbol *x, Symbol *y) {
  *
  * Returns: void
  */
-void emitDivision(Symbol *x, Symbol *y) {
-	genericArithConstruct(x, y, "division", "DIVI", "DIVR");
+void emitDivision(Symbol *x, Symbol *y, int opToken) {
+	genericArithConstruct(x, y, "division", "DIVI", "DIVR", opToken);
 }
 
 
@@ -85,7 +85,7 @@ void emitMod(Symbol *x, Symbol *y) {
 	int result;
 	emitArithmCheckAndComment(x, y, "mod");
 
-	emitArithmeticPrep(x, y, &result);
+	emitArithmeticPrep(x, y, &result, NO_OP);
 	emitStmt(STMT_LEN, "MOD");	
 }
 
@@ -150,7 +150,7 @@ void emitRTOI(Symbol *x) {
  *		y : the RHS operand
  *		result : a pointer to an integer
  */
-static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
+static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result, int opToken)
 {
 	CHECK_CAN_EMIT(x);
 	CHECK_CAN_EMIT(y);
@@ -174,6 +174,19 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	}
 
 	if ((getType(x) == INTEGER_T) && (getType(y) == INTEGER_T)) {
+
+		if ( opToken == DIVIDE ) {
+			emitComment("Converting %s to a real value.", x->name);
+			emitStmt(STMT_LEN, "ADJUST -1");
+			emitStmt(STMT_LEN, "ITOR");
+			emitStmt(STMT_LEN, "ADJUST 1");	
+
+			emitComment("Converting %s to a real value.", y->name);
+			emitStmt(STMT_LEN, "ITOR");
+
+			*result = ARITHMETIC_RESULT_REAL;
+			return;
+		}
 	
 		/* Emit code to perform arithmetic operation on two integers */
 		*result = ARITHMETIC_RESULT_INTEGER;
@@ -217,12 +230,12 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
  * Returns: void
  */
 void genericArithConstruct(Symbol *x, Symbol *y, char *opName, 
-	char *ascIntName, char *ascRealName) 
+	char *ascIntName, char *ascRealName, int opToken) 
 {
 	int result;
 
 	emitArithmCheckAndComment(x, y, opName);
-	emitArithmeticPrep(x, y, &result);
+	emitArithmeticPrep(x, y, &result, opToken);
 
 	if ( result == ARITHMETIC_RESULT_INTEGER) {
 		emitStmt(STMT_LEN, ascIntName);

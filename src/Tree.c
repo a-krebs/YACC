@@ -64,10 +64,10 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 		emitOr(x, y);
 		break;
 	case DIVIDE:
-		emitDivision(x, y);
+		emitDivision(x, y, opToken);
 		break;
 	case DIV:
-		emitDivision(x, y);
+		emitDivision(x, y, opToken);
 		break;
 	case MULTIPLY:
 		emitMultiplication(x, y);

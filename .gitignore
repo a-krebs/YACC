@@ -27,8 +27,8 @@ bin/*
 # emacs and gedit backup stuff (yes, I edit with gedit, I'm not proud)
 *~
 *#
-*.pal
-*.asc
+.pal
+.asc
 *.lst
 # generated asc/lst files
 test/integration/full/*.asc
@@ -40,6 +40,7 @@ test/integration/syntax/*.lst
 test/integration/unsolved_syntax_issues/*.asc
 test/integration/unsolved_syntax_issues/*.lst
 test/unit/asctests/test*.asc
+test/integration/asc/generated_asc/*.asc
 __*.asc
 # python compiled files
 *.pyc
