@@ -428,10 +428,10 @@ static void emitWrite(Symbol *s, struct ElementArray *args)
 			emitPushConstValue(arg);
 		}
 		switch (getType(arg)) {
-		case ARRAY_T:
 		case CHAR_T:
 			emitIOCall("__write_char", arg);
 			break;
+		case ARRAY_T:
 		case STRING_T:
 			emitIOCall("__write_str", arg);
 			break;
@@ -477,10 +477,10 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 			emitPushConstValue(arg);
 		}
 		switch (getType(arg)) {
-		case ARRAY_T:
 		case CHAR_T:
 			emitIOCall("__writeln_char", arg);
 			break;
+		case ARRAY_T:
 		case STRING_T:
 			emitIOCall("__writeln_str", arg);
 			break;

@@ -177,7 +177,7 @@ struct treeNode *recordAccessToProxy(struct treeNode *node, char *id) {
 		return node;	
 	}
 
-	
+	s->isAddress = 1;
 	return createRecordNode(s, node);
 }
 
