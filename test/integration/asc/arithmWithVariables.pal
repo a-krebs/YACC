@@ -20,6 +20,16 @@ begin
 	i := a div b div c;
 
 	r := a / b;
-	//r := a / b / c;	
+	r := a / b / c;	
+
+	i := a * b;
+	i := a * b * c;
+
+	i := a - b;
+	i := a - b - c;
+
+	//REALS
+	r := x + y;
+	r := x + y + z;
 end.
 
