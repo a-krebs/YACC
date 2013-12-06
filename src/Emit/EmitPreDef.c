@@ -173,7 +173,6 @@ void emitPreDefIO(Symbol *s, struct ElementArray *args)
 	} else if (strcmp(s->name, "writeln") == 0) {
 
 		emitWriteln(s, args);
-
 	}
 }
 

@@ -193,7 +193,7 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
-	type_t type;
+	Symbol * type;
 	int i = 0;
 	int nArgs = 0;
 
@@ -208,7 +208,7 @@ ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 	}
 	
 	param = ((struct treeNode *)getElementAt(ea, i))->symbol;
-	type = getType(param);
+	type = getTypeSym(param);
 	
 	if (isArgTypeValidInPreDefFunc(s, param)) {
 		return getPreDefFuncReturnType(s, type);
@@ -216,14 +216,14 @@ ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 	} else {
 		errMsg = customErrorString("Function %s cannot be "
 		    "called with argument of type %s.", s->name,
-		    typeToString(type));
+		    typeToString(getType(type)));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return 0;
 	}
 }
 
 
-Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
+Symbol *getPreDefFuncReturnType(Symbol *s, Symbol *argTypeSym) {
 	char *name = NULL;
 	
 	if (!s) return NULL;
@@ -236,7 +236,7 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 	    (strcmp(name, SUCC) == 0) ||
 	    (strcmp(name, PRED) == 0)
 	) {
-		return getTypeSym(s);
+		return argTypeSym;
 	} else if (
 	    (strcmp(name, SIN) == 0) ||
 	    (strcmp(name, EXP) == 0) ||

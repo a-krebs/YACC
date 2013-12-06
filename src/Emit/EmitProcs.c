@@ -224,6 +224,7 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
 
+
 	if (isPreDefFunc(symbol)) {
 		emitPreDefFunc(symbol, params);
 	}
