@@ -18,7 +18,7 @@ type
 	Dog = (poodle,germanShep,littleYappyOne);
 	dog = array[Dog] of integer;
 	intArray = array[1..10]of integer;
-	//supDog = array[poodle..germanShep] of char;
+	supDog = array[poodle..germanShep] of char;
 	alpha = array[char] of char;
 	list2 = array[2..20] of colours;
 	list3 = array[colours] of integer;
@@ -28,7 +28,7 @@ var
 	a: integer;
 	s: string;
 	res : Boolean;
-	//whats : supDog;
+	whats : supDog;
 	w : list3;
 procedure testProc(a:integer; c:intArray);
 begin
@@ -45,7 +45,7 @@ begin
 	testProc(a,c);
 	res := testStrAssign(s,s);
 	if res then a := 12 else a := 13;
-	//whats[poodle] := 'a';
+	whats[poodle] := 'a';
 	d[3] := green;		
 	w[red] := 45;
 	if bar = foo then writeln('eh');
