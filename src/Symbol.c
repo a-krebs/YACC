@@ -258,7 +258,7 @@ Symbol *newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh) {
 		/* Error:  Mismatched types for subrange indices */
 		return NULL;
 	}
-
+	
 	if (!isOrdinal(getType(constSymLow))) {
 		/*
 		 * Error: trying to construct subrange from non ordinal
@@ -271,6 +271,10 @@ Symbol *newSubrangeSym(ProxySymbol *constSymLow, ProxySymbol *constSymHigh) {
 	 * Insure that values are bounded correctly (dependent on type ).
 	 */
 	switch(getType(constSymLow)) {
+	case SCALAR_T:
+		if (getConstVal(constSymLow)->Integer.value >
+		    getConstVal(constSymHigh)->Integer.value) return NULL;
+		break;
 	case INTEGER_T:
 		if (getConstVal(constSymLow)->Integer.value >
 		    getConstVal(constSymHigh)->Integer.value) return NULL;
