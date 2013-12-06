@@ -98,7 +98,12 @@ static void pushPreDefFuncValues(Symbol *s, struct treeNode *node)
 	emitComment("Make room for return value");
 	emitStmt(STMT_LEN, "CONSTI 0");	
 	postOrderWalk(node);
-	emitPushParamValue(node->symbol, 0);
+	
+	if (node->symbol->isAddress) {
+		emitPushAddressValue(node->symbol);
+	} else {
+		emitPushParamValue(node->symbol, 0);
+	}
 }
 
 static void emitOrd(Symbol *s, struct treeNode *node)

@@ -1,0 +1,30 @@
+program test(input, output);
+type
+	DayOfWeek = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+var 
+   	day : DayOfWeek;
+        day2 : DayOfWeek;
+
+begin
+	day := Sun;
+        day2 := Sat;
+
+        //yes
+        //if (day = Sun) then
+        //        writeln('yes')
+        //else
+        //        writeln('no');
+
+        //no
+        //if (day <> Sun) then
+        //        writeln('yes')
+        //else
+        //        writeln('no');       
+
+        //
+        if (day = day2) then
+                writeln('yes')
+        else
+                writeln('no');                
+
+end.

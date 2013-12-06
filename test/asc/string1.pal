@@ -1,0 +1,23 @@
+program test(input, output);
+type
+	string10 = array[1..10] of char;
+	string9 = array[1..9] of char;
+var 
+   	array1 : string10;
+   	array2 : string10;
+   	//array3 : string9;
+   	b : boolean;
+
+begin
+	array1 := 'thisisastr';
+	array2 := 'thisisastr';
+
+	b := array1 = array1;
+
+	if true and true then
+  		writeln('yes')
+  	else
+  		writeln('no');
+  	
+
+end.
