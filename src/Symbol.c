@@ -483,9 +483,6 @@ Symbol *newStringTypeSym(int strlen) {
 int
 isConstInScalar(Symbol *constSym, Symbol *scalarSymType)
 {
-	struct ElementArray *consts = NULL;
-	Symbol *c = NULL;
-	int i;
 	if (!(constSym) || !(scalarSymType)) return 0;
 	if (getTypePtr(getTypeSym(constSym)) != getTypePtr(scalarSymType)) {
 		return 0;
