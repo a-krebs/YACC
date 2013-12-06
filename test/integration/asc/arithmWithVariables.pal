@@ -5,6 +5,7 @@ var
 	i : integer;
 	r : real;
 begin
+	//INTEGERS
 	a := 10;
 	b := 5;
 	c := 1;
@@ -31,5 +32,35 @@ begin
 	//REALS
 	r := x + y;
 	r := x + y + z;
+
+	r := x - y;
+	r := x - y - z;	
+
+	r := x / y;
+	r := x / y / z;	
+
+	r := x * y;
+	r := x * y * z;	
+
+	//INTEGER MOD, BECAUSE FUCK BACKING UP IN ASC
+	i := a mod b;
+	i := (a mod b) mod c;
+
+	//BOTH INTEGERS AND REALS
+	r := a + x;
+	r := a + x + a;
+	r := a + a + a + a + a;
+
+	//UNARY , 30 next
+	i := -a;
+	i := -a + (-a);
+	i := -a + (+a);
+	i := +a + (-a);
+	i := +a + (+a) + (+a);
+
+	r := -a;
+	r := -a + (-a);
+	r := -a + (+a);	
+
 end.
 
