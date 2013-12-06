@@ -10,7 +10,7 @@ lational operations.
 static void emitRelationalOperandValue(Symbol *);
 static void emitRelationalPrep(Symbol *, Symbol *, int *);
 static void emitRelationalSimpleTypeConversion(Symbol *, Symbol *, int *);	
-
+static void handleSpecialCase(Symbol *, Symbol *, int *);
 /*
  * Performs conversion of the given simple types as necessary in order to
  * make the relational operation function as expected.
@@ -83,6 +83,17 @@ static void emitRelationalOperandValue(Symbol *x)
 	}
 
 }
+
+static void handleSpecialCase(Symbol *x, Symbol *y, int *opType)
+{
+	/* given two addresses on the stack, make some magic happen bro */
+	emitStmt(STMT_LEN, "ADJUST -1");
+	emitStmt(STMT_LEN, "PUSHI");
+	emitStmt(STMT_LEN, "ADJUST 1");
+	emitStmt(STMT_LEN, "PUSHI");
+}
+
+
 /*
  * Given two symbols to be used in a relational operation, emitRelationalPrep()
  * generates the asc code to insure that the two required values are on the
@@ -99,6 +110,17 @@ static void emitRelationalPrep(Symbol *x, Symbol *y, int *opType)
 
 	emitRelationalOperandValue(x);
 	emitRelationalOperandValue(y);
+
+	if (x->isAddress && y->isAddress) {
+		handleSpecialCase(x, y, opType);
+		if (isSimpleType(getType(x))) {
+			emitRelationalSimpleTypeConversion(x, y, opType);
+			return;
+		} else if (getType(x) == SCALAR_T) {
+			*opType = INTEGER_OPERATION;
+		} else *opType = STRUCTURED_OPERATION;
+		return;
+	}
 
 	if ( ( x->kind == CONST_KIND && isConstResultSym(x) )
 		&&  ( y->kind == CONST_KIND && isConstResultSym(y) ) ) {
