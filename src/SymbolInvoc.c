@@ -176,12 +176,21 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < nArgs; i++) {
 		param = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		type = getType(param);
+		
 		if (type == ARRAY_T) {
 			arrayBaseType = getType(getArrayBaseSym(param));
 			if(arrayBaseType == CHAR_T){
 				type = arrayBaseType;
 			}
 		}
+		
+		if ((param->kind == TYPE_KIND) && !(param->isAddress)){
+			errMsg = customErrorString(" Passing expressions to "
+			"procedure %s is not allowed.",s->name);
+			recordError(errMsg, yylineno, colno, SEMANTIC);
+			valid = 0;
+		}
+		
 		if ( (type != CHAR_T) && (type != INTEGER_T) &&
 		    (type != REAL_T) && (type != STRING_T) ) {
 			errMsg = customErrorString("Invalid argument "

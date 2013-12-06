@@ -964,16 +964,18 @@ int isAssignmentCompat(Symbol *x, Symbol *y) {
 
 	type1 = getTypeSym(x);
 	type2 = getTypeSym(y);
-	
-	if (areSameType(type1, type2)) {
-		return 1;
-	} else if (areCompatibleStrings(type1, type2)) {
-		return 1;
-	} else if ((getType(type1) == REAL_T) && 
-	    (getType(type2) == INTEGER_T)) {
-		return 1;
-	} else if (isConstInScalar(y,type1)) {
-		return 1;
+	/*checking the kind first*/
+	if (areKindCompat(x,y)) {
+		if (areSameType(type1, type2)) {
+			return 1;
+		} else if (areCompatibleStrings(type1, type2)) {
+			return 1;
+		} else if ((getType(type1) == REAL_T) && 
+	    	(getType(type2) == INTEGER_T)) {
+			return 1;
+		} else if (isConstInScalar(y,type1)) {
+			return 1;
+		}
 	} 
 	errMsg = customErrorString("The type %s cannot be assigned a value"
 	    " of type %s", typeToString(getType(type1)), 
