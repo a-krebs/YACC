@@ -1,0 +1,10 @@
+{9}
+program opsWithScalars(in, out);
+type
+	list = (one,two,three);
+var
+	a : list;
+begin
+	a := one;
+	two := three;	// error
+end.

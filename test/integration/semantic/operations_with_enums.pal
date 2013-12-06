@@ -1,0 +1,12 @@
+{11}
+program opsWithScalars(in, out);
+const
+	// these are fine:
+	i = 1;
+	j = 2;
+	k = i + j;
+var
+	a : integer;
+begin
+	i := a;	// error
+end.

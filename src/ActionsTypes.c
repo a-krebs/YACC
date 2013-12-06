@@ -71,11 +71,21 @@ struct ElementArray *appendToScalarListType(struct ElementArray *ea,
 		alreadyDefinedError(id);
 		return NULL;
 	}
-	s = (Symbol *) newConstProxySym(id, &ea->nElements, 
+
+	/*
+	 * We set the type to integer here, but it will change to
+	 * the parent scalar list type once the
+	 * parent type is defined further up in the grammar
+	 */
+	s = (Symbol *) newConstProxySym(id, &ea->nElements,
 	    getPreDefInt(preDefTypeSymbols));
-	s->lvl = getCurrentLexLevel(symbolTable);
-	addToSymbolTable(symbolTable, s);
+	
+	if (addToSymbolTable(symbolTable, s) != 0) {
+		symbolTableInsertFailure();
+	}
+
 	appendElement(ea, s);
+	
 	return ea;
 }
 
@@ -108,6 +118,11 @@ struct ElementArray * createScalarList(char *id) {
 		return NULL;
 	}
 
+	/*
+	 * We set the type to integer here, but it will change to
+	 * the parent scalar list type once the
+	 * parent type is defined further up in the grammar
+	 */
 	s = (Symbol *) newConstProxySym(
 	    id, &value, getPreDefInt(preDefTypeSymbols));
 
