@@ -23,7 +23,6 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 
 	arrayType = getTypeSym(arrayBase);
 
-	
 	while (indices) {
 		if (!(givenArgs.a)) {
 			emitComment("Doing array bounds checking.");
@@ -40,12 +39,12 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 
 			emitComment("Checking < high bound");
 			emitStmt(STMT_LEN, "CONSTI %d",
-			    getArrayHighIndexValue(arrayType));
+			    getArrayHighIndexValue(arrayType) + 1);
 			emitStmt(STMT_LEN, "LTI");
 			emitStmt(STMT_LEN, "IFZ __array_error");
 			emitComment("Checking > low bound");
 			emitStmt(STMT_LEN, "CONSTI %d",
-			    getArrayLowIndexValue(arrayType));
+			    getArrayLowIndexValue(arrayType) - 1);
 			emitStmt(STMT_LEN, "GTI");
 			emitStmt(STMT_LEN, "IFZ __array_error");
 		}
