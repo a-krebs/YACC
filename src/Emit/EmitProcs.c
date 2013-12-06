@@ -60,19 +60,6 @@ void emitEndFunc(Symbol *symbol) {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(1);
 
-	/* Calucalate where to return to:
-	   determined by size of parameters 
-	   + 3 (PC, display reg, and return value)
-	   * -1	
-	*/
-	int offset = (getSizeOfParams(symbol) + 3) * -1;
-
-	/* Get the lexical so we can idenity the display register */
-	int lexLevel = getCurrentLexLevel(symbolTable);
-
-	/* Return result */
-	emitStmt(STMT_LEN, "POP %d[%d]", offset, lexLevel);
-
 	emitProcOrFuncEndCommon(symbol, "Function end.");
 } 
 
@@ -156,10 +143,10 @@ void emitProcOrFuncEndCommon(Symbol *symbol, char *msg) {
 	adjustCount = getOffset(symbolTable) * -1;	
 
 	/* Get the lexical so we can idenity the display register */
-	lexLevel = symbol->lvl;	
+	lexLevel = symbol->lvl + 1;	
 
 	/* Adjust and return */
-	emitStmt(STMT_LEN, "ADJUST %d", adjustCount - 2);
+	emitStmt(STMT_LEN, "ADJUST %d", adjustCount);
 	emitStmt(STMT_LEN, "RET %d", lexLevel);
 
 	emitComment(msg);
