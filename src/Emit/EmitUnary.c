@@ -26,7 +26,7 @@ static void emitUnaryPrep(Symbol *x, int *opType)
 	switch (getType(x)) {
 	case BOOLEAN_T:
 		*opType = BOOLEAN_UNARY_OPERATION;
-	
+		return;	
 	case INTEGER_T:
 		*opType = INTEGER_UNARY_OPERATION;
 		return;

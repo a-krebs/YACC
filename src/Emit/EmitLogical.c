@@ -20,19 +20,26 @@ static void emitLogicalPrep(Symbol *, Symbol *, int *);
  */
 static void emitLogicalPrep(Symbol *x, Symbol *y, int *opType)
 {
-	if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ) {
+	if ( ( x->kind == CONST_KIND && isConstResultSym(x) )
+		&&  ( y->kind == CONST_KIND && isConstResultSym(y) ) ) {
 		/* Nothing to do */
 		*opType = NO_OP;
 		return;
 	}  
-	
-	/* If x or y is not a type kind, then their value has not yet
-	 * been placed on the stack */
-	if (x->kind != TYPE_KIND) {
+
+	if ( (x->kind == CONST_KIND) && isConstResultSym(x) ) {
+	}
+	else if (x->kind == TYPE_KIND && x->isAddress) {
+		emitPushAddressValue(x);
+	} else if (x->kind != TYPE_KIND) {
 		emitPushSymbolValue(x);
 	}
 
-	if (y->kind != TYPE_KIND) {
+	if ( (y->kind == CONST_KIND) && isConstResultSym(y) ) {
+	}
+	else if (y->kind == TYPE_KIND && y->isAddress) {
+		emitPushAddressValue(y);
+	} else if (y->kind != TYPE_KIND) {
 		emitPushSymbolValue(y);
 	}
 

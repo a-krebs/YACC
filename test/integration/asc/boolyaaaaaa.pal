@@ -1,0 +1,37 @@
+program test(input, output);
+var	
+	b: boolean;
+	a: boolean;
+	c: boolean;
+begin
+	b := true and true;
+	b := true and false;
+	b := false and true;
+	b := false and false;
+
+	b := true or true;
+	b := true or false;
+	b := false or true;
+	b := false or false;
+
+	b := false or false or true;
+	b := false and false or true;
+	b := true and true or true;
+
+	a := true;
+	c := false;
+
+	b := a;
+	b := c;
+
+	b := a and a and a and a;
+	b := a and a and a and a or c;
+	b := a and b;
+	
+	b := b;
+	b := not b;
+
+	b := not (a and a and a);
+	b := not (not (not (not b)));
+end.
+
