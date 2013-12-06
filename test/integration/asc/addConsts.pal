@@ -1,7 +1,0 @@
-program test(input, output);
-var	
-	i: integer;
-begin
-	i := 5 + 10;
-end.
-
