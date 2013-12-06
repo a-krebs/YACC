@@ -92,7 +92,7 @@ struct Boolean {
 
 /* char constant */
 struct Char {
-	char value;		/* value only needed when being pointed to
+	unsigned char value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 

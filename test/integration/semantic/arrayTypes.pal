@@ -1,4 +1,4 @@
-{10,11,12,16,17,21,22}
+{10,11,12,17,18,23,24,26}
 {
     Test array indexing
 }
@@ -10,16 +10,19 @@ type
 	blues = (lightBlue,darkBlue,blue);	// error
 	blue = blues;				// error
 	list = array[1..10] of blues;		//error
-	list2 = array[2..20] of colours;	
+	list2 = array[2..20] of colours;
+	list3 = array[colours] of integer;
 var
 	a : colours;				
 	b : blues;				// error
 	c : list;				// error
 	d : list2;
 	x : integer;
+	w : list3;
 begin
 	i := x;					// error
-	b := c[5];
+	b := c[5];				// error
 	d[3] := green;				
-	d[6] := d[red];
+	d[6] := d[red];				// error
+	w[red] := 45;
 end.
