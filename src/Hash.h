@@ -4,6 +4,8 @@
 
 /* Macros and const string variable declarations. */
 #define TABLE_SIZE 1000
+#define LEXICAL_LEVELS 1024	
+
 #if HASHDEBUG
 	#define HASH_DEBUG 1
 #else
@@ -12,20 +14,21 @@
 
 /* Global variables. */
 struct hashElement {
-    char *key;
-    struct Symbol *symbol;
-    struct hashElement *prev;
-    struct hashElement *next;
+	char *key;
+	struct Symbol *symbol;
+	struct hashElement *prev;
+	struct hashElement *next;
 };
 
 struct hash {
-    struct hashElement *elements[TABLE_SIZE];
-    unsigned int (*hashFunction)();
-    int lexLevel;
+	struct hashElement *elements[TABLE_SIZE];
+	int offset[LEXICAL_LEVELS];
+	unsigned int (*hashFunction)();
+	int lexLevel;
+
 };
 
 /* Non-C99 compliant function prototypes. */
-
 
 /* Function declarations. */
 unsigned int getHashedKeySimple(char *string);
@@ -38,7 +41,7 @@ int isKeysIdentical(struct hashElement *element, char *key);
 int isKeyCollison(struct hash *hash, char *key);
 void freeHashElement(struct hashElement *element);
 void deleteHashBucket(struct hashElement *current);
-void destroyHash(struct hash *hash);
+void destroyHash(struct hash **hashPtr);
 int deleteHashElement(struct hash *hash, char *key);
 struct hashElement *findHashElementByKey(struct hash *hash, char *key);
 // struct hashElement *allocHashElement(char *key, int value);
@@ -62,6 +65,34 @@ int popLexLevel(struct hash *hash);
 int incrementLexLevel(struct hash *hash);
 int decrementLexLevel(struct hash *hash);
 
+/* 
+ * Functions implementing functionality regarding offset getting and
+ * incrementing.
+ */
+
+int getOffset(struct hash *hash);
+void addToOffset(struct hash *hash, int toAdd);
+void incrementOffset(struct hash *hash);
+void resetOffset(struct hash *hash);
+
+
+/* Gets the number of symbols at the current lexical level
+ *
+ * Parameters: 
+ *
+ * Return: count of local symbols
+*/
+int getLocalSymbolCount(struct hash *hash);	
+
+
+/* Gets the number of symbols that have negative offsets.
+ * i.e. parameters to function
+ *
+ * Parameters: 
+ *
+ * Return: count of function/procedure parameters
+*/
+int getLocalParamSymbolCount(struct hash *hash);
 
 
 #endif

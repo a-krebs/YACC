@@ -1,0 +1,16 @@
+{13,15}
+{
+    Test array bounds
+}
+program test(input, output);
+type
+	arr = array[2..20] of integer;	
+var
+	a : arr;
+	x : integer;
+begin
+	a[3] := 5;				
+	a[6] := a[0];			//a[0] is out of range		
+	a[6] := a[4];
+	a[78] := 78;			// error index out of range
+end.

@@ -20,6 +20,12 @@
 #define REAL_KEY "real"
 #define STRING_KEY "string"
 
+//pre-defined constants:
+#define TRUE_KEY "true"
+#define FALSE_KEY "false"
+#define MAXINT_KEY "maxint"
+#define ASC_MAX_INT 2147483647
+
 //pre-defined procedures:
 #define WRITE "write"
 #define WRITELN "writeln"
@@ -32,10 +38,8 @@
 #define SQR "sqr"
 #define SQRT "sqrt"
 #define SIN "sin"
-#define COS "cos"
 #define EXP "exp"
 #define LN "ln"
-#define ARCTAN "arctan"
 //type coercion
 #define TRUNC "trunc"
 #define ROUND "round"
@@ -53,7 +57,6 @@ struct preDefTypeSymbols {
 	Symbol *chars;
 	Symbol *integer;
 	Symbol *real;	
-	Symbol *string;	
 };
 
 

@@ -11,6 +11,11 @@
 #include "testActions.h"
 #include "testUtils.h"
 #include "testPreDef.h"
+#include "testEmitUtils.h"
+#include "testTree.h"
+
+/* Include ASC tests */
+#include "testPreDefAsc.h"
 
 /* Include globals */
 #include "Globals.h"
@@ -21,9 +26,19 @@ int tests_run = 0;
 extern struct hash *symbolTable;
 extern struct preDefTypeSymbols *preDefTypeSymbols;
 
+int testAsc();
+
 int main(int argc, char *argv[]) {
 
 	initialize();
+
+	/* 
+	 * If any argument is passed to the cmd line, we run tests on the
+	 * ASC code for the predefined functions 
+	 * TODO: change this functionality before the repo goes public
+	 * and you bring shame to everyone you love.
+	 */
+	if (argc > 1) testAsc();
 
 	char *result = test_all();
 	if (result != NULL) {
@@ -52,5 +67,30 @@ char *test_all() {
 	mu_run_suite(test_all_Actions);
 	mu_run_suite(test_all_Utils);
 	mu_run_suite(test_all_PreDef);
+	mu_run_suite(test_all_EmitUtils);
+	mu_run_suite(test_all_Tree);
 	return NULL;
+}
+
+int
+testAsc()
+{
+	setUpAscTests();
+	testArctan();
+	testAbs();
+	testChr();
+	testCos();
+	testDoArrayAssignment();
+	testExp();
+	testLn();
+	testPred();
+	testRound();
+	testSin();
+	testSucc();
+	testSqrt();
+	testTrunc();
+	testWrite();
+	testWriteln();
+	tearDownAscTests();
+	return 0;
 }

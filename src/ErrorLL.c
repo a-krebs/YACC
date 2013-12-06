@@ -48,9 +48,12 @@ appendError(struct ErrorLL **eLL, struct Error *e)
 		t1->next = t2;
 	}
 
+#ifndef TESTBUILD
+	/* do not output when running unit tests */
 	if (givenArgs.q == 0) {
 		printError(e);
 	}
+#endif
 }
 
 

@@ -1,0 +1,62 @@
+{34,35,48,50,51,52,58,59,60,61}
+
+{
+	test type scope
+}
+program scopeTest1(input, output);
+var
+	a : integer;
+	b : integer;
+function scope1() : integer;
+	type
+		int = integer;
+		string = array[1..10] of char;
+	var
+		c : int;
+		d : string;
+		e : int;
+	function scope2() : integer;
+		type
+			str = string;
+			int3 = int;
+		var
+			e : str;
+			f : integer;
+			g : int;
+			h : int3;
+		begin
+			a := 3;
+			b := 3;
+			c := 3;
+			a := b;
+			a := c;
+			c := a;
+			d := 3;		// error d is a string
+			e := 3;		// error e is a str
+			d := e;
+			e := d;
+
+			f := a;
+			a := f;
+			a := h;
+			g := h;
+		end;
+	begin
+		a := 2;
+		b := 2;
+		c := 2;
+		d := 2;		// error, d is a string
+		e := 2;		// should work, e is an int at this level
+		f := 2;		// error, out of scope
+		g := 2;		// error, out of scope
+		h := 2;		// error, out of scope
+		d := 'string?loi';  
+	end;
+begin
+	a := 1;
+	b := 1;
+	c := 1;		// error, out of scope
+	d := 1;		// error, out of scope
+	e := 1;		// error, out of scope
+	f := 1;		// error, out of scope
+end.

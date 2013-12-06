@@ -1,0 +1,25 @@
+{17}
+{	
+	
+	line 15: assign a char to an integer array
+	line 20: no value assgined to a before passed in
+}
+program arraytest(input,output);
+type
+    intArray = array[1..10]of integer;
+var
+    	a: integer;
+	b: char;
+	c: intArray;
+procedure test(a:integer; c:intArray);
+begin
+	c[0]:=a;
+	c[1]:=b;	//error
+end;	
+begin
+	test(a,c);
+	a:= 10;
+    	test(a,c);
+    	
+end.
+

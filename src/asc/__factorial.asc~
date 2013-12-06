@@ -1,0 +1,44 @@
+
+###############################################################################
+# factorial(n) - returns n! (useful in calculating values of trig functions)
+# --> returns the n! as a real such that we can express larger factorial values
+###############################################################################
+__factorial		ADJUST 1	# make room for local var tmp
+			PUSH -3[0]	# push n onto stack
+			IFZ __factorial_zero #handle special case n = 0
+			PUSH -3[0]	# push n onto stack
+			ITOR		# make n a real
+			POP -3[0]	# save n as a real
+			PUSH -3[0]	# put n onto stack
+			POP 0[0]	# tmp <-- n
+			GOTO __factorial_loop
+
+__factorial_zero	CONSTR 1.0
+			POP 0[0]
+			GOTO __factorial_done
+
+__factorial_loop	PUSH -3[0]	# push n onto stack
+			CONSTR -1.0	# push -1 onto stack
+			ADDR		# top of stack <-- n - 1
+			POP -3[0]	# n <-- n - 1
+			PUSH -3[0]	# push n-1 onto stack
+			IFZ __factorial_done
+			PUSH -3[0]	# push n-1 onto stack
+			PUSH 0[0]	# push tmp onto stack
+			MULR		# top of stack <-- tmp * (n - 1)
+			# TODO: add test for > maxint, set run-time error 
+			POP 0[0]	# tmp <-- tmp * (n - 1)
+			GOTO __factorial_loop
+
+
+__factorial_done	PUSH 0[0]	# push tmp onto stack
+			POP -4[0]	# save tmp as ret value
+			ADJUST -1	# kick local vars off stack
+			GOTO __factorial_ret
+
+__factorial_ret		PUSH -4[0]
+			WRITER
+			CONSTI 10
+			WRITEC
+			STOP		
+			RET 0

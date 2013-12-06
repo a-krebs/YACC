@@ -1,0 +1,32 @@
+program test(input, output);
+type
+	//a = array [1..10] of integer;
+
+	Books = record
+	   title: char;
+	   boo: char;
+	   bookid: integer
+	end;
+
+	//DayOfWeek = (Sun, Mon, Tue, Wed, Thu, Fri, Sat);
+
+var
+	//i,d ,e, w : integer;
+	//i : integer;
+	//r : real;
+	r : Books;
+
+procedure pad( arr: Books );
+begin
+end;
+
+begin
+	r.bookid := 4;
+	r.boo := 'r';
+	r.title := 's';
+	//pad(r);
+	//i := 22;
+	//r := 44.3;
+	pad(r);
+end.
+

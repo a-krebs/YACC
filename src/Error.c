@@ -14,7 +14,7 @@
 #include "Error.h"
 #include "ErrorLL.h"
 
-
+extern int doNotEmit;
 int nErrors = 0;
 
 
@@ -34,6 +34,9 @@ struct Error *recordError(const char *s, int lineno,
 	 * We will not try to report more errors than a given maximum.
 	 */
 	if (nErrors < MAXERRORS) nErrors++;
+
+	/* If the given .pal file has any errors, we should not emit asc code */
+	doNotEmit = 1;
 
 	/* Construct new error given function args */
 	newError = calloc(1, sizeof(struct Error));

@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 /* include symbols for token union */
-#include "Symbol.h"
+#include "SymbolAll.h"
 
 %}
 

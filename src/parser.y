@@ -8,8 +8,10 @@
 #include "Error.h"
 #include "ErrorLL.h"
 #include "args.h"
-#include "Symbol.h"
-#include "Actions.h"
+#include "SymbolAll.h"
+#include "ActionsAll.h"
+#include "Utils.h"
+#include "Tree.h"
 
 extern struct args givenArgs;	/* from args.h */
 extern int yylex(void);
@@ -18,6 +20,7 @@ extern int yyleng;
 extern int yyerrok;
 extern char *yytext;
 extern int colno;
+
 
 /* 
  * Flag to set if we're in constant declaration.
@@ -62,22 +65,20 @@ program_head
 	  inDecl = 1; }
 ;
 
-// no | here since this is a list
 decls
-: const_decl_part
-  type_decl_part
-  var_decl_part
-  proc_decl_part
+: const_decl_part type_decl_part var_decl_part proc_decl_part
+  	{ exitDeclPart(); }
 | error
 ;
 
 const_decl_part
 : CONST const_decl_list semicolon_or_error
-	{ exitConstDeclPart(); 
+	{ exitConstDeclPart();
 	  inDecl = 0;
 	}
 |
-	{ inDecl = 0; }
+	{ exitConstDeclPart();
+	  inDecl = 0; }
 ;
 
 const_decl_list
@@ -86,8 +87,8 @@ const_decl_list
 ;
 
 const_decl
-: decl_ID_or_err EQUAL expr
-	{ doConstDecl($<id>1, $<proxy>3); }
+: decl_ID_or_err EQUAL expr_node
+	{ doConstDecl($<id>1, $<node>3); }
 | error
 ;
 
@@ -158,8 +159,8 @@ array_type_decl
 array_type
 : simple_type
 	{ $<symbol>$ = assertArrIndexType($<symbol>1); }
-| expr RANGE expr
-	{ $<symbol>$ = createRangeType($<proxy>1, $<proxy>3); }
+| expr_node RANGE expr_node
+	{ $<symbol>$ = createRangeType($<node>1, $<node>3); }
 ;
 
 field_list
@@ -178,6 +179,7 @@ var_decl_part
 : VAR var_decl_list semicolon_or_error
 	{ exitVarDeclPart(); }
 |
+	{ exitVarDeclPart(); }
 ;
 
 var_decl_list
@@ -189,7 +191,7 @@ var_decl
 : ID_or_err COLON type
 	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>3); }
 | ID_or_err comma_or_error var_decl
-	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>2); }
+	{ $<symbol>$ = doVarDecl($<id>1, $<symbol>3); }
 ;
 
 proc_decl_part
@@ -204,30 +206,44 @@ proc_decl_list
 
 proc_decl
 : proc_heading decls compound_stat semicolon_or_error
-	{ exitProcOrFuncDecl(); }
+	{ exitProcOrFuncDecl($<symbol>1); }
 | proc_heading semicolon_or_error
-	{ exitProcOrFuncDecl(); }
+	{ exitProcOrFuncDecl($<symbol>1); }
 ;
 
 proc_heading
-: PROCEDURE ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, $<elemarray>3); }
-| FUNCTION ID_or_err f_parm_decl COLON simple_type semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, $<symbol>5); }
-| FUNCTION ID_or_err f_parm_decl semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, $<elemarray>3, NULL); }
+: PROCEDURE proc_heading_proc
+	{ $<symbol>$ = $<symbol>2;
+	  inDecl = 1;
+	} 
+| FUNCTION proc_heading_func
+	{ $<symbol>$ = $<symbol>2;
+	  inDecl = 1;
+	} 
+;
 
-| PROCEDURE ID semicolon_or_error
-	{ $<symbol>$ = enterProcDecl($<id>2, NULL);
+proc_heading_proc
+: ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterProcDecl($<id>1, $<elemarray>2); }
+| ID semicolon_or_error
+	{ $<symbol>$ = enterProcDecl($<id>1, NULL);
 	  yyerrok; }
-| FUNCTION ID semicolon_or_error
-	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
-	  yyerrok; }
-| PROCEDURE semicolon_or_error
-	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
-| FUNCTION semicolon_or_error
+| semicolon_or_error
 	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
 ;
+
+proc_heading_func
+: ID_or_err f_parm_decl COLON simple_type semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>1, $<elemarray>2, $<symbol>4); }
+| ID_or_err f_parm_decl semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>1, $<elemarray>2, NULL); }
+| ID semicolon_or_error
+	{ $<symbol>$ = enterFuncDecl($<id>2, NULL, NULL);
+	  yyerrok; }
+| semicolon_or_error
+	{ $<symbol>$ = enterProcDecl(NULL, NULL); }
+;
+
 
 f_parm_decl
 : L_PAREN f_parm_list R_PAREN
@@ -275,101 +291,114 @@ stat
 ;
 
 simple_stat
-: var ASSIGN expr
-	{ assignOp($<proxy>1, $<proxy>3); }
+: assigned_var ASSIGN expr
+	{ assignOp($<symbol>1, $<proxy>3); }
 | proc_invok
 | compound_stat
 ;
 
-var
-: decl_ID_or_err
-	{ $<proxy>$ = hashLookupToProxy($<id>1); }
-| ID_or_err
-	{ $<proxy>$ = hashLookupToProxy($<id>1); }
-| var PERIOD ID_or_err
-	{ $<proxy>$ = recordAccessToProxy($<proxy>1, $<id>3 ); }
-| subscripted_var RS_BRACKET
-	{ $<proxy>$ = $<proxy>1; }
+assigned_var
+: ID_or_err 
+	{ $<symbol>$ = variableAssignmentLookup($<id>1); }
+| var PERIOD ID_or_err 
+	{ $<symbol>$ = recordFieldAssignmentLookup($<node>1, $<id>3); }
+| subscripted_var RS_BRACKET 
+	{ $<symbol>$ = pushArrayIndexValue($<node>1);}
 ;
 
+var
+: decl_ID_or_err
+	{ $<node>$ = hashLookupToProxy($<id>1); }
+| ID_or_err
+	{ $<node>$ = hashLookupToProxy($<id>1); }
+| var PERIOD ID_or_err
+	{ $<node>$ = recordAccessToProxy(($<node>1), $<id>3 ); }
+| subscripted_var RS_BRACKET
+	{ $<node>$ = $<node>1; }
+;
 
 subscripted_var
 : var LS_BRACKET subscripted_var_index_list
-	{ $<proxy>$ = arrayIndexAccess($<proxy>1, $<proxy>3);  }
+	{ $<node>$ = arrayIndexAccess($<node>1, $<node>3);  }
 ;
 
 subscripted_var_index_list
 : subscripted_var_index
-	{ $<proxy>$ = $<proxy>1;  }
+	{ $<node>$ = $<node>1;  }
 | subscripted_var_index_list comma_or_error subscripted_var_index
-	{ $<proxy>$ = concatArrayIndexList($<proxy>1, $<proxy>3); }
+	{ $<node>$ = concatArrayIndexList($<node>1, $<node>3); }
 ;
 
 subscripted_var_index
-: expr
-	{ $<proxy>$ = createArrayIndexList($<proxy>1); }
+: expr_node
+	{ $<node>$ = createArrayIndexList($<node>1); }
 ;
 
 expr
+: expr_node
+	{ $<proxy>$ = (ProxySymbol*)postOrderWalk($<node>1); }
+;
+
+expr_node
 : simple_expr
-	{ $<proxy>$ = $<proxy>1; }
-| expr EQUAL simple_expr
-	{ $<proxy>$ = eqOp($<proxy>1, $<proxy>3); }
-| expr NOT_EQUAL simple_expr
-	{ $<proxy>$ = notEqOp($<proxy>1, $<proxy>3); }
-| expr LESS_OR_EQUAL simple_expr
-	{ $<proxy>$ = lessOrEqOp($<proxy>1, $<proxy>3); }
-| expr LESS simple_expr
-	{ $<proxy>$ = lessOp($<proxy>1, $<proxy>3); }
-| expr GREATER_OR_EQUAL simple_expr
-	{ $<proxy>$ = gtOrEqOp($<proxy>1, $<proxy>3); }
-| expr GREATER simple_expr
-	{ $<proxy>$ = gtOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = $<node>1; }
+| expr_node EQUAL simple_expr
+	{ $<node>$ = eqOp($<node>1, $<node>3); }
+| expr_node NOT_EQUAL simple_expr
+	{ $<node>$ = notEqOp($<node>1, $<node>3); }
+| expr_node LESS_OR_EQUAL simple_expr
+	{ $<node>$ = lessOrEqOp($<node>1, $<node>3); }
+| expr_node LESS simple_expr
+	{ $<node>$ = lessOp($<node>1, $<node>3); }
+| expr_node GREATER_OR_EQUAL simple_expr
+	{ $<node>$ = gtOrEqOp($<node>1, $<node>3); }
+| expr_node GREATER simple_expr
+	{ $<node>$ = gtOp($<node>1, $<node>3); }
 ;
 
 simple_expr
 : term
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | PLUS term
-	{ $<proxy>$ = unaryPlusOp($<proxy>2); }
+	{ $<node>$ = unaryPlusOp($<node>2); }
 | MINUS term
-	{ $<proxy>$ = unaryMinusOp($<proxy>2); }
+	{ $<node>$ = unaryMinusOp($<node>2); }
 | simple_expr PLUS term
-	{ $<proxy>$ = plusOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = plusOp($<node>1, $<node>3); }
 | simple_expr MINUS term
-	{ $<proxy>$ = minusOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = minusOp($<node>1, $<node>3); }
 | simple_expr OR term
-	{ $<proxy>$ = orOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = orOp($<node>1, $<node>3); }
 ;
 
 term
 : factor
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | term MULTIPLY factor
-	{ $<proxy>$ = multOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = multOp($<node>1, $<node>3); }
 | term DIVIDE factor
-	{ $<proxy>$ = divideOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = divideOp($<node>1, $<node>3); }
 | term DIV factor
-	{ $<proxy>$ = divOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = divOp($<node>1, $<node>3); }
 | term MOD factor
-	{ $<proxy>$ = modOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = modOp($<node>1, $<node>3); }
 | term AND factor
-	{ $<proxy>$ = andOp($<proxy>1, $<proxy>3); }
+	{ $<node>$ = andOp($<node>1, $<node>3); }
 | error
-	{ $<proxy>$ = NULL; }
+	{ $<node>$ = createLeafNode(NULL); }
 ;
 
 factor
 : var
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | unsigned_const
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = createLeafNode($<proxy>1); }
 | L_PAREN expr R_PAREN_or_error
-	{ $<proxy>$ = $<proxy>2; }
+	{ $<node>$ = createLeafNode($<proxy>2); }
 | func_invok
-	{ $<proxy>$ = $<proxy>1; }
+	{ $<node>$ = $<node>1; }
 | NOT factor
-	{ $<proxy>$ = unaryNotOp($<proxy>2); }
+	{ $<node>$ = unaryNotOp($<node>2); }
 ;
 
 R_PAREN_or_error
@@ -409,7 +438,7 @@ func_invok
 	  $<proxy>$ = $<proxy>1; }
 | ID_or_err L_PAREN R_PAREN
 	{ /* TODO might want to explicitly use an empty arg list here */
-	  $<proxy>$ = funcInvok($<id>1, NULL); }
+	  $<node>$ = funcInvok($<id>1, NULL); }
 /*| plist_finvok error R_PAREN
 	{ $<proxy>$ = funcInvok($<id>1, NULL);
 	  yyerrok; }
@@ -426,7 +455,7 @@ plist_pinvok
 // duplicated once for functions and once for procedures
 plist_finvok
 : ID_or_err L_PAREN parm_list R_PAREN
-	{ $<proxy>$ = funcInvok($<id>1, $<elemarray>3); }
+	{ $<node>$ = funcInvok($<id>1, $<elemarray>3); }
 /*| ID_or_err error R_PAREN */
 ;
 
@@ -437,31 +466,72 @@ parm_list
 	{ $<elemarray>$ = concatArgLists($<elemarray>1, $<elemarray>3); }
 
 parm
+: expr_node
+	{ $<elemarray>$ = createArgList($<node>1); }
+;
+
+while_expr
 : expr
-	{ // TODO can we use the same action as for function decl?
-	  $<elemarray>$ = createArgList($<proxy>1); }
+	{ whileLoopCondCheck($<proxy>1); }
 ;
 
 struct_stat
-: IF expr THEN matched_stat ELSE stat
-| IF expr THEN stat
-| WHILE expr DO stat
+: if_part error then_matched_stat_part else_stat_part
+| if_part then_matched_stat_part else_stat_part
+| if_part then_stat_part
+| WHILE while_expr do_loop_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+do_loop_stat
+: DO stat
+	{ gotoLoopTop(); }
 ;
 
 matched_stat
 : simple_stat
-| IF expr THEN matched_stat ELSE matched_stat
-| WHILE expr DO matched_stat
+| if_part error then_matched_stat_part else_matched_stat_part
+| if_part then_matched_stat_part else_matched_stat_part
+| WHILE while_expr do_loop_matched_stat
 	{ endWhileLoop(); }
 | CONTINUE
 	{ continueLoop(); }
 | EXIT
 	{ exitLoop(); }
+;
+
+do_loop_matched_stat
+: DO matched_stat
+	{ gotoLoopTop(); }
+;
+
+if_part
+: IF expr
+	{ ifPart($<proxy>2); }
+;
+
+then_stat_part
+: THEN stat
+	{ thenStatPart(); }
+;
+
+then_matched_stat_part
+: THEN matched_stat
+	{ thenMatchedStatPart(); }
+;
+
+else_stat_part
+: ELSE stat
+	{ elseStatPart(); }
+;
+
+else_matched_stat_part
+: ELSE matched_stat
+	{ elseStatPart(); }
 ;
 
 comma_or_error
@@ -487,7 +557,7 @@ decl_ID_or_err
 : DECL_ID UNREC decl_ID_or_err
 	{ $<id>$ = $<id>1; }
 | DECL_ID
-	{ $<id>$ = $<id>1; }
+	{  $<id>$ = $<id>1;}
 ;
 
 %%

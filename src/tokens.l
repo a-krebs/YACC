@@ -4,12 +4,15 @@
 ********************************************************************************/
 
 #include <stdlib.h>
+#include <errno.h>
 
 
 #include "Error.h"
 #include "ErrorLL.h"
-#include "Symbol.h"
+#include "SymbolAll.h"
 #include "Globals.h"
+#include "ActionsStructStat.h"
+#include "Utils.h"
 
 #ifndef LEXTEST_DEBUG
 #include "parser.tab.h"
@@ -27,7 +30,6 @@ extern YYABORT;
 extern int nErrors;
 int colno = 1;
 extern void yyerror(char *);
-extern unsigned long long whileLoopDepth;
 
 /* 
  * Flag to set if we're in constant declaration.
@@ -73,7 +75,6 @@ int inDecl = 0;
 "}"             { colno++;
                   struct Error *e = recordError("Closing comment brace '}' "
                   "found without matching '{'", yylineno, colno, SYNTAX);
-                  printError(e);
 #if DEBUG
                   printf("'}' FOUND WITHOUT MATCHING '{'\n");
 #endif
@@ -112,14 +113,22 @@ comment.");
 
 [0-9]+((\.[0-9]+([E][+-]?[0-9]+)?)|([E][+-]?[0-9]+)) { 
 #ifndef LEXTEST_DEBUG
-				  yylval.real = atof(yytext); 
+				  /* clear and check errno */
+				  errno = 0;
+				  yylval.real = strtod(yytext, NULL);
+				  checkErrnoStrtoX();
+
 #endif
 				  colno += strlen(yytext);
 				  return(REAL_CONST);
 				}
 
 [0-9]+                          {
-				  yylval.integer = atoi(yytext);
+				  /* clear and check errno */
+				  errno = 0;
+				  yylval.integer = strtol(yytext, NULL, 10);
+				  checkErrnoStrtoX();
+
 #if DEBUG
 				  colno += strlen(yytext);
 #endif
@@ -140,17 +149,17 @@ comment.");
 				return(STRING_CONST);
 				}
 
-"'"(([^'\\])|(\\['tn\\]))*"'"		{
-				  char *s;
+"'"(([^'\\])|(\\['tn\\]))*"'"	{
 #if DEBUG
 				  printf("STRING FOUND\n");
-#endif	
+#endif
+				  /* Remove leading and trailing apostrophe
+				   * when copying. strndup adds null-termination
+				   */
 				  yylval.string.strlen = yyleng - 2;
-				
-				  yylval.string.str = strndup(yytext,
-				      yyleng);
-				  s = yylval.string.str;
-				  *(s+(yyleng-1)) = 0;
+				  yylval.string.str = strndup(yytext + 1,
+				      yylval.string.strlen);
+
 				  return(STRING_CONST);
 				}
 
@@ -172,7 +181,7 @@ comment.");
 "function"			{ return(FUNCTION); }
 "of"				{ return(OF); }
 "record"			{ return(RECORD); }
-"while"				{ whileLoopDepth++;
+"while"				{ beginWhileLoop();
 				  return(WHILE); }
 "const"				{ return(CONST); }
 "else"				{ return(ELSE); }

@@ -1,8 +1,10 @@
 #include "testingUtils.h"
 #include "Definitions.h"
+#include "Globals.h"
+#include "Hash.h"
 
 Symbol *createTestSymbol(int lexLevel, char *key) {
-	struct Symbol *symbol = malloc(sizeof(struct Symbol));
+	struct Symbol *symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = lexLevel;
 	symbol->name = key;
 	symbol->typeOriginator = 0;
@@ -12,7 +14,7 @@ Symbol *createTestSymbol(int lexLevel, char *key) {
 
 
 Symbol *createTestSymbolTypeKind(int lexLevel, char *key, type_t type) {
-	struct Symbol *symbol = malloc(sizeof(struct Symbol));
+	struct Symbol *symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = lexLevel;
 	symbol->name = key;
 	symbol->typeOriginator = 0;
@@ -24,4 +26,20 @@ Symbol *createTestSymbolTypeKind(int lexLevel, char *key, type_t type) {
 	symbol->kindPtr.TypeKind->type = type;
 
 	return symbol;
+}
+
+
+/*
+ * Initialize a clean environment for each test.
+ */
+void initTestEnv() {
+	symbolTable = createHash(&getHashedKeyNormal);
+}
+
+
+/*
+ * Tear down the testing environment after each test.
+ */
+void tearDownTestEnv() {
+	destroyHash(&symbolTable);
 }

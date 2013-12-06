@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
+#include <errno.h>
 
 #include "Error.h"
 #include "Utils.h"
@@ -102,6 +104,10 @@ notDefinedError(char *id) {
 	recordError(errMsg, yylineno, colno, SEMANTIC);
 }
 
+void symbolTableInsertFailure() {
+	err(EXIT_FAILURE, "Failed to insert into symbol table.");
+}
+
 int
 isLogicalOperator(int op)
 {
@@ -149,4 +155,25 @@ isUnaryOperator(int op)
 
 	return 0;
 
+}
+
+
+
+
+int getStrlen(struct String s)
+{
+	return s.strlen;
+}
+
+
+/*
+ * Conform that strtod did not set errno.
+ * Set errno to 0 before calling
+ */
+void checkErrnoStrtoX() {
+	if (errno != 0) {
+		errMsg = customErrorString("Error parsing numerical constant: "
+		    "%s", strerror(errno));
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+	}
 }

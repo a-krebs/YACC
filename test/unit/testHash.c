@@ -57,7 +57,7 @@ char *test_destroyHash() {
 			symbolTable->elements[i] == NULL);
 	}	
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
 	return NULL;
@@ -84,7 +84,7 @@ char *test_createHash() {
 	mu_assert("Expected initial lex level of 0",
 		symbolTable->lexLevel == 0);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);		
 
 //normal hash function	
@@ -107,7 +107,7 @@ char *test_createHash() {
 	mu_assert("Expected initial lex level of 0",
 		symbolTable->lexLevel == 0);	
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 	return NULL;
 }
@@ -129,7 +129,7 @@ char *test_getHashIndex() {
 	mu_assert("getHashIndex does not return expected value on key 'b'", 
 		index == 61);			
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 //normal hash function	
@@ -144,7 +144,7 @@ char *test_getHashIndex() {
 	mu_assert("getHashIndex does not return expected value on key 'b'", 
 		index == 660);			
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -153,7 +153,7 @@ char *test_getHashIndex() {
 
 //not testing on normal hash to hard to find collisons
 char *test_isKeyCollison() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -167,7 +167,7 @@ char *test_isKeyCollison() {
 	mu_assert("Found key collision where one should not exist.", 
  		isKeyCollison(symbolTable, "green") == 0); 			
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -175,7 +175,7 @@ char *test_isKeyCollison() {
 
 
 char *test_createHashElement() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 14;
 //simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
@@ -194,7 +194,7 @@ char *test_createHashElement() {
 	mu_assert("Head of symbol linked list hash same lex level as appending symbol.", 
  		createHashElement(symbolTable, "blue", symbol) == 3);
 
-	struct Symbol *symbol2 =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol2 =  calloc(1, sizeof(struct Symbol));
 	symbol2->lvl = 1;
 	setLexLevel(symbolTable, 1);
 	mu_assert("Appending symbol is at a lower lex level then list head.", 
@@ -209,7 +209,7 @@ char *test_createHashElement() {
 	// createHashElement(symbolTable, "red", symbol) ;
 	// dumpHash(symbolTable);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 //normal hash function
@@ -222,7 +222,7 @@ char *test_createHashElement() {
 	mu_assert("Could not create element where bucket collison happened.", 
  		createHashElement(symbolTable, "boo", symbol) == 0);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -230,7 +230,7 @@ char *test_createHashElement() {
 
 
 char *test_allocHashElement() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hashElement *element = allocHashElement("blue", symbol);
 
 	mu_assert("Unable to create hash element, expected NULL.", 
@@ -254,7 +254,7 @@ char *test_allocHashElement() {
 
 
 char *test_appendToHashBucket() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hashElement *element1 = allocHashElement("blue", symbol);
 	struct hashElement *element2 = allocHashElement("green", symbol);
 
@@ -283,7 +283,7 @@ char *test_appendToHashBucket() {
 }
 
 char *test_isKeysIdentical() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hashElement *element = allocHashElement("blue", symbol);
 
 	mu_assert("Keys idenitcal but evaluating to different.", 
@@ -296,7 +296,7 @@ char *test_isKeysIdentical() {
 }
 
 char *test_findHashElementByKey() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 
 //simple hash function
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
@@ -310,7 +310,7 @@ char *test_findHashElementByKey() {
 	mu_assert("Found element that should not be table.", 
  		findHashElementByKey(symbolTable, "green") == NULL);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 //normal hash function
@@ -325,7 +325,7 @@ char *test_findHashElementByKey() {
 	mu_assert("Found element that should not be table.", 
  		findHashElementByKey(symbolTable, "green") == NULL);
 
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -334,7 +334,7 @@ char *test_findHashElementByKey() {
 
 //can't test on normal hash function. can't find collisons
 char *test_isKeyInBucket() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -354,7 +354,7 @@ char *test_isKeyInBucket() {
 	mu_assert("Could not find expected key 'blue' in bucket.", 
 		isKeyInBucket(symbolTable, "boo") == 1 );		
 	
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -362,7 +362,7 @@ char *test_isKeyInBucket() {
 
 //can't test on normal hash function. can't find collisons
 char *test_getHashBucketHead() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hash *symbolTable = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -379,7 +379,7 @@ char *test_getHashBucketHead() {
 	mu_assert("Returned bucket head is incorrect.", 
 		getHashBucketHead(symbolTable, "bobby") != findHashElementByKey(symbolTable, "bobby") );
 	
-	destroyHash(symbolTable);
+	destroyHash(&symbolTable);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	return NULL;
@@ -412,7 +412,7 @@ char *test_dumpHash() {
 	mu_assert("Hash dumper gives unexpected output on empty hash.", 
  		strcmp(expectedOutput, buffer) == 0);	
 	
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);	
 
 	hash = createHash(&getHashedKeySimple);
@@ -424,7 +424,7 @@ char *test_dumpHash() {
 
 	// dumpHash(hash);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -432,7 +432,7 @@ char *test_dumpHash() {
 
 //can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_begining() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -460,7 +460,7 @@ char *test_deleteHashElement_begining() {
 	mu_assert("Resulting bucket should have more than one element.", 
  		newHead->next != NULL);	
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -468,7 +468,7 @@ char *test_deleteHashElement_begining() {
 
 //can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_end() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -492,7 +492,7 @@ char *test_deleteHashElement_end() {
 	mu_assert("Did not delete end of list propertly.", 
  		newTail->prev != NULL);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -500,7 +500,7 @@ char *test_deleteHashElement_end() {
 
 //can't test on normal hash function. can't find collisons
 char *test_deleteHashElement_middle() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -528,7 +528,7 @@ char *test_deleteHashElement_middle() {
 	mu_assert("Did not reset prev in list propertly", 
  		tail->prev == head);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -536,7 +536,7 @@ char *test_deleteHashElement_middle() {
 
 char *test_deleteHashElement_single() {
 // simple hash function	
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
    	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -557,7 +557,7 @@ char *test_deleteHashElement_single() {
 	mu_assert("Single element not deleted.", 
  		hash->elements[index] == NULL);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 //normal hash function
@@ -581,7 +581,7 @@ char *test_deleteHashElement_single() {
 	mu_assert("Single element not deleted.", 
  		hash->elements[index] == NULL);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 	return NULL;
@@ -590,7 +590,7 @@ char *test_deleteHashElement_single() {
 
 char *test_getSizeOfBucket() {
 //simple hash	
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
    	struct hash *hash = createHash(&getHashedKeySimple);
 	mu_assert("Call to createHash does not seg fault.", 1);	
 
@@ -610,7 +610,7 @@ char *test_getSizeOfBucket() {
 	mu_assert("Expected bucket size of 4.",
 		getSizeOfBucket(hash, "r") == 4);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 
 //normal hash	
@@ -634,7 +634,7 @@ char *test_getSizeOfBucket() {
 	mu_assert("Expected bucket size of 4.",
 		getSizeOfBucket(hash, "red") == 1);
 
-	destroyHash(hash);
+	destroyHash(&hash);
 	mu_assert("Call to destroyHash does not seg fault.", 1);
 	return NULL;
 }
@@ -667,7 +667,7 @@ char * test_setLexLevel() {
 
 
 char * test_getSymbolLexLevel() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 123;
 
 	mu_assert("Unexpected value in symbol lex level.",
@@ -687,12 +687,12 @@ char * test_getCurrentLexLevel() {
 }
 
 char * test_appendToSymbolList() {
-	struct Symbol *symbol =  malloc(sizeof(struct Symbol));
+	struct Symbol *symbol =  calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 0;
 	struct hashElement *element = allocHashElement("weee", symbol);
 	element->symbol = symbol;
 
-	symbol = malloc(sizeof(struct Symbol));
+	symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 1;
 
 	struct hash *hash = createHash(&getHashedKeySimple);
@@ -702,27 +702,27 @@ char * test_appendToSymbolList() {
 	mu_assert("Could not append symbol.",
 		appendToSymbolList(hash, element, symbol) == 0);
 
-	symbol = malloc(sizeof(struct Symbol));
+	symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 1;
 	hash->lexLevel = 2;
 
 	mu_assert("Could not append, current lex level not same as symbol.",
 		appendToSymbolList(hash, element, symbol) == 1);
 
-	symbol = malloc(sizeof(struct Symbol));
+	symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 2;
 	hash->lexLevel = 2;
 
 	mu_assert("Could not append symbol.",
 		appendToSymbolList(hash, element, symbol) == 0);
 
-	symbol = malloc(sizeof(struct Symbol));
+	symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 2;
 
 	mu_assert("Could not append, head of symbol list has same lex level as appending symbol.",
 		appendToSymbolList(hash, element, symbol) == 3);	
 
-	symbol = malloc(sizeof(struct Symbol));
+	symbol = calloc(1, sizeof(struct Symbol));
 	symbol->lvl = 1;
 	hash->lexLevel = 1;
 

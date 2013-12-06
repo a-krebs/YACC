@@ -1,0 +1,7 @@
+{}
+program HelloWorld(input,output);
+var 
+    a,b:integer;
+begin
+   a:=b;
+end.

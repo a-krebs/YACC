@@ -11,13 +11,16 @@
 
 #include "testActions.h"
 #include "testSymbol.h"	/* for setUpTypeSymbol() */
-#include "Actions.h"
+#include "ActionsAll.h"
+#include "SymbolAPI.h"
+#include "tokens.h" /* for test token definitions */
+#include "Type.h"
 
 char *test_assertOpCompat() {
 	Symbol *type1 = setUpTypeSymbol();
 	Symbol *type2 = setUpTypeSymbol();
 
-	mu_assert("Two integer types compatible with DIV",
+	mu_assert("Two integer types compatible with PLUS",
 	    assertOpCompat(type1, PLUS, type2));	
 	mu_assert("Two integer types are compatible with EQUAL",
 	    assertOpCompat(type1, EQUAL, type2));
@@ -35,37 +38,155 @@ char *test_assertOpCompat() {
 	return NULL;
 }
 
-char *test_assignmentCompatEh() {
-	// TODO
-	return NULL;
-}
+/* test constCal for constant expressions */
+char *test_constCalc() {
+	Symbol *x = NULL;
+	Symbol *y = NULL;
+	Symbol *res = NULL;
 
-char *test_enterConstDeclPart() {
-	// function does nothing, so nothing to test
-	return NULL;
-}
+	Symbol *xType = NULL;
+	Symbol *yType = NULL;
+	Symbol *resType = NULL;
 
-char *test_doConstDecl(){
-	// TODO
-	return NULL;
-}
+	xType = createTypeSymbol(NULL, 0);
+	yType = createTypeSymbol(NULL, 0);
+	resType = createTypeSymbol(NULL, 0);
+	
+	x = createConstSymbol(NULL);
+	setInnerTypeSymbol(x,xType);
+	
+	y = createConstSymbol(NULL);
+	setInnerTypeSymbol(y,yType);
+	
+	res = createConstSymbol(NULL);
+	setInnerTypeSymbol(res,resType);
 
-char *test_enterTypeDecltPart() {
-	// function does nothing, so nothing to test
-	return NULL;
-}
+	/* end of prep stuff  */
+	
+	/* test EQUAL */
 
-char *test_doTypeDecl() {
-	// TODO
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Integer.value = 10;
+	getConstVal(y)->Integer.value = 22;
+
+	constCalc(res, x, EQUAL, y);
+	mu_assert("constCalc EQUAL failing",
+	    getConstVal(res)->Boolean.value == 0);
+
+	yType->kindPtr.TypeKind->type = REAL_T;
+	constCalc(res, x, EQUAL, y);
+	mu_assert("constCalc EQUAL failing",
+	    getConstVal(res)->Boolean.value == 0);
+
+	getConstVal(y)->Real.value = 10;
+	constCalc(res, x, EQUAL, y);
+	mu_assert("constCalc EQUAL failing",
+	    getConstVal(res)->Boolean.value == 1);
+
+	/* test DIV */
+
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Integer.value = 10;
+	getConstVal(y)->Integer.value = 22;
+
+	constCalc(res, x, DIV, y);
+	mu_assert("constCalc DIV failing",
+	    getConstVal(res)->Integer.value == 0);
+
+	/* test OR */
+
+	xType->kindPtr.TypeKind->type = BOOLEAN_T;
+	yType->kindPtr.TypeKind->type = BOOLEAN_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Boolean.value = 0;
+	getConstVal(y)->Boolean.value = 1;
+	
+	constCalc(res, x, OR, y);
+	mu_assert("constCalc OR failing",
+	    getConstVal(res)->Boolean.value == 1);
+	
+	/* test unary NOT */
+
+	xType->kindPtr.TypeKind->type = BOOLEAN_T;
+	yType->kindPtr.TypeKind->type = BOOLEAN_T;
+	resType->kindPtr.TypeKind->type = BOOLEAN_T;
+	
+	getConstVal(x)->Boolean.value = 0;
+	getConstVal(y)->Boolean.value = 1;
+	
+	constCalc(res, NULL, NOT, y);
+	mu_assert("constCalc NOT failing",
+	    getConstVal(res)->Boolean.value == 0);
+	
+	getConstVal(x)->Boolean.value = 0;
+	getConstVal(y)->Boolean.value = 0;
+	
+	constCalc(res, NULL, NOT, y);
+	mu_assert("constCalc NOT failing",
+	    getConstVal(res)->Boolean.value == 1);
+
+	/* test unary minus */
+
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = INTEGER_T;
+	
+	getConstVal(x)->Integer.value = 0;
+	getConstVal(y)->Integer.value = 100;
+	
+	constCalc(res, NULL, MINUS, y);
+	mu_assert("constCalc MINUS failing",
+	    getConstVal(res)->Integer.value == -100);
+	
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = REAL_T;
+	resType->kindPtr.TypeKind->type = REAL_T;
+	
+	getConstVal(x)->Integer.value = 0;
+	getConstVal(y)->Real.value = 100.10;
+	
+	constCalc(res, NULL, MINUS, y);
+	mu_assert("constCalc MINUS failing",
+	    getConstVal(res)->Real.value == -100.10);
+
+	/* test unary plus */
+
+	xType->kindPtr.TypeKind->type = INTEGER_T;
+	yType->kindPtr.TypeKind->type = INTEGER_T;
+	resType->kindPtr.TypeKind->type = INTEGER_T;
+	
+	getConstVal(x)->Integer.value = 0;
+	getConstVal(y)->Integer.value = -100;
+	
+	constCalc(res, NULL, PLUS, y);
+	/* unary plus is identity, so sign shouldn't change */
+	mu_assert("constCalc PLUS failing",
+	    getConstVal(res)->Integer.value == -100);
+	
+	xType->kindPtr.TypeKind->type = REAL_T;
+	yType->kindPtr.TypeKind->type = REAL_T;
+	resType->kindPtr.TypeKind->type = REAL_T;
+	
+	getConstVal(x)->Real.value = 0;
+	getConstVal(y)->Real.value = -100.998;
+	
+	constCalc(res, NULL, PLUS, y);
+	/* unary plus is identity, so sign shouldn't change */
+	mu_assert("constCalc PLUS failing",
+	    getConstVal(res)->Real.value == -100.998);
+
 	return NULL;
 }
 
 char *test_all_Actions() {
 	mu_run_test(test_assertOpCompat);
-	mu_run_test(test_assignmentCompatEh);
-	mu_run_test(test_enterConstDeclPart);
-	mu_run_test(test_doConstDecl);
-	mu_run_test(test_enterTypeDecltPart);
-	mu_run_test(test_doTypeDecl);
+	mu_run_test(test_constCalc);
 	return NULL;
 }

@@ -1,0 +1,10 @@
+{}
+
+{
+	Team YACC Checkpoint 3 Test 3
+	Must test semantic errors only
+	Must contain a maximum of 3 errors
+}
+program test(input, output);
+begin
+end.

@@ -7,8 +7,9 @@
 
 #include "Hash.h"
 #include "Definitions.h"
-#include "Actions.h"
+#include "ActionsAll.h"
 #include "Type.h"
+#include "SymbolPrivateAPI.h"
 
 
 
@@ -67,7 +68,8 @@ int incrementLexLevel(struct hash *hash) {
         }
 
         hash->lexLevel = hash->lexLevel + 1;
-        return 0;        
+	//resetOffset(hash);
+	return 0;        
 }
 
 
@@ -347,19 +349,23 @@ void deleteHashBucket(struct hashElement *current) {
 }
 
 
-/* Destroys the symbol table for program end. Frees and alloced memory.
+/* Destroys the symbol table for program end. Frees all allocated memory.
+ * Zeros out the hash pointer (which is why the argument is a double pointer).
  *
  * Parameters: void
  *
  * Return: void
  */
-void destroyHash(struct hash *hash) {
+void destroyHash(struct hash **hashPtr) {
+	struct hash *hash = *hashPtr;
         for (int i = 0; i < TABLE_SIZE; ++i) {
                 if ( hash->elements[i] != NULL ) {     
                         deleteHashBucket(hash->elements[i]);
                         hash->elements[i] = NULL;     
                 }
         }
+	free(hash);
+	*hashPtr = NULL;
 }
 
 
@@ -464,14 +470,14 @@ struct hashElement *findHashElementByKey(struct hash *hash, char *key) {
  *
  */
 struct hashElement *allocHashElement(char *key, struct Symbol *symbolPtr) {    
-        struct hashElement *element = malloc(sizeof(struct hashElement));
+        struct hashElement *element = calloc(1, sizeof(struct hashElement));
 
         if (element == NULL ) {
                 err(1, "Error: Could not create hash element. alloc returned NULL.");
                 exit(EXIT_FAILURE);
         }
 
-        element->key = malloc(strlen(key) + 1);
+        element->key = calloc(1, strlen(key) + 1);
         strcpy(element->key, key);
 
         element->symbol = symbolPtr;
@@ -572,7 +578,7 @@ char *createNameForAnonType(struct Symbol *symbol) {
         tim = tv.tv_sec + ( tv.tv_usec / 1000000.0 );
 
         size = snprintf(NULL, 0, "%f", tim);
-        name = malloc(size + 1);
+        name = calloc(1, size + 1);
         sprintf(name, "%f", tim);
 
         symbol->name = name;
@@ -648,7 +654,7 @@ int createHashElement(struct hash *hash, char *key, struct Symbol *symbol) {
  * Return: createHash: created hash struct
  */
 struct hash *createHash(unsigned int (*hashFunction)(char *)) {
-        struct hash *hash = malloc(sizeof(struct hash));
+        struct hash *hash = calloc(1, sizeof(struct hash));
         hash->hashFunction = hashFunction;
         hash->lexLevel = 0;             //default value
 
@@ -691,9 +697,10 @@ void dumpHash(struct hash *hash) {
                                 for (; symbol != NULL; symbol = symbol->next) {
                                         printf("\t\t\tName: %s\n", symbol->name);
                                         printf("\t\t\tLex Level: %d\n", symbol->lvl);
-                                        //if( symbol->kind == TYPE_KIND ) {
+                                        printf("\t\t\tKind: %d\n", symbol->kind);
+                                        if( symbol->kind == TYPE_KIND ) {
                                             printf("\t\t\tType: %s\n", typeToString(getType(symbol)));
-                                        //}
+                                        }
 
                                         printf("\t\t\tTypeOriginator: %d\n\n", symbol->typeOriginator);
                                 }
@@ -808,7 +815,7 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         //only item in list
         if ( isOnlySymbolInList(element, symbol) ) {
                 retval = deleteHashElement(hash, key);
-                return retval;
+		return retval;
         }
 
         //at head of list
@@ -840,8 +847,10 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         struct Symbol *symbol;
         int lexLevel = getCurrentLexLevel(hash);
 
-        if (lexLevel == 0) {
-                if (HASH_DEBUG) { printf("Cannot pop lexical levels when already at level 0.\n");}
+        if (lexLevel == 0 ) {
+#if HASH_DEBUG
+                printf("Cannot pop lexical levels when already at level 0.\n");
+#endif
                 return 1;
         }
 
@@ -852,9 +861,18 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
                         symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
 
                         if (symbol != NULL) {
-                                if (deleteSymbolAtLexLevel(hash, element->key, lexLevel) != 0) {
+                                if (deleteSymbolAtLexLevel(
+				    hash, element->key, lexLevel) != 0) {
                                         return 1;
                                 }
+				if (hash->elements[i] == NULL) {
+					/* 
+					 * if there was only one element in
+					 * the list, element->next is now
+					 * and invalid read
+					 */
+					break;
+				}
                         }
                 }
         }
@@ -862,4 +880,118 @@ int deleteSymbolAtLexLevel(struct hash *hash, char *key, int lexLevel) {
         decrementLexLevel(hash);
 
         return 0;
+}
+
+/*
+ * Increments the offset value for the given hash table by the given integer
+ * at the current lexical level.
+ * NOTE: do not call with toAdd == 1, instead call incrementOffset().
+ * Parameters:
+ * 		hash: the hash table whose offset is to be changed
+ *		toAdd: the integer value by which to increment offset
+ */
+void addToOffset(struct hash *hash, int toAdd)
+{
+	hash->offset[getCurrentLexLevel(hash)] += toAdd;
+}
+/* 
+ * Increments the the offset value for the given hash table by 1 at the current
+ * lexical level.
+ * Parameters:
+ * 		hash: the has table whose offset is to be incremented
+ */
+void incrementOffset(struct hash *hash)
+{
+	hash->offset[getCurrentLexLevel(hash)]++;
+}
+
+/*
+ * Returns the value of the offset for the given hash table at the current
+ * lexical level.
+ * Parameters:
+ * 		hash: the table whose offset value is to be retrieved 
+ */
+int getOffset(struct hash *hash)
+{
+	return hash->offset[getCurrentLexLevel(hash)];
+}
+
+/*
+ * Resets the offset value for the given hash table when a new lexical level
+ * is pushed.
+ * Parameters:
+ * 		hash: the hash table whose offset value is to be reset
+ */
+void resetOffset(struct hash *hash)
+{
+	hash->offset[getCurrentLexLevel(hash)] = 0;	
+}
+
+
+/* Gets the number of symbols at the current lexical level
+ *
+ * Parameters: 
+ *
+ * Return: count of local symbols
+*/
+int getLocalSymbolCount(struct hash *hash) {
+        int lexLevel = getCurrentLexLevel(hash);
+        struct Symbol *symbol;    
+        struct hashElement *element;
+        int count = 0;
+
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                element = hash->elements[i];
+
+                if ( element == NULL ) {
+                        continue;
+                }
+
+                symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
+
+                if ( symbol != NULL ) {
+                        if ( (symbol->kind == CONST_KIND 
+                                || symbol->kind == VAR_KIND)
+                                && symbol->offset >= 0 ) {
+                                count++;
+                        }
+                }
+        }
+
+        return count;
+}
+
+
+/* Gets the number of symbols that have negative offsets.
+ * i.e. parameters to function
+ *
+ * Parameters: 
+ *
+ * Return: count of function/procedure parameters
+*/
+int getLocalParamSymbolCount(struct hash *hash) {
+        int lexLevel = getCurrentLexLevel(hash);
+        struct Symbol *symbol;    
+        struct hashElement *element;
+        int count = 0;
+
+        for (int i = 0; i < TABLE_SIZE; ++i) {
+                element = hash->elements[i];
+
+                if ( element == NULL ) {
+                        continue;
+                }
+
+                symbol = findSymbolByLexLevel(hash, element->key, lexLevel);
+
+                if ( symbol != NULL ) {
+                        if ( (symbol->kind == CONST_KIND 
+                                || symbol->kind == VAR_KIND)
+                                && symbol->offset < 0 ) {
+                                count++;
+                        }
+                }
+        }
+
+        return count;
 }

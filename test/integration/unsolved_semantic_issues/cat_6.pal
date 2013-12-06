@@ -1,0 +1,76 @@
+{74,75,76}
+{
+    Semantic errors about assignments of structured type
+    
+    See the Pal specification.
+    Errors on 73-75
+}
+program SemStructuredTypeAssignment(input, output);
+type
+    int7 = array[1..7] of integer;
+    reca = record
+             vx : boolean;
+             vy : boolean;
+             aai : array[1..7] of int7
+           end;
+    tra = record
+            a: integer
+          end;
+    trb = record
+            a: integer
+          end;
+var
+    vai7a1, vai7a2 : int7;
+    vai7b1, vai7b2 : array[1..7] of integer;
+    vai7c : array[0..6] of integer;
+    vac7  : array[1..7] of char;
+    vreca1, vreca2 : reca;
+    vrecb1, vrecb2 : record
+                       vx : boolean;
+                       vy : boolean;
+                       aai : array[1..7] of int7
+                     end;
+    vrecc : record
+              xx : boolean; { Different name from reca }
+              vy : boolean;
+              aai : array[1..7] of int7
+            end;
+    vrecd : record
+              vx : char; { Different type from reca }
+              vy : boolean;
+              aai : array[1..7] of int7
+            end;
+    vaaarec1, vaaarec2 : array[1..2] of array[1..3] of array[1..5] of reca;
+    vra : tra;
+    vrb : trb;
+    vrc : record
+            a: integer
+          end;
+    vrd : record
+            a: integer
+          end;
+begin
+    { Valid assignments }
+    vai7a1 := vai7a2;
+    vai7b1 := vai7b2;
+    vreca1 := vreca2;
+    vrecb1 := vrecb2;
+    vaaarec1 := vaaarec2;
+    vreca1.aai[1] := vai7a1;
+    vai7a2 := vreca1.aai[1];
+    vaaarec1[1][1][1] := vreca2;
+    vreca1 := vaaarec2[2][2][2];
+    vaaarec1[1][1][1].aai := vreca2.aai;
+    vreca1.aai := vaaarec2[2][2][2].aai;
+    vaaarec1[1][1][1].aai[2] := vai7b2;
+    vai7b1 := vaaarec2[2][2][2].aai[1];
+    vra := vra;
+    vrb := vrb;
+    vrc := vrc;
+    vrd := vrd;
+    { Inalid assignments }
+    vai7a1 := vai7c; { Invalid: different subrange }
+    vreca1 := vrecd; { Different type because of a different type in field }
+    vrecb1 := vreca2; { Different type in PAL }
+end.
+{ vim: set ft=pascal: }

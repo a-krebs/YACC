@@ -1,14 +1,19 @@
 %error-verbose
 %union {
-      char character;
-      struct String string;
-      char *id;
-      double real;
-      int integer;
+	char character;
+	struct String string;
+	char *id;
+	double real;
+	/*
+	 * Integer is a long int since we populate it using strtol().
+	 * Range is checked against maxint and then converted to int in Actions.
+	 */
+	long int integer;
 	struct ElementArray *elemarray;
-      Symbol *symbol;
-      ProxySymbol *proxy;
+	Symbol *symbol;
+	ProxySymbol *proxy;
 	void * voidtype;
+	struct treeNode *node;
 }
 
 /* id */

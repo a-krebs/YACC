@@ -14,10 +14,14 @@ struct args {
 	int a;
 	/* Do not print error output to stdout. */
 	int q;
+	/* Do no execute compiled asc file */
+	int c;
 	/* Input file name */
 	char *inFile;
 	/* Listing file name */
 	char *listingFile;
+	/* Generated asc file name */
+	char *ascFile;
 };
 
 struct args givenArgs;

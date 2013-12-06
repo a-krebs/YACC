@@ -1,0 +1,30 @@
+{25}
+{ 
+
+	General syntax tests 
+
+	Line 24: invalid statement -- `x`
+	Line 24: invalid statement -- `= ...`
+
+} 
+
+program simpleTest(input, output); 
+var 
+	x : Integer;
+	y : Integer;
+	z : Integer;
+	a : Char;
+procedure w();
+begin
+    writeln('This is so valid.')
+end;
+begin 
+	x := 0;
+	y := 0; 
+	z := 0; 
+	x ;= x + x + x + 
+	w() { This is totally valid in either case of error handling! }
+	;
+	
+end. 	
+

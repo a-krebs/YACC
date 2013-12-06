@@ -8,30 +8,31 @@
  */
 
 typedef enum {
+	VOID_T,		/* special type for return type of procedures */
 	ARRAY_T,
 	BOOLEAN_T,
 	CHAR_T,
 	INTEGER_T,
 	REAL_T,
-	RECORD_T,	
+	RECORD_T,
+	SCALARINT_T,	
 	SCALAR_T,
-	SCALARINT_T,
 	STRING_T,
 	SUBRANGE_T,
-	VOID_T,		/* special type for return type of procedures */
 } type_t;
 
+/* For specific type information */
 typedef union type_union {
 	struct Array * Array;
-	struct Boolean * Boolean;
-	struct Char * Char;
-	struct Integer * Integer;
 	struct Function *Function;
 	struct Procedure *Procedure;
-	struct Real * Real;
 	struct Record * Record;
 	struct Scalar * Scalar;
-	struct String * String;
+	/* Note that String and StringType are two different structs.
+	 * Constant values are not stored on Type, so StringType only
+	 * keeps the string length
+	 */
+	struct StringType * String;
 	struct Subrange * Subrange;
 } Type;
 
@@ -77,19 +78,21 @@ struct ElementArray {
 	unsigned int nElements;
 };
 
-
+/* array type */
 struct Array {
 	struct Symbol *baseTypeSym;	/* pointer to struct of base type */
 	struct Symbol *indexTypeSym;	/* pointer to struct of index type */
 };
 
+/* bool constant */
 struct Boolean {
 	int value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
+/* char constant */
 struct Char {
-	char value;		/* value only needed when being pointed to
+	unsigned char value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
@@ -103,41 +106,51 @@ struct Char {
 struct Function {
 	struct ParamArray *params;
 	struct Symbol  *returnTypeSym;
-
+	char *label;
 };
 
+/* integer constant */
 struct Integer {
 	int value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
+/* procedure type */
 struct Procedure {
 	struct ParamArray *params;
+	char *label;
 };
 
-
+/* real constant */
 struct Real {
 	double value;		/* value only needed when being pointed to
 				 * by an object of kind CONST_KIND */
 };
 
-
+/* string constant */
 struct String {
 	char * str;
 	unsigned int strlen;
 };
+
+/* string type */
+struct StringType {
+	unsigned int strlen;
+};
+
+/* subrange type */
 struct Subrange {
 	int high;
 	int low;
 	struct Symbol *baseTypeSym; /* pointer to struct of type of subrange indices */
 };
 
+/* scalar list type */
 struct Scalar {
 	struct ElementArray *consts;
 };
 
-
-
+/* record type */
 struct Record { 
 	/* each record implemented as its own symbol table */
 	struct hash *hash;
@@ -167,6 +180,8 @@ typedef union kind_union {
 } Kind;
 
 struct ConstantKind {
+	int constResultFlag;	
+	/* flag indicated if the constant is a result of constant calculation */
 	struct Symbol *typeSym;
 	AnonConstVal value;		
 };
@@ -174,10 +189,15 @@ struct ConstantKind {
 struct FunctionKind {
 	struct Symbol *typeSym;
 	struct ElementArray *params;
+	char *label;
+	int invocationInstance;	/* indicates whether this particular function
+				 * symbol is resulted from an invocation
+				 * instance */ 
 };
 
 struct ProcedureKind {
 	struct ElementArray *params;
+	char *label;
 };
 
 struct TypeKind {
@@ -187,6 +207,9 @@ struct TypeKind {
 
 struct VariableKind {
 	struct Symbol *typeSym;
+	int byRef;		/* flag indicated if the variable is a value
+				 * or a reference to a value (e.g., an address)
+				 */
 };
 
 
@@ -201,6 +224,14 @@ struct Symbol {
 	Kind kindPtr;	/* kind specific description of symbol */
 	int lvl;	/* the lexical level at which the entry is defined */
 	int typeOriginator; /* set if the symbol is the originator of its kindPtr*/
+	int offset;	/* the offset (i.e., position in the stack offset from
+			 * display register) at which the variable appears */
+	int size;	/* the ASC memory units this symbol occupies in the
+			 * stack */
+	int isAddress; 	/* indicates that the value corresponding to the symbol 
+			 * that resides on the stack is an address */
+	int isRecordHead;/* flag indicating whether or not the symbol is the
+			  * "outmost" record in a record definition */
 	struct Symbol *next;	
 };
 

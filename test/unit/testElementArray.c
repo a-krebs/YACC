@@ -39,7 +39,6 @@ test_growElementArray(){
 	
 	
 	struct ElementArray *ea = newElementArray();
-	unsigned int len;
 		
 	growElementArray(ea);
 	
@@ -48,7 +47,6 @@ test_growElementArray(){
 	mu_assert("growElementArray(): should not change nElements\
 		  in the array", ea->nElements == 0);
 		  
-	len = ea->len;
 	growElementArray(ea);
 	mu_assert("growParamArray(): should be 4*EA_DEFAULT_SZ", ea->len == 4*EA_DEFAULT_SZ);
 	return NULL;
@@ -90,8 +88,6 @@ test_appendElement(){
 	
 	mu_assert("appendElement(): The kind of the second symbol should be \
 		  TYPE_KIND",(((Symbol **)ea->data)[1]->kind == TYPE_KIND));
-	mu_assert("appendElement(): The value of the second symbol should be \
-		  INTLOW_VAL ",(((Symbol **)ea->data)[1]->kindPtr.TypeKind->typePtr.Integer->value == INTLOW_VAL));
 	return NULL;	
 }
 
@@ -127,9 +123,6 @@ test_getElementAt(){
 		  'testType'",strcmp(sym->name,typeId)==0);
 	mu_assert("getElementAt(): The kind of the second symbol should be \
 		  TYPE_KIND",sym->kind == TYPE_KIND);
-	mu_assert("getElementAt(): The value of the second symbol should be \
-		  INTLOW_VAL ",sym->kindPtr.TypeKind->typePtr.Integer->value == INTLOW_VAL);
-		
 	
 	return NULL;
 	
@@ -170,8 +163,8 @@ test_hasDuplicateElement(){
 	int i,size,returnVal;
 	size = 100;
 	Symbol *sym, *sym1, *sym2, *sym3;
-	struct ElememtArray *ea = newElementArray();
-	struct ElememtArray *ea2 = newElementArray();
+	struct ElementArray *ea = newElementArray();
+	struct ElementArray *ea2 = newElementArray();
 	
 	for(i = 0; i < size ; i++){
 		sym = (Symbol *)setUpTypeSymbol();	

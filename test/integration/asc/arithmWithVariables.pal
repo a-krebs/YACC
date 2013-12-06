@@ -1,0 +1,71 @@
+program test(input, output);
+var	
+	a, b, c: integer;
+	x, y, z: real;
+	i : integer;
+	r : real;
+begin
+	//INTEGERS
+	a := 10;
+	b := 5;
+	c := 1;
+
+	x := 10.0;
+	y := 1.585;
+	z := 9.3698;
+
+	i := a + b;
+	i := a + b + c;
+
+	i := a div b;
+	i := a div b div c;
+
+	r := a / b;
+	r := a / b / c;	
+
+	i := a * b;
+	i := a * b * c;
+
+	i := a - b;
+	i := a - b - c;
+
+	//REALS
+	r := x + y;
+	r := x + y + z;
+
+	r := x - y;
+	r := x - y - z;	
+
+	r := x / y;
+	r := x / y / z;	
+
+	r := x * y;
+	r := x * y * z;	
+
+	//INTEGER MOD, BECAUSE FUCK BACKING UP IN ASC
+	i := a mod b;
+	i := (a mod b) mod c;
+
+	//BOTH INTEGERS AND REALS
+	r := a + x;
+	r := a + x + a;
+	r := a + a + a + a + a;
+
+	//UNARY , 30 next
+	i := -a;
+	i := -a + (-a);
+	i := -a + (+a);
+	i := +a + (-a);
+	i := +a + (+a) + (+a);
+
+	r := -a;
+	r := -a + (-a);
+	r := -a + (+a);	
+
+	i := -(a + 10 * b);
+	i := -(a * 10 + b);	
+	r := -(x * y + z);
+	r := -(x * y + (+z));	
+
+end.
+

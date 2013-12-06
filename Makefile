@@ -6,12 +6,24 @@
 # this list.
 OBJS=		$(BIN)/parser.tab.o 
 OBJS+=		$(BIN)/lex.yy.o $(BIN)/Error.o $(BIN)/ErrorLL.o
-OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o $(BIN)/Symbol.o 
-OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o
-OBJS+=		$(BIN)/Actions.o
+OBJS+=		$(BIN)/ProgList.o $(BIN)/ElementArray.o
+OBJS+=		$(BIN)/Type.o $(BIN)/Kind.o $(BIN)/Utils.o $(BIN)/Emit.o
 OBJS+=		$(BIN)/Hash.o
 OBJS+=		$(BIN)/PreDef.o
 OBJS+=		$(BIN)/Init.o
+OBJS+=		$(BIN)/Symbol.o $(BIN)/SymbolAPI.o $(BIN)/SymbolArray.o 
+OBJS+=		$(BIN)/SymbolInvoc.o  $(BIN)/SymbolPrivateAPI.o 
+OBJS+=		$(BIN)/SymbolProxy.o
+OBJS+=		$(BIN)/ActionsConsts.o $(BIN)/ActionsDecls.o 
+OBJS+=		$(BIN)/ActionsExprs.o $(BIN)/ActionsInvocs.o 
+OBJS+=		$(BIN)/ActionsStructStat.o $(BIN)/ActionsTypes.o 
+OBJS+=		$(BIN)/StmtLL.o
+OBJS+=		$(BIN)/EmitArithmetic.o $(BIN)/EmitDecls.o $(BIN)/EmitUtils.o
+OBJS+=		$(BIN)/EmitExprs.o $(BIN)/EmitRelational.o $(BIN)/EmitLogical.o
+OBJS+=		$(BIN)/EmitStructStat.o $(BIN)/EmitProcs.o $(BIN)/EmitUnary.o 
+OBJS+=		$(BIN)/EmitToFile.o $(BIN)/EmitPreDef.o
+OBJS+=		$(BIN)/PreDefAsc.o
+OBJS+=		$(BIN)/Tree.o
 
 # New variable for filtering out lex.yy.o and parser.tab.o from
 # the compilation of the tests.
@@ -21,6 +33,10 @@ LEX_FILTER=	$(BIN)/parser.tab.o
 
 # Root source directory
 SRC=		src
+# Directory for asc code emission modules (Emit*.c files)
+EMIT=		$(SRC)/Emit
+# Directory for pre-defined asc code
+ASC=		$(SRC)/asc
 # Directory to store compiled binaries
 BIN=		bin
 # Location of test source files
@@ -39,11 +55,13 @@ LEXTEST_OBJS=	$(filter-out $(LEX_FILTER), $(LEXTEST_OBJS1))
 TESTEXE=	$(BIN)/test
 TESTOBJS1=	$(BIN)/test.o
 TESTOBJS1+=	$(BIN)/testHash.o
+TESTOBJS1+=	$(BIN)/testTree.o
 TESTOBJS1+=	$(BIN)/testError.o $(BIN)/testErrorLL.o $(BIN)/testProgList.o
 TESTOBJS1+=	$(BIN)/testType.o $(BIN)/testSymbol.o $(BIN)/testElementArray.o
 TESTOBJS1+=	$(BIN)/testActions.o $(BIN)/testUtils.o $(BIN)/testKind.o
 TESTOBJS1+=	$(BIN)/testingUtils.o
-TESTOBJS1+=	$(BIN)/testPreDef.o
+TESTOBJS1+=	$(BIN)/testEmitUtils.o
+TESTOBJS1+=	$(BIN)/testPreDef.o $(BIN)/testPreDefAsc.o
 TESTOBJS1+=	$(OBJS)
 TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 
@@ -53,7 +71,7 @@ TESTOBJS=	$(filter-out $(TEST_FILTER), $(TESTOBJS1))
 BISONREPORT= 	bisonReport.out
 
 # Compiler flags for all builds
-CFLAGS+=	-Wall -std=c99
+CFLAGS+=	-Wall -std=c99 -I$(SRC) -I$(EMIT)
 # exclude these flags from compiles involving Bison/Flex
 FLEXBISONFLAGEXCLUDES= -Wall -std=c99
 
@@ -82,7 +100,7 @@ SED_INCLUDE= 	sed -e "/<-- MAKE PLACES DEFINITIONS.TOKENS FILE HERE -->/r\
 all: $(EXE)
 
 # Build main executable with debug symbols and DEBUG option
-debug: CFLAGS+= -g
+debug: CFLAGS+= -g 
 debug: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug: $(EXE)
 
@@ -94,12 +112,15 @@ debug_hash: CFLAGS+= -g -DHASHDEBUG
 debug_hash: YACCFLAGS += --report-file=$(BISONREPORT) -v
 debug_hash: $(EXE)
 
+asc_simple: CFLAGS+= -g -DASC_SIMPLE
+asc_simple: $(EXE)
+
 # Build main using tokenTestParser.y to analyze lexical tokens
 lextest: CFLAGS+= -g -DLEXTEST_DEBUG
 lextest: $(LEXTEST_EXE)
 
 # Build test executable
-test: CFLAGS+= -g -Isrc/ -DTESTBUILD
+test: CFLAGS+= -g -I$(SRC) -DTESTBUILD -D_POSIX_C_SOURCE=200809L
 test: $(TESTEXE)
 
 $(EXE): $(EXEOBJS)
@@ -135,8 +156,6 @@ $(BIN)/ElementArray.o: $(SRC)/ElementArray.c $(SRC)/ElementArray.h
 $(BIN)/ProgList.o: $(SRC)/ProgList.c $(SRC)/ProgList.h
 	$(COMPILE)
 
-$(BIN)/Symbol.o: $(SRC)/Symbol.c $(SRC)/Symbol.h $(SRC)/Definitions.h
-	$(COMPILE)
 
 $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 	$(COMPILE)
@@ -144,17 +163,28 @@ $(BIN)/Type.o: $(SRC)/Type.c $(SRC)/Type.h $(SRC)/Definitions.h
 $(BIN)/ErrorLL.o: $(SRC)/ErrorLL.c $(SRC)/ErrorLL.h
 	$(COMPILE)
 
+$(BIN)/StmtLL.o: $(SRC)/StmtLL.c $(SRC)/StmtLL.h
+	$(COMPILE)
+
 $(BIN)/Hash.o: $(SRC)/Hash.c $(SRC)/Hash.h
 	$(COMPILE)	
 
-$(BIN)/Actions.o: $(SRC)/Actions.c $(SRC)/Actions.h $(SRC)/parser.tab.c
-	$(COMPILE)
+$(BIN)/Tree.o: $(SRC)/Tree.c $(SRC)/Tree.h
+	$(COMPILE)	
+
+include ActionModules.mk
+
+include EmitModules.mk
+
+include SymbolModules.mk
 
 $(BIN)/PreDef.o: $(SRC)/PreDef.c $(SRC)/PreDef.h $(SRC)/Definitions.h
 	$(COMPILE)	
 
 $(BIN)/Init.o: $(SRC)/Init.c $(SRC)/Init.h 
 	$(COMPILE)		
+
+include PreDefAsc.mk
 
 $(BIN)/testSymbol.o: $(TEST)/testSymbol.c $(TEST)/testSymbol.h
 	$(COMPILE)
@@ -184,6 +214,9 @@ $(BIN)/test.o: $(TEST)/test.c $(TEST)/minunit.h
 	$(COMPILE)
 
 $(BIN)/testHash.o: $(TEST)/testHash.c $(TEST)/testHash.h
+	$(COMPILE)	
+
+$(BIN)/testTree.o: $(TEST)/testTree.c $(TEST)/testTree.h
 	$(COMPILE)		
 
 $(BIN)/testActions.o: $(TEST)/testActions.c $(TEST)/testActions.h
@@ -193,6 +226,12 @@ $(BIN)/testingUtils.o: $(TEST)/testingUtils.c $(TEST)/testingUtils.h $(SRC)/Defi
 	$(COMPILE)
 
 $(BIN)/testPreDef.o: $(TEST)/testPreDef.c $(TEST)/testPreDef.h
+	$(COMPILE)
+
+$(BIN)/testPreDefAsc.o: $(TEST)/testPreDefAsc.c $(TEST)/testPreDefAsc.h
+	$(COMPILE)
+
+$(BIN)/testEmitUtils.o: $(TEST)/testEmitUtils.c $(TEST)/testEmitUtils.h
 	$(COMPILE)
 
 $(BIN)/parser.tab.o: $(SRC)/parser.tab.c $(SRC)/lex.yy.c
@@ -228,6 +267,9 @@ clean:
 	-rm -f $(BISONREPORT)
 	-rm -f $(SRC)/generated_parser.y
 	-rm -f $(SRC)/generated_tokenTestParser.y
+	-rm -f $(ASC)/__PreDefAsc.__asc
+	-rm -f $(ASC)/__PreDefAsc.__c
+	-rm -f $(SRC)/PreDefAsc.c
 	-rm -f $(TEST)/ProgListTestFile.txt
 	-rm -f $(TEST)/ProgListTestFileOut.lst
 	-rm -f 0.pal 1.pal 2.pal 3.pal 4.pal
@@ -273,10 +315,26 @@ semantic_tests:
 	@make -s semantic_tests_
 
 semantic_tests_:
-	@echo "CHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
+	@echo "\nCHECKING SEMANTIC TESTS FOR SYNTAX ERRORS:"
 	@-cd test && python testRunner.py -x -i -d ./integration/semantic
 	@echo "\nSEMANTIC TESTS:"
 	@-cd test && python testRunner.py -c -d ./integration/semantic
+
+asc_tests:
+	@make -s integration_tests_base
+	@make -s asc_predef_append
+	@make -s asc_tests_	
+
+asc_predef_append: $(ASC)/__PreDefAsc.__asc
+	@cp $(ASC)/__PreDefAsc.__asc $(TEST_FILES)/asc/TODELETE 
+	for number in `ls $(TEST_FILES)/asc/pre_appended_test_asc/`; do \
+        	cat $(TEST_FILES)/asc/pre_appended_test_asc/$$number $(TEST_FILES)/asc/TODELETE > $(TEST_FILES)/asc/test_asc/$$number; \
+    	done; \
+    	rm -f $(TEST_FILES)/asc/TODELETE
+
+asc_tests_:
+	@echo "\nASC TESTS:"
+	@-cd test && python testRunner.py -a -d ./integration/asc
 
 full_tests:
 	@make -s integration_tests_base
@@ -290,4 +348,4 @@ full_tests_:
 clean_lst:
 	find . -name "*.lst" -delete
 
-include Checkpoint2.mk
+include Checkpoint3.mk

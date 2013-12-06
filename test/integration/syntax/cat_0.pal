@@ -1,0 +1,21 @@
+{15,17}
+{ 
+	Minor syntax/lexical errors.
+
+    Line 12 -- missing semicolon in `var` declarations.
+	Line 14 -- misspelled begin (should lex as an identifier).
+
+} 
+
+program test(input, output); 
+var 
+	x : Integer;
+	y : Integer;
+	y : Integer
+	z : Integer;
+begn
+	x := 3;
+	x := 4;
+	
+end.  
+

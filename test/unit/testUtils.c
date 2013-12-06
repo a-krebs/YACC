@@ -37,6 +37,7 @@ test_isUnaryOperator()
 	mu_assert("MINUS is a unary operator", isUnaryOperator(MINUS));
 	mu_assert("EQUAL is not a unary operator", !isUnaryOperator(EQUAL));
 
+	return NULL;
 }
 
 char *

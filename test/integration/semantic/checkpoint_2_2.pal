@@ -1,9 +1,11 @@
-{}
+{31, 32, 43, 44, 52 ,54}
 {
 	Team YACC Checkpoint 2 Test 2
 
 	Test the built-in functions combined with scope
 	This file contains no errors
+
+	Updated after submission
 }
 program test0(input, output);
 var

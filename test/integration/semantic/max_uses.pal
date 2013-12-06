@@ -1,0 +1,16 @@
+{4,5}
+program HelloWorld(in, output);
+const
+	i = 2147483648;	// too big
+	w = -2147483648; // too big (the unary operator is separate)
+	l = 2147483647;	// just right
+	y = -2147483647;	// just right
+	j = maxint;
+	k = i + j;	// too big, but we don't catch it
+var
+	a : integer;
+begin
+	a := i + j
+end.
+
+

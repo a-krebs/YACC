@@ -1,0 +1,24 @@
+{12,14,17,22}
+{
+    Using identifiers without declaration
+    Errors 
+    13 invalid enum can't have same name 
+    16, 21 Not declared errors 
+}
+program SemNoDeclared(input, output);
+const
+    c1 = 1;
+    c2 = c1;
+    c3 = cx; { Invalid: cx is not declared }
+type
+    crew = (foo, fooaa, foo); {invalid } 
+    t1 = integer;
+    t2 = t1;
+    t3 = tx; { Invalid: tx is not declared }
+var
+    v1 : t1;
+begin
+    v1 := c1;
+    v1 := cx; { Invalid: cx is not declared }
+end.
+{ vim: set ft=pascal: }
