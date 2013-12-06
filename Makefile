@@ -323,12 +323,12 @@ semantic_tests_:
 asc_tests:
 	@make -s integration_tests_base
 	@make -s asc_predef_append
-	
+	@make -s asc_tests_	
 
 asc_predef_append: $(ASC)/__PreDefAsc.__asc
 	@cp $(ASC)/__PreDefAsc.__asc $(TEST_FILES)/asc/TODELETE 
-	for number in `ls $(TEST_FILES)/asc/test_asc/`; do \
-        	cat $(TEST_FILES)/asc/test_asc/$$number $(TEST_FILES)/asc/TODELETE > $(TEST_FILES)/asc/test_asc_predef_append/$$number; \
+	for number in `ls $(TEST_FILES)/asc/pre_appended_test_asc/`; do \
+        	cat $(TEST_FILES)/asc/pre_appended_test_asc/$$number $(TEST_FILES)/asc/TODELETE > $(TEST_FILES)/asc/test_asc/$$number; \
     	done; \
     	rm -f $(TEST_FILES)/asc/TODELETE
 

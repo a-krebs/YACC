@@ -1,5 +1,0 @@
-{       100}
-program hello(what, ever);
-begin
-	writeln(100)
-end.
