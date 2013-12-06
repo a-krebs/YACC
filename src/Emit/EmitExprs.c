@@ -19,7 +19,7 @@ extern int yylineno;
 void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 {
 	Symbol *arrayType = NULL;
-	int onceThrough, lowVal, baseTypeSize;
+	int onceThrough = 0, lowVal, baseTypeSize;
 
 	arrayType = getTypeSym(arrayBase);
 
@@ -469,7 +469,7 @@ void emitPushStringLiteralValue(Symbol *s)
 	emitComment("We now push the values in the string constant ");
 	emitComment("onto the stack.");
 
-	for (i = strlen-1; i >= 0; i--) {
+	for (i = 0; i < strlen; i++) {
 		emitStmt(STMT_LEN, "CONSTI %d", *(str + i)); 
 	}
 

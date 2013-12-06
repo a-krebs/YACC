@@ -18,7 +18,7 @@
  */
 Symbol *createArrayTypeSymbol(
    char *id, int typeOriginator, Symbol *base, Symbol *index);
-
+Symbol *makeArrayIndexSym(Symbol *);
 
 /*
  * Create a new type symbol for a scalar list type.
