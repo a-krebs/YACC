@@ -1,8 +1,8 @@
 program test(input, output);
 var	
-	b: boolean;
-	a: boolean;
-	c: boolean;
+	b: Boolean;
+	a: Boolean;
+	c: Boolean;
 begin
 	b := true and true;
 	b := true and false;

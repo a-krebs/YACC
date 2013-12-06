@@ -1,6 +1,6 @@
 program test(input, output);
 var	
-	b: boolean;
+	b: Boolean;
 begin
 	b := 5 = 10;
 	b := 5 <> 10;

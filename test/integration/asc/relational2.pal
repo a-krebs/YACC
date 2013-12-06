@@ -1,6 +1,6 @@
 program test(input, output);
 var	
-	b: boolean;
+	b: Boolean;
 	i1 : integer;
 	i2 : integer;
 	r1 : real;
