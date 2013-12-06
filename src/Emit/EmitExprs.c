@@ -442,6 +442,7 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	case BOOLEAN_T:
 	case CHAR_T:
 	case INTEGER_T:
+	case SCALAR_T:
 		/* No checking to do, simply make the assignment */
 		emitStmt(STMT_LEN, "POPI");
 		break;
