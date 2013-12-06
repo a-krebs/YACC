@@ -1,10 +1,43 @@
-{}
+{36,37,38}
 
 {
 	Team YACC Checkpoint 3 Test 2
 	Must test semantic errors only
 	Must contain a maximum of 3 errors
+
+	This test checks for assignment compatibility of
+	enumerated/scalar-list types.
+
+	Errors are
+	Line 36: Cannot assign integers to enumerated types
+	Line 37: Assignment must be of the same numerated type
+	Line 38: arithmetic operations are not valid for enum types
 }
 program test(input, output);
+type
+	colours = (red, green, blue);
+	sizes = (small, med, large);
+	things = (shirts, pants, coats);
+	inventory = array[red..green] of real;
+var
+	item : things;
+	s : sizes;
+	c : colours;
+	i : integer;
+	inv : inventory;
+	inv2 : inventory;
 begin
+	item := shirts;
+	item := pants;
+	item := coats;
+	item := succ(coats);	// not a semantic error, but a run-time error
+	item := pred(shirts);	// same
+	
+	item := 2;		// error
+	s := red;		// different enumerated types
+	i := red + blue;	// cannot perform arithmetic on enums
+
+	// these are valid:
+	inv[red] := 2.2;
+	inv2 := inv;
 end.
