@@ -128,7 +128,6 @@ struct ElementArray *createArgList(struct treeNode *arg) {
 	return ea;
 }
 
-
 /*
  * Concatenate two lists of arguments, maintaining order.
  *
