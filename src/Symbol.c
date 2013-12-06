@@ -363,8 +363,7 @@ Symbol *newTypeSymFromSym(char *id, Symbol *typeSym) {
  * 	pointer to new symbol with kind TYPE_KIND and kindPtr type ARRAY_T
  */
 Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
-	Symbol *newArraySym = NULL, *lowSym, *highSym, *index;
-	int low, high;
+	Symbol *newArraySym = NULL, *index;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
 		errMsg = customErrorString("Cannot define array. "
 		    "Base type or index type incorrect or undefined.");
@@ -389,31 +388,7 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 		return NULL;
 	}
 
-
-	switch (getType(indexTypeSym)) {
-	case BOOLEAN_T:
-		low = 0;
-		lowSym = newConstProxySym(NULL, &low, 
-		    getTypeSym(indexTypeSym));
-		high = 1;
-		highSym = newConstProxySym(NULL, &high, 
-		    getTypeSym(indexTypeSym));
-		/* TODO: memory leak */
-		index = newSubrangeSym(lowSym, highSym);
-		break;
-	case CHAR_T:
-		low = 0;
-		lowSym = newConstProxySym(NULL, &low,
-		    getTypeSym(indexTypeSym));
-		high = 255;
-		highSym = newConstProxySym(NULL, &high,
-		    getTypeSym(indexTypeSym));
-		index = newSubrangeSym(lowSym, highSym);
-		break;
-	default:
-		index = indexTypeSym;
-		break;	
-	}
+	index = makeArrayIndexSym(indexTypeSym);
 
 	/* create with no name and set as type originator */
 	newArraySym = createArrayTypeSymbol(
@@ -425,6 +400,33 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 	return newArraySym;
 }
 
+Symbol *makeArrayIndexSym(Symbol *indexTypeSym)
+{
+	Symbol *lowSym, *highSym;
+	int low, high;
+	switch (getType(indexTypeSym)) {
+	case BOOLEAN_T:
+		low = 0;
+		lowSym = newConstProxySym(NULL, &low, 
+		    getTypeSym(indexTypeSym));
+		high = 1;
+		highSym = newConstProxySym(NULL, &high, 
+		    getTypeSym(indexTypeSym));
+		return newSubrangeSym(lowSym, highSym);
+	case CHAR_T:
+		low = 0;
+		lowSym = newConstProxySym(NULL, &low,
+		    getTypeSym(indexTypeSym));
+		high = 255;
+		highSym = newConstProxySym(NULL, &high,
+		    getTypeSym(indexTypeSym));
+		getConstVal(highSym)->Char.value = '\xff';
+		return newSubrangeSym(lowSym, highSym);
+	default:
+		return indexTypeSym;
+	}
+	return NULL;
+}
 
 /*
  * Create a new symbol for an anonymous scalar list type.

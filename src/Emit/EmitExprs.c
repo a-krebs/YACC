@@ -1,5 +1,5 @@
 #include "EmitExprs.h"
-
+#include "args.h"
 extern int yylineno;
 
 /*
@@ -19,16 +19,44 @@ extern int yylineno;
 void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 {
 	Symbol *arrayType = NULL;
-	int onceThrough, lowVal, baseTypeSize;
+	int onceThrough = 0, lowVal, baseTypeSize;
 
 	arrayType = getTypeSym(arrayBase);
 
+	
 	while (indices) {
+		if (!(givenArgs.a)) {
+			emitComment("Doing array bounds checking.");
+			if ( (indices->kind == VAR_KIND) || (indices->kind
+			    == CONST_KIND && !isConstResultSym(indices)) ) {
+				emitPushSymbolValue(indices);
+				emitPushSymbolValue(indices);	
+				emitPushSymbolValue(indices);	
+			} else {
+				/* The value is already on the stack */
+				emitStmt(STMT_LEN, "DUP");
+				emitStmt(STMT_LEN, "DUP");
+			}
+
+			emitComment("Checking < high bound");
+			emitStmt(STMT_LEN, "CONSTI %d",
+			    getArrayHighIndexValue(arrayType));
+			emitStmt(STMT_LEN, "LTI");
+			emitStmt(STMT_LEN, "IFZ __array_error");
+			emitComment("Checking > low bound");
+			emitStmt(STMT_LEN, "CONSTI %d",
+			    getArrayLowIndexValue(arrayType));
+			emitStmt(STMT_LEN, "GTI");
+			emitStmt(STMT_LEN, "IFZ __array_error");
+		}
 		/* Note that the calculation below handles the case of
 		 * negatives indices and indices of mixed sign */
 		emitComment("Pushing index_val - index_lowerbound_val for");
 		emitComment("location calculation.");
-		emitPushSymbolValue(indices);
+	
+		if ( (!(indices->kind == CONST_KIND && 
+		    isConstResultSym(indices))) && (givenArgs.a))
+			emitPushSymbolValue(indices);
 		lowVal = getArrayLowIndexValue(arrayType);
 		emitStmt(STMT_LEN, "CONSTI %d", lowVal);
 		emitStmt(STMT_LEN, "SUBI");
@@ -469,7 +497,7 @@ void emitPushStringLiteralValue(Symbol *s)
 	emitComment("We now push the values in the string constant ");
 	emitComment("onto the stack.");
 
-	for (i = strlen-1; i >= 0; i--) {
+	for (i = 0; i < strlen; i++) {
 		emitStmt(STMT_LEN, "CONSTI %d", *(str + i)); 
 	}
 
