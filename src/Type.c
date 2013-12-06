@@ -11,6 +11,7 @@
 #include "Type.h"
 #include "Hash.h"
 #include "Kind.h"
+#include "SymbolAPI.h"
 #include "SymbolArray.h"
 
 //////////////////////////////////////////////////////////////////////////
@@ -192,6 +193,14 @@ isSimpleType(type_t type)
  */
 int areCompatibleStrings(Symbol *s1, Symbol *s2)
 {
+	Symbol *subTypeSym1;
+	Symbol *subTypeSym2;
+	/* Upper bound & lower bound */
+	int high1 = 0;
+	int low1 = 0;
+	
+	int high2 = 0;
+	int low2 = 0;
 	/* two string lengths */
 	int l1 = 0;
 	int l2 = 0;
@@ -203,7 +212,8 @@ int areCompatibleStrings(Symbol *s1, Symbol *s2)
 	if (!(s1->kind == TYPE_KIND) || !(s2->kind == TYPE_KIND)) {
 		return 0;
 	}
-
+	
+	if ( (getType(s1) != STRING_T) && (getType(s1) != ARRAY_T) ) return 0;
 	if ( (getType(s2) != STRING_T) && (getType(s2) != ARRAY_T) ) return 0;
 
 	if ( (getType(s1) == ARRAY_T) && 
@@ -214,7 +224,56 @@ int areCompatibleStrings(Symbol *s1, Symbol *s2)
 	if ( (getType(s2) == ARRAY_T) && 
 	    (getType(getArrayBaseSym(s2)) != CHAR_T) ) {
 		return 0;
-	} 
+	}
+	
+	if ( (getType(s1) == ARRAY_T) && (getType(s2) == STRING_T) ) {
+		 l1 = getArrayLength(s1);
+		 l2 = getTypePtr(s2)->String->strlen;
+		 
+		 low1 = getArrayLowIndexValue(s1);
+		 high1 = getArrayHighIndexValue(s1);
+		 
+		 if (getType(getArrayIndexSym(s1)) != SUBRANGE_T) return 0;
+		 
+		 subTypeSym1 = getSubrangeBaseTypeSym(getArrayIndexSym(s1));
+		 
+		 if (getType(subTypeSym1) != INTEGER_T) return 0;
+		 
+		 if ((low1 == 1) && (high1 > 1) && (l1 == l2)) {
+			return 1;
+		 } else {
+			return 0;		 
+		 }
+	}
+	
+	if ( (getType(s1) == ARRAY_T) && (getType(s2) == ARRAY_T) ) {
+		l1 = getArrayLength(s1);
+		l2 = getArrayLength(s2);
+		
+		low1 = getArrayLowIndexValue(s1);
+		high1 = getArrayHighIndexValue(s1);
+		
+		low2 = getArrayLowIndexValue(s2);
+		high2 = getArrayHighIndexValue(s2);
+		
+		if (getType(getArrayIndexSym(s1)) != SUBRANGE_T) return 0;
+		if (getType(getArrayIndexSym(s2)) != SUBRANGE_T) return 0;
+		
+		subTypeSym1 = getSubrangeBaseTypeSym(getArrayIndexSym(s1));
+		subTypeSym2 = getSubrangeBaseTypeSym(getArrayIndexSym(s2));
+		
+		if (getType(subTypeSym1) != INTEGER_T) return 0;
+		if (getType(subTypeSym2) != INTEGER_T) return 0;
+		
+		if ((low1 == 1) && (high1 > 1) && 
+			(low2 == 1) && (high2 > 1) && 
+			(l1 == l2)
+		) {
+			return 1;
+		} else {
+			return 0;		 
+		}
+	}
 
 	if (getType(s1) == STRING_T) l1 = getTypePtr(s1)->String->strlen;
 	else l1 = s1->size;
@@ -227,7 +286,7 @@ int areCompatibleStrings(Symbol *s1, Symbol *s2)
 	}
 	else {
 		return 0;
-	}	
+	}
 }
 
 
