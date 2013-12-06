@@ -38,7 +38,7 @@ begin
 	while boc.red > 1 do
 	begin
 		boc.letThePeopleBeFree[1] := chr(boc.blue);
-	//	writeln(chr(boc.blue));
+		writeln(chr(boc.blue));
 		boc.red := boc.red - 1;
 	end;
 end. 
