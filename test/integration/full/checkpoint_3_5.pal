@@ -4,9 +4,28 @@
 	Team YACC Checkpoint 3 Test 5
 	Must be a correct PAL program that compiles to ASC
 
-	Describe what this program does and what parts of the compiler
-	it is supposed to test.
+	This program tests that records can be passed as function arguments
 }
 program test(input, output);
+type
+	eeeh = record
+		a: integer;
+		b: real;
+		c: array[1..100]of integer
+		end;
+var 
+	tryMe: eeeh;
+function caller(try:eeeh):integer; 
 begin
+	tryMe.a:=12;
+end;
+function callee(try2:eeeh):integer;
+begin
+	tryMe.b:=caller(try2);
+end;
+	
+begin
+	tryMe.c[1]:=callee(tryMe);
+	tryMe.a := tryMe.a;
+	tryMe.b := tryMe.a;
 end.
