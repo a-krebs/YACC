@@ -121,7 +121,6 @@ int areSameType(Symbol *s1, Symbol *s2) {
 	}
 }
 
-
 /*
  * Returns true if the two Symbols are arithmetic compatible.
  */
