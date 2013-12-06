@@ -14,6 +14,7 @@
 #include "Emit/EmitRelational.h"
 #include "Emit/EmitStructStat.h"
 #include "Emit/EmitToFile.h"
+#include "Emit/EmitPreDef.h"
 #include "Emit/EmitUtils.h"
 #include "Emit/EmitUnary.h"
 
