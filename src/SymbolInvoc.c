@@ -283,7 +283,6 @@ paramToVar(Symbol *param)
 {
 	Symbol *s = NULL;
 	if (!param) return NULL;
-	if (param->kind != PARAM_KIND) return NULL;
 	Symbol *typeSym = getTypeSym(param);
 	s = newVariableSym(param->name, typeSym);
 	if (!s) return NULL;

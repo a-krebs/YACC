@@ -965,7 +965,7 @@ int isAssignmentCompat(Symbol *x, Symbol *y) {
 	type1 = getTypeSym(x);
 	type2 = getTypeSym(y);
 	/*checking the kind first*/
-	if (areKindCompat(x,y)) {
+	if (areKindAssignCompat(x,y)) {
 		if (areSameType(type1, type2)) {
 			return 1;
 		} else if (areCompatibleStrings(type1, type2)) {
