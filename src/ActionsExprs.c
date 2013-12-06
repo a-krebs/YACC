@@ -538,7 +538,6 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	int intVal;
 	
 	switch (opToken) {
-	
 	case EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 		
@@ -706,7 +705,6 @@ int
 doOrOp(ProxySymbol *x, ProxySymbol *y){
 	return (int)(getSimpleConstVal(x)) || 
 	(int)(getSimpleConstVal(y));
-
 }
 
 
@@ -769,7 +767,6 @@ doUnaryMinusOp(ProxySymbol *y) {
 	return 0.0-(double)(getSimpleConstVal(y));
 }
 
-
 /*
  *	Check whether the two given strings are equal char by char
  * 
@@ -797,7 +794,6 @@ doStrEqCmp(ProxySymbol *x, ProxySymbol *y){
 	return 1;
 }
 
-
 /*
  *	Compare whether one string is less than another char by char
  * 
@@ -808,6 +804,7 @@ doStrEqCmp(ProxySymbol *x, ProxySymbol *y){
  *				0:	x !< y
  *
  */
+
 int
 doStrLessCmp(ProxySymbol *x, ProxySymbol *y){
 	int i;
@@ -822,7 +819,6 @@ doStrLessCmp(ProxySymbol *x, ProxySymbol *y){
 	}
 	return 0;
 }
-
 
 /*
  *	Compare whether one string is greater than another char by char

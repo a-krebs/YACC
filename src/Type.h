@@ -108,4 +108,7 @@ struct StringType *newStringType(unsigned int strlen);
 int isRealIntBool(type_t type);
 
 
+int isScalarMember(Symbol *sym);
+
+int isScalarVar(Symbol *sym);
 #endif

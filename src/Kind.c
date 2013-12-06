@@ -294,14 +294,15 @@ copyConstVal(AnonConstVal *newacl, AnonConstVal * acl, type_t type)
 	}	
 
 }
+
 /*	Check whehter a function is invocked correctly by its name.
  *	
  *  Parameters: Symbol in function kind
  * 	Return: 1: invocation is correct
  *			0: invocation is wrong
  */
-int isInvocInstance(Symbol *x){
-	return x->kindPtr.FuncKind->invocationInstance;
+int isInvocInstance(Symbol *sym){
+	return sym->kindPtr.FuncKind->invocationInstance;
 }
 
 /* Ensure that the kind of the given sybmols are actually compatible with each other

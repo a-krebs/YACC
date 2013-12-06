@@ -39,7 +39,8 @@ Symbol *paramToVar(Symbol * param);
 int isElementArraySimple(struct ElementArray *elementArray);
 
 
-int typeIsInValidArgs(Symbol *s, type_t type);
+int isArgTypeValidInPreDefFunc(Symbol *s, Symbol *arg);
 
+int isArgTypeValidInIOFunc(Symbol *s, Symbol *arg);
 
 #endif

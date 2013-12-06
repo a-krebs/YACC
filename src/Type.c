@@ -728,6 +728,7 @@ struct StringType *newStringType(unsigned int strlen) {
 }
 
 
+
 /*
  * Boolean function to determine if passed type is an 
  * either real, int, or bool.
@@ -746,6 +747,32 @@ int isRealIntBool(type_t type) {
 		return 1;
 	}
 
+	return 0;
+}
+
+
+/* if the symbol is a scalar variable symbol 
+ * returns 1 ,otherwise 0
+ */
+int isScalarVar(Symbol *sym){
+	if (sym->kind == VAR_KIND){
+		if(getType(sym) == SCALAR_T){
+			return 1;
+		}
+	} 
+	return 0;
+}
+
+
+/* if the symbol is a scalar member symbol 
+ * returns 1 ,otherwise 0
+ */
+int isScalarMember(Symbol *sym){
+	if (sym->kind == CONST_KIND){
+		if(getType(sym) == SCALAR_T){
+			return 1;
+		}
+	} 
 	return 0;
 }
 
