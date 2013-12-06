@@ -8,9 +8,9 @@
 	This test checks that pre-defined functions return the correct types.
 	It is mostly a repeat of our checkpoint 2 test 2.
 	Errors are on lines:
-	58: pred(Boolean) and succ(Boolean) should return a Boolean,
+	58 and 64: pred(Boolean) and succ(Boolean) should return a Boolean,
 	which is not assignment compatible with integer
-	?
+
 }
 program test(input, output);
 type
