@@ -111,7 +111,9 @@ void setSymbolSize(Symbol *s)
 	if (!getTypeSym(s)) return;
 	switch (s->kind) {
 	case CONST_KIND:
-		/* fall through */
+		if (getType(s) == SCALAR_T) s->size = 1;
+		else s->size = getTypeSym(s)->size;
+		break;
 	case PARAM_KIND:
 		/* fall through */
 	case VAR_KIND:

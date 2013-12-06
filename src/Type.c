@@ -650,7 +650,9 @@ int calculateSymbolSize(Symbol *s)
 	case RECORD_T:
 		return 0;
 	case SCALAR_T:
+	{	
 		return calculateScalarSize(s);
+	}	
 	case SUBRANGE_T:
 		return calculateSubrangeSize(s);
 	case VOID_T:
