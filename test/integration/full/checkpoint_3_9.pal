@@ -3,7 +3,100 @@
 {
 	Team YACC Checkpoint 3 Test 9
 	Anything-goes test. No limit on number of errors.
+
+	Tests procedures called within procedure.
 }
 program test(input, output);
+
+var 
+	x: integer;
+procedure a();
+	var i: integer;
+	
+	procedure b();
+		var i: integer;
+
+procedure c();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure d();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure e();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure f();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure g();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	c();
+	d();
+	e();
+	f();
+	g();
+	end;
+
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure c();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure d();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure e();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure f();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
+	procedure g();
+		var i: integer;
+	begin
+		i := 10 + 10;
+	end;
+
 begin
+	i:= 10 + 10;
+	b();
+	c();
+	d();
+	e();
+	f();
+	g();
+end;
+
+begin
+     
+
+
 end.
