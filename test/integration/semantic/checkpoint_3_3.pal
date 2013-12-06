@@ -1,10 +1,34 @@
-{}
+{22,24,33}
 
 {
 	Team YACC Checkpoint 3 Test 3
 	Must test semantic errors only
 	Must contain a maximum of 3 errors
+
+	Tests scope of function names and parameters.
+
+	This test checks that function names and function parameters cannot
+	be the same. Also, that functions cannot be called with a parameter
+	of the same name as the function.
+	Errors:
+	Line 22: the parameter cannot have the same name as the function
+	Line 24: foo is already defined in the scope (the function name)
+	Line 33: cannot pass foo as an argument to foo()
 }
 program test(input, output);
+var
+	i : integer;
+	flag : Boolean;
+function foo(foo:integer; b:Boolean):integer;	// error
+const
+	foo = 12;				// error
 begin
+	if b then
+		foo := 12
+	else
+		foo := 15;
+end;
+begin
+	flag := false;
+	i := foo(foo, flag);			// error
 end.
