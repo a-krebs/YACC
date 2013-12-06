@@ -1,10 +1,52 @@
 {}
-
 {
 	Team YACC Checkpoint 3 Test 0
 	Must test semantic errors only
 	Must contain a maximum of 3 errors
+
+	This test contains no errors. It is intended to test semantics of
+	array types.
 }
 program test(input, output);
+const
+	bar = 'Shorter string';
+	foo = 'Shorter string';
+
+type
+	string = array[0..9] of char;
+	colours = (red,green,blue);
+	Dog = (poodle,germanShep,littleYappyOne);
+	dog = array[Dog] of integer;
+	intArray = array[1..10]of integer;
+	//supDog = array[poodle..germanShep] of char;
+	alpha = array[char] of char;
+	list2 = array[2..20] of colours;
+	list3 = array[colours] of integer;
+var
+	d : list2;
+	c: intArray;
+	a: integer;
+	s: string;
+	res : Boolean;
+	//whats : supDog;
+	w : list3;
+procedure testProc(a:integer; c:intArray);
 begin
+	c[0]:= a;
+end;
+function testStrAssign(s:string;d:string):Boolean;
+begin
+	d := s;
+	testStrAssign := true;
+end;
+begin
+	testProc(a,c);
+	a := 10;
+	testProc(a,c);
+	res := testStrAssign(s,s);
+	if res then a := 12 else a := 13;
+	//whats[poodle] := 'a';
+	d[3] := green;		
+	w[red] := 45;
+	if bar = foo then writeln('eh');
 end.
