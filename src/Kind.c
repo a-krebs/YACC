@@ -294,3 +294,19 @@ copyConstVal(AnonConstVal *newacl, AnonConstVal * acl, type_t type)
 	}	
 
 }
+int isInvocInstance(Symbol *x){
+	return x->kindPtr.FuncKind->invocationInstance;
+}
+
+int areKindCompat(Symbol *x, Symbol *y){
+
+	if ((x->kind == VAR_KIND) && (y->kind == FUNC_KIND)) {
+		if (!isInvocInstance(y)){
+			return 0;
+		}
+	} else if ((x->kind == TYPE_KIND) && (x->isAddress != 1)) {
+		return 0;
+	}
+	
+	return 1;
+}

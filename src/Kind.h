@@ -102,4 +102,17 @@ void setSimpleConstVal(Symbol *, double);
  * Return: void
  */
 void copyConstVal(AnonConstVal *, AnonConstVal *, type_t);
+/*
+ * Determine whether we call the function by its name only or 
+ *
+ *
+ */
+int isInvocInstance(Symbol *);
+/*
+ *
+ *
+ *
+ */
+int areKindCompat(Symbol *, Symbol *);
+
 #endif
