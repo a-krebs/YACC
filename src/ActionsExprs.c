@@ -666,6 +666,15 @@ calcSub(ProxySymbol *x, ProxySymbol *y){
 
 double
 calcDivide(ProxySymbol *x, ProxySymbol *y){
+	
+	if((double)getSimpleConstVal(y) == 0.0){
+		errMsg = customErrorString("DIVIDE operation error:"
+		" Denominator has the value of zero."
+		"\n");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		err(EXIT_FAILURE,"Arithmetic Overflow Exception");
+	}
+	
 	return (double)(getSimpleConstVal(x)) / 
 	(double)(getSimpleConstVal(y));
 }
@@ -673,6 +682,15 @@ calcDivide(ProxySymbol *x, ProxySymbol *y){
 
 int
 calcDiv(ProxySymbol *x, ProxySymbol *y){
+	
+	if((double)getSimpleConstVal(y) == 0.0){
+		errMsg = customErrorString("DIV operation error:"
+		" Denominator has the value of zero."
+		"\n");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		err(EXIT_FAILURE,"Arithmetic Overflow Exception");
+	}
+
 	int val = (double)(getSimpleConstVal(x)) / 
 	(double)(getSimpleConstVal(y));
 	
@@ -689,6 +707,15 @@ calcMult(ProxySymbol *x, ProxySymbol *y){
 
 double
 calcMod(ProxySymbol *x, ProxySymbol *y){
+
+	if((int)getSimpleConstVal(y) == 0){
+		errMsg = customErrorString("MOD operation error:"
+		" Cannot MOD the value of zero."
+		"\n");
+		recordError(errMsg, yylineno, colno, SEMANTIC);
+		err(EXIT_FAILURE,"Arithmetic Overflow Exception");
+	}
+
 	return (int)(getSimpleConstVal(x)) % 
 	(int)(getSimpleConstVal(y));
 }
