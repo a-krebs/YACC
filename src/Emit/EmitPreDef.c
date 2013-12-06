@@ -149,7 +149,7 @@ static void emitWrite(Symbol *s, struct ElementArray *args)
 	
 		} else if (arg->kind == CONST_KIND) {
 
-			emitPushConstValue(s);
+			emitPushConstValue(arg);
 
 		} else if (arg->kind == TYPE_KIND) {
 			emitComment("Walking expression tree to get correct "
@@ -187,8 +187,6 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 	for (i = 0; i < args->nElements; i++) {
 		arg = ((struct treeNode *)getElementAt(args, i))->symbol;
 
-		emitComment("Got %s as arg", arg->name);
-	
 		if (!arg) return;
 
 		if (arg->kind == VAR_KIND) {
@@ -197,7 +195,7 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 	
 		} else if (arg->kind == CONST_KIND) {
 
-			emitPushConstValue(s);
+			emitPushConstValue(arg);
 
 		} else if (arg->kind == TYPE_KIND) {
 			emitComment("Walking expression tree to get correct "
@@ -248,6 +246,13 @@ static void emitIOCall(char *proc, Symbol *arg)
 		emitStmt(STMT_LEN, "CALL 0, %s", proc);
 		emitStmt(STMT_LEN, "ADJUST -1");
 		break;
+	case STRING_T:
+		emitComment("Push size of string");
+		emitStmt(STMT_LEN, "CONSTI %d", 
+		    getConstVal(arg)->String.strlen);
+		emitStmt(STMT_LEN, "CALL 0, %s", proc);
+		emitComment("Kick params off the stack.");
+		emitStmt(STMT_LEN, "ADJUST -2");
 	default:
 		break;
 	}
