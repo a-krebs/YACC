@@ -41,8 +41,9 @@ Shihao Xu <shihao1@ualberta.ca>
 
 .SH BUGS
 
-Further, the argument [-a] does nothing, since compiling to ASC is not
-supported yet.
+The current version has severe memory leaks to do the symbol table.
+Recursive function calls are not supported.
+String literals with invalid escape sequences cause over-reporting of other errors
 
 .SH SEE ALSO
 yacc(1), bison(1), flex(1)
