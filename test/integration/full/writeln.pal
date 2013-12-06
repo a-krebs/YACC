@@ -1,0 +1,7 @@
+{}
+program testWriteln(in, out);
+var
+	a : integer;
+begin
+	writeln(a);
+end.
