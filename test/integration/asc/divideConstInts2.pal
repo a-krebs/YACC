@@ -1,0 +1,7 @@
+program test(input, output);
+var	
+	i: integer;
+begin
+	i := 10 div 5;
+end.
+
