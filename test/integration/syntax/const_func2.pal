@@ -1,0 +1,12 @@
+{4,7}
+program constTest(input, output);
+const
+	foo = funcCall();
+procedure bar( i : integer);
+const
+	baz = funcCall();
+	buttons = 1;
+begin
+end;
+begin
+end.
