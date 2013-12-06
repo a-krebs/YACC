@@ -1,0 +1,34 @@
+program test(input, output);
+var	
+	b: boolean;
+	i1 : integer;
+	i2 : integer;
+	r1 : real;
+	r2 : real;
+begin
+	i1:= 20;
+	i2:= 50;
+
+	r1:= 1.963;
+	r2:= 200.111;
+
+	b := i1 = i2;
+	b := i1 <> i2;
+	b := i1 < i2;
+	b := i1 > i2;
+	b := i1 <= i2;
+	b := i1 >= i2;
+
+	b := r1 = r2;
+	b := r1 <> r2;
+	b := r1 < r2;
+	b := r1 > r2;
+	b := r1 <= r2;
+	b := r1 >= r2;
+	
+
+	b := i1 = r2;
+	b := r2 = i1;
+
+end.
+

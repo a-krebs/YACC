@@ -26,7 +26,7 @@ static void emitRelationalSimpleTypeConversion(Symbol *x, Symbol *y,
 		/* No conversion to make */
 		*opType = INTEGER_OPERATION;	
 
-	} else if ((getType(x) == SCALARINT_T) && (getType(y) == SCALARINT_T)) {
+	} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
 
 		/* No conversion to make */
 		*opType = INTEGER_OPERATION;
@@ -71,7 +71,7 @@ static void emitRelationalOperandValue(Symbol *x)
 		 * a value */
 		emitPushAddressValue(x);
 
-	} else if (x->kind == CONST_KIND) {
+	} else if (x->kind == CONST_KIND && !isConstResultSym(x) ) {
 
 		emitPushSymbolValue(x);
 	
@@ -100,7 +100,8 @@ static void emitRelationalPrep(Symbol *x, Symbol *y, int *opType)
 	emitRelationalOperandValue(x);
 	emitRelationalOperandValue(y);
 
-	if ( (x->kind == CONST_KIND) && (y->kind == CONST_KIND) ) {
+	if ( ( x->kind == CONST_KIND && isConstResultSym(x) )
+		&&  ( y->kind == CONST_KIND && isConstResultSym(y) ) ) {
 		/* Both LHS and RHS operand consts => we have evaluated the
 		 * expr at the semantic level */
 		*opType = NO_OP;

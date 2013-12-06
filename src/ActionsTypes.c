@@ -209,9 +209,9 @@ Symbol *assertArrIndexType(Symbol *index_type) {
 	if (index_type->kind != TYPE_KIND) return NULL;
 
 	sym_t = getType(index_type);
-	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
-		errMsg = customErrorString("Invalid array index type %s. "
-		    " Must be of type SUBRANGE or of type SCALAR", 
+	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) &&
+	    (sym_t != CHAR_T) && (sym_t != BOOLEAN_T) ) {
+		errMsg = customErrorString("Invalid array index type %s. ",
 		    typeToString(sym_t));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
