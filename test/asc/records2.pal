@@ -1,0 +1,14 @@
+program test(input, output);
+type
+        Books = record
+           title: array [1..10] of char;
+           rate: char;
+           id: integer
+        end;
+var 
+   	book : Books;
+        c : char;
+begin
+        book.title := 'mybookisaw';
+        writeln(book.title);
+end.

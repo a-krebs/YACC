@@ -4,9 +4,189 @@
 	Team YACC Checkpoint 3 Test 4
 	Must be a correct PAL program that compiles to ASC
 
-	Describe what this program does and what parts of the compiler
-	it is supposed to test.
+	This program has no errors in it and should compile and run
+	successfully. This program is to test operators on varius types.
 }
 program test(input, output);
+var	
+	b: Boolean;
+	i1 : integer;
+	i2 : integer;
+	r1 : real;
+	r2 : real;
+	r: real;
+	i: integer;
+	b2: Boolean;
+	b3: Boolean;
+	a, c, d: integer;
+	x, y, z: real;
 begin
+	b := 5 = 10;
+	b := 5 <> 10;
+	b := 5 < 10;
+	b := 5 > 10;
+	b := 5 <= 10;
+	b := 5 >= 10;
+
+	b := 5.693 = 10.999;
+	b := 5.693 <> 10.999;
+	b := 5.693 < 10.999;
+	b := 5.693 > 10.999;
+	b := 5.693 <= 10.999;
+	b := 5.693 >= 10.999;
+
+	i1:= 20;
+	i2:= 50;
+
+	r1:= 1.963;
+	r2:= 200.111;
+
+	b := i1 = i2;
+	b := i1 <> i2;
+	b := i1 < i2;
+	b := i1 > i2;
+	b := i1 <= i2;
+	b := i1 >= i2;
+
+	b := r1 = r2;
+	b := r1 <> r2;
+	b := r1 < r2;
+	b := r1 > r2;
+	b := r1 <= r2;
+	b := r1 >= r2;
+	
+	b := i1 = r2;
+	b := r2 = i1;	
+
+	b := 5 = 10;
+	b := 5 <> 10;
+	b := 5 < 10;
+	b := 5 > 10;
+	b := 5 <= 10;
+	b := 5 >= 10;
+
+	b := 5.693 = 10.999;
+	b := 5.693 <> 10.999;
+	b := 5.693 < 10.999;
+	b := 5.693 > 10.999;
+	b := 5.693 <= 10.999;
+	b := 5.693 >= 10.999;
+
+	r := 13.1 * 2.5;
+	i := 5 * 10;
+	i := 5 mod 10;
+	r := 13.1 - 2.5;
+	i := 5 - 10;
+	r := 13.1 / 2.5;
+	i := 10 div 5;
+	i := 5 div 10;
+	r := 13.1 + 2.5;
+	i := 5 + 10;
+
+	i := 1 + 10;
+	i := 2 + 10;
+	i := 3 + 10;
+	i := 4 + 10;
+	i := 5 + 10;
+	i := 1 + 13;
+	i := 45 + 15;
+	i := 57 + 77;
+	i := 5 + 234;
+	i := 3454 + 324545;
+	i := 34564 + 23434;
+
+
+	b := true and true;
+	b := true and false;
+	b := false and true;
+	b := false and false;
+
+	b := true or true;
+	b := true or false;
+	b := false or true;
+	b := false or false;
+
+	b := false or false or true;
+	b := false and false or true;
+	b := true and true or true;
+
+	b2 := true;
+	b3 := false;
+
+	b := b2;
+	b := b3;
+
+	b := b2 and b2 and b2 and b2;
+	b := b2 and b2 and b2 and b2 or b3;
+	b := b2 and b;
+	
+	b := b;
+	b := not b;
+
+	b := not (b2 and b2 and b2);
+	b := not (not (not (not b)));
+
+	//INTEGERS
+	a := 10;
+	d := 5;
+	c := 1;
+
+	x := 10.0;
+	y := 1.585;
+	z := 9.3698;
+
+	i := a + d;
+	i := a + d + c;
+
+	i := a div d;
+	i := a div d div c;
+
+	r := a / d;
+	r := a / d / c;	
+
+	i := a * d;
+	i := a * d * c;
+
+	i := a - d;
+	i := a - d - c;
+
+	//REALS
+	r := x + y;
+	r := x + y + z;
+
+	r := x - y;
+	r := x - y - z;	
+
+	r := x / y;
+	r := x / y / z;	
+
+	r := x * y;
+	r := x * y * z;	
+
+	//INTEGER MOD, BECAUSE FUCK BACKING UP IN ASC
+	i := a mod d;
+	i := (a mod d) mod c;
+
+	//BOTH INTEGERS AND REALS
+	r := a + x;
+	r := a + x + a;
+	r := a + a + a + a + a;
+
+	//UNARY , 30 next
+	i := -a;
+	i := -a + (-a);
+	i := -a + (+a);
+	i := +a + (-a);
+	i := +a + (+a) + (+a);
+
+	r := -a;
+	r := -a + (-a);
+	r := -a + (+a);	
+
+	i := -(a + 10 * d);
+	i := -(a * 10 + d);	
+	r := -(x * y + z);
+	r := -(x * y + (+z));	
+
 end.
+

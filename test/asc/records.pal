@@ -1,0 +1,42 @@
+program test(input, output);
+type
+        Books = record
+           title: char;
+           boo: char;
+           id: integer
+        end;
+
+        MegaRecord = record
+                b: Boolean;
+                i1 : integer;
+                i2 : integer;
+                r1 : real;
+                r2 : real;
+                r: real;
+                i: integer;
+                b2: Boolean;
+                b3: Boolean;
+                a : integer;
+                c : integer;
+                d : integer;
+                x : real;
+                y : real;
+                z : real
+        end;
+var 
+   	book : Books;
+        c : char;
+
+begin
+        book.boo := 'F';
+	book.title := 'w';
+       // book.id := 123;
+
+        //writeln(book.id);
+        //writeln(book.boo);
+        //writeln(book.title);
+
+        book.boo := book.title;
+        writeln(book.boo);
+        writeln(book.title);
+end.

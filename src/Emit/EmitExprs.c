@@ -418,18 +418,13 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	if (y->isAddress) {
 		emitComment("Value of y is address, convert to actual value");
 		emitPushAddressValue(y);
-	}
-
-	// TODO : factor the two conditionals below out into its own function
-	if (y->kind == VAR_KIND) {
+	} else if (y->kind == VAR_KIND) {
 		emitComment("RHS of assignment operation is a single variable "
 		    "value.");
 		emitComment("So we push its value now as it was not pushed "
 		    "before.");
 		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl);
-	}
-
-	if ( (y->kind == CONST_KIND) && !isConstResultSym(y)) {
+	} else if ( (y->kind == CONST_KIND) && !isConstResultSym(y)) {
 		emitComment("RHS of assignment operation is a const, so its "
 		    "value was not");
 		emitComment("pushed before.  So, we push it now.");
