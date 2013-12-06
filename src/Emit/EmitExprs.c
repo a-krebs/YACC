@@ -378,6 +378,10 @@ void emitArrayAssignment(Symbol *x, Symbol *y)
 	 	} else { 
  			emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl); 
 		}
+
+	}
+	else if ( !isConstResultSym(y) && y->kind == CONST_KIND ) {
+		emitPushSymbolValue(y);
 	}
 	emitComment("Calling pre-defined function __do_array_assignment");
 	emitComment("First, we place the array size on the stack.");

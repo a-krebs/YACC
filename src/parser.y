@@ -213,9 +213,13 @@ proc_decl
 
 proc_heading
 : PROCEDURE proc_heading_proc
-	{ $<symbol>$ = $<symbol>2; } 
+	{ $<symbol>$ = $<symbol>2;
+	  inDecl = 1;
+	} 
 | FUNCTION proc_heading_func
-	{ $<symbol>$ = $<symbol>2; } 
+	{ $<symbol>$ = $<symbol>2;
+	  inDecl = 1;
+	} 
 ;
 
 proc_heading_proc
