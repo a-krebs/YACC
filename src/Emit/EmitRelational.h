@@ -18,6 +18,8 @@
 #define INTEGER_OPERATION 0
 #define REAL_OPERATION 1
 #define STRUCTURED_OPERATION 2
+#define SCALAR_OPERATION 3
+
 
 void emitEqualsOp(Symbol *, Symbol *);
 void emitInequalityOp(Symbol *, Symbol *);
