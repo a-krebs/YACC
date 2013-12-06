@@ -21,7 +21,7 @@ int isValidIOProcInvocation(Symbol *s, struct ElementArray *ea);
 ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea);
 
 
-Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType);
+Symbol *getPreDefFuncReturnType(Symbol *s, Symbol *argType);
 
 
 Symbol *paramToVar(Symbol * param);

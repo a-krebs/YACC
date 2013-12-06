@@ -26,7 +26,6 @@ __factorial_loop	PUSH -3[0]	# push n onto stack
 			PUSH -3[0]	# push n-1 onto stack
 			PUSH 0[0]	# push tmp onto stack
 			MULR		# top of stack <-- tmp * (n - 1)
-			IFERR __arithmetic_error
 			# TODO: add test for > maxint, set run-time error 
 			POP 0[0]	# tmp <-- tmp * (n - 1)
 			GOTO __factorial_loop
@@ -37,4 +36,9 @@ __factorial_done	PUSH 0[0]	# push tmp onto stack
 			ADJUST -1	# kick local vars off stack
 			GOTO __factorial_ret
 
-__factorial_ret		RET 0
+__factorial_ret		PUSH -4[0]
+			WRITER
+			CONSTI 10
+			WRITEC
+			STOP		
+			RET 0

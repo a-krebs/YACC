@@ -70,8 +70,11 @@ Symbol *createArrayTypeSymbol(
 Symbol *createScalarListTypeSymbol(
     char *id, int typeOriginator, struct ElementArray *scalars)
 {
+	int i = 0;
 	Symbol *symbol = NULL;
+	Symbol *tmpConstSym = NULL;
 	struct TypeKind *kindPtr = NULL;
+
 	if (scalars == NULL) {
 		err(EXIT_FAILURE, "Trying to make a new scalar list type "
 		    "with empty list. This should be caught further up in "
@@ -85,6 +88,13 @@ Symbol *createScalarListTypeSymbol(
 	kindPtr->type = SCALAR_T;
 	kindPtr->typePtr.Scalar = newScalar(scalars);
 
+	/* now set all scalar list members to be the same type */
+	for (i = 0; i < scalars->nElements; i++) {
+		tmpConstSym = getElementAt(scalars, i);
+		if (tmpConstSym == NULL) continue;
+
+		setInnerTypeSymbol(tmpConstSym, symbol);
+	}
 	return symbol;
 }
 
@@ -353,8 +363,8 @@ Symbol *newTypeSymFromSym(char *id, Symbol *typeSym) {
  * 	pointer to new symbol with kind TYPE_KIND and kindPtr type ARRAY_T
  */
 Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
-	Symbol *newArraySym = NULL;
-
+	Symbol *newArraySym = NULL, *lowSym, *highSym, *index;
+	int low, high;
 	if ((!baseTypeSym) || (!indexTypeSym)) {
 		errMsg = customErrorString("Cannot define array. "
 		    "Base type or index type incorrect or undefined.");
@@ -369,17 +379,45 @@ Symbol *newAnonArraySym(Symbol *baseTypeSym, Symbol *indexTypeSym) {
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
-	if ((getType(indexTypeSym) != SCALAR_T) &&
-	    (getType(indexTypeSym) != SUBRANGE_T)) {
+	if (((getType(indexTypeSym)) != SCALAR_T) 	&&
+	    ((getType(indexTypeSym)) != SUBRANGE_T) 	&&
+	    ((getType(indexTypeSym))!= BOOLEAN_T)	&&
+	    ((getType(indexTypeSym)) != CHAR_T)) {
 		errMsg = customErrorString("Trying to index array using non-"
 		    "index type %s", typeToString(getType(indexTypeSym)));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
 	}
 
+
+	switch (getType(indexTypeSym)) {
+	case BOOLEAN_T:
+		low = 0;
+		lowSym = newConstProxySym(NULL, &low, 
+		    getTypeSym(indexTypeSym));
+		high = 1;
+		highSym = newConstProxySym(NULL, &high, 
+		    getTypeSym(indexTypeSym));
+		/* TODO: memory leak */
+		index = newSubrangeSym(lowSym, highSym);
+		break;
+	case CHAR_T:
+		low = 0;
+		lowSym = newConstProxySym(NULL, &low,
+		    getTypeSym(indexTypeSym));
+		high = 255;
+		highSym = newConstProxySym(NULL, &high,
+		    getTypeSym(indexTypeSym));
+		index = newSubrangeSym(lowSym, highSym);
+		break;
+	default:
+		index = indexTypeSym;
+		break;	
+	}
+
 	/* create with no name and set as type originator */
 	newArraySym = createArrayTypeSymbol(
-	     NULL, TYPEORIGINATOR_YES, baseTypeSym, indexTypeSym);
+	     NULL, TYPEORIGINATOR_YES, baseTypeSym, index);
 	if (!newArraySym) {
 		err(EXIT_FAILURE, "Failed to allocate memory for new array!");
 	}

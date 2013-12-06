@@ -71,11 +71,21 @@ struct ElementArray *appendToScalarListType(struct ElementArray *ea,
 		alreadyDefinedError(id);
 		return NULL;
 	}
-	s = (Symbol *) newConstProxySym(id, &ea->nElements, 
+
+	/*
+	 * We set the type to integer here, but it will change to
+	 * the parent scalar list type once the
+	 * parent type is defined further up in the grammar
+	 */
+	s = (Symbol *) newConstProxySym(id, &ea->nElements,
 	    getPreDefInt(preDefTypeSymbols));
-	s->lvl = getCurrentLexLevel(symbolTable);
-	addToSymbolTable(symbolTable, s);
+	
+	if (addToSymbolTable(symbolTable, s) != 0) {
+		symbolTableInsertFailure();
+	}
+
 	appendElement(ea, s);
+	
 	return ea;
 }
 
@@ -108,6 +118,11 @@ struct ElementArray * createScalarList(char *id) {
 		return NULL;
 	}
 
+	/*
+	 * We set the type to integer here, but it will change to
+	 * the parent scalar list type once the
+	 * parent type is defined further up in the grammar
+	 */
 	s = (Symbol *) newConstProxySym(
 	    id, &value, getPreDefInt(preDefTypeSymbols));
 
@@ -194,9 +209,9 @@ Symbol *assertArrIndexType(Symbol *index_type) {
 	if (index_type->kind != TYPE_KIND) return NULL;
 
 	sym_t = getType(index_type);
-	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) ) {
-		errMsg = customErrorString("Invalid array index type %s. "
-		    " Must be of type SUBRANGE or of type SCALAR", 
+	if ( (sym_t != SUBRANGE_T) && (sym_t != SCALAR_T) &&
+	    (sym_t != CHAR_T) && (sym_t != BOOLEAN_T) ) {
+		errMsg = customErrorString("Invalid array index type %s. ",
 		    typeToString(sym_t));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return NULL;
