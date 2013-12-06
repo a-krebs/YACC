@@ -17,6 +17,10 @@ void emitIfStat(Symbol *s) {
 	/* reserve labels for THEN and ELSE */
 	reserveLabels(labelStack, 2);
 
+	if (! (s->kind == CONST_KIND && isConstResultSym(s))) {
+		emitPushSymbolValue(s);
+	}
+
 	emitComment("IF expr THEN. If 'expr' is false skip to %s%d",
 	    LABEL_PREFIX, peekLabelStackTop(labelStack));
 	emitStmt(STMT_LEN, "IFZ %s%d", 
@@ -97,6 +101,10 @@ void emitBeginWhile() {
 void emitWhileLoopCondCheck(Symbol *s) {
 	/* we don't have a symbol pointer, so just pass in non-null */
 	CHECK_CAN_EMIT(s);
+
+	if (! (s->kind == CONST_KIND && isConstResultSym(s))) {
+		emitPushSymbolValue(s);
+	}
 
 	emitComment("If expr is false, skip loop body");
 	emitStmt(STMT_LEN, "IFZ %s%d",
