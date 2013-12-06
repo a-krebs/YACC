@@ -542,8 +542,10 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	switch (opToken) {
 	case EQUAL:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
-		
 			setSimpleConstVal(ps,(double)doStrEqCmp(x,y));
+		} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
+			// SCALAR EQUAL
+			setSimpleConstVal(ps,(double)doScalarEqCmp(x,y));
 		} else {
 			setSimpleConstVal(ps, (double)doEqCmp(x,y));
 		}
@@ -552,6 +554,9 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	case NOT_EQUAL:	
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 			setSimpleConstVal(ps,(double)!doStrEqCmp(x,y));
+		} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
+			// SCALAR NOT EQUAL
+			setSimpleConstVal(ps,(double)doScalarNotEqCmp(x,y));
 		} else {
 			setSimpleConstVal(ps, (double)doNotEqCmp(x,y));
 		}
@@ -562,6 +567,9 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 			/* x str is less or equal y str */
 			intVal = (doStrLessCmp(x,y) || doStrEqCmp(x,y));
 			setSimpleConstVal(ps,(double)intVal);
+		} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
+			// lESSS OR EQUAL
+			setSimpleConstVal(ps,(double)doScalarLessOrEqCmp(x,y));
 		} else {
 			setSimpleConstVal(ps, (double)doLessOrEqCmp(x,y));
 		}
@@ -570,6 +578,9 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	case LESS:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 			setSimpleConstVal(ps,(double)doStrLessCmp(x,y));
+		} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
+			// lESS
+			setSimpleConstVal(ps,(double)doScalarLessCmp(x,y));
 		} else {
 			setSimpleConstVal(ps,(double)doLessCmp(x,y));
 		}
@@ -579,7 +590,10 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 			/* x str is greater or equal y str */
 			intVal = (doStrGtCmp(x,y) || doStrEqCmp(x,y));
-			setSimpleConstVal(ps,(double)intVal);	
+			setSimpleConstVal(ps,(double)intVal);
+		} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
+			// GREATER_OR_EQUAL
+			setSimpleConstVal(ps,(double)doScalarGtOrEqCmp(x,y));	
 		} else {
 			setSimpleConstVal(ps,(double)doGtOrEqCmp(x,y));
 		}
@@ -588,6 +602,9 @@ constCalc(ProxySymbol *ps, ProxySymbol *x, int opToken, ProxySymbol *y) {
 	case GREATER:
 		if ((getType(x) == STRING_T) && (getType(y) == STRING_T)) {
 			setSimpleConstVal(ps,(double)doStrGtCmp(x,y));
+		} else if ((getType(x) == SCALAR_T) && (getType(y) == SCALAR_T)) {
+			// GREATER
+			setSimpleConstVal(ps,(double)doScalarGtCmp(x,y));	
 		} else {
 			setSimpleConstVal(ps,(double)doGtCmp(x,y));
 		}
@@ -874,6 +891,78 @@ doStrGtCmp(ProxySymbol *x, ProxySymbol *y){
 	return 0;
 }
 
+
+int 
+doScalarEqCmp(ProxySymbol *x, ProxySymbol *y) {
+	int low = x->kindPtr.ConstKind->value.Integer.value;
+	int high = y->kindPtr.ConstKind->value.Integer.value;
+	
+	if(low == high ){
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+int doScalarNotEqCmp(ProxySymbol *x, ProxySymbol *y) {
+	int low = x->kindPtr.ConstKind->value.Integer.value;
+	int high = y->kindPtr.ConstKind->value.Integer.value;
+
+	if ( low != high ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+int doScalarGtCmp(ProxySymbol *x, ProxySymbol *y) {
+	int low = x->kindPtr.ConstKind->value.Integer.value;
+	int high = y->kindPtr.ConstKind->value.Integer.value;
+
+	if ( low > high ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+int doScalarGtOrEqCmp(ProxySymbol *x, ProxySymbol *y) {
+	int low = x->kindPtr.ConstKind->value.Integer.value;
+	int high = y->kindPtr.ConstKind->value.Integer.value;
+
+	if ( low >= high ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+int doScalarLessCmp(ProxySymbol *x, ProxySymbol *y) {
+	int low = x->kindPtr.ConstKind->value.Integer.value;
+	int high = y->kindPtr.ConstKind->value.Integer.value;
+	
+	if ( low < high ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+
+int doScalarLessOrEqCmp(ProxySymbol *x, ProxySymbol *y) {
+	int low = x->kindPtr.ConstKind->value.Integer.value;
+	int high = y->kindPtr.ConstKind->value.Integer.value;
+
+	if ( low <= high ) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
 
 /*
  * Compare that the given types are compatible when using the given
