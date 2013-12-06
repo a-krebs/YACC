@@ -1,10 +1,67 @@
-{}
+{58,64}
 
 {
 	Team YACC Checkpoint 3 Test 1
 	Must test semantic errors only
-	Must contain a maximum of 3 errors
+	Must contain a maximum of 3 errors.
+
+	This test checks that pre-defined functions return the correct types.
+	It is mostly a repeat of our checkpoint 2 test 2.
+	Errors are on lines:
+	58: pred(Boolean) and succ(Boolean) should return a Boolean,
+	which is not assignment compatible with integer
+	?
 }
 program test(input, output);
+type
+	colours = (red, green, blue);
+var
+	r : real;
+	i : integer;
+	b : Boolean;
+	c : colours;
+	ch : char;
 begin
+	r := abs(r);
+	i := abs(i);
+	r := abs(i);
+	
+	r := sqr(r);
+	i := sqr(i);
+	r := sqr(r);
+
+	r := sin(r);
+	r := sin(i);
+	r := sin(r);
+
+	r := exp(r);
+	r := exp(i);
+
+	r := ln(r);
+	r := ln(i);
+
+	r := sqrt(r);
+	r := sqrt(i);
+
+	i := trunc(r);
+	r := trunc(r);
+
+	i := round(r);
+	r := round(r);
+
+	i := ord(b);
+
+	b := succ(b);
+	ch := succ(ch);
+	c := succ(c);
+
+	i := succ(b);	// error
+
+	b := pred(b);
+	ch := pred(ch);
+	c := pred(c);
+
+	i := pred(ch);	// error
+
+	b := odd(i);
 end.
