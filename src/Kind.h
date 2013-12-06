@@ -124,6 +124,6 @@ int isInvocInstance(Symbol *);
  *	Returns: 1 if two sym are compatible
  *			 0 if not
  */
-int areKindCompat(Symbol *, Symbol *);
+int areKindAssignCompat(Symbol *, Symbol *);
 
 #endif
