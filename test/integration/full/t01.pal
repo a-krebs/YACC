@@ -56,14 +56,14 @@ type
 	index 		= array[12..100] of integer;
 	segment 	= array[1..4] of in;
 	quad 		= array[4..8] of i;
-	outcome 	= boolean;
-	legal		= array[5..6] of boolean;
+	outcome 	= Boolean;
+	legal		= array[5..6] of Boolean;
 	negarray	= array[-50..-1] of int;
 	
 	member		= record
 					id : int;
 					address : string;
-					married : boolean;
+					married : Boolean;
 					purchases : index
 				  end;
 
@@ -100,10 +100,10 @@ var
 	a,b,int1,int2,huge 	: integer;
     c,d,r1,r2          	: real;
     e,f             	: char;
-    g,h,result        	: boolean;
+    g,h,result        	: Boolean;
     j,k             	: record
                       		sum : integer; sum2 : real;
-                      		indexed : boolean
+                      		indexed : Boolean
                     	  end;
     long            	: array[1..25] of real;
     short,small     	: array[1..5] of real;
@@ -138,7 +138,7 @@ begin
 end;
 
 { Totally usless function to test nested control structures, continue and exit statements }
-function ControlFlow() : boolean;
+function ControlFlow() : Boolean;
 begin
 	if watts >= 10 then
 	  begin
@@ -193,7 +193,7 @@ begin
     short2[2] := l[3];
 end;
 
-procedure ton ( e : integer; f : int; g : five; h : cart; i : rl; j : boolean; k : string);
+procedure ton ( e : integer; f : int; g : five; h : cart; i : rl; j : Boolean; k : string);
 begin
     str := k;
     h.item := e;

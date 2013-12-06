@@ -11,7 +11,7 @@ program test0(input, output);
 var
 	r : real;
 	i : integer;
-	b : boolean;
+	b : Boolean;
 procedure foo();
 	function abs(i : integer) : integer;
 	begin
