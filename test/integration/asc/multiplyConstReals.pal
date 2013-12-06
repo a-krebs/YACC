@@ -1,0 +1,7 @@
+program test(input, output);
+var	
+	r: real;
+begin
+	r := 13.1 * 2.5;
+end.
+

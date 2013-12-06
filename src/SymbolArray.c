@@ -167,7 +167,7 @@ Symbol *getArrayBaseSym(Symbol *s)
  */
 int getArrayLength(Symbol *s)
 {
-	return (getArrayHighIndexValue(s) - getArrayLowIndexValue(s));
+	return (getArrayHighIndexValue(s) - getArrayLowIndexValue(s))+1;
 }
 
 /*

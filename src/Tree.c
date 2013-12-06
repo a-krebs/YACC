@@ -50,25 +50,46 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 		break;
 	case PLUS:
 	{
-		if ( (!x) || (!y) ) ; //emit unary plus
-		else emitAddition(x, y);
+		if ( (!x) || (!y) ) {
+			if (!x) {
+				emitUnaryPlus(y);
+			}
+			else {
+				emitUnaryPlus(x);
+			}
+		}
+		else {
+			emitAddition(x, y);
+		}
 		break;
 	}
 	case MINUS:
 	{
-		if ( (!x) || (!y) ) ; //emit unary minus
-		else emitSubtraction(x, y);
+		if ( (!x) || (!y) ) {
+			if (!x) {
+				emitUnaryMinus(y);
+			}
+			else {
+				emitUnaryMinus(x);
+			}
+		}
+		else {
+			emitSubtraction(x, y);
+		}
 		break;
 	}
 	case OR:
 		emitOr(x, y);
 		break;
 	case DIVIDE:
-		emitDivision(x, y);
+		emitDivision(x, y, opToken);
 		break;
 	case DIV:
-		emitDivision(x, y);
+		emitDivision(x, y, opToken);
 		break;
+	case MULTIPLY:
+		emitMultiplication(x, y);
+		break;		
 	case MOD:
 		emitMod(x, y);
 		break;

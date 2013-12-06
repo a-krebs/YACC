@@ -21,7 +21,7 @@ int isValidIOProcInvocation(Symbol *s, struct ElementArray *ea);
 ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea);
 
 
-Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType);
+Symbol *getPreDefFuncReturnType(Symbol *s, Symbol *argType);
 
 
 Symbol *paramToVar(Symbol * param);
@@ -39,7 +39,8 @@ Symbol *paramToVar(Symbol * param);
 int isElementArraySimple(struct ElementArray *elementArray);
 
 
-int typeIsInValidArgs(Symbol *s, type_t type);
+int isArgTypeValidInPreDefFunc(Symbol *s, Symbol *arg);
 
+int isArgTypeValidInIOFunc(Symbol *s, Symbol *arg);
 
 #endif

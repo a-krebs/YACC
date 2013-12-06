@@ -21,6 +21,17 @@
 #include "EmitExprs.h"
 #include "EmitUtils.h"
 
+#ifdef TESTBUILD
+	#include "tokens.h"
+#else
+	#ifdef LEXTEST_DEBUG
+		#include "tokenTestParser.tab.h"
+	#else
+		#include "parser.tab.h"	/* token definitions used in operator compat checks */
+	#endif
+#endif
+
+
 #define ARITHMETIC_RESULT_INTEGER 0
 #define ARITHMETIC_RESULT_REAL 1
 
@@ -30,12 +41,12 @@ extern int doNotEmit;
 void emitAddition(Symbol *, Symbol *);
 void emitSubtraction(Symbol *, Symbol *);
 void emitMultiplication(Symbol *, Symbol *);
-void emitDivision(Symbol *, Symbol *);
+void emitDivision(Symbol *, Symbol *, int);
 void emitMod(Symbol *, Symbol *);
 void emitITOR(Symbol *);
 void emitRTOI(Symbol *);
 void genericArithConstruct(Symbol *, Symbol *, char *, 
-	char *, char *);
+	char *, char *, int);
 void emitArithmCheckAndComment(Symbol *, Symbol *, char *);
 
 

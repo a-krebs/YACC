@@ -14,9 +14,9 @@ typedef enum {
 	CHAR_T,
 	INTEGER_T,
 	REAL_T,
-	RECORD_T,	
+	RECORD_T,
+	SCALARINT_T,	
 	SCALAR_T,
-	SCALARINT_T,
 	STRING_T,
 	SUBRANGE_T,
 } type_t;

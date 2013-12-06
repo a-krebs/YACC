@@ -515,11 +515,9 @@ void setParamOffset(Symbol *s, struct ElementArray *params)
 	 * 	where size of s = 1 if s is passed by reference
  	 */
 	for (i = 0; i < params->nElements; i++) {
-		
 		param = getElementAt(params, i);
 		if (isByReference(param)) offset += 1;
 		else offset += param->size;
-		
 		if (strcmp(param->name, s->name) == 0) {
 			/* We found s in the parameter array */
 			break;	

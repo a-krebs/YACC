@@ -46,6 +46,7 @@ void procInvok(char *id, struct ElementArray *ea) {
 
 	if (isIOProc(s)) {
 		isValidIOProcInvocation(s, ea);
+		emitPreDefIO(s, ea);
 	} else {
 		// this prints errors, so call it but ignore return value
 		isValidProcInvocation(s, ea);
@@ -66,7 +67,7 @@ void procInvok(char *id, struct ElementArray *ea) {
  */
 struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 	struct treeNode *funcNode;
-	Symbol *s = NULL, *newNodeSym;
+	Symbol *s = NULL, *newNodeSym, *typeSym;
 	s = getGlobalSymbol(symbolTable, id);
 	
 	if (!s) {
@@ -79,8 +80,19 @@ struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isPreDefFunc(s)) {
-		/* Needs to be handled separately */
-		return createLeafNode(isValidPreDefFuncInvocation(s, argv));
+
+		typeSym = isValidPreDefFuncInvocation(s, argv);
+		if (typeSym) {
+			newNodeSym = newFuncSym(0, s->name, typeSym, argv);
+			newNodeSym->lvl = 0; 
+			newNodeSym->kindPtr.FuncKind->label =
+			    s->kindPtr.FuncKind->label;
+			newNodeSym->kindPtr.FuncKind->invocationInstance = 1;
+			funcNode = createLeafNode(newNodeSym);
+			funcNode->opToken = FUNCTION_INVOCATION;
+			return funcNode;
+		}
+		return createLeafNode(NULL);
 	}
 
 	if (isValidFuncInvocation(s, argv)) {
@@ -126,7 +138,6 @@ struct ElementArray *createArgList(struct treeNode *arg) {
 	appendElement(ea, arg);	
 	return ea;
 }
-
 
 /*
  * Concatenate two lists of arguments, maintaining order.

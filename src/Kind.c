@@ -294,3 +294,42 @@ copyConstVal(AnonConstVal *newacl, AnonConstVal * acl, type_t type)
 	}	
 
 }
+
+/*	Check whehter a function is invocked correctly by its name.
+ *	
+ *  Parameters: Symbol in function kind
+ * 	Return: 1: invocation is correct
+ *			0: invocation is wrong
+ */
+int isInvocInstance(Symbol *sym){
+	return sym->kindPtr.FuncKind->invocationInstance;
+}
+
+/* Ensure that the kind of the given sybmols are actually compatible with each other
+ * before assigning one to the other one.
+ * This function checks the following:
+ *		Assigning to a TYPE_KIND Symbol 
+ * areKindAssignCompat also be able to validate the correctness of function 
+ * inovaction by calling isInvocInstance(). (May need to refactor this later)
+ *
+ *	Parameters: Symbol x on LHS
+ *				Symbol y on RHS
+ *
+ *	Returns: 1 if two sym are compatible
+ *			 0 if not
+ */
+ 
+int areKindAssignCompat(Symbol *x, Symbol *y){
+
+	if ((x->kind == VAR_KIND) && (y->kind == FUNC_KIND)) {
+		if (!isInvocInstance(y)){
+			return 0;
+		}
+	}
+	
+	if ((x->kind == TYPE_KIND) && (x->isAddress != 1)) {
+		return 0;
+	}
+	
+	return 1;
+}

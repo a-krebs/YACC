@@ -167,7 +167,7 @@ int
 isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
-	type_t type,arrayBaseType;
+	type_t type;
 	int i, nArgs, valid = 1;
 
 	nArgs = ea->nElements;
@@ -176,14 +176,8 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 	for (i = 0; i < nArgs; i++) {
 		param = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		type = getType(param);
-		if (type == ARRAY_T) {
-			arrayBaseType = getType(getArrayBaseSym(param));
-			if(arrayBaseType == CHAR_T){
-				type = arrayBaseType;
-			}
-		}
-		if ( (type != CHAR_T) && (type != INTEGER_T) &&
-		    (type != REAL_T) && (type != STRING_T) ) {
+		
+		if (!isArgTypeValidInIOFunc(s, param)) {
 			errMsg = customErrorString("Invalid argument "
 			    "of type %s passed to procedure %s.",
 			    typeToString(type), s->name);
@@ -199,7 +193,7 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
-	type_t type;
+	Symbol * type;
 	int i = 0;
 	int nArgs = 0;
 
@@ -214,22 +208,22 @@ ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 	}
 	
 	param = ((struct treeNode *)getElementAt(ea, i))->symbol;
-	type = getType(param);
+	type = getTypeSym(param);
 	
-	if (typeIsInValidArgs(s, type)) {
+	if (isArgTypeValidInPreDefFunc(s, param)) {
 		return getPreDefFuncReturnType(s, type);
 			
 	} else {
 		errMsg = customErrorString("Function %s cannot be "
 		    "called with argument of type %s.", s->name,
-		    typeToString(type));
+		    typeToString(getType(type)));
 		recordError(errMsg, yylineno, colno, SEMANTIC);
 		return 0;
 	}
 }
 
 
-Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
+Symbol *getPreDefFuncReturnType(Symbol *s, Symbol *argTypeSym) {
 	char *name = NULL;
 	
 	if (!s) return NULL;
@@ -242,7 +236,7 @@ Symbol *getPreDefFuncReturnType(Symbol *s, type_t argType) {
 	    (strcmp(name, SUCC) == 0) ||
 	    (strcmp(name, PRED) == 0)
 	) {
-		return getTypeSym(s);
+		return argTypeSym;
 	} else if (
 	    (strcmp(name, SIN) == 0) ||
 	    (strcmp(name, EXP) == 0) ||
@@ -274,7 +268,6 @@ paramToVar(Symbol *param)
 {
 	Symbol *s = NULL;
 	if (!param) return NULL;
-	if (param->kind != PARAM_KIND) return NULL;
 	Symbol *typeSym = getTypeSym(param);
 	s = newVariableSym(param->name, typeSym);
 	if (!s) return NULL;
@@ -316,12 +309,58 @@ int isElementArraySimple(struct ElementArray *elementArray) {
 
 	return 1;
 }
-
-
-int typeIsInValidArgs(Symbol *s, type_t type) {
+int isArgTypeValidInIOFunc(Symbol *s, Symbol *arg) {
 	char *name = NULL;
-	if (!s) return 0;
+	type_t type;
+	type_t arrayBaseType;
+	kind_t kind;
+	if(!s || !arg) return 0;
+	
 	name = s->name;
+	type = getType(arg);
+	kind = arg->kind;
+	
+	if (type == ARRAY_T) {
+			arrayBaseType = getType(getArrayBaseSym(arg));
+			if (arrayBaseType == CHAR_T) {
+				type = arrayBaseType;
+			}
+	}
+		
+	if ((strcmp(name, "read") == 0) ||
+		(strcmp(name, "readln") == 0)
+	) {
+		if (kind == TYPE_KIND) { 
+			if (!(arg->isAddress)) {
+				return 0;
+			}
+		} else if (kind == CONST_KIND) {
+				return 0;
+		} else if ((type != CHAR_T) && (type != INTEGER_T) &&
+					(type != REAL_T) && (type != STRING_T) )
+		     {
+			return 0;
+		}
+			
+	} else if ((strcmp(name, "writeln") == 0) ||
+	           (strcmp(name, "write") == 0 )
+	) {
+		if( (type != CHAR_T) && (type != INTEGER_T) &&
+		    (type != REAL_T) && (type != STRING_T) ) {
+			return 0;
+		}
+	}
+	
+	return 1;
+	
+}
+
+int isArgTypeValidInPreDefFunc(Symbol *s, Symbol *arg) {
+	char *name = NULL;
+	type_t type;
+	if (!s || !arg) return 0;
+	name = s->name;
+	type = getType(arg);
 
 	if (
 	    (strcmp(name, ABS) == 0) ||
@@ -349,6 +388,9 @@ int typeIsInValidArgs(Symbol *s, type_t type) {
 	    (strcmp(name, SUCC) == 0) ||
 	    (strcmp(name, PRED) == 0)
 	){
+		
+		if (isScalarMember(arg)) return 1;
+		if (isScalarVar(arg)) return 1;
 		if (isOrdinal(type)) return 1;
 	}
 	return 0;
