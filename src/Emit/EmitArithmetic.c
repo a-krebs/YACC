@@ -181,7 +181,7 @@ static void emitArithmeticPrep(Symbol *x, Symbol *y, int *result)
 	} else if ((getType(x) == REAL_T) && (getType(y) == REAL_T)) {
 
 		/* Emit code to arithmetic operaton on two reals */
-		*result = ARITHMETIC_RESULT_INTEGER;
+		*result = ARITHMETIC_RESULT_REAL;
 
 	} else if ((getType(x) == INTEGER_T) && (getType(y) == REAL_T)) {
 		/* 

@@ -69,6 +69,9 @@ void emitBabyTree(Symbol *x, int opToken, Symbol *y) {
 	case DIV:
 		emitDivision(x, y);
 		break;
+	case MULTIPLY:
+		emitMultiplication(x, y);
+		break;		
 	case MOD:
 		emitMod(x, y);
 		break;
