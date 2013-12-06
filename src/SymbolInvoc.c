@@ -167,7 +167,7 @@ int
 isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 {
 	Symbol *param = NULL;
-	type_t type,arrayBaseType;
+	type_t type;
 	int i, nArgs, valid = 1;
 
 	nArgs = ea->nElements;
@@ -177,22 +177,7 @@ isValidIOProcInvocation(Symbol *s, struct ElementArray *ea)
 		param = ((struct treeNode *)getElementAt(ea, i))->symbol;
 		type = getType(param);
 		
-		if (type == ARRAY_T) {
-			arrayBaseType = getType(getArrayBaseSym(param));
-			if(arrayBaseType == CHAR_T){
-				type = arrayBaseType;
-			}
-		}
-		
-		if ((param->kind == TYPE_KIND) && !(param->isAddress)){
-			errMsg = customErrorString(" Passing expressions to "
-			"procedure %s is not allowed.",s->name);
-			recordError(errMsg, yylineno, colno, SEMANTIC);
-			valid = 0;
-		}
-		
-		if ( (type != CHAR_T) && (type != INTEGER_T) &&
-		    (type != REAL_T) && (type != STRING_T) ) {
+		if (!isArgTypeValidInIOFunc(s, param)) {
 			errMsg = customErrorString("Invalid argument "
 			    "of type %s passed to procedure %s.",
 			    typeToString(type), s->name);
@@ -225,7 +210,7 @@ ProxySymbol *isValidPreDefFuncInvocation(Symbol *s, struct ElementArray *ea)
 	param = ((struct treeNode *)getElementAt(ea, i))->symbol;
 	type = getType(param);
 	
-	if (typeIsInValidArgs(s, type)) {
+	if (isArgTypeValidInPreDefFunc(s, param)) {
 		return getPreDefFuncReturnType(s, type);
 			
 	} else {
@@ -324,12 +309,59 @@ int isElementArraySimple(struct ElementArray *elementArray) {
 
 	return 1;
 }
-
-
-int typeIsInValidArgs(Symbol *s, type_t type) {
+int isArgTypeValidInIOFunc(Symbol *s, Symbol *arg) {
 	char *name = NULL;
-	if (!s) return 0;
+	type_t type;
+	type_t arrayBaseType;
+	kind_t kind;
+	if(!s || !arg) return 0;
+	
 	name = s->name;
+	type = getType(arg);
+	kind = arg->kind;
+	
+	if (type == ARRAY_T) {
+			arrayBaseType = getType(getArrayBaseSym(arg));
+			if (arrayBaseType == CHAR_T) {
+				type = arrayBaseType;
+			}
+	}
+		
+	if ((strcmp(name, "read") == 0) ||
+		(strcmp(name, "readln") == 0)
+	) {
+		if (kind == TYPE_KIND) { 
+			if (!(arg->isAddress)) {
+				return 0;
+			}
+		} else if (kind == CONST_KIND) {
+			if (!isConstResultSym(arg)) {
+				return 0;
+			}
+		} else if ((type != CHAR_T) && (type != INTEGER_T) &&
+					(type != REAL_T) && (type != STRING_T) ) {
+			return 0;
+		}
+			
+	} else if ((strcmp(name, "writeln") == 0) ||
+	           (strcmp(name, "write") == 0 )
+	) {
+		if( (type != CHAR_T) && (type != INTEGER_T) &&
+		    (type != REAL_T) && (type != STRING_T) ) {
+			return 0;
+		}
+	}
+	
+	return 1;
+	
+}
+
+int isArgTypeValidInPreDefFunc(Symbol *s, Symbol *arg) {
+	char *name = NULL;
+	type_t type;
+	if (!s || !arg) return 0;
+	name = s->name;
+	type = getType(arg);
 
 	if (
 	    (strcmp(name, ABS) == 0) ||
@@ -357,6 +389,9 @@ int typeIsInValidArgs(Symbol *s, type_t type) {
 	    (strcmp(name, SUCC) == 0) ||
 	    (strcmp(name, PRED) == 0)
 	){
+		
+		if (isScalarMember(arg)) return 1;
+		if (isScalarVar(arg)) return 1;
 		if (isOrdinal(type)) return 1;
 	}
 	return 0;
