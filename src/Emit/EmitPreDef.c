@@ -12,6 +12,14 @@ static void emitTrunc(Symbol *, struct treeNode *);
 static void emitRound(Symbol *, struct treeNode *);
 static void emitSucc(Symbol *, struct treeNode *);
 static void emitPred(Symbol *, struct treeNode *);
+
+static void emitOdd(Symbol *, struct treeNode *);
+static void emitAbs(Symbol *, struct treeNode *);
+static void emitSqrt(Symbol *, struct treeNode *);
+static void emitSin(Symbol *, struct treeNode *);
+static void emitExp(Symbol *, struct treeNode *);
+static void emitLn(Symbol *, struct treeNode *);
+
 static void pushPreDefFuncValues(Symbol *, struct treeNode *);
 
 
@@ -35,6 +43,30 @@ void emitPreDefFunc(Symbol *s, struct ElementArray *args)
 
 		emitOrd(s, node);
 
+	} else if (strcmp(s->name, "odd") == 0) {
+
+		emitOdd(s, node);
+
+	} else if (strcmp(s->name, "abs") == 0) {
+
+		emitAbs(s, node);
+
+	} else if (strcmp(s->name, "sqrt") == 0) {
+
+		emitSqrt(s, node);
+
+	} else if (strcmp(s->name, "sin") == 0) {
+
+		emitSin(s, node);
+
+	} else if (strcmp(s->name, "exp") == 0) {
+	
+		emitExp(s, node);
+
+	} else if (strcmp(s->name, "ln") == 0) {
+
+		emitLn(s, node);
+	
 	} else if (strcmp(s->name, "chr") == 0) {
 
 		emitChr(s, node);
@@ -148,6 +180,96 @@ static void emitPred(Symbol *s, struct treeNode *node)
 		break; 
 	}
 }
+
+static void emitOdd(Symbol *s, struct treeNode *node)
+{
+	pushPreDefFuncValues(s, node);
+	emitStmt(STMT_LEN, "CALL 0, __odd");
+	emitStmt(STMT_LEN, "ADJUST -1");
+}
+
+static void emitAbs(Symbol *s, struct treeNode *node)
+{
+	pushPreDefFuncValues(s, node);
+	switch (getType(node->symbol)) {
+	case INTEGER_T:
+		emitStmt(STMT_LEN, "CALL 0, __abs_int");
+		break;
+	case REAL_T:
+		emitStmt(STMT_LEN, "CALL 0, __abs_real");
+		break;
+	default:
+		/* Not reached */
+		break;
+	}
+	emitStmt(STMT_LEN, "ADJUST -1");
+}
+
+static void emitSqrt(Symbol *s, struct treeNode *node)
+{
+	pushPreDefFuncValues(s, node);
+	switch (getType(node->symbol)) {
+	case INTEGER_T:
+		emitStmt(STMT_LEN, "CALL 0, __sqrt_int");
+		break;
+	case REAL_T:
+		emitStmt(STMT_LEN, "CALL 0, __sqrt_real");
+		break;
+	default:
+		/* Not reached */
+		break;	
+	}
+	emitStmt(STMT_LEN, "ADJUST -1");
+}
+static void emitSin(Symbol *s, struct treeNode *node)
+{
+	pushPreDefFuncValues(s, node);
+	switch (getType(node->symbol)) {
+	case INTEGER_T:
+		emitStmt(STMT_LEN, "CALL 0, __sqrt_int");
+		break;
+	case REAL_T:
+		emitStmt(STMT_LEN, "CALL 0, __sqrt_real");
+		break;
+	default:
+		/* Not reached */
+		break;
+	}
+	emitStmt(STMT_LEN, "ADJUST -1");
+}
+static void emitExp(Symbol *s, struct treeNode *node)
+{
+	pushPreDefFuncValues(s, node);
+	switch (getType(node->symbol)) {
+	case INTEGER_T:
+		emitStmt(STMT_LEN, "CALL 0, __exp_int");
+		break;
+	case REAL_T:
+		emitStmt(STMT_LEN, "CALL 0, __exp_real");
+		break;
+	default:
+		/* Not reached */
+		break;
+	}
+	emitStmt(STMT_LEN, "ADJUST -1");
+}
+static void emitLn(Symbol *s, struct treeNode *node)
+{
+	pushPreDefFuncValues(s, node);
+	switch (getType(node->symbol)) {
+	case INTEGER_T:
+		emitStmt(STMT_LEN, "CALL 0, __ln_int");
+		break;
+	case REAL_T:
+		emitStmt(STMT_LEN, "CALL 0, __ln_real");
+		break;
+	default:
+		/* Not reached */
+		break;
+	}
+	emitStmt(STMT_LEN, "ADJUST -1");
+}
+
 /*
  * Emits the code necessary to called the pre-defined I/O procedure 
  * represented in s with the arguments args (an array of expression nodes).
