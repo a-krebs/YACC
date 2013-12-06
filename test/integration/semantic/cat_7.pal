@@ -11,12 +11,12 @@ const
     cf = false;
     c1 = 1;
 type
-    t1 = boolean;
+    t1 = Boolean;
 var
     b1 : t1;
-    b2 : boolean;
+    b2 : Boolean;
     s1 : (foo, bar, baz);
-    a1 : array[1..3] of boolean;
+    a1 : array[1..3] of Boolean;
 begin
     { Valid operations }
     b1 := true;
@@ -26,8 +26,8 @@ begin
     b1 := not ( ( ct or b1 ) and b2 );
     b2 := (not b2) or ( b1 and cf );
     { Invalid operations }
-    b1 := not 1; { Invalid: 1 is not boolean }
-    b1 := s1 and true; { Invalid: s1 is not boolean }
-    b1 := not c1; { Invalid: c1 is not boolean }
+    b1 := not 1; { Invalid: 1 is not Boolean }
+    b1 := s1 and true; { Invalid: s1 is not Boolean }
+    b1 := not c1; { Invalid: c1 is not Boolean }
 end.
 { vim: set ft=pascal: }

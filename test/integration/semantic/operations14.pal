@@ -10,7 +10,7 @@ const
 //	colour = (red,green,blue);
 var
 //	i : integer;
-	b : boolean;
+	b : Boolean;
 //	r : real;
 //	c : colour;
 begin

@@ -1,7 +1,7 @@
 {}
 program ifStats(input, output);
 var
-	a : boolean;
+	a : Boolean;
 	b : integer;
 begin
 

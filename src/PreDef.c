@@ -36,11 +36,11 @@ Symbol *getPreDefReal(struct preDefTypeSymbols *preDefTypeSymbols) {
 struct Symbol *createPreDefType(char *name, type_t type) {
 	struct Symbol *symbol = NULL;
 
-	if (! ( (strcmp(name, "boolean") == 0 )  ||
-		( strcmp(name, "char") == 0 )    ||
-		( strcmp(name, "integer") == 0 ) ||
-		( strcmp(name, "real") == 0 )    ||
-		( strcmp(name, "string") == 0 ) ))
+	if (! ( (strcmp(name, BOOLEAN_KEY) == 0 )  ||
+		( strcmp(name, CHAR_KEY) == 0 )    ||
+		( strcmp(name, INTEGER_KEY) == 0 ) ||
+		( strcmp(name, REAL_KEY) == 0 )    ||
+		( strcmp(name, STRING_KEY) == 0 ) ))
 	{
 		err(2, "createPreDefType does not support the given type.");
 		exit(EXIT_FAILURE);
