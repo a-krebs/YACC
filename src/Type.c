@@ -154,7 +154,10 @@ areBothInts(Symbol *s1, Symbol *s2)
 int
 isOrdinal(type_t type)
 {
-	if ((type == BOOLEAN_T) || (type == CHAR_T) || (type == INTEGER_T)) {
+	if ((type == BOOLEAN_T) ||
+		(type == CHAR_T) || 
+		(type == INTEGER_T) ||
+		(type == SCALAR_T)) {
 		return 1;
 	}
 	return 0;
@@ -522,11 +525,14 @@ struct Subrange *allocateSubRangeType() {
 struct Subrange *
 newSubrange(Symbol * lowSym, Symbol *highSym)
 {
+	type_t rangeType;
 	struct Subrange *subRange = allocateSubRangeType();
 	int low = 0, high = 0;
-
-	type_t rangeType = getInnerTypeSymbol(lowSym)->kindPtr.TypeKind->type;
-
+	if(getType(lowSym) == SCALAR_T){
+		rangeType = getType(lowSym);
+	}else{
+		rangeType = getInnerTypeSymbol(lowSym)->kindPtr.TypeKind->type;
+	}
 	switch(rangeType) {
 		case BOOLEAN_T:
 			low = lowSym->kindPtr.ConstKind->value.Boolean.value;
@@ -537,6 +543,10 @@ newSubrange(Symbol * lowSym, Symbol *highSym)
 			high = highSym->kindPtr.ConstKind->value.Char.value;
 			break;
 		case INTEGER_T:
+			low = lowSym->kindPtr.ConstKind->value.Integer.value;
+			high = highSym->kindPtr.ConstKind->value.Integer.value;
+			break;
+		case SCALAR_T:
 			low = lowSym->kindPtr.ConstKind->value.Integer.value;
 			high = highSym->kindPtr.ConstKind->value.Integer.value;
 			break;
