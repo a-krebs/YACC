@@ -430,6 +430,8 @@ static void emitWrite(Symbol *s, struct ElementArray *args)
 		switch (getType(arg)) {
 		case ARRAY_T:
 		case CHAR_T:
+			emitIOCall("__write_char", arg);
+			break;
 		case STRING_T:
 			emitIOCall("__write_str", arg);
 			break;
@@ -451,8 +453,7 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 	Symbol *arg;
 	int i;
 	if (args->nElements == 0) {
-		// TODO: can I just call writeln and have it do the right
-		// thing?
+		emitStmt(STMT_LEN, "CALL 0, __writeln_no_args");
 		return;
 	} 
 
@@ -478,6 +479,8 @@ static void emitWriteln(Symbol *s, struct ElementArray *args)
 		switch (getType(arg)) {
 		case ARRAY_T:
 		case CHAR_T:
+			emitIOCall("__writeln_char", arg);
+			break;
 		case STRING_T:
 			emitIOCall("__writeln_str", arg);
 			break;
