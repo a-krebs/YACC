@@ -1,4 +1,4 @@
-/* Cmput 415 - YACC - Bison parser */
+/*Cmput 415 - YACC - Bison parser */
 %{
 
 #include <stdio.h>
