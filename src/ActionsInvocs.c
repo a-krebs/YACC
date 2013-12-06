@@ -46,6 +46,7 @@ void procInvok(char *id, struct ElementArray *ea) {
 
 	if (isIOProc(s)) {
 		isValidIOProcInvocation(s, ea);
+		emitPreDefIO(s, ea);
 	} else {
 		// this prints errors, so call it but ignore return value
 		isValidProcInvocation(s, ea);

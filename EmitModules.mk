@@ -1,4 +1,3 @@
-
 $(BIN)/EmitArithmetic.o: $(EMIT)/EmitArithmetic.c $(EMIT)/EmitArithmetic.h
 	$(COMPILE)
 
@@ -27,6 +26,9 @@ $(BIN)/EmitLogical.o: $(EMIT)/EmitLogical.c $(EMIT)/EmitLogical.h
 	$(COMPILE)
 
 $(BIN)/EmitUnary.o: $(EMIT)/EmitUnary.c $(EMIT)/EmitUnary.h
+	$(COMPILE)
+
+$(BIN)/EmitPreDef.o: $(EMIT)/EmitPreDef.c $(EMIT)/EmitPreDef.h
 	$(COMPILE)
 
 $(BIN)/Emit.o: $(SRC)/Emit.c $(SRC)/Emit.h

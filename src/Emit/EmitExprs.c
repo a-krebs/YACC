@@ -199,7 +199,7 @@ void emitPushVarAddress(Symbol *s)
 			 * to which we ultimately want to assign a new value */
 			emitStmt(STMT_LEN, "PUSH %d[%d]", s->offset, s->lvl);
 		}
-	break;
+		break;
 	}
 	default:
 		return;
