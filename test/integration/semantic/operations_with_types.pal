@@ -1,0 +1,14 @@
+{11,12,13}
+program opsWithTypes(in, out);
+type
+	a = (Mon,Tues,Wed);
+	b = (Thurs, Fri, Sat);
+var
+	i : integer;
+	foo : a;
+	bar : b;
+begin
+	i := Mon + Tues;	// error
+	foo := Tues + Wed;	// error
+	foo := Mon + Tues;	// error
+end.
