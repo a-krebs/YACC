@@ -508,11 +508,9 @@ static void emitIOCall(char *proc, Symbol *arg)
 		emitStmt(STMT_LEN, "ADJUST -2");
 		break;
 	case CHAR_T:
-		emitComment("Push size of char array");
-		emitStmt(STMT_LEN, "CONSTI 1");
 		emitStmt(STMT_LEN, "CALL 0, %s", proc);
 		emitComment("Kick params off the stack.");
-		emitStmt(STMT_LEN, "ADJUST -2");
+		emitStmt(STMT_LEN, "ADJUST -1");
 		break;
 	case INTEGER_T:
 		emitStmt(STMT_LEN, "CALL 0, %s", proc);
