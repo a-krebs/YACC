@@ -1,0 +1,26 @@
+program example( input, output );
+    type 
+        string = array[1..7] of char;
+    var 
+        x : integer;
+        y : integer;
+        answer : integer;
+        flag : char;
+        str : string;
+
+function gcd( a : integer; b : integer ) : integer;
+begin
+    gcd := (a mod b );
+end;
+    
+function lcm( a : integer; b : integer ) : integer;
+begin
+    lcm := gcd( a, b );
+end;        
+
+
+begin 
+
+      
+        
+end.
