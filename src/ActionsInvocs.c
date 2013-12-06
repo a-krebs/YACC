@@ -67,7 +67,7 @@ void procInvok(char *id, struct ElementArray *ea) {
  */
 struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 	struct treeNode *funcNode;
-	Symbol *s = NULL, *newNodeSym;
+	Symbol *s = NULL, *newNodeSym, *typeSym;
 	s = getGlobalSymbol(symbolTable, id);
 	
 	if (!s) {
@@ -80,8 +80,18 @@ struct treeNode *funcInvok(char *id, struct ElementArray *argv) {
 	}
 
 	if (isPreDefFunc(s)) {
-		/* Needs to be handled separately */
-		return createLeafNode(isValidPreDefFuncInvocation(s, argv));
+		typeSym = isValidPreDefFuncInvocation(s, argv);
+		if (typeSym) {
+			newNodeSym = newFuncSym(s->lvl, s->name, getTypeSym(s),
+			    argv);
+			newNodeSym->kindPtr.FuncKind->label =
+			    s->kindPtr.FuncKind->label;
+			newNodeSym->kindPtr.FuncKind->invocationInstance = 1;
+			funcNode = createLeafNode(newNodeSym);
+			funcNode->opToken = FUNCTION_INVOCATION;
+			return funcNode;
+		}
+		return createLeafNode(NULL);
 	}
 
 	if (isValidFuncInvocation(s, argv)) {

@@ -4,6 +4,7 @@
  */
 
 #include "Tree.h"
+#include "EmitPreDef.h"
 #include "EmitProcs.h"
 #include "EmitExprs.h"
 
@@ -222,6 +223,10 @@ void emitFuncInvok(Symbol *symbol, struct ElementArray *params) {
 	CHECK_CAN_EMIT(symbol);
  	emitStmt(STMT_LEN, "");
  	emitComment("Start function invocation '%s':", symbol->name);	
+
+	if (isPreDefFunc(symbol)) {
+		emitPreDefFunc(symbol, params);
+	}
 	
 	label = symbol->kindPtr.FuncKind->label;
 

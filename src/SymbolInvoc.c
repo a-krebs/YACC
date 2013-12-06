@@ -335,11 +335,10 @@ int isArgTypeValidInIOFunc(Symbol *s, Symbol *arg) {
 				return 0;
 			}
 		} else if (kind == CONST_KIND) {
-			if (!isConstResultSym(arg)) {
 				return 0;
-			}
 		} else if ((type != CHAR_T) && (type != INTEGER_T) &&
-					(type != REAL_T) && (type != STRING_T) ) {
+					(type != REAL_T) && (type != STRING_T) )
+		     {
 			return 0;
 		}
 			
