@@ -23,7 +23,6 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 
 	arrayType = getTypeSym(arrayBase);
 
-	
 	while (indices) {
 		if (!(givenArgs.a)) {
 			emitComment("Doing array bounds checking.");
@@ -40,12 +39,12 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 
 			emitComment("Checking < high bound");
 			emitStmt(STMT_LEN, "CONSTI %d",
-			    getArrayHighIndexValue(arrayType));
+			    getArrayHighIndexValue(arrayType) + 1);
 			emitStmt(STMT_LEN, "LTI");
 			emitStmt(STMT_LEN, "IFZ __array_error");
 			emitComment("Checking > low bound");
 			emitStmt(STMT_LEN, "CONSTI %d",
-			    getArrayLowIndexValue(arrayType));
+			    getArrayLowIndexValue(arrayType) - 1);
 			emitStmt(STMT_LEN, "GTI");
 			emitStmt(STMT_LEN, "IFZ __array_error");
 		}
@@ -83,7 +82,7 @@ void emitArrayElementLocation(Symbol* arrayBase, Symbol *indices)
 	 * call to ADDI as we know in this case we must have previously 
 	 * calculated some location value and left it on top of the stack.
 	 */
-	if (arrayBase->kind == VAR_KIND) {
+	if (arrayBase->kind == VAR_KIND && !(arrayBase->isAddress)) {
 		emitComment("We now push the base address of the array");
 		emitPushVarAddress(arrayBase);
 	}
@@ -212,6 +211,7 @@ void emitPushVarAddress(Symbol *s)
 	case REAL_T:
 	case RECORD_T:
 	case SCALARINT_T:
+	case SCALAR_T:
 	{
 		if (!isByReference(s)) {
 			/* Not passed by reference, so we push the address
@@ -257,7 +257,7 @@ void emitPushVarValue(Symbol *s)
 	case CHAR_T:
 	case INTEGER_T:
 	case REAL_T:
-	case SCALARINT_T:
+	case SCALAR_T:
 	{
 		if (!isByReference(s)) { 
  			/*  
@@ -378,6 +378,10 @@ void emitArrayAssignment(Symbol *x, Symbol *y)
 	 	} else { 
  			emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl); 
 		}
+
+	}
+	else if ( !isConstResultSym(y) && y->kind == CONST_KIND ) {
+		emitPushSymbolValue(y);
 	}
 	emitComment("Calling pre-defined function __do_array_assignment");
 	emitComment("First, we place the array size on the stack.");
@@ -413,18 +417,13 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	if (y->isAddress) {
 		emitComment("Value of y is address, convert to actual value");
 		emitPushAddressValue(y);
-	}
-
-	// TODO : factor the two conditionals below out into its own function
-	if (y->kind == VAR_KIND) {
+	} else if (y->kind == VAR_KIND) {
 		emitComment("RHS of assignment operation is a single variable "
 		    "value.");
 		emitComment("So we push its value now as it was not pushed "
 		    "before.");
 		emitStmt(STMT_LEN, "PUSH %d[%d]", y->offset, y->lvl);
-	}
-
-	if ( (y->kind == CONST_KIND) && !isConstResultSym(y)) {
+	} else if ( (y->kind == CONST_KIND) && !isConstResultSym(y)) {
 		emitComment("RHS of assignment operation is a const, so its "
 		    "value was not");
 		emitComment("pushed before.  So, we push it now.");
@@ -437,6 +436,7 @@ void emitAssignmentOp(Symbol *x, Symbol *y)
 	case BOOLEAN_T:
 	case CHAR_T:
 	case INTEGER_T:
+	case SCALAR_T:
 		/* No checking to do, simply make the assignment */
 		emitStmt(STMT_LEN, "POPI");
 		break;

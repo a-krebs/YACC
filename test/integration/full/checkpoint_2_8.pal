@@ -18,7 +18,7 @@ var
 	myI : integer;
 	myR : real;
 	i : integer;
-	b : boolean;
+	b : Boolean;
 	r2 : real;
 procedure foo(a : integer; b : integer);
 begin

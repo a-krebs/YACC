@@ -108,9 +108,14 @@ static void emitRelationalPrep(Symbol *x, Symbol *y, int *opType)
 		return;
 	}
 
-	if (isSimpleType(getType(x))) 
-	    emitRelationalSimpleTypeConversion(x, y, opType);
-	else *opType = STRUCTURED_OPERATION;
+	if (isSimpleType(getType(x))) {
+	    	emitRelationalSimpleTypeConversion(x, y, opType);
+		return;
+	}
+	if (getType(x) == SCALAR_T) {
+		*opType = INTEGER_OPERATION;
+		return;
+	} else *opType = STRUCTURED_OPERATION;
 }
 
 void emitEqualsOp(Symbol *x, Symbol *y)

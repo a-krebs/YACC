@@ -101,8 +101,15 @@ double doUnaryMinusOp(ProxySymbol *y);
 int doStrEqCmp(ProxySymbol *x, ProxySymbol *y);
 int doStrLessCmp(ProxySymbol *x, ProxySymbol *y);
 int doStrGtCmp(ProxySymbol *x, ProxySymbol *y);
-
-
+/*
+ * Scalar member comparison are the following
+ */
+int doScalarEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doScalarNotEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doScalarGtCmp(ProxySymbol *x, ProxySymbol *y);
+int doScalarGtOrEqCmp(ProxySymbol *x, ProxySymbol *y);
+int doScalarLessCmp(ProxySymbol *x, ProxySymbol *y);
+int doScalarLessOrEqCmp(ProxySymbol *x, ProxySymbol *y);
 
 
 ProxySymbol *exprsOp(ProxySymbol *x, int opToken, ProxySymbol *y);

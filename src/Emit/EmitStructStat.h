@@ -17,6 +17,7 @@
 #include "Kind.h"
 #include "StmtLL.h"
 
+#include "EmitExprs.h"
 #include "EmitUtils.h"
 
 #define LABEL_PREFIX "LABEL"

@@ -14,7 +14,7 @@
 /* Macros and const string variable declarations. */
 
 //pre-defined types:
-#define BOOLEAN_KEY "boolean"
+#define BOOLEAN_KEY "Boolean"
 #define CHAR_KEY "char"
 #define INTEGER_KEY "integer"
 #define REAL_KEY "real"

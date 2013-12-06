@@ -14,7 +14,7 @@ var
 	a : int;
 	b : real;
 	c : haha;
-	d : boolean;
+	d : Boolean;
 begin
 	writeln(a,b,c,'bla bla and bla');
 	{error 1 :variable c is not in ordinal type}

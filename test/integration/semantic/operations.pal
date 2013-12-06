@@ -5,7 +5,7 @@
 program test(input, output);
 var
 	i : integer;
-	b : boolean;
+	b : Boolean;
 	r : real;
 begin
 	// unary plus

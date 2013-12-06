@@ -9,7 +9,7 @@ var
 	myString : string20;
 	i : integer;
 	r : real;
-	b : boolean;
+	b : Boolean;
 function doStrThing(a : string20) : integer;
 	begin
 		doStrThing := 10;
