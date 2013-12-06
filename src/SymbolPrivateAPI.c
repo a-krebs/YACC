@@ -112,6 +112,8 @@ void setSymbolSize(Symbol *s)
 	switch (s->kind) {
 	case CONST_KIND:
 		/* fall through */
+	case PARAM_KIND:
+		/* fall through */
 	case VAR_KIND:
 		s->size = getTypeSym(s)->size;
 		break;

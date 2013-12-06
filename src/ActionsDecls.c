@@ -291,6 +291,8 @@ Symbol *enterProcDecl(char *id, struct ElementArray *ea) {
 
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			addToSymbolTable(symbolTable, var);
+			setSymbolSize(getElementAt(ea, i));
+			setSymbolSize(var);
 			setParamOffset(var, ea);
 		}
 		else {
@@ -356,9 +358,12 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 		var = paramToVar(getElementAt(ea, i));
 		if (!getLocalSymbol(symbolTable, var->name)) {
 			addToSymbolTable(symbolTable, var);
+			setSymbolSize(var);
+			setSymbolSize(getElementAt(ea, i));
 			setParamOffset(var, ea);
 		}
 		if (var) {
+			
 			if (strcmp(var->name, s->name) == 0) {
 				errMsg = customErrorString("Function %s has "
 				    "parameter with same name as function.",
@@ -373,7 +378,7 @@ Symbol *enterFuncDecl(char *id, struct ElementArray *ea, Symbol *typeSym) {
 	 * lexical level */
 	if (!badParamName) {
 		var = paramToVar(s);
-		addToSymbolTable(symbolTable, var);
+		addToSymbolTable(symbolTable, var);	
 		setParamOffset(var, ea);
 	}
 
